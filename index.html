@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." />
+  <title>Noustelos Studio | Web Design for Tourism &amp; Creative Projects</title>
+
+  <!-- Typography: Space Grotesk for headings, Inter for body text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="#top" aria-label="Noustelos Studio">Noustelos Studio</a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 1. Hero -->
+    <section class="hero section" aria-labelledby="hero-title">
+      <div class="container hero-content">
+        <h1 id="hero-title">Modern Websites That Tell Your Story</h1>
+        <p class="hero-subtitle">Design and development for tourism and creative businesses</p>
+        <p class="hero-intro">Designed and built by Nick Karadimas</p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="#work">View My Work</a>
+          <a class="button button-secondary" href="#contact">Contact</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Selected Work -->
+    <section class="section" id="work" aria-labelledby="work-title">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="work-title">Selected Work</h2>
+        </div>
+
+        <div class="projects-grid">
+          <article class="project-card">
+            <img src="https://picsum.photos/seed/odontotos/900/600" alt="Odontotos Railway landing page preview" loading="lazy" width="900" height="600" />
+            <div class="card-content">
+              <h3>Odontotos Railway Landing Page</h3>
+              <p>Tourism landing page for the Odontotos railway and Vouraikos Gorge. Video hero, immersive storytelling and mobile optimization.</p>
+              <a class="button button-link" href="#">View Project</a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <img src="https://picsum.photos/seed/diakopto/900/600" alt="Discover Diakopto website preview" loading="lazy" width="900" height="600" />
+            <div class="card-content">
+              <h3>Discover Diakopto</h3>
+              <p>Tourism guide website presenting the region, attractions and experiences.</p>
+              <a class="button button-link" href="#">View Project</a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <img src="https://picsum.photos/seed/creative-web/900/600" alt="Creative web experiments preview" loading="lazy" width="900" height="600" />
+            <div class="card-content">
+              <h3>Creative Web Experiments</h3>
+              <p>Experimental landing pages exploring visuals and storytelling.</p>
+              <a class="button button-link" href="#">View Project</a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <img src="https://picsum.photos/seed/portfolio-grid/900/600" alt="Portfolio projects preview" loading="lazy" width="900" height="600" />
+            <div class="card-content">
+              <h3>Portfolio Concepts</h3>
+              <p>A collection of landing pages and modern web design concepts.</p>
+              <a class="button button-link" href="#">View Project</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Services -->
+    <section class="section section-muted" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="services-title">Services</h2>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <h3>Website Design</h3>
+            <p>Modern responsive websites for tourism businesses and local companies.</p>
+          </article>
+
+          <article class="service-card">
+            <h3>Landing Pages</h3>
+            <p>High-conversion landing pages for products, campaigns and events.</p>
+          </article>
+
+          <article class="service-card">
+            <h3>Creative Web Projects</h3>
+            <p>Visual storytelling and experimental interactive web experiences.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. About -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container about-block">
+        <div class="section-heading">
+          <h2 id="about-title">About</h2>
+        </div>
+        <p>I'm Nick Noustelos, a creative web designer and developer based in Greece.</p>
+        <p>I build modern websites that focus on clarity, performance and visual storytelling.</p>
+        <p>My work combines clean design with practical functionality so businesses can present themselves clearly online.</p>
+      </div>
+    </section>
+
+    <!-- 5. Contact -->
+    <section class="section section-muted" id="contact" aria-labelledby="contact-title">
+      <div class="container contact-block">
+        <div class="section-heading">
+          <h2 id="contact-title">Let's Work Together</h2>
+        </div>
+        <p>If you need a modern website or landing page, feel free to contact me.</p>
+        <div class="contact-actions">
+          <a class="button button-primary" href="mailto:hello@noustelos.gr">Email</a>
+          <a class="button button-secondary" href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+        <p class="small-text">noustelos.gr</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 6. Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; Noustelos Studio</p>
+      <p>Designed in Santorini | 2026 &copy; all rights reserved | In collaboration with WebHostPro</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
