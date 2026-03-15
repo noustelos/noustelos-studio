@@ -2,6 +2,7 @@
 const navToggle = document.querySelector('.nav-toggle');
 const menu = document.querySelector('#site-menu');
 const langToggle = document.querySelector('.lang-toggle');
+const topLinks = document.querySelectorAll('.logo, .footer-top-link');
 
 const translations = {
   en: {
@@ -82,7 +83,7 @@ const translations = {
       email: 'Email'
     },
     footer: {
-      rights: 'Designed in Santorini | 2026 all rights reserved | In collaboration with WebHostPro'
+      rights: 'Designed in Santorini | © 2026 all rights reserved | In collaboration with WebHostPro'
     }
   },
   gr: {
@@ -163,7 +164,7 @@ const translations = {
       email: 'Email'
     },
     footer: {
-      rights: 'Σχεδιασμένο στη Σαντορίνη | 2026 όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro'
+      rights: 'Σχεδιασμένο στη Σαντορίνη | © 2026 όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro'
     }
   }
 };
@@ -245,5 +246,15 @@ if (langToggle) {
     const currentLang = localStorage.getItem('siteLanguage') || preferredLanguage;
     const nextLang = currentLang === 'en' ? 'gr' : 'en';
     applyLanguage(nextLang);
+  });
+}
+
+if (topLinks.length) {
+  topLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, '', '#top');
+    });
   });
 }
