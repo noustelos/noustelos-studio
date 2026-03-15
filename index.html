@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." />
-  <title>Noustelos Studio | Web Design for Tourism &amp; Creative Projects</title>
+  <meta name="description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." data-i18n-attr="content:meta.description" />
+  <title data-i18n="meta.title">Noustelos Studio | Web Design for Tourism &amp; Creative Projects</title>
 
   <!-- Typography: Space Grotesk for headings, Inter for body text -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,20 +16,26 @@
 <body>
   <!-- Header -->
   <header class="site-header" id="top">
-    <nav class="container nav" aria-label="Main navigation">
+    <nav class="container nav" aria-label="Main navigation" data-i18n-attr="aria-label:nav.mainAria">
       <a class="logo" href="#home" aria-label="Noustelos Studio">Noustelos Studio</a>
 
-      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu" data-i18n-attr="aria-label:nav.toggleAria">
         <span></span>
         <span></span>
       </button>
 
       <ul class="menu" id="site-menu">
-        <li><a href="#work">Work</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#work" data-i18n="nav.work">Work</a></li>
+        <li><a href="#services" data-i18n="nav.services">Services</a></li>
+        <li><a href="#about" data-i18n="nav.about">About</a></li>
+        <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
       </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language" data-i18n-attr="aria-label:lang.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">|</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
     </nav>
   </header>
 
@@ -37,13 +43,13 @@
     <!-- 1. Hero -->
     <section class="hero section" id="home" aria-labelledby="hero-title">
       <div class="container hero-content">
-        <h1 id="hero-title">Modern Websites for Tourism &amp; Creative Projects</h1>
-        <p class="hero-subtitle">Clean design. Fast performance. Clear storytelling.</p>
-        <p class="hero-intro">Designed and built by Nick Karadimas</p>
+        <h1 id="hero-title" data-i18n="hero.title">Modern Websites for Tourism &amp; Creative Projects</h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">Clean design. Fast performance. Clear storytelling.</p>
+        <p class="hero-intro" data-i18n="hero.intro">Designed and built by Nick Karadimas</p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="#work">View My Work</a>
-          <a class="button button-secondary" href="#contact">Contact</a>
+          <a class="button button-primary" href="#work" data-i18n="hero.ctaWork">View My Work</a>
+          <a class="button button-secondary" href="#contact" data-i18n="hero.ctaContact">Contact</a>
         </div>
       </div>
     </section>
@@ -52,61 +58,61 @@
     <section class="section" id="work" aria-labelledby="work-title">
       <div class="container">
         <div class="section-heading">
-          <h2 id="work-title">Selected Work</h2>
+          <h2 id="work-title" data-i18n="work.title">Selected Work</h2>
         </div>
 
         <div class="projects-grid">
           <article class="project-card">
-            <img src="assets/works/project1.jpeg" alt="Odontotos Railway landing page preview" loading="lazy" width="1421" height="770" />
+            <img src="assets/works/project1.jpeg" alt="Odontotos Railway landing page preview" data-i18n-attr="alt:work.project1.alt" loading="lazy" width="1421" height="770" />
             <div class="card-content">
               <h3>365orthodoxy.com</h3>
-              <p>Landing page for widget promotion.</p>
-              <a class="button button-link" href="https://365orthodoxy.com/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project1.desc">Landing page for widget promotion.</p>
+              <a class="button button-link" href="https://365orthodoxy.com/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
 
           <article class="project-card">
-            <img src="assets/works/project2.jpeg" alt="Discover Diakopto website preview" loading="lazy" width="1420" height="781" />
+            <img src="assets/works/project2.jpeg" alt="Discover Diakopto website preview" data-i18n-attr="alt:work.project2.alt" loading="lazy" width="1420" height="781" />
             <div class="card-content">
               <h3>Discover Diakopto</h3>
-              <p>Tourism guide website presenting the region, attractions and experiences.</p>
-              <a class="button button-link" href="https://noustelos.github.io/discover-diakopto/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project2.desc">Tourism guide website presenting the region, attractions and experiences.</p>
+              <a class="button button-link" href="https://noustelos.github.io/discover-diakopto/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
 
           <article class="project-card">
-            <img src="assets/works/project3.jpeg" alt="Creative web experiments preview" loading="lazy" width="1423" height="781" />
+            <img src="assets/works/project3.jpeg" alt="Creative web experiments preview" data-i18n-attr="alt:work.project3.alt" loading="lazy" width="1423" height="781" />
             <div class="card-content">
               <h3>Vouraikos Gorge, Unesco Global Geopark</h3>
-              <p>Experimental landing pages exploring visuals and storytelling.</p>
-              <a class="button button-link" href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project3.desc">Experimental landing pages exploring visuals and storytelling.</p>
+              <a class="button button-link" href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
 
           <article class="project-card">
-            <img src="assets/works/project4.jpeg" alt="Portfolio projects preview" loading="lazy" width="1416" height="783" />
+            <img src="assets/works/project4.jpeg" alt="Portfolio projects preview" data-i18n-attr="alt:work.project4.alt" loading="lazy" width="1416" height="783" />
             <div class="card-content">
               <h3>Odontotos Railway Landing Page</h3>
-              <p>Tourism landing page for the Odontotos railway and Vouraikos Gorge. Video hero, immersive storytelling and mobile optimization.</p>
-              <a class="button button-link" href="https://noustelos.github.io/odontotos/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project4.desc">Tourism landing page for the Odontotos railway and Vouraikos Gorge. Video hero, immersive storytelling and mobile optimization.</p>
+              <a class="button button-link" href="https://noustelos.github.io/odontotos/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
 
           <article class="project-card">
-            <img src="assets/works/project5.jpeg" alt="Additional portfolio concept preview" loading="lazy" width="1418" height="776" />
+            <img src="assets/works/project5.jpeg" alt="Additional portfolio concept preview" data-i18n-attr="alt:work.project5.alt" loading="lazy" width="1418" height="776" />
             <div class="card-content">
               <h3>Honeymoon Beach Studios</h3>
-              <p>Simple, clean, SEO optimised webpage for a family owned hotel.</p>
-              <a class="button button-link" href="https://noustelos.github.io/honeymoon/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project5.desc">Simple, clean, SEO optimised webpage for a family owned hotel.</p>
+              <a class="button button-link" href="https://noustelos.github.io/honeymoon/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
 
           <article class="project-card">
-            <img src="assets/works/m2.webp" alt="Modern tourism website concept preview" loading="lazy" width="1344" height="768" />
+            <img src="assets/works/m2.webp" alt="Modern tourism website concept preview" data-i18n-attr="alt:work.project6.alt" loading="lazy" width="1344" height="768" />
             <div class="card-content">
               <h3>Daily Inspiration Widget</h3>
-              <p>Daily Bible inspiration and feast-day reminders. Minimalist design, glass-style visuals, and smooth, intuitive UX.</p>
-              <a class="button button-link" href="https://illustrious-piroshki-cd95ac.netlify.app/" target="_blank" rel="noopener noreferrer">View Project</a>
+              <p data-i18n="work.project6.desc">Daily Bible inspiration and feast-day reminders. Minimalist design, glass-style visuals, and smooth, intuitive UX.</p>
+              <a class="button button-link" href="https://illustrious-piroshki-cd95ac.netlify.app/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
             </div>
           </article>
         </div>
@@ -117,23 +123,23 @@
     <section class="section section-muted" id="services" aria-labelledby="services-title">
       <div class="container">
         <div class="section-heading">
-          <h2 id="services-title">Services</h2>
+          <h2 id="services-title" data-i18n="services.title">Services</h2>
         </div>
 
         <div class="services-grid">
           <article class="service-card">
-            <h3>Website Design</h3>
-            <p>Modern responsive websites for tourism businesses and local companies.</p>
+            <h3 data-i18n="services.card1.title">Website Design</h3>
+            <p data-i18n="services.card1.desc">Modern responsive websites for tourism businesses and local companies.</p>
           </article>
 
           <article class="service-card">
-            <h3>Landing Pages</h3>
-            <p>High-conversion landing pages for products, campaigns and events.</p>
+            <h3 data-i18n="services.card2.title">Landing Pages</h3>
+            <p data-i18n="services.card2.desc">High-conversion landing pages for products, campaigns and events.</p>
           </article>
 
           <article class="service-card">
-            <h3>Creative Web Projects</h3>
-            <p>Visual storytelling and experimental interactive web experiences.</p>
+            <h3 data-i18n="services.card3.title">Creative Web Projects</h3>
+            <p data-i18n="services.card3.desc">Visual storytelling and experimental interactive web experiences.</p>
           </article>
         </div>
       </div>
@@ -143,11 +149,11 @@
     <section class="section" id="about" aria-labelledby="about-title">
       <div class="container about-block">
         <div class="section-heading">
-          <h2 id="about-title">About</h2>
+          <h2 id="about-title" data-i18n="about.title">About</h2>
         </div>
-        <p>I'm Nick Karadimas, a creative web designer and developer based in Santorini.</p>
-        <p>I build modern websites that focus on clarity, performance, and visual storytelling, combining clean design with practical functionality so businesses can present themselves clearly online.</p>
-        <p>I also leverage cutting-edge tools and AI-assisted workflows to streamline creative processes, help improve efficiency, and deliver high-quality results for clients, while keeping creative judgment and craftsmanship at the center of every project.</p>
+        <p data-i18n="about.p1">I'm Nick Karadimas, a creative web designer and developer based in Santorini.</p>
+        <p data-i18n="about.p2">I build modern websites that focus on clarity, performance, and visual storytelling, combining clean design with practical functionality so businesses can present themselves clearly online.</p>
+        <p data-i18n="about.p3">I also leverage cutting-edge tools and AI-assisted workflows to streamline creative processes, help improve efficiency, and deliver high-quality results for clients, while keeping creative judgment and craftsmanship at the center of every project.</p>
       </div>
     </section>
 
@@ -155,11 +161,11 @@
     <section class="section section-muted" id="contact" aria-labelledby="contact-title">
       <div class="container contact-block">
         <div class="section-heading">
-          <h2 id="contact-title">Let's Work Together</h2>
+          <h2 id="contact-title" data-i18n="contact.title">Let's Work Together</h2>
         </div>
-        <p>If you need a modern website or landing page, feel free to contact me.</p>
+        <p data-i18n="contact.text">If you need a modern website or landing page, feel free to contact me.</p>
         <div class="contact-actions">
-          <a class="button button-primary" href="mailto:avatar68@gmail.com">Email</a>
+          <a class="button button-primary" href="mailto:avatar68@gmail.com" data-i18n="contact.email">Email</a>
           <a class="button button-secondary" href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
@@ -170,7 +176,7 @@
   <footer class="site-footer">
     <div class="container">
       <p>&copy; Noustelos Studio</p>
-      <p>Designed in Santorini | 2026 &copy; all rights reserved | In collaboration with WebHostPro</p>
+      <p data-i18n="footer.rights">Designed in Santorini | 2026 &copy; all rights reserved | In collaboration with WebHostPro</p>
     </div>
   </footer>
 
