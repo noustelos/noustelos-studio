@@ -91,10 +91,35 @@ h3,
 }
 
 .logo {
-  font-size: 28px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18em;
+  padding: 0.25rem 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 700;
+  letter-spacing: 0.07em;
   line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.logo-wordmark {
+  color: var(--text-primary);
+}
+
+.logo-mark {
+  font-size: 0.74em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  transform: translateY(-0.32em);
+  transition: color 150ms ease;
+}
+
+.logo:hover .logo-mark,
+.logo:focus-visible .logo-mark {
+  color: var(--accent);
 }
 
 .menu {
@@ -410,8 +435,9 @@ h3 {
   }
 
   .logo {
-    font-size: clamp(20px, 6vw, 25px);
-    letter-spacing: 0.03em;
+    font-size: clamp(14px, 4.8vw, 20px);
+    letter-spacing: 0.06em;
+    gap: 0.14em;
   }
 
   .menu {

@@ -221,7 +221,7 @@ const preferredLanguage = (() => {
     return storedLang;
   }
 
-  return navigator.language && navigator.language.toLowerCase().startsWith('el') ? 'gr' : 'en';
+  return 'en';
 })();
 
 applyLanguage(preferredLanguage);
