@@ -268,8 +268,7 @@ h1 {
 
 .project-card img {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
+  height: auto;
 }
 
 .card-content,
