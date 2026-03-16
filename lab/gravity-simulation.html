@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, follow" />
+  <title>Gravity Simulation | Noustelos Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="lab.css" />
+</head>
+<body class="lab-page page-id-42 page-id-42-gravity">
+  <main class="gravity-ui-shell" aria-labelledby="gravity-ui-title">
+    <header class="gravity-ui-head">
+      <div>
+        <h1 id="gravity-ui-title" class="gravity-ui-title">gravity simulation<span class="gravity-ui-title-mark" aria-hidden="true">/&gt;</span><span class="lab-gravity-subtitle gravity-ui-inline-subtitle">ORBITAL TEST FIELD</span></h1>
+      </div>
+      <a class="gravity-ui-back" href="index.html">Back to UX Lab /&gt;</a>
+    </header>
+
+    <section class="lab-card lab-gravity-card" aria-label="Gravity simulation card">
+      <p class="gravity-ui-note">click inside the field to spawn objects</p>
+
+      <div class="gravity-controls">
+        <label for="gravitySlider">PLANET GRAVITY</label>
+        <input type="range" min="0" max="8" step="1" value="2" id="gravitySlider">
+        <div class="gravity-label" aria-live="polite"></div>
+        <div class="planet-icon" aria-hidden="true"></div>
+        <button class="gravity-clear" type="button">clear simulation /&gt;</button>
+      </div>
+
+      <div class="lab-physics impact-glow" aria-label="Gravity simulation field"></div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <script src="gravity-simulation.js"></script>
+</body>
+</html>
