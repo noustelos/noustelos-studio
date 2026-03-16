@@ -180,6 +180,11 @@ h3,
   opacity: 0.65;
 }
 
+.menu a.is-active {
+  color: var(--glass-gray-text);
+  opacity: 1;
+}
+
 .nav-toggle {
   margin-left: auto;
   width: 2.75rem;

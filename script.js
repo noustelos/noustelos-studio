@@ -3,6 +3,8 @@ const navToggle = document.querySelector('.nav-toggle');
 const menu = document.querySelector('#site-menu');
 const langToggle = document.querySelector('.lang-toggle');
 const topLinks = document.querySelectorAll('.logo, .footer-top-link');
+const siteHeader = document.querySelector('.site-header');
+const sectionNavLinks = document.querySelectorAll('.menu a[href^="#"]');
 
 const translations = {
   en: {
@@ -261,4 +263,58 @@ if (topLinks.length) {
       history.replaceState(null, '', '#top');
     });
   });
+}
+
+if (sectionNavLinks.length) {
+  const sectionMap = new Map();
+  let ticking = false;
+
+  sectionNavLinks.forEach((link) => {
+    const targetId = link.getAttribute('href');
+
+    if (!targetId || targetId === '#top' || targetId === '#home') {
+      return;
+    }
+
+    const targetSection = document.querySelector(targetId);
+
+    if (targetSection) {
+      sectionMap.set(link, targetSection);
+    }
+  });
+
+  const updateActiveMenuLink = () => {
+    ticking = false;
+
+    const headerHeight = siteHeader ? siteHeader.offsetHeight : 0;
+    const triggerLine = headerHeight + 2;
+    let activeLink = null;
+
+    sectionMap.forEach((section, link) => {
+      const rect = section.getBoundingClientRect();
+
+      if (rect.top <= triggerLine && rect.bottom > triggerLine) {
+        activeLink = link;
+      }
+    });
+
+    sectionNavLinks.forEach((link) => {
+      link.classList.toggle('is-active', link === activeLink);
+    });
+  };
+
+  const requestActiveUpdate = () => {
+    if (ticking) {
+      return;
+    }
+
+    ticking = true;
+    window.requestAnimationFrame(updateActiveMenuLink);
+  };
+
+  window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+  window.addEventListener('resize', requestActiveUpdate);
+  window.addEventListener('load', requestActiveUpdate);
+
+  requestActiveUpdate();
 }
