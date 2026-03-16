@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="lab.css" />
 </head>
 <body class="lab-page page-id-42">
   <div class="page-id-42-easter-zone" aria-hidden="true">
@@ -28,32 +29,38 @@
     <h1 id="lab-title" class="lab-title" data-i18n="lab.title">UX <em>Lab</em></h1>
     <p class="lab-intro" data-i18n="lab.intro">Welcome to the hidden workshop. Here you will find experimental concepts, interaction studies and ideas still in exploration mode.</p>
 
-    <section class="lab-grid" aria-label="Experimental projects" data-i18n-attr="aria-label:lab.gridAria">
-      <article class="lab-card">
-        <h2 data-i18n="lab.card1.title">Visual Storytelling Trials</h2>
-        <p data-i18n="lab.card1.desc">Experimental layouts focused on sequencing, rhythm and immersive sections.</p>
-        <a href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer" data-i18n="lab.card1.link">Open Study</a>
-      </article>
-
-      <article class="lab-card">
-        <h2 data-i18n="lab.card2.title">Widget Interaction Patterns</h2>
-        <p data-i18n="lab.card2.desc">Micro-UX research for daily inspiration widgets with motion and glass UI.</p>
-        <a href="https://illustrious-piroshki-cd95ac.netlify.app/" target="_blank" rel="noopener noreferrer" data-i18n="lab.card2.link">Open Prototype</a>
-      </article>
-
-      <article class="lab-card">
-        <h2 data-i18n="lab.card3.title">Coming Next</h2>
-        <p data-i18n="lab.card3.desc">New experimental work is coming soon, with focus on conversion-first UX.</p>
-        <a href="mailto:avatar68@gmail.com" data-i18n="lab.card3.link">Suggest an Experiment</a>
-      </article>
-
-      <a class="lab-card lab-card--nebula lab-card-link" href="nebula-ui.html" aria-label="Open Nebula UI page">
-        <div class="lab-nebula" aria-hidden="true"></div>
-        <div class="lab-card-content">
-          <h2>Νebula UI</h2>
-          <p>Spatial glass surfaces and atmospheric depth experiments for next-gen interface mood.</p>
+    <section class="lab-sections" aria-label="Lab sections">
+      <section class="lab-section lab-drawer" aria-labelledby="visual-experiments-title">
+        <button class="lab-drawer-trigger" id="visual-experiments-title" type="button" aria-expanded="false" aria-controls="lab-drawer-visual">
+          <span class="lab-section-title">visual experiments /&gt;</span>
+          <span class="lab-drawer-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="lab-section-content" id="lab-drawer-visual" hidden>
+          <a class="lab-card lab-card--nebula lab-card-link" href="nebula-ui.html" aria-label="Open Nebula UI page">
+            <div class="lab-nebula" aria-hidden="true"></div>
+            <div class="lab-card-content">
+              <h3>Νebula UI</h3>
+              <p>Spatial glass surfaces and atmospheric depth experiments for next-gen interface mood.</p>
+            </div>
+          </a>
         </div>
-      </a>
+      </section>
+
+      <section class="lab-section lab-drawer" aria-labelledby="interaction-lab-title">
+        <button class="lab-drawer-trigger" id="interaction-lab-title" type="button" aria-expanded="false" aria-controls="lab-drawer-interaction">
+          <span class="lab-section-title">interaction lab /&gt;</span>
+          <span class="lab-drawer-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="lab-section-content" id="lab-drawer-interaction" hidden></div>
+      </section>
+
+      <section class="lab-section lab-drawer" aria-labelledby="creative-tools-title">
+        <button class="lab-drawer-trigger" id="creative-tools-title" type="button" aria-expanded="false" aria-controls="lab-drawer-creative">
+          <span class="lab-section-title">creative tools /&gt;</span>
+          <span class="lab-drawer-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="lab-section-content" id="lab-drawer-creative" hidden></div>
+      </section>
     </section>
 
     <a class="lab-back" href="/">

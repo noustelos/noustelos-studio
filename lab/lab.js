@@ -140,6 +140,88 @@ if (!document.body.classList.contains('page-id-42')) {
     });
   }
 
+  const drawerTriggers = document.querySelectorAll(`${PAGE_SCOPE} .lab-drawer-trigger`);
+
+  const setDrawerState = (trigger, nextState) => {
+    const drawer = trigger.closest('.lab-drawer');
+    const contentId = trigger.getAttribute('aria-controls');
+    const content = contentId ? document.getElementById(contentId) : null;
+
+    trigger.setAttribute('aria-expanded', String(nextState));
+
+    if (drawer) {
+      drawer.classList.toggle('is-open', nextState);
+    }
+
+    if (!content) {
+      return;
+    }
+
+    if (nextState) {
+      content.hidden = false;
+      content.style.maxHeight = '0px';
+
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          const targetHeight = content.scrollHeight;
+          content.style.maxHeight = `${targetHeight}px`;
+        });
+      });
+    } else {
+      const currentHeight = content.scrollHeight;
+      content.style.maxHeight = `${currentHeight}px`;
+
+      window.requestAnimationFrame(() => {
+        content.style.maxHeight = '0px';
+      });
+    }
+
+    let finalized = false;
+
+    const finalizeState = () => {
+      if (finalized) {
+        return;
+      }
+
+      finalized = true;
+
+      if (nextState) {
+        content.style.maxHeight = 'none';
+      } else {
+        content.hidden = true;
+      }
+    };
+
+    const onTransitionEnd = (event) => {
+      if (event.propertyName !== 'max-height') {
+        return;
+      }
+
+      content.removeEventListener('transitionend', onTransitionEnd);
+      finalizeState();
+    };
+
+    content.addEventListener('transitionend', onTransitionEnd);
+    window.setTimeout(finalizeState, 920);
+  };
+
+  drawerTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      const nextState = !isOpen;
+
+      if (nextState) {
+        drawerTriggers.forEach((otherTrigger) => {
+          if (otherTrigger !== trigger && otherTrigger.getAttribute('aria-expanded') === 'true') {
+            setDrawerState(otherTrigger, false);
+          }
+        });
+      }
+
+      setDrawerState(trigger, nextState);
+    });
+  });
+
   document.addEventListener('mousemove', (e) => {
     const nebula = document.querySelector(`${PAGE_SCOPE} .lab-nebula`);
     if (!nebula) return;
