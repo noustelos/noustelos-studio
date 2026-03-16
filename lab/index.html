@@ -11,7 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
 </head>
-<body class="lab-page">
+<body class="lab-page page-id-42">
+  <div class="page-id-42-easter-zone" aria-hidden="true">
+    <span class="page-id-42-easter-note">Secret unlocked: 42</span>
+  </div>
   <main class="lab-shell" aria-labelledby="lab-title">
     <div class="lab-controls">
       <button class="lang-toggle" type="button" aria-label="Switch language" data-i18n-attr="aria-label:lang.switchAria">
@@ -43,9 +46,21 @@
         <p data-i18n="lab.card3.desc">New experimental work is coming soon, with focus on conversion-first UX.</p>
         <a href="mailto:avatar68@gmail.com" data-i18n="lab.card3.link">Suggest an Experiment</a>
       </article>
+
+      <a class="lab-card lab-card--nebula lab-card-link" href="nebula-ui.html" aria-label="Open Nebula UI page">
+        <div class="lab-nebula" aria-hidden="true"></div>
+        <div class="lab-card-content">
+          <h2>Νebula UI</h2>
+          <p>Spatial glass surfaces and atmospheric depth experiments for next-gen interface mood.</p>
+        </div>
+      </a>
     </section>
 
-    <a class="lab-back" href="/" data-i18n="lab.back">Back to Portfolio /&gt;</a>
+    <a class="lab-back" href="/">
+      <span class="lab-back-prefix" data-i18n="lab.backPrefix">Back to</span>
+      <span class="lab-back-wordmark">NOUSTELOS_STUDIO</span>
+      <span class="lab-back-mark">/&gt;</span>
+    </a>
   </main>
   <script src="lab.js"></script>
 </body>
