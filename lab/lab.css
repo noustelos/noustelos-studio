@@ -3,6 +3,7 @@ body.page-id-42 {
   display: grid;
   place-items: center;
   padding: 4rem 0;
+  -webkit-text-size-adjust: 100%;
   position: relative;
   overflow-x: clip;
   background:
@@ -414,6 +415,96 @@ body.page-id-42 .lab-card-link span {
   }
 }
 
+@media (max-width: 390px) {
+  body.page-id-42 .lab-title {
+    font-size: clamp(30px, 10vw, 36px);
+  }
+
+  body.page-id-42 .lab-drawer-trigger {
+    min-height: 46px;
+    padding: 0.65rem;
+  }
+
+  body.page-id-42 .lab-section-title {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+
+  body.page-id-42 .lab-section-content {
+    padding: 0 0.56rem 0.6rem;
+  }
+
+  body.page-id-42 .lab-card {
+    padding: 0.78rem;
+  }
+
+  body.page-id-42 .lab-card-content,
+  body.page-id-42 .lab-gravity-header {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body.page-id-42 .lab-card-content h3,
+  body.page-id-42 .lab-card-content p,
+  body.page-id-42 .lab-gravity-header h3,
+  body.page-id-42 .lab-gravity-header p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  body.page-id-42 .lab-gravity-header h3 {
+    font-size: clamp(18px, 6.2vw, 22px);
+    line-height: 1.2;
+  }
+
+  body.page-id-42 .lab-gravity-header p {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  body.page-id-42 .lab-card--nebula {
+    min-height: 154px;
+  }
+
+  body.page-id-42 .lab-gravity-subtitle {
+    letter-spacing: 0.14em;
+  }
+
+  body.page-id-42 .lab-back {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.15rem;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  body.page-id-42 .lab-back-prefix {
+    flex: 0 0 auto;
+    margin-right: 0.18rem;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    transform: translateY(-0.04em);
+  }
+
+  body.page-id-42 .lab-back-wordmark {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body.page-id-42 .lab-back-mark {
+    flex: 0 0 auto;
+    font-size: 0.7em;
+    transform: translateY(-0.22em);
+  }
+}
+
 body.page-id-42 .lab-card--nebula h2,
 body.page-id-42 .lab-card--nebula h3,
 body.page-id-42 .lab-card--nebula p {
@@ -428,6 +519,7 @@ body.page-id-42 .lab-gravity-card {
   color: rgba(255, 255, 255, 0.96);
   border-color: rgba(255, 255, 255, 0.16);
   padding: clamp(1rem, 2.6vw, 1.4rem);
+  overflow: hidden;
 }
 
 body.page-id-42 .lab-gravity-card:hover,
@@ -669,7 +761,7 @@ body.page-id-42.page-id-42-gravity .gravity-ui-back {
 
 body.page-id-42.page-id-42-gravity .gravity-ui-note {
   margin: 0 0 1rem;
-  color: rgba(0, 71, 171, 0.82);
+  color: var(--glass-gray-text);
   font-size: 14px;
   text-align: center;
   animation: gravity-note-cobalt-pulse 2.2s ease-in-out infinite;

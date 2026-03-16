@@ -16,7 +16,7 @@ if (!document.body.classList.contains('page-id-42')) {
       lab: {
         eyebrow: 'Early Access',
         title: 'UX <em>Lab</em>',
-        intro: 'Welcome to the hidden workshop. Here you will find experimental concepts, interaction studies and ideas still in exploration mode.',
+        intro: 'Welcome to the digital research station. Here you will find experimental concepts, interaction studies and ideas still in exploration mode.',
         gridAria: 'Experimental projects',
         card1: {
           title: 'Visual Storytelling Trials',
