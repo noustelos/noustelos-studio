@@ -86,6 +86,7 @@ const translations = {
     },
     footer: {
       labAria: 'Open UX Lab',
+      universeAria: 'Open universe page',
       topAria: 'Back to top',
       rights: 'Designed in Santorini | © 2026 all rights reserved | In collaboration with WebHostPro'
     }
@@ -169,6 +170,7 @@ const translations = {
     },
     footer: {
       labAria: 'Άνοιγμα UX Lab',
+      universeAria: 'Άνοιγμα σελίδας universe',
       topAria: 'Επιστροφή στην κορυφή',
       rights: 'Σχεδιασμένο στη Σαντορίνη | © 2026 όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro'
     }

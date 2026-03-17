@@ -430,6 +430,12 @@ h3 {
   gap: 0.48rem;
 }
 
+.footer-secret-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .site-footer p {
   margin: 0;
   font-size: 14px;
@@ -470,6 +476,26 @@ h3 {
 
 .footer-actions .lab-link {
   margin-top: calc(clamp(13px, 1.45vw, 17px) + 0.45rem);
+}
+
+.footer-universe-trigger {
+  margin-top: 0.35rem;
+  margin-left: -0.34rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--glass-gray-text);
+  opacity: 0.45;
+  transition: opacity 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.footer-universe-trigger:hover,
+.footer-universe-trigger:focus-visible {
+  opacity: 1;
+  color: rgba(115, 123, 133, 0.95);
+  transform: translateX(-1px);
 }
 
 .lab-link:hover,
