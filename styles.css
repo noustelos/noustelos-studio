@@ -367,6 +367,10 @@ h1 {
   height: auto;
 }
 
+.project-card > a {
+  display: block;
+}
+
 .card-content,
 .service-card {
   padding: 1.4rem;
