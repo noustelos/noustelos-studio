@@ -412,45 +412,18 @@ if (sectionNavLinks.length) {
       ctx.textBaseline = 'middle';
       const markX = textureCanvas.width * 0.5;
       const markY = textureCanvas.height * 0.32;
-      const lockupBaseY = 585;
-      const lockupShiftY = -11;
-      const lockupLineGap = 80;
-      const labelOneY = lockupBaseY + lockupShiftY;
-      const labelTwoY = labelOneY + lockupLineGap;
       const markFont = '700 560px "Space Grotesk", sans-serif';
-      const labelFont = '700 44px "Space Grotesk", sans-serif';
-      const markTipX = markX + 245;
-      const lockupRightInset = 6;
-
-      function drawLockupLines(yOffset) {
-        const lineOne = 'NOUSTELOS';
-        const lineTwo = '_STUDIO';
-
-        ctx.font = labelFont;
-        const lineOneWidth = ctx.measureText(lineOne).width;
-        const lineTwoWidth = ctx.measureText(lineTwo).width;
-        const lineTwoRightX = markTipX - lockupRightInset;
-        const lineOneStartX = lineTwoRightX - lineOneWidth;
-
-        ctx.textAlign = 'left';
-        ctx.fillText(lineOne, lineOneStartX, labelOneY + yOffset);
-        ctx.textAlign = 'right';
-        ctx.fillText(lineTwo, lineTwoRightX, labelTwoY + yOffset);
-        ctx.textAlign = 'center';
-      }
 
       if (shadow) {
         ctx.fillStyle = `rgba(0, 0, 0, ${SHADOW_ALPHA})`;
         ctx.filter = `blur(${SHADOW_BLUR}px)`;
         ctx.font = markFont;
         ctx.fillText('/>', markX, markY + 14);
-        drawLockupLines(8);
         ctx.filter = 'none';
       } else {
         ctx.fillStyle = '#111111';
         ctx.font = markFont;
         ctx.fillText('/>', markX, markY);
-        drawLockupLines(0);
       }
 
       const texture = new THREE.CanvasTexture(textureCanvas);
