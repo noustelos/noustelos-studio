@@ -7,8 +7,8 @@ if (!document.body.classList.contains('page-id-42')) {
   const translations = {
     en: {
       meta: {
-        title: 'UX Lab | Noustelos Studio',
-        description: 'UX Lab by Noustelos Studio: experimental web works, micro-interactions and creative concepts.'
+        title: 'UX Lab | Noustelos Studio Santorini',
+        description: 'UX Lab by Noustelos Studio in Santorini: experimental web works, micro-interactions and creative concepts.'
       },
       lang: {
         switchAria: 'Switch language'
@@ -38,8 +38,8 @@ if (!document.body.classList.contains('page-id-42')) {
     },
     gr: {
       meta: {
-        title: 'UX Lab | Noustelos Studio',
-        description: 'UX Lab από το Noustelos Studio: πειραματικά web works, micro-interactions και creative concepts.'
+        title: 'UX Lab | Noustelos Studio Santorini',
+        description: 'UX Lab από το Noustelos Studio στη Σαντορίνη: πειραματικά web works, micro-interactions και creative concepts.'
       },
       lang: {
         switchAria: 'Αλλαγή γλώσσας'

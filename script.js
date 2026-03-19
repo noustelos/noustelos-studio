@@ -9,8 +9,8 @@ const sectionNavLinks = document.querySelectorAll('.menu a[href^="#"]');
 const translations = {
   en: {
     meta: {
-      title: 'Noustelos Studio | Web Design for Tourism & Creative Projects',
-      description: 'Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects.'
+      title: 'Noustelos Studio Santorini | Web Design for Tourism & Creative Projects',
+      description: 'Noustelos Studio in Santorini creates modern websites for tourism brands, local businesses and creative projects.'
     },
     nav: {
       mainAria: 'Main navigation',
@@ -93,8 +93,8 @@ const translations = {
   },
   gr: {
     meta: {
-      title: 'Noustelos Studio | Σχεδιασμός Ιστοσελίδων για Τουρισμό & Δημιουργικά Projects',
-      description: 'Το Noustelos Studio δημιουργεί μοντέρνες ιστοσελίδες για τουριστικά brands, τοπικές επιχειρήσεις και δημιουργικά projects.'
+      title: 'Noustelos Studio Santorini | Σχεδιασμός Ιστοσελίδων για Τουρισμό & Δημιουργικά Projects',
+      description: 'Το Noustelos Studio με έδρα τη Σαντορίνη δημιουργεί μοντέρνες ιστοσελίδες για τουριστικά brands, τοπικές επιχειρήσεις και δημιουργικά projects.'
     },
     nav: {
       mainAria: 'Κύρια πλοήγηση',
