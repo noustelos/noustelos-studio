@@ -114,7 +114,7 @@ h3,
 
 .logo {
   display: inline-flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.18em;
   padding: 0.25rem 0;
   font-size: clamp(18px, 2.1vw, 28px);
@@ -125,8 +125,30 @@ h3,
   white-space: nowrap;
 }
 
+.logo-lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18em;
+  line-height: 1;
+}
+
 .logo-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
   color: var(--text-primary);
+}
+
+.logo-location {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.42em;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: var(--glass-gray-text);
+  opacity: 0.9;
+  align-self: flex-end;
+  margin-top: 3px;
 }
 
 .logo-mark {
@@ -678,6 +700,12 @@ h3 {
     letter-spacing: 0.06em;
     gap: 0.14em;
   }
+
+  .logo-location {
+    font-size: 0.38em;
+    letter-spacing: 0.21em;
+  }
+
   .menu {
     padding: 0.95rem 1rem 1.1rem;
   }

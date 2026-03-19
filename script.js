@@ -355,12 +355,19 @@ if (sectionNavLinks.length) {
       return;
     }
 
-    const EFFECT_RADIUS = 4.6;
-    const EFFECT_DEPTH = 1.9;
+    const isDesktopViewport = window.matchMedia('(min-width: 900px)').matches;
+    const isIpadLike =
+      /iPad/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const useDesktopSubtle = isDesktopViewport && !isIpadLike;
+
+    const EFFECT_RADIUS = useDesktopSubtle ? 3.0 : 4.6;
+    const EFFECT_DEPTH = useDesktopSubtle ? 0.68 : 1.9;
     const SHADOW_ALPHA = 0.07;
     const SHADOW_BLUR = 72;
     const SHADOW_OPACITY = 0.34;
-    const EFFECT_LERP = 0.22;
+    const EFFECT_LERP = useDesktopSubtle ? 0.12 : 0.22;
+    const PROXIMITY_PADDING = useDesktopSubtle ? 18 : 0;
     const BASE_ROTATION = 0;
 
     let renderer;
@@ -562,8 +569,24 @@ if (sectionNavLinks.length) {
 
     function updatePointer(event) {
       const rect = wrap.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
+      const left = rect.left - PROXIMITY_PADDING;
+      const top = rect.top - PROXIMITY_PADDING;
+      const width = rect.width + PROXIMITY_PADDING * 2;
+      const height = rect.height + PROXIMITY_PADDING * 2;
+
+      const isNear =
+        event.clientX >= left &&
+        event.clientX <= left + width &&
+        event.clientY >= top &&
+        event.clientY <= top + height;
+
+      if (!isNear) {
+        resetPointer();
+        return;
+      }
+
+      const x = (event.clientX - left) / width;
+      const y = (event.clientY - top) / height;
 
       pointer.x = x * 2 - 1;
       pointer.y = -(y * 2 - 1);
@@ -608,7 +631,7 @@ if (sectionNavLinks.length) {
       const width = Math.max(1, Math.floor(rect.width));
       const height = Math.max(1, Math.floor(rect.height));
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, useDesktopSubtle ? 1 : 1.75));
       renderer.setSize(width, height, false);
 
       aspect = width / height;
