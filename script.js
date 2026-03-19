@@ -327,30 +327,6 @@ if (sectionNavLinks.length) {
   const interactionRegion = wrap;
   const THREE_FALLBACK_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
 
-  // Toggle profiles from one place.
-  // Available values: subtle | dynamic
-  const HERO_ANIMATION_PROFILE = {
-    desktop: 'dynamic',
-    mobile: 'dynamic'
-  };
-
-  const HERO_ANIMATION_PRESETS = {
-    subtle: {
-      radius: 2.6,
-      depth: 0.45,
-      proximityPadding: 16,
-      pixelRatioCap: 1,
-      lerp: 0.1
-    },
-    dynamic: {
-      radius: 5.3,
-      depth: 2.05,
-      proximityPadding: 82,
-      pixelRatioCap: 1.75,
-      lerp: 0.28
-    }
-  };
-
   if (!wrap || !canvas || !interactionRegion) {
     return;
   }
@@ -379,22 +355,12 @@ if (sectionNavLinks.length) {
       return;
     }
 
-    const isDesktopViewport = window.matchMedia('(min-width: 900px)').matches;
-    const isDesktopChrome =
-      isDesktopViewport && /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
-    const isIpadLike =
-      /iPad/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const selectedProfileName = isDesktopViewport ? HERO_ANIMATION_PROFILE.desktop : HERO_ANIMATION_PROFILE.mobile;
-    const selectedProfile = HERO_ANIMATION_PRESETS[selectedProfileName] || HERO_ANIMATION_PRESETS.dynamic;
-
-    const EFFECT_RADIUS = selectedProfile.radius;
-    const EFFECT_DEPTH = selectedProfile.depth;
-    const SHADOW_ALPHA = 0;
-    const SHADOW_BLUR = 38;
-    const SHADOW_OPACITY = 0;
-    const PROXIMITY_PADDING = isIpadLike ? Math.max(selectedProfile.proximityPadding, 120) : selectedProfile.proximityPadding;
-    const EFFECT_LERP = selectedProfile.lerp;
+    const EFFECT_RADIUS = 4.6;
+    const EFFECT_DEPTH = 1.9;
+    const SHADOW_ALPHA = 0.07;
+    const SHADOW_BLUR = 72;
+    const SHADOW_OPACITY = 0.34;
+    const EFFECT_LERP = 0.22;
     const BASE_ROTATION = 0;
 
     let renderer;
@@ -422,7 +388,7 @@ if (sectionNavLinks.length) {
       0.01,
       100
     );
-    camera.position.set(0, -3.4, 7.4);
+    camera.position.set(0, -4, 7);
     camera.lookAt(0, 0, 0);
 
     const raycaster = new THREE.Raycaster();
@@ -505,7 +471,7 @@ if (sectionNavLinks.length) {
       return;
     }
 
-    const geometry = new THREE.PlaneGeometry(16.8, 16.8, 140, 140);
+    const geometry = new THREE.PlaneGeometry(16.8, 16.8, 180, 180);
 
     const shadowMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -533,10 +499,6 @@ if (sectionNavLinks.length) {
       uniform float uRadius;
       uniform float uOpacity;
 
-      float mapValue(float value, float min1, float max1, float min2, float max2) {
-        return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-      }
-
       void main() {
         vec4 color = texture2D(uTexture, vUv);
         if (color.a < 0.02) {
@@ -544,8 +506,8 @@ if (sectionNavLinks.length) {
         }
 
         if (vDist < uRadius) {
-          float alpha = mapValue(vDist, uRadius, 0.0, color.a, 0.0);
-          color.a = alpha;
+          float fade = smoothstep(0.0, uRadius * 1.2, vDist);
+          color.a *= fade;
         }
         color.a *= uOpacity;
         gl_FragColor = color;
@@ -627,24 +589,8 @@ if (sectionNavLinks.length) {
 
     function updatePointer(event) {
       const rect = wrap.getBoundingClientRect();
-      const left = rect.left - PROXIMITY_PADDING;
-      const top = rect.top - PROXIMITY_PADDING;
-      const width = rect.width + PROXIMITY_PADDING * 2;
-      const height = rect.height + PROXIMITY_PADDING * 2;
-
-      const isNear =
-        event.clientX >= left &&
-        event.clientX <= left + width &&
-        event.clientY >= top &&
-        event.clientY <= top + height;
-
-      if (!isNear) {
-        resetPointer();
-        return;
-      }
-
-      const x = (event.clientX - left) / width;
-      const y = (event.clientY - top) / height;
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
 
       pointer.x = x * 2 - 1;
       pointer.y = -(y * 2 - 1);
@@ -686,11 +632,10 @@ if (sectionNavLinks.length) {
 
     function resize() {
       const rect = wrap.getBoundingClientRect();
-      const width = Math.max(1, rect.width);
-      const height = Math.max(1, rect.height);
+      const width = Math.max(1, Math.floor(rect.width));
+      const height = Math.max(1, Math.floor(rect.height));
 
-      const targetPixelRatio = isDesktopChrome ? 1 : Math.min(window.devicePixelRatio || 1, selectedProfile.pixelRatioCap);
-      renderer.setPixelRatio(targetPixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
       renderer.setSize(width, height, false);
 
       aspect = width / height;
@@ -699,13 +644,6 @@ if (sectionNavLinks.length) {
       camera.top = cameraDistance;
       camera.bottom = -cameraDistance;
       camera.updateProjectionMatrix();
-    }
-
-    if (typeof ResizeObserver !== 'undefined') {
-      const wrapObserver = new ResizeObserver(() => {
-        requestAnimationFrame(resize);
-      });
-      wrapObserver.observe(wrap);
     }
 
     function animate() {

@@ -31,11 +31,11 @@
 			return;
 		}
 
-		const EFFECT_RADIUS = 3.2;
-		const EFFECT_DEPTH = 1.6;
-		const SHADOW_ALPHA = 0.1;
-		const SHADOW_BLUR = 38;
-		const SHADOW_OPACITY = 0.5;
+		const EFFECT_RADIUS = 4.6;
+		const EFFECT_DEPTH = 1.9;
+		const SHADOW_ALPHA = 0.07;
+		const SHADOW_BLUR = 72;
+		const SHADOW_OPACITY = 0.34;
 		const BASE_ROTATION = Math.PI / 4;
 
 		let renderer;
@@ -63,7 +63,7 @@
 			0.01,
 			100
 		);
-		camera.position.set(0, -10, 5);
+		camera.position.set(0, -4, 7);
 		camera.lookAt(0, 0, 0);
 
 		const raycaster = new THREE.Raycaster();
@@ -85,16 +85,46 @@
 			ctx.clearRect(0, 0, textureCanvas.width, textureCanvas.height);
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.font = '700 620px "Space Grotesk", sans-serif';
+			const markX = textureCanvas.width * 0.5;
+			const markY = textureCanvas.height * 0.32;
+			const lockupBaseY = 585;
+			const lockupShiftY = -11;
+			const lockupLineGap = 80;
+			const labelOneY = lockupBaseY + lockupShiftY;
+			const labelTwoY = labelOneY + lockupLineGap;
+			const markFont = '700 560px "Space Grotesk", sans-serif';
+			const labelFont = '700 44px "Space Grotesk", sans-serif';
+			const markTipX = markX + 245;
+			const lockupRightInset = 6;
+
+			function drawLockupLines(yOffset) {
+				const lineOne = "NOUSTELOS";
+				const lineTwo = "_STUDIO";
+
+				ctx.font = labelFont;
+				const lineOneWidth = ctx.measureText(lineOne).width;
+				const lineTwoRightX = markTipX - lockupRightInset;
+				const lineOneStartX = lineTwoRightX - lineOneWidth;
+
+				ctx.textAlign = "left";
+				ctx.fillText(lineOne, lineOneStartX, labelOneY + yOffset);
+				ctx.textAlign = "right";
+				ctx.fillText(lineTwo, lineTwoRightX, labelTwoY + yOffset);
+				ctx.textAlign = "center";
+			}
 
 			if (shadow) {
 				ctx.fillStyle = `rgba(0, 0, 0, ${SHADOW_ALPHA})`;
 				ctx.filter = `blur(${SHADOW_BLUR}px)`;
-				ctx.fillText("/>", textureCanvas.width * 0.5, textureCanvas.height * 0.54);
+				ctx.font = markFont;
+				ctx.fillText("/>", markX, markY + 14);
+				drawLockupLines(8);
 				ctx.filter = "none";
 			} else {
 				ctx.fillStyle = "#111111";
-				ctx.fillText("/>", textureCanvas.width * 0.5, textureCanvas.height * 0.5);
+				ctx.font = markFont;
+				ctx.fillText("/>", markX, markY);
+				drawLockupLines(0);
 			}
 
 			const texture = new THREE.CanvasTexture(textureCanvas);
@@ -143,10 +173,6 @@
 			uniform float uRadius;
 			uniform float uOpacity;
 
-			float mapValue(float value, float min1, float max1, float min2, float max2) {
-				return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-			}
-
 			void main() {
 				vec4 color = texture2D(uTexture, vUv);
 				if (color.a < 0.02) {
@@ -154,8 +180,8 @@
 				}
 
 				if (vDist < uRadius) {
-					float alpha = mapValue(vDist, uRadius, 0.0, color.a, 0.0);
-					color.a = alpha;
+					float fade = smoothstep(0.0, uRadius * 1.2, vDist);
+					color.a *= fade;
 				}
 				color.a *= uOpacity;
 				gl_FragColor = color;

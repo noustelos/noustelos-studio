@@ -71,11 +71,11 @@ body {
 .placeholder-home-link {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(0.95rem, 2.1vw, 1.25rem);
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: 0.08em;
   color: #111111;
   text-decoration: none;
-  opacity: 0.72;
+  opacity: 0.9;
   transition: opacity 160ms ease, transform 160ms ease;
 }
 
@@ -89,4 +89,10 @@ body {
   opacity: 1;
   transform: perspective(900px) rotateX(52deg) rotateZ(-12deg);
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.14));
+}
+
+@media (min-width: 768px) and (max-width: 1366px) and (pointer: coarse) {
+  .placeholder-mark-wrap {
+    --mark-size: clamp(18.5625rem, 60.75vw, 50.625rem);
+  }
 }
