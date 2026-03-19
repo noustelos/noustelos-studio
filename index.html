@@ -74,13 +74,20 @@
     <!-- 1. Hero -->
     <section class="hero section" id="home" aria-labelledby="hero-title">
       <div class="container hero-content">
-        <h1 id="hero-title" data-i18n="hero.title">Modern Websites for Tourism &amp; Creative Projects</h1>
-        <p class="hero-subtitle" data-i18n="hero.subtitle">Clean design. Fast performance. Clear storytelling.</p>
-        <p class="hero-intro" data-i18n="hero.intro">Designed and built by Nick Karadimas</p>
+        <div class="hero-copy">
+          <h1 id="hero-title" data-i18n="hero.title">Modern Websites for Tourism &amp; Creative Projects</h1>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">Clean design. Fast performance. Clear storytelling.</p>
+          <p class="hero-intro" data-i18n="hero.intro">Designed and built by Nick Karadimas</p>
 
-        <div class="hero-actions">
-          <a class="button button-primary" href="#work" data-i18n="hero.ctaWork">View My Work</a>
-          <a class="button button-secondary" href="#contact" data-i18n="hero.ctaContact">Contact</a>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#work" data-i18n="hero.ctaWork">View My Work</a>
+            <a class="button button-secondary" href="#contact" data-i18n="hero.ctaContact">Contact</a>
+          </div>
+        </div>
+
+        <div class="hero-mark-wrap webgl-pending" role="img" aria-label="Animated symbol /&gt;">
+          <canvas class="hero-mark-canvas" aria-hidden="true"></canvas>
+          <span class="hero-mark-fallback">/&gt;</span>
         </div>
       </div>
     </section>
@@ -235,6 +242,7 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
   <script src="script.js"></script>
 </body>
 </html>

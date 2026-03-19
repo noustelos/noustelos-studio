@@ -12,8 +12,14 @@
 </head>
 <body>
   <main class="universe-placeholder" aria-label="Universe placeholder">
-    <span class="placeholder-mark">/&gt;</span>
+    <div class="placeholder-mark-wrap" role="img" aria-label="Animated symbol /&gt;">
+      <canvas class="placeholder-mark-canvas" aria-hidden="true"></canvas>
+      <span class="placeholder-mark-fallback">/&gt;</span>
+    </div>
     <a class="placeholder-home-link" href="/">NOUSTELOS_STUDIO /&gt;</a>
   </main>
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
+  <script src="./universe.js"></script>
 </body>
 </html>
