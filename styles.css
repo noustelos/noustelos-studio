@@ -264,6 +264,11 @@ h3,
   .hero-content {
     width: fit-content;
   }
+
+  .hero-mark-wrap {
+    margin-top: clamp(0.45rem, 1.3vw, 1.7rem);
+    transform: translateY(0);
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1099px) {
@@ -304,7 +309,7 @@ h1 {
   --hero-mark-size: clamp(11.5rem, 30vw, 23rem);
   position: relative;
   width: var(--hero-mark-size);
-  height: calc(var(--hero-mark-size) * 0.82);
+  height: calc(var(--hero-mark-size) * 1.04);
   justify-self: start;
   align-self: start;
   margin-left: clamp(-1.1rem, -1.6vw, -0.55rem);

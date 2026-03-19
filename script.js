@@ -327,6 +327,30 @@ if (sectionNavLinks.length) {
   const interactionRegion = wrap;
   const THREE_FALLBACK_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
 
+  // Toggle profiles from one place.
+  // Available values: subtle | dynamic
+  const HERO_ANIMATION_PROFILE = {
+    desktop: 'dynamic',
+    mobile: 'dynamic'
+  };
+
+  const HERO_ANIMATION_PRESETS = {
+    subtle: {
+      radius: 2.6,
+      depth: 0.45,
+      proximityPadding: 16,
+      pixelRatioCap: 1,
+      lerp: 0.1
+    },
+    dynamic: {
+      radius: 5.3,
+      depth: 2.05,
+      proximityPadding: 82,
+      pixelRatioCap: 1.75,
+      lerp: 0.28
+    }
+  };
+
   if (!wrap || !canvas || !interactionRegion) {
     return;
   }
@@ -355,13 +379,23 @@ if (sectionNavLinks.length) {
       return;
     }
 
-    const EFFECT_RADIUS = 4.8;
-    const EFFECT_DEPTH = 1.85;
+    const isDesktopViewport = window.matchMedia('(min-width: 900px)').matches;
+    const isDesktopChrome =
+      isDesktopViewport && /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
+    const isIpadLike =
+      /iPad/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const selectedProfileName = isDesktopViewport ? HERO_ANIMATION_PROFILE.desktop : HERO_ANIMATION_PROFILE.mobile;
+    const selectedProfile = HERO_ANIMATION_PRESETS[selectedProfileName] || HERO_ANIMATION_PRESETS.dynamic;
+
+    const EFFECT_RADIUS = selectedProfile.radius;
+    const EFFECT_DEPTH = selectedProfile.depth;
     const SHADOW_ALPHA = 0;
     const SHADOW_BLUR = 38;
     const SHADOW_OPACITY = 0;
-    const PROXIMITY_PADDING = 70;
-    const BASE_ROTATION = THREE.MathUtils.degToRad(5);
+    const PROXIMITY_PADDING = isIpadLike ? Math.max(selectedProfile.proximityPadding, 120) : selectedProfile.proximityPadding;
+    const EFFECT_LERP = selectedProfile.lerp;
+    const BASE_ROTATION = 0;
 
     let renderer;
 
@@ -410,16 +444,47 @@ if (sectionNavLinks.length) {
       ctx.clearRect(0, 0, textureCanvas.width, textureCanvas.height);
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = '700 620px "Space Grotesk", sans-serif';
+      const markX = textureCanvas.width * 0.5;
+      const markY = textureCanvas.height * 0.32;
+      const lockupBaseY = 585;
+      const lockupShiftY = -11;
+      const lockupLineGap = 80;
+      const labelOneY = lockupBaseY + lockupShiftY;
+      const labelTwoY = labelOneY + lockupLineGap;
+      const markFont = '700 560px "Space Grotesk", sans-serif';
+      const labelFont = '700 44px "Space Grotesk", sans-serif';
+      const markTipX = markX + 245;
+      const lockupRightInset = 6;
+
+      function drawLockupLines(yOffset) {
+        const lineOne = 'NOUSTELOS';
+        const lineTwo = '_STUDIO';
+
+        ctx.font = labelFont;
+        const lineOneWidth = ctx.measureText(lineOne).width;
+        const lineTwoWidth = ctx.measureText(lineTwo).width;
+        const lineTwoRightX = markTipX - lockupRightInset;
+        const lineOneStartX = lineTwoRightX - lineOneWidth;
+
+        ctx.textAlign = 'left';
+        ctx.fillText(lineOne, lineOneStartX, labelOneY + yOffset);
+        ctx.textAlign = 'right';
+        ctx.fillText(lineTwo, lineTwoRightX, labelTwoY + yOffset);
+        ctx.textAlign = 'center';
+      }
 
       if (shadow) {
         ctx.fillStyle = `rgba(0, 0, 0, ${SHADOW_ALPHA})`;
         ctx.filter = `blur(${SHADOW_BLUR}px)`;
-        ctx.fillText('/>', textureCanvas.width * 0.5, textureCanvas.height * 0.54);
+        ctx.font = markFont;
+        ctx.fillText('/>', markX, markY + 14);
+        drawLockupLines(8);
         ctx.filter = 'none';
       } else {
         ctx.fillStyle = '#111111';
-        ctx.fillText('/>', textureCanvas.width * 0.5, textureCanvas.height * 0.5);
+        ctx.font = markFont;
+        ctx.fillText('/>', markX, markY);
+        drawLockupLines(0);
       }
 
       const texture = new THREE.CanvasTexture(textureCanvas);
@@ -440,7 +505,7 @@ if (sectionNavLinks.length) {
       return;
     }
 
-    const geometry = new THREE.PlaneGeometry(16.8, 16.8, 180, 180);
+    const geometry = new THREE.PlaneGeometry(16.8, 16.8, 140, 140);
 
     const shadowMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -624,7 +689,8 @@ if (sectionNavLinks.length) {
       const width = Math.max(1, rect.width);
       const height = Math.max(1, rect.height);
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+      const targetPixelRatio = isDesktopChrome ? 1 : Math.min(window.devicePixelRatio || 1, selectedProfile.pixelRatioCap);
+      renderer.setPixelRatio(targetPixelRatio);
       renderer.setSize(width, height, false);
 
       aspect = width / height;
@@ -643,7 +709,7 @@ if (sectionNavLinks.length) {
     }
 
     function animate() {
-      displacement.lerp(displacementTarget, 0.22);
+      displacement.lerp(displacementTarget, EFFECT_LERP);
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
