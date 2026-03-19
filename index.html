@@ -6,22 +6,35 @@
   <meta name="description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." data-i18n-attr="content:meta.description" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="author" content="Nick Karadimas" />
+  <meta name="application-name" content="Noustelos Studio" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="canonical" href="https://noustelos.gr/" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Noustelos Studio" />
   <meta property="og:title" content="Noustelos Studio | Web Design for Tourism &amp; Creative Projects" />
   <meta property="og:description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." />
   <meta property="og:url" content="https://noustelos.gr/" />
-  <meta property="og:image" content="https://noustelos.gr/assets/works/project4.jpeg" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio hero section and header preview" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="el_GR" />
 
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/" />
   <meta name="twitter:title" content="Noustelos Studio | Web Design for Tourism &amp; Creative Projects" />
   <meta name="twitter:description" content="Noustelos Studio creates modern websites for tourism brands, local businesses and creative projects." />
-  <meta name="twitter:image" content="https://noustelos.gr/assets/works/project4.jpeg" />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio hero section and header preview" />
   <title data-i18n="meta.title">Noustelos Studio | Web Design for Tourism &amp; Creative Projects</title>
 
   <!-- Typography: Space Grotesk for headings, Inter for body text -->
@@ -34,10 +47,46 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Noustelos Studio",
-      "url": "https://noustelos.gr/",
-      "inLanguage": ["en", "el"]
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://noustelos.gr/#website",
+          "url": "https://noustelos.gr/",
+          "name": "Noustelos Studio",
+          "inLanguage": ["en", "el"]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://noustelos.gr/#organization",
+          "name": "Noustelos Studio",
+          "url": "https://noustelos.gr/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://noustelos.gr/assets/og/hero-share.png"
+          }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://noustelos.gr/#person",
+          "name": "Nick Karadimas",
+          "jobTitle": "Web Designer and Developer",
+          "worksFor": {
+            "@id": "https://noustelos.gr/#organization"
+          },
+          "url": "https://noustelos.gr/"
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "https://noustelos.gr/#service",
+          "name": "Noustelos Studio",
+          "url": "https://noustelos.gr/",
+          "provider": {
+            "@id": "https://noustelos.gr/#organization"
+          },
+          "description": "Modern website design, landing pages, and creative web projects for tourism and local businesses.",
+          "areaServed": "Greece"
+        }
+      ]
     }
   </script>
 </head>
