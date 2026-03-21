@@ -39,6 +39,12 @@ body {
   overflow-x: hidden;
 }
 
+.fonts-pending .logo-mark,
+.fonts-pending .hero-mark-canvas,
+.fonts-pending .hero-mark-fallback {
+  opacity: 0;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -157,7 +163,8 @@ h3,
   letter-spacing: 0.03em;
   color: var(--glass-gray-text);
   transform: translateY(-0.32em);
-  transition: color 150ms ease;
+  opacity: 1;
+  transition: color 150ms ease, opacity 120ms ease;
 }
 
 .logo:hover .logo-mark,
@@ -345,6 +352,8 @@ h1 {
   width: 100%;
   height: 100%;
   display: block;
+  opacity: 1;
+  transition: opacity 120ms ease;
 }
 
 .hero-mark-fallback {
@@ -360,6 +369,7 @@ h1 {
   color: #111111;
   transform-origin: 50% 56%;
   pointer-events: none;
+  transition: opacity 120ms ease;
 }
 
 .hero-mark-wrap.is-ready .hero-mark-fallback,

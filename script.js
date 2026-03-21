@@ -5,6 +5,30 @@ const langToggle = document.querySelector('.lang-toggle');
 const topLinks = document.querySelectorAll('.logo, .footer-top-link');
 const siteHeader = document.querySelector('.site-header');
 const sectionNavLinks = document.querySelectorAll('.menu a[href^="#"]');
+const documentRoot = document.documentElement;
+
+const brandFontReady = (() => {
+  const finalize = () => {
+    documentRoot.classList.remove('fonts-pending');
+    documentRoot.classList.add('fonts-ready');
+  };
+
+  if (!document.fonts || typeof document.fonts.load !== 'function') {
+    finalize();
+    return Promise.resolve();
+  }
+
+  const fontLoads = Promise.allSettled([
+    document.fonts.load('700 1em "Space Grotesk"'),
+    document.fonts.load('600 1em "Space Grotesk"')
+  ]);
+  const fontSettled = Promise.allSettled([document.fonts.ready, fontLoads]);
+  const timeout = new Promise((resolve) => {
+    window.setTimeout(resolve, 2500);
+  });
+
+  return Promise.race([fontSettled, timeout]).finally(finalize);
+})();
 
 const translations = {
   en: {
@@ -662,12 +686,14 @@ if (sectionNavLinks.length) {
     wrap.classList.add('is-ready');
   }
 
-  if (typeof THREE === 'undefined') {
-    loadThreeFallback()
-      .then(boot)
-      .catch(markNoWebgl);
-    return;
-  }
+  brandFontReady.then(() => {
+    if (typeof THREE === 'undefined') {
+      loadThreeFallback()
+        .then(boot)
+        .catch(markNoWebgl);
+      return;
+    }
 
-  boot();
+    boot();
+  });
 })();
