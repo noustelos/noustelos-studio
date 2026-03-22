@@ -310,7 +310,8 @@ h3,
     grid-template-columns: minmax(0, 1fr) auto;
     justify-content: start;
     gap: 0;
-    padding-inline: clamp(0.2rem, 0.8vw, 0.65rem);
+    padding-left: max(clamp(1.2rem, 3vw, 2rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1.2rem, 3vw, 2rem), env(safe-area-inset-right));
     overflow-x: visible;
   }
 
@@ -466,23 +467,16 @@ h1 {
 .project-card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-height: 100%;
   box-shadow: var(--shadow-soft);
-  transition: transform 180ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .project-card:hover,
 .project-card:focus-within {
   transform: translateY(-4px);
-}
-
-.project-card img {
-  width: 100%;
-  height: auto;
-}
-
-.project-card > a {
-  display: block;
+  border-color: rgba(115, 123, 133, 0.35);
+  box-shadow: 0 14px 34px rgba(17, 17, 17, 0.1);
 }
 
 .card-content,
@@ -493,7 +487,22 @@ h1 {
 .card-content {
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
   flex: 1;
+}
+
+.project-card .card-content {
+  justify-content: space-between;
+}
+
+.project-card h3 a {
+  display: inline-block;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.project-card h3 a:hover,
+.project-card h3 a:focus-visible {
+  color: var(--glass-gray-text);
 }
 
 h3 {
@@ -737,6 +746,8 @@ h3 {
   .hero-content {
     grid-template-columns: 1fr;
     gap: 0;
+    padding-left: max(clamp(1.05rem, 4.8vw, 1.7rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1.05rem, 4.8vw, 1.7rem), env(safe-area-inset-right));
   }
 
   .hero-mark-wrap {
@@ -829,6 +840,11 @@ h3 {
     padding: 98px 0 52px;
   }
 
+  .hero-content {
+    padding-left: max(clamp(1rem, 5.5vw, 1.5rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1rem, 5.5vw, 1.5rem), env(safe-area-inset-right));
+  }
+
   h1 {
     font-size: clamp(32px, 10.5vw, 40px);
   }
@@ -872,6 +888,11 @@ h3 {
   .logo {
     font-size: 13px;
     letter-spacing: 0.05em;
+  }
+
+  .hero-content {
+    padding-left: max(clamp(0.85rem, 5vw, 1.2rem), env(safe-area-inset-left));
+    padding-right: max(clamp(0.85rem, 5vw, 1.2rem), env(safe-area-inset-right));
   }
 
   .logo-location {
