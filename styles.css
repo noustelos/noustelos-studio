@@ -337,6 +337,7 @@ h1 {
 
 .hero-mark-wrap {
   --hero-mark-size: clamp(11.5rem, 30vw, 23rem);
+  --hero-mark-shift-x: 20px;
   position: relative;
   width: var(--hero-mark-size);
   height: calc(var(--hero-mark-size) * 1.04);
@@ -344,7 +345,7 @@ h1 {
   align-self: start;
   margin-left: clamp(-1.1rem, -1.6vw, -0.55rem);
   margin-top: clamp(0.95rem, 2.1vw, 1.95rem);
-  transform: none;
+  transform: translateX(var(--hero-mark-shift-x));
   touch-action: none;
 }
 
@@ -741,11 +742,12 @@ h3 {
   .hero-mark-wrap {
     display: block;
     --hero-mark-size: clamp(9.75rem, 42vw, 13.5rem);
+    --hero-mark-shift-x: 0px;
     justify-self: center;
     align-self: center;
     margin-left: 0;
     margin-top: 1.1rem;
-    transform: none;
+    transform: translateX(var(--hero-mark-shift-x));
   }
 
   .section {
