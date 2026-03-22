@@ -279,7 +279,7 @@ h3,
   margin-inline: auto;
   text-align: left;
   display: grid;
-  grid-template-columns: minmax(0, max-content) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   gap: clamp(0rem, 0.6vw, 0.45rem);
 }
@@ -307,7 +307,7 @@ h3,
 
   .hero-content {
     width: 100%;
-    grid-template-columns: minmax(0, max-content) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     justify-content: start;
     gap: 0;
     padding-inline: clamp(0.2rem, 0.8vw, 0.65rem);
@@ -798,6 +798,17 @@ h3 {
   .footer-actions {
     gap: 0.35rem;
   }
+
+  .footer-layout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .footer-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 767px) and (-webkit-touch-callout: none) {
@@ -835,6 +846,46 @@ h3 {
   .site-footer p {
     font-size: 13px;
     line-height: 1.45;
+  }
+
+  .footer-top-link {
+    margin-top: 0;
+    font-size: clamp(30px, 11vw, 40px);
+  }
+
+  .footer-actions .lab-link {
+    margin-top: 0.45rem;
+  }
+
+  .footer-universe-trigger {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --container-inline: 0.85rem;
+  }
+
+  .logo {
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  .logo-location {
+    display: none;
+  }
+
+  .nav-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .lang-toggle {
+    min-width: 3.55rem;
+    height: 2.35rem;
+    padding: 0 0.45rem;
+    font-size: 10px;
   }
 }
 
