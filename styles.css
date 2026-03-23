@@ -534,6 +534,31 @@ h3 {
   align-self: flex-start;
 }
 
+.project-meta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.project-meta .button-link {
+  margin-top: 0;
+}
+
+.work-status-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.65rem;
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.02);
+}
+
 .about-block,
 .contact-block {
   max-width: 780px;
