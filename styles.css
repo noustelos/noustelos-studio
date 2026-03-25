@@ -865,6 +865,12 @@ h3 {
     justify-content: space-between;
   }
 
+  .contact-email-link {
+    margin-left: 0;
+    left: 0;
+    width: 100%;
+  }
+
   .section-heading {
     margin-bottom: 2rem;
   }
@@ -906,6 +912,12 @@ h3 {
 @media (max-width: 767px) and (-webkit-touch-callout: none) {
   .hero-mark-wrap {
     margin-top: calc(1.1rem + 10px);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .contact-email-link {
+    left: -180px;
   }
 }
 
