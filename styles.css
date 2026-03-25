@@ -437,7 +437,7 @@ h1 {
   gap: 0.38rem;
   margin-left: auto;
   position: relative;
-  left: -60px;
+  left: -180px;
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(12px, 1.05vw, 14px);
   font-weight: 400;
