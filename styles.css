@@ -418,6 +418,47 @@ h1 {
   justify-content: flex-start;
 }
 
+.contact-actions {
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.contact-buttons {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.contact-email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin-left: auto;
+  position: relative;
+  left: -60px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(12px, 1.05vw, 14px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--glass-gray-text);
+  text-decoration: none;
+  opacity: 0.78;
+  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.contact-email-link i {
+  font-size: 0.9em;
+}
+
+.contact-email-link:hover,
+.contact-email-link:focus-visible {
+  opacity: 1;
+  color: rgba(115, 123, 133, 0.95);
+  transform: translateY(-1px);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -585,35 +626,6 @@ h3 {
   align-items: flex-start;
   gap: 0.48rem;
   flex-wrap: wrap;
-}
-
-.footer-email-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  position: relative;
-  left: -80px;
-  margin-top: calc(clamp(13px, 1.45vw, 17px) + 0.62rem);
-  margin-right: 0.15rem;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(12px, 1.05vw, 14px);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  color: var(--glass-gray-text);
-  text-decoration: none;
-  opacity: 0.7;
-  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
-}
-
-.footer-email-link i {
-  font-size: 0.9em;
-}
-
-.footer-email-link:hover,
-.footer-email-link:focus-visible {
-  opacity: 1;
-  color: rgba(115, 123, 133, 0.95);
-  transform: translateY(-1px);
 }
 
 .footer-secret-stack {
@@ -849,6 +861,10 @@ h3 {
     margin-top: 2rem;
   }
 
+  .contact-actions {
+    justify-content: space-between;
+  }
+
   .section-heading {
     margin-bottom: 2rem;
   }
@@ -873,11 +889,6 @@ h3 {
 
   .footer-actions {
     gap: 0.35rem;
-  }
-
-  .footer-email-link {
-    margin-top: 0;
-    margin-left: auto;
   }
 
   .footer-layout {
@@ -924,8 +935,22 @@ h3 {
     gap: 0.65rem;
   }
 
+  .contact-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
   .hero-actions .button,
   .contact-actions .button {
+    width: 100%;
+  }
+
+  .contact-email-link {
+    margin-left: 0;
+    left: 0;
     width: 100%;
   }
 
