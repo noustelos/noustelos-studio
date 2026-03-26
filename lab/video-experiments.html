@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="description" content="Video experiment studies from Noustelos UX Lab." />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/lab/video-experiments.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="video.other" />
+  <meta property="og:title" content="Video Experiments | UX Lab" />
+  <meta property="og:description" content="Portrait mode video experiments from the Noustelos UX Lab sandbox." />
+  <meta property="og:url" content="https://noustelos.gr/lab/video-experiments.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <title>Video Experiments | UX Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="lab.css" />
+</head>
+<body class="lab-video-page">
+  <main class="lab-video-shell" aria-labelledby="video-experiments-title">
+    <h1 id="video-experiments-title" class="lab-video-heading">Video Experiments /&gt;</h1>
+    <p class="lab-video-subtitle">Portrait study: Tree sequence.</p>
+
+    <div class="lab-video-player-wrap">
+      <video
+        id="treeLoopVideo"
+        class="lab-video-player"
+        autoplay
+        muted
+        loop
+        preload="auto"
+        playsinline
+        src="https://noustelos.gr/tree-1.mp4"
+        aria-label="Tree portrait mode experiment video"
+      ></video>
+    </div>
+
+    <a class="lab-video-back" href="index.html" aria-label="Back to UX Lab">
+      <span>Back to UX Lab</span>
+      <span class="lab-video-back-mark" aria-hidden="true">/&gt;</span>
+    </a>
+  </main>
+  <script>
+    (function ensureAutoplayLoop() {
+      const video = document.getElementById('treeLoopVideo');
+      if (!video) {
+        return;
+      }
+
+      video.controls = false;
+      video.muted = true;
+      video.loop = true;
+
+      video.play().catch(() => {
+        // Autoplay may be blocked by browser policy.
+      });
+    })();
+  </script>
+</body>
+</html>

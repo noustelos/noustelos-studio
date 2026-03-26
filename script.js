@@ -399,7 +399,7 @@ if (sectionNavLinks.length) {
     const BASE_ROTATION = 0;
     const heroMarkColor =
       getComputedStyle(document.documentElement).getPropertyValue('--glass-gray-text').trim() || '#737b85';
-    const heroMarkAlpha = 0.7;
+    const heroMarkAlpha = 0.5;
 
     let renderer;
 
