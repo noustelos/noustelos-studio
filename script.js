@@ -6,6 +6,13 @@ const topLinks = document.querySelectorAll('.logo, .footer-top-link');
 const siteHeader = document.querySelector('.site-header');
 const sectionNavLinks = document.querySelectorAll('.menu a[href^="#"]');
 const documentRoot = document.documentElement;
+const isIpadLikeDevice =
+  /iPad/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+if (isIpadLikeDevice) {
+  documentRoot.classList.add('is-ipad');
+}
 
 const brandFontReady = (() => {
   const finalize = () => {
@@ -380,10 +387,7 @@ if (sectionNavLinks.length) {
     }
 
     const isDesktopViewport = window.matchMedia('(min-width: 900px)').matches;
-    const isIpadLike =
-      /iPad/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const useDesktopSubtle = isDesktopViewport && !isIpadLike;
+    const useDesktopSubtle = isDesktopViewport && !isIpadLikeDevice;
 
     const EFFECT_RADIUS = useDesktopSubtle ? 3.0 : 4.6;
     const EFFECT_DEPTH = useDesktopSubtle ? 0.68 : 1.9;
@@ -393,6 +397,9 @@ if (sectionNavLinks.length) {
     const EFFECT_LERP = useDesktopSubtle ? 0.12 : 0.22;
     const PROXIMITY_PADDING = useDesktopSubtle ? 18 : 0;
     const BASE_ROTATION = 0;
+    const heroMarkColor =
+      getComputedStyle(document.documentElement).getPropertyValue('--glass-gray-text').trim() || '#737b85';
+    const heroMarkAlpha = 0.7;
 
     let renderer;
 
@@ -452,9 +459,11 @@ if (sectionNavLinks.length) {
         ctx.fillText('/>', markX, markY + 14);
         ctx.filter = 'none';
       } else {
-        ctx.fillStyle = '#111111';
+        ctx.fillStyle = heroMarkColor;
+        ctx.globalAlpha = heroMarkAlpha;
         ctx.font = markFont;
         ctx.fillText('/>', markX, markY);
+        ctx.globalAlpha = 1;
       }
 
       const texture = new THREE.CanvasTexture(textureCanvas);
