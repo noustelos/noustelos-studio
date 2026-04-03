@@ -61,12 +61,33 @@ Pass criteria:
    - <title>
    - meta description
    - canonical link
+   - og:url (where present)
+   - twitter:url (where present)
    - favicon link
 2. Confirm privacy page is reachable from footer.
-3. Confirm sitemap.xml includes home, lab, subpages, universe, privacy page.
+3. Confirm sitemap.xml includes only indexable pages:
+   - /
+   - /lab/
+   - /lab/video-experiments.html
+   - /privacy-policy.html
+4. Confirm noindex pages are not listed in sitemap.xml (/universe/, /lab/gravity-simulation.html, /lab/nebula-ui.html).
 
 Pass criteria:
 - Metadata complete and consistent on all audited pages.
+
+## 8) Canonical and Redirect Rules (Production)
+1. Verify preferred host is non-www: `https://noustelos.gr`.
+2. Verify 301 redirect from `http://noustelos.gr` -> `https://noustelos.gr`.
+3. Verify 301 redirect from `https://www.noustelos.gr` -> `https://noustelos.gr`.
+4. Verify 301 redirect from `http://www.noustelos.gr` -> `https://noustelos.gr`.
+5. Verify `https://noustelos.gr/index.html` 301 redirects to `https://noustelos.gr/`.
+6. Verify folder slash normalization is consistent:
+   - `https://noustelos.gr/lab` -> `https://noustelos.gr/lab/`
+   - `https://noustelos.gr/universe` -> `https://noustelos.gr/universe/`
+7. Verify canonical tags match final destination URLs after redirects.
+
+Pass criteria:
+- All redirect checks return one clean 301 hop to the final canonical URL.
 
 ## 6) Console and Network Hygiene
 1. Open DevTools Console per page and confirm no red errors.
