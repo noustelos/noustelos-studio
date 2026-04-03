@@ -133,7 +133,8 @@ const translations = {
       universeAria: 'Open universe page',
       topAria: 'Back to top',
       rights: 'Designed in Santorini | © {{year}} all rights reserved | In collaboration with WebHostPro',
-      privacy: 'Privacy Policy'
+      privacy: 'Privacy Policy',
+      privacyHref: '/privacy-policy-en.html'
     },
     cookie: {
       text: 'This site uses essential cookies for language and interface preferences.',
@@ -230,7 +231,8 @@ const translations = {
       universeAria: 'Άνοιγμα σελίδας universe',
       topAria: 'Επιστροφή στην κορυφή',
       rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro',
-      privacy: 'Πολιτική Απορρήτου'
+      privacy: 'Πολιτική Απορρήτου',
+      privacyHref: '/privacy-policy.html'
     },
     cookie: {
       text: 'Αυτός ο ιστότοπος χρησιμοποιεί απαραίτητα cookies για γλώσσα και προτιμήσεις περιβάλλοντος.',
