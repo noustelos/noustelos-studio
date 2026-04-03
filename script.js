@@ -6,6 +6,12 @@ const topLinks = document.querySelectorAll('.logo, .footer-top-link');
 const siteHeader = document.querySelector('.site-header');
 const sectionNavLinks = document.querySelectorAll('.menu a[href^="#"]');
 const documentRoot = document.documentElement;
+const currentYear = String(new Date().getFullYear());
+const obfuscatedMailLinks = document.querySelectorAll('.js-contact-mail');
+const contactForm = document.querySelector('#contact-form');
+const cookieBanner = document.querySelector('#cookie-banner');
+const cookieAccept = document.querySelector('#cookie-accept');
+const cookieDecline = document.querySelector('#cookie-decline');
 const isIpadLikeDevice =
   /iPad/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -40,8 +46,8 @@ const brandFontReady = (() => {
 const translations = {
   en: {
     meta: {
-      title: 'Noustelos Studio Santorini | Web Design for Tourism & Creative Projects',
-      description: 'Noustelos Studio in Santorini creates modern websites for tourism brands, local businesses and creative projects.'
+      title: 'Noustelos Studio Santorini | Web Design & Development',
+      description: 'Noustelos Studio in Santorini designs fast, SEO-ready websites for tourism brands, hotels and local businesses with clean UX, storytelling and high performance.'
     },
     nav: {
       mainAria: 'Main navigation',
@@ -74,7 +80,7 @@ const translations = {
       },
       project3: {
         alt: 'Vouraikos Gorge project preview',
-        desc: 'Experimental landing pages exploring visuals and storytelling.'
+          desc: 'Vouraikos Gorge, Unesco Global Geopark.'
       },
       project4: {
         alt: 'Odontotos railway project preview',
@@ -113,19 +119,32 @@ const translations = {
     contact: {
       title: "Let's Work Together",
       text: 'If you need a modern website or landing page, feel free to contact me.',
-      email: 'Email'
+      email: 'Email',
+      directEmail: 'Direct Email',
+      form: {
+        nameLabel: 'Name',
+        messageLabel: 'Project details',
+        submit: 'Send via email app',
+        note: 'Your email client will open with a prefilled message.'
+      }
     },
     footer: {
       labAria: 'Open UX Lab',
       universeAria: 'Open universe page',
       topAria: 'Back to top',
-      rights: 'Designed in Santorini | © 2026 all rights reserved | In collaboration with WebHostPro'
+      rights: 'Designed in Santorini | © {{year}} all rights reserved | In collaboration with WebHostPro',
+      privacy: 'Privacy Policy'
+    },
+    cookie: {
+      text: 'This site uses essential cookies for language and interface preferences.',
+      accept: 'Accept',
+      decline: 'Decline'
     }
   },
   gr: {
     meta: {
-      title: 'Noustelos Studio Santorini | Σχεδιασμός Ιστοσελίδων για Τουρισμό & Δημιουργικά Projects',
-      description: 'Το Noustelos Studio με έδρα τη Σαντορίνη δημιουργεί μοντέρνες ιστοσελίδες για τουριστικά brands, τοπικές επιχειρήσεις και δημιουργικά projects.'
+      title: 'Noustelos Studio Santorini | Web Design & Ανάπτυξη',
+      description: 'Το Noustelos Studio στη Σαντορίνη σχεδιάζει γρήγορες, SEO-ready ιστοσελίδες για τουριστικά brands, ξενοδοχεία και τοπικές επιχειρήσεις, με καθαρό UX και δυνατή απόδοση.'
     },
     nav: {
       mainAria: 'Κύρια πλοήγηση',
@@ -158,7 +177,7 @@ const translations = {
       },
       project3: {
         alt: 'Προεπισκόπηση project Φαράγγι Βουραϊκού',
-        desc: 'Πειραματικά landing pages με έμφαση σε οπτική αφήγηση και storytelling.'
+          desc: 'Φαράγγι Βουραϊκού, Unesco Global Geopark.'
       },
       project4: {
         alt: 'Προεπισκόπηση project Οδοντωτός σιδηρόδρομος',
@@ -197,13 +216,26 @@ const translations = {
     contact: {
       title: 'Ας Συνεργαστούμε',
       text: 'Αν χρειάζεσαι μια μοντέρνα ιστοσελίδα ή landing page, μπορείς να επικοινωνήσεις μαζί μου.',
-      email: 'Email'
+      email: 'Email',
+      directEmail: 'Άμεσο Email',
+      form: {
+        nameLabel: 'Όνομα',
+        messageLabel: 'Λεπτομέρειες έργου',
+        submit: 'Αποστολή μέσω εφαρμογής email',
+        note: 'Θα ανοίξει η εφαρμογή email με προσυμπληρωμένο μήνυμα.'
+      }
     },
     footer: {
       labAria: 'Άνοιγμα UX Lab',
       universeAria: 'Άνοιγμα σελίδας universe',
       topAria: 'Επιστροφή στην κορυφή',
-      rights: 'Σχεδιασμένο στη Σαντορίνη | © 2026 όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro'
+      rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro',
+      privacy: 'Πολιτική Απορρήτου'
+    },
+    cookie: {
+      text: 'Αυτός ο ιστότοπος χρησιμοποιεί απαραίτητα cookies για γλώσσα και προτιμήσεις περιβάλλοντος.',
+      accept: 'Αποδοχή',
+      decline: 'Απόρριψη'
     }
   }
 };
@@ -223,7 +255,7 @@ const applyLanguage = (lang) => {
     const value = getNestedValue(langContent, key);
 
     if (typeof value === 'string') {
-      element.textContent = value;
+      element.textContent = value.replace('{{year}}', currentYear);
     }
   });
 
@@ -254,6 +286,82 @@ const applyLanguage = (lang) => {
   localStorage.setItem('siteLanguage', safeLang);
 };
 
+const applyDynamicYear = () => {
+  document.querySelectorAll('[data-current-year]').forEach((element) => {
+    element.textContent = currentYear;
+  });
+};
+
+const setupMailLinks = () => {
+  if (!obfuscatedMailLinks.length) {
+    return;
+  }
+
+  obfuscatedMailLinks.forEach((link) => {
+    const user = link.getAttribute('data-mail-user');
+    const domain = link.getAttribute('data-mail-domain');
+
+    if (!user || !domain) {
+      return;
+    }
+
+    const email = `${user}@${domain}`;
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.location.href = `mailto:${email}`;
+    });
+  });
+};
+
+const setupContactForm = () => {
+  if (!contactForm) {
+    return;
+  }
+
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(contactForm);
+    const botField = (formData.get('website') || '').toString().trim();
+
+    if (botField) {
+      return;
+    }
+
+    const name = (formData.get('name') || '').toString().trim();
+    const message = (formData.get('message') || '').toString().trim();
+
+    if (!name || !message) {
+      return;
+    }
+
+    const subject = encodeURIComponent(`New website inquiry from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\n\nProject details:\n${message}`);
+    window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
+  });
+};
+
+const setupCookieConsent = () => {
+  if (!cookieBanner || !cookieAccept || !cookieDecline) {
+    return;
+  }
+
+  const consentKey = 'siteCookieConsent';
+  const existingConsent = localStorage.getItem(consentKey);
+
+  if (!existingConsent) {
+    cookieBanner.hidden = false;
+  }
+
+  const setConsent = (value) => {
+    localStorage.setItem(consentKey, value);
+    cookieBanner.hidden = true;
+  };
+
+  cookieAccept.addEventListener('click', () => setConsent('accepted'));
+  cookieDecline.addEventListener('click', () => setConsent('declined'));
+};
+
 const preferredLanguage = (() => {
   const storedLang = localStorage.getItem('siteLanguage');
 
@@ -265,6 +373,10 @@ const preferredLanguage = (() => {
 })();
 
 applyLanguage(preferredLanguage);
+applyDynamicYear();
+setupMailLinks();
+setupContactForm();
+setupCookieConsent();
 
 if (navToggle && menu) {
   navToggle.addEventListener('click', () => {

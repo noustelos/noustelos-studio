@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Noustelos Studio in Santorini creates modern websites for tourism brands, local businesses and creative projects." data-i18n-attr="content:meta.description" />
+  <meta name="description" content="Noustelos Studio in Santorini designs fast, SEO-ready websites for tourism brands, hotels and local businesses with clean UX, storytelling and high performance." data-i18n-attr="content:meta.description" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="author" content="Nick Karadimas" />
   <meta name="application-name" content="Noustelos Studio Santorini" />
@@ -17,8 +17,8 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Noustelos Studio" />
-  <meta property="og:title" content="Noustelos Studio Santorini | Web Design for Tourism &amp; Creative Projects" />
-  <meta property="og:description" content="Noustelos Studio in Santorini creates modern websites for tourism brands, local businesses and creative projects." />
+  <meta property="og:title" content="Noustelos Studio Santorini | Web Design &amp; Development" />
+  <meta property="og:description" content="Noustelos Studio in Santorini designs fast, SEO-ready websites for tourism brands, hotels and local businesses with clean UX, storytelling and high performance." />
   <meta property="og:url" content="https://noustelos.gr/" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
@@ -31,11 +31,11 @@
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://noustelos.gr/" />
-  <meta name="twitter:title" content="Noustelos Studio Santorini | Web Design for Tourism &amp; Creative Projects" />
-  <meta name="twitter:description" content="Noustelos Studio in Santorini creates modern websites for tourism brands, local businesses and creative projects." />
+  <meta name="twitter:title" content="Noustelos Studio Santorini | Web Design &amp; Development" />
+  <meta name="twitter:description" content="Noustelos Studio in Santorini designs fast, SEO-ready websites for tourism brands, hotels and local businesses with clean UX, storytelling and high performance." />
   <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <meta name="twitter:image:alt" content="Noustelos Studio header with a large centered symbol" />
-  <title data-i18n="meta.title">Noustelos Studio Santorini | Web Design for Tourism &amp; Creative Projects</title>
+  <title data-i18n="meta.title">Noustelos Studio Santorini | Web Design &amp; Development</title>
 
   <!-- Typography: Space Grotesk for headings, Inter for body text -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,7 +47,7 @@
     document.documentElement.classList.add('fonts-pending');
   </script>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.min.css" />
 
   <script type="application/ld+json">
     {
@@ -132,7 +132,7 @@
         <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
       </ul>
 
-      <button class="lang-toggle" type="button" aria-label="Switch language" data-i18n-attr="aria-label:lang.switchAria">
+      <button class="lang-toggle" type="button">
         <span data-lang-option="en">EN</span>
         <span class="lang-divider">|</span>
         <span data-lang-option="gr">GR</span>
@@ -199,8 +199,8 @@
 
           <article class="project-card">
             <div class="card-content">
-              <h3><a href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer">Vouraikos Gorge, Unesco Global Geopark</a></h3>
-              <p data-i18n="work.project3.desc">Experimental landing pages exploring visuals and storytelling.</p>
+                <h3><a href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer">vouraikos.gr</a></h3>
+                <p data-i18n="work.project3.desc">Vouraikos Gorge, Unesco Global Geopark.</p>
               <div class="project-meta">
                 <a class="button button-link" href="https://noustelos.github.io/river/" target="_blank" rel="noopener noreferrer" data-i18n="work.viewProject">View Project</a>
                 <span class="work-status-label">work in progress</span>
@@ -274,14 +274,29 @@
         <p data-i18n="contact.text">If you need a modern website or landing page, feel free to contact me.</p>
         <div class="contact-actions">
           <div class="contact-buttons">
-            <a class="button button-primary" href="mailto:avatar68@gmail.com" data-i18n="contact.email">Email</a>
+              <a class="button button-primary js-contact-mail" href="#" data-mail-user="avatar68" data-mail-domain="gmail.com" data-i18n="contact.email">Email</a>
             <a class="button button-secondary" href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
-          <a class="contact-email-link" href="mailto:info@noustelos.gr" aria-label="Send email to info@noustelos.gr">
+            <a class="contact-email-link js-contact-mail" href="#" data-mail-user="info" data-mail-domain="noustelos.gr">
             <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-            <span>info@noustelos.gr</span>
+              <span data-i18n="contact.directEmail">Direct Email</span>
           </a>
         </div>
+          <form class="contact-form" id="contact-form" novalidate>
+            <label for="contact-name" data-i18n="contact.form.nameLabel">Name</label>
+            <input id="contact-name" name="name" type="text" autocomplete="name" required />
+
+            <label for="contact-message" data-i18n="contact.form.messageLabel">Project details</label>
+            <textarea id="contact-message" name="message" rows="4" required></textarea>
+
+            <div class="contact-honeypot" aria-hidden="true">
+              <label for="website">Leave this field empty</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button class="button button-primary" type="submit" data-i18n="contact.form.submit">Send via email app</button>
+            <p class="contact-form-note" data-i18n="contact.form.note">Your email client will open with a prefilled message.</p>
+          </form>
       </div>
     </section>
   </main>
@@ -294,7 +309,10 @@
           <span class="footer-brand-wordmark">NOUSTELOS_STUDIO</span>
           <span class="footer-brand-mark" aria-hidden="true">/&gt;</span>
         </p>
-        <p data-i18n="footer.rights">Designed in Santorini | &copy; 2026 all rights reserved | In collaboration with WebHostPro</p>
+          <p data-i18n="footer.rights">Designed in Santorini | &copy; <span data-current-year>2026</span> all rights reserved | In collaboration with WebHostPro</p>
+          <p class="footer-legal-links">
+            <a href="/privacy-policy.html" data-i18n="footer.privacy">Privacy Policy</a>
+          </p>
       </div>
       <div class="footer-actions">
         <div class="footer-secret-stack">
@@ -306,7 +324,15 @@
     </div>
   </footer>
 
+    <div class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent banner" hidden>
+      <p data-i18n="cookie.text">This site uses essential cookies for language and interface preferences.</p>
+      <div class="cookie-actions">
+        <button class="button button-primary" id="cookie-accept" type="button" data-i18n="cookie.accept">Accept</button>
+        <button class="button button-secondary" id="cookie-decline" type="button" data-i18n="cookie.decline">Decline</button>
+      </div>
+    </div>
+
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
-  <script src="script.js"></script>
+  <script src="script.min.js"></script>
 </body>
 </html>

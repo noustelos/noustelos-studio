@@ -8,7 +8,7 @@ if (!document.body.classList.contains('page-id-42')) {
     en: {
       meta: {
         title: 'UX Lab | Noustelos Studio Santorini',
-        description: 'UX Lab by Noustelos Studio in Santorini: experimental web works, micro-interactions and creative concepts.'
+        description: 'UX Lab by Noustelos Studio presents experimental web concepts, interaction studies and prototype interfaces focused on motion, storytelling and accessibility.'
       },
       lang: {
         switchAria: 'Switch language'
@@ -39,7 +39,7 @@ if (!document.body.classList.contains('page-id-42')) {
     gr: {
       meta: {
         title: 'UX Lab | Noustelos Studio Santorini',
-        description: 'UX Lab από το Noustelos Studio στη Σαντορίνη: πειραματικά web works, micro-interactions και creative concepts.'
+        description: 'Το UX Lab του Noustelos Studio παρουσιάζει πειραματικά web concepts, interaction studies και πρωτότυπα interfaces με έμφαση σε motion, storytelling και accessibility.'
       },
       lang: {
         switchAria: 'Αλλαγή γλώσσας'
