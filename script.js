@@ -96,6 +96,7 @@ const translations = {
       },
       project7: {
         alt: 'Artemis project preview',
+        title: 'Ethical dog training and care',
         desc: "Conversion-focused landing page for Artemis Antoniou's digital dog behavior guide. Editorial design, interactive quiz and calm, trust-led storytelling."
       }
     },
@@ -198,7 +199,8 @@ const translations = {
       },
       project7: {
         alt: 'Προεπισκόπηση project Artemis',
-        desc: 'Conversion-focused landing page για το digital dog behavior guide της Artemis Antoniou. Editorial αισθητική, interactive quiz και calm, trust-led storytelling.'
+        title: 'Ηθική εκπαίδευση και φροντίδα σκύλων',
+        desc: 'Landing page με έμφαση στις μετατροπές για τον ψηφιακό οδηγό συμπεριφοράς σκύλων της Artemis Antoniou. Editorial αισθητική, διαδραστικό quiz και ήρεμο, αξιόπιστο storytelling.'
       }
     },
     services: {
