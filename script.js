@@ -93,6 +93,10 @@ const translations = {
       project6: {
         alt: 'Daily Inspiration Widget project preview',
         desc: 'Daily Bible inspiration and feast-day reminders. Minimalist design, glass-style visuals, and smooth, intuitive UX.'
+      },
+      project7: {
+        alt: 'Artemis project preview',
+        desc: "Conversion-focused landing page for Artemis Antoniou's digital dog behavior guide. Editorial design, interactive quiz and calm, trust-led storytelling."
       }
     },
     services: {
@@ -191,6 +195,10 @@ const translations = {
       project6: {
         alt: 'Προεπισκόπηση project Daily Inspiration Widget',
         desc: 'Καθημερινή βιβλική έμπνευση και υπενθυμίσεις εορτολογίου. Minimalist design, glass-style visuals και ομαλό, διαισθητικό UX.'
+      },
+      project7: {
+        alt: 'Προεπισκόπηση project Artemis',
+        desc: 'Conversion-focused landing page για το digital dog behavior guide της Artemis Antoniou. Editorial αισθητική, interactive quiz και calm, trust-led storytelling.'
       }
     },
     services: {
