@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="description" content="Wave Grid από το UX Lab του Noustelos: fullscreen canvas study με reactive geometric grid, click waves και masked editorial overlays." />
+  <meta name="theme-color" content="#050505" />
+  <link rel="canonical" href="https://noustelos.gr/lab/visual-wave-grid.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Wave Grid | Visual Experiments | UX Lab" />
+  <meta property="og:description" content="Canvas-driven geometric field με pointer proximity, click-triggered waves και masked interface overlays στο UX Lab." />
+  <meta property="og:url" content="https://noustelos.gr/lab/visual-wave-grid.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Wave Grid | Visual Experiments | UX Lab" />
+  <meta name="twitter:description" content="Canvas-driven geometric field με pointer proximity, click-triggered waves και masked interface overlays στο UX Lab." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.svg" />
+  <title>Wave Grid | Visual Experiments | UX Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.min.css" />
+  <link rel="stylesheet" href="visual-wave-grid.min.css" />
+</head>
+<body class="lab-wave-grid-page">
+  <canvas class="wave-canvas"></canvas>
+
+  <main class="wave-shell" aria-labelledby="wave-grid-title">
+    <div class="wave-topbar">
+      <a class="wave-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab">
+        <span>UX Lab</span>
+        <span>/&gt;</span>
+      </a>
+
+      <div class="wave-meta-pill" data-shape-mask>Visual Experiments / Study 05</div>
+    </div>
+
+    <section class="wave-stage">
+      <section class="wave-hero" data-shape-mask>
+        <div>
+          <p class="wave-kicker">Canvas Field</p>
+          <h1 id="wave-grid-title" class="wave-title">
+            Wave
+            <span>Grid</span>
+          </h1>
+          <p class="wave-intro">
+            Fullscreen geometric grid που αντιδρά σε pointer proximity και click-triggered waves, με masked overlays ώστε το UI να μοιάζει κομμένο μέσα από το reactive pattern.
+          </p>
+
+          <div class="wave-actions">
+            <button class="wave-button" type="button" id="triggerCenterWave">
+              <strong>Wave</strong>
+              <span>στείλε pulse από το κέντρο</span>
+            </button>
+            <button class="wave-button" type="button" id="triggerRandomWave">
+              <strong>Random</strong>
+              <span>δοκίμασε τυχαίο impact point</span>
+            </button>
+          </div>
+
+          <div class="wave-controls" aria-label="Wave Grid controls">
+            <label class="wave-control" for="gridDensity">
+              <span class="wave-control-head">
+                <span>Density</span>
+                <output id="gridDensityValue" for="gridDensity">40 px</output>
+              </span>
+              <input id="gridDensity" type="range" min="28" max="64" step="4" value="40" />
+            </label>
+
+            <label class="wave-control" for="waveVelocity">
+              <span class="wave-control-head">
+                <span>Wave speed</span>
+                <output id="waveVelocityValue" for="waveVelocity">1200 /s</output>
+              </span>
+              <input id="waveVelocity" type="range" min="700" max="1800" step="50" value="1200" />
+            </label>
+          </div>
+        </div>
+
+        <div class="wave-metrics" aria-label="Experiment metrics">
+          <div class="wave-metric">
+            <strong>Grid</strong>
+            <span>reactive shapes</span>
+          </div>
+          <div class="wave-metric">
+            <strong>Click</strong>
+            <span>wave propagation</span>
+          </div>
+          <div class="wave-metric">
+            <strong>Mask</strong>
+            <span>ui cutout logic</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave-notes" data-shape-mask>
+        <article class="wave-note-card">
+          <strong>01 / motion</strong>
+          <h2>Pointer bloom</h2>
+          <p>
+            Τα shapes μεγαλώνουν με smooth falloff γύρω από το pointer και κάθε hover cycle ανανεώνει scale, rotation και star geometry.
+          </p>
+        </article>
+
+        <article class="wave-note-card">
+          <strong>02 / waves</strong>
+          <h3>Click shock</h3>
+          <p>
+            Κάθε click παράγει wave ring που ταξιδεύει πάνω στο grid και παρακάμπτει προσωρινά τα masked panels για να φαίνεται καθαρά η διάδοση.
+          </p>
+        </article>
+
+        <article class="wave-note-card">
+          <strong>03 / palette</strong>
+          <h3>Gradient mix</h3>
+          <p>
+            Solid και radial gradient fills εναλλάσσονται τυχαία ώστε το πεδίο να παραμένει ζωντανό χωρίς να μοιάζει επαναλαμβανόμενο.
+          </p>
+        </article>
+      </section>
+    </section>
+
+    <aside class="wave-floating-note" data-shape-mask>
+      <strong>Interaction</strong>
+      <p>
+        Κινήσου πάνω στο πεδίο για local activation και κάνε click οπουδήποτε για wave burst. Τα overlay blocks χρησιμοποιούν το attribute data-shape-mask για να μένουν καθαρά.
+      </p>
+    </aside>
+
+    <a class="wave-footer-link" href="visual-experiments.html" aria-label="Επιστροφή στα Visual Experiments">
+      <span>Back to Visual Experiments</span>
+      <span>/&gt;</span>
+    </a>
+  </main>
+
+  <script src="visual-wave-grid.min.js"></script>
+</body>
+</html>

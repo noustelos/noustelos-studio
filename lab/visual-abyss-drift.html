@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="description" content="Abyss Drift από το UX Lab του Noustelos: procedural Three.js underwater study με wireframe sea bed, drifting capsules και οργανικό swimmer mesh." />
+  <meta name="theme-color" content="#021423" />
+  <link rel="canonical" href="https://noustelos.gr/lab/visual-abyss-drift.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Abyss Drift | Visual Experiments | UX Lab" />
+  <meta property="og:description" content="Procedural underwater Three.js study με animated wireframe terrain, volumetric atmosphere και οργανικό swimmer form μέσα από το UX Lab." />
+  <meta property="og:url" content="https://noustelos.gr/lab/visual-abyss-drift.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <title>Abyss Drift | Visual Experiments | UX Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.min.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.182.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.182.0/examples/jsm/"
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="visual-abyss-drift.min.css" />
+</head>
+<body class="lab-abyss-page">
+  <main class="abyss-shell" aria-labelledby="abyss-title">
+    <a class="abyss-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab">
+      <span>UX Lab</span>
+      <span>/&gt;</span>
+    </a>
+
+    <section class="abyss-hero">
+      <section class="abyss-copy">
+        <p class="abyss-kicker">Visual Experiments / Study 04</p>
+        <h1 id="abyss-title" class="abyss-title">
+          Abyss
+          <span>Drift</span>
+        </h1>
+        <p class="abyss-intro">
+          Procedural underwater study με custom shader noise, line-based sea bed και οργανική wireframe μορφή που κινείται μέσα σε ήπια fogged σκηνή.
+        </p>
+
+        <div class="abyss-meta" aria-label="Experiment metrics">
+          <div class="abyss-meta-card">
+            <strong>50</strong>
+            <span>drifting forms</span>
+          </div>
+          <div class="abyss-meta-card">
+            <strong>WebGL</strong>
+            <span>three.js render</span>
+          </div>
+          <div class="abyss-meta-card">
+            <strong>Noise</strong>
+            <span>shader terrain</span>
+          </div>
+        </div>
+
+        <div class="abyss-tags" aria-label="Techniques used">
+          <span>Three.js</span>
+          <span>Orbit controls</span>
+          <span>Wireframe motion</span>
+          <span>Responsive canvas</span>
+        </div>
+      </section>
+
+      <section class="abyss-stage-shell" aria-label="Procedural underwater scene">
+        <div class="abyss-stage">
+          <div class="abyss-stage-bar" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="abyss-stage-caption">Live WebGL scene</div>
+          <div id="abyssCanvasRoot" aria-hidden="true"></div>
+          <div class="abyss-stage-hint">
+            <strong>Interaction</strong>
+            Drag για orbit γύρω από το object. Το camera damping και το fog κρατούν την κίνηση ήπια και readable σε mobile και desktop.
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="abyss-notes" aria-labelledby="abyss-notes-title">
+      <div class="abyss-notes-head">
+        <h2 id="abyss-notes-title">Scene Notes</h2>
+        <p>
+          Το sketch μεταφέρθηκε σε responsive stage container ώστε να δουλεύει σαν αυτόνομη UX Lab σελίδα χωρίς να εξαρτάται από full-window body canvas.
+        </p>
+      </div>
+
+      <div class="abyss-note-grid">
+        <article class="abyss-note-card">
+          <strong>01 / terrain</strong>
+          <h3>Wave field</h3>
+          <p>
+            Το sea bed χρησιμοποιεί simplex noise μέσα στο vertex shader για να δημιουργεί συνεχές κυματιστό ανάγλυφο με looped οριζόντια ροή.
+          </p>
+        </article>
+
+        <article class="abyss-note-card">
+          <strong>02 / atmosphere</strong>
+          <h3>Deep fog</h3>
+          <p>
+            Background sphere και fog χτίζουν υδάτινο βάθος, ενώ τα drifting capsules προσθέτουν χαμηλής έντασης parallax γύρω από τον κεντρικό swimmer.
+          </p>
+        </article>
+
+        <article class="abyss-note-card">
+          <strong>03 / creature</strong>
+          <h3>Organic motion</h3>
+          <p>
+            Η κεντρική μορφή παραμορφώνεται στο shader με synchronized body wave και wing-like sway ώστε το wireframe να θυμίζει υποβρύχιο πλάσμα αντί για στατικό mesh.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <a class="abyss-footer-link" href="visual-experiments.html" aria-label="Επιστροφή στα Visual Experiments">
+      <span>Back to Visual Experiments</span>
+      <span>/&gt;</span>
+    </a>
+  </main>
+
+  <script type="module" src="visual-abyss-drift.min.js"></script>
+</body>
+</html>

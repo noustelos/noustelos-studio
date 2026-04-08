@@ -1,0 +1,406 @@
+:root {
+  --wave-bg: #050505;
+  --wave-panel: rgba(7, 7, 7, 0.82);
+  --wave-panel-soft: rgba(10, 10, 10, 0.62);
+  --wave-line: rgba(255, 255, 255, 0.08);
+  --wave-line-strong: rgba(255, 255, 255, 0.14);
+  --wave-text: #f8fafc;
+  --wave-muted: rgba(226, 232, 240, 0.72);
+  --wave-display: "Sora", sans-serif;
+  --wave-body: "Inter", sans-serif;
+  --wave-code: "IBM Plex Mono", monospace;
+  --wave-shadow: 0 28px 72px rgba(0, 0, 0, 0.34);
+  --wave-transition: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body.lab-wave-grid-page {
+  margin: 0;
+  background: var(--wave-bg);
+  color: var(--wave-text);
+  font-family: var(--wave-body);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.wave-canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.wave-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  width: min(calc(100% - 1.2rem), 1320px);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 1.5rem) 0 clamp(1.5rem, 5vw, 3rem);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+}
+
+.wave-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.wave-back-link,
+.wave-footer-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.24rem;
+  color: var(--wave-text);
+  text-decoration: none;
+  font-family: var(--wave-code);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color var(--wave-transition), transform var(--wave-transition);
+}
+
+.wave-back-link:hover,
+.wave-back-link:focus-visible,
+.wave-footer-link:hover,
+.wave-footer-link:focus-visible {
+  color: rgba(255, 255, 255, 0.72);
+  transform: translateX(2px);
+}
+
+.wave-back-link span:last-child,
+.wave-footer-link span:last-child {
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.wave-meta-pill {
+  padding: 0.62rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--wave-line);
+  background: rgba(7, 7, 7, 0.72);
+  color: var(--wave-muted);
+  font-family: var(--wave-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.wave-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.62fr);
+  align-items: end;
+  gap: clamp(0.9rem, 2.6vw, 1.4rem);
+}
+
+.wave-hero,
+.wave-notes,
+.wave-floating-note {
+  position: relative;
+  border: 1px solid var(--wave-line);
+  border-radius: 30px;
+  background: var(--wave-panel);
+  box-shadow: var(--wave-shadow);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+
+.wave-hero {
+  padding: clamp(1rem, 3vw, 1.7rem);
+  min-height: min(62vh, 620px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wave-kicker {
+  margin: 0;
+  font-family: var(--wave-code);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wave-muted);
+}
+
+.wave-title {
+  margin: 0.8rem 0 0;
+  font-family: var(--wave-display);
+  font-size: clamp(42px, 8vw, 110px);
+  line-height: 0.88;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+}
+
+.wave-title span {
+  display: block;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.wave-intro {
+  margin: 1rem 0 0;
+  max-width: 32ch;
+  color: var(--wave-muted);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.wave-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.wave-button {
+  appearance: none;
+  border: 1px solid var(--wave-line-strong);
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  background: linear-gradient(180deg, rgba(24, 24, 24, 0.92), rgba(7, 7, 7, 0.92));
+  color: var(--wave-text);
+  font: inherit;
+  cursor: pointer;
+  transition: transform var(--wave-transition), border-color var(--wave-transition), background var(--wave-transition);
+}
+
+.wave-button:hover,
+.wave-button:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(30, 30, 30, 0.96), rgba(12, 12, 12, 0.96));
+}
+
+.wave-button strong {
+  display: block;
+  font-family: var(--wave-code);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.wave-button span {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 14px;
+  color: var(--wave-muted);
+}
+
+.wave-controls {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.wave-control {
+  padding: 0.85rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid var(--wave-line);
+  background: var(--wave-panel-soft);
+  display: grid;
+  gap: 0.65rem;
+}
+
+.wave-control-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.wave-control-head span,
+.wave-control-head output {
+  font-family: var(--wave-code);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.wave-control-head span {
+  color: var(--wave-muted);
+}
+
+.wave-control-head output {
+  color: var(--wave-text);
+}
+
+.wave-control input[type="range"] {
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.68), rgba(99, 102, 241, 0.8));
+  outline: none;
+}
+
+.wave-control input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: #0f172a;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.wave-control input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: #0f172a;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.wave-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+
+.wave-metric {
+  padding: 0.85rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid var(--wave-line);
+  background: var(--wave-panel-soft);
+}
+
+.wave-metric strong {
+  display: block;
+  font-family: var(--wave-display);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.wave-metric span {
+  display: block;
+  margin-top: 0.34rem;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wave-muted);
+}
+
+.wave-notes {
+  padding: clamp(0.95rem, 2vw, 1.15rem);
+  display: grid;
+  gap: 0.85rem;
+}
+
+.wave-note-card {
+  padding: 0.95rem;
+  border-radius: 22px;
+  border: 1px solid var(--wave-line);
+  background: rgba(12, 12, 12, 0.72);
+}
+
+.wave-note-card strong {
+  display: block;
+  font-family: var(--wave-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wave-muted);
+}
+
+.wave-note-card h2,
+.wave-note-card h3 {
+  margin: 0.58rem 0 0;
+  font-family: var(--wave-display);
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.wave-note-card p {
+  margin: 0.68rem 0 0;
+  color: var(--wave-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.wave-floating-note {
+  justify-self: end;
+  max-width: 340px;
+  padding: 0.95rem 1rem;
+  background: rgba(9, 9, 9, 0.78);
+}
+
+.wave-floating-note strong {
+  display: block;
+  font-family: var(--wave-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wave-muted);
+}
+
+.wave-floating-note p {
+  margin: 0.55rem 0 0;
+  color: var(--wave-muted);
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+.wave-footer-link {
+  margin-top: auto;
+}
+
+@media (max-width: 980px) {
+  .wave-stage {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .wave-floating-note {
+    justify-self: start;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .wave-shell {
+    width: min(calc(100% - 0.9rem), 1320px);
+  }
+
+  .wave-topbar {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .wave-hero,
+  .wave-notes,
+  .wave-floating-note {
+    border-radius: 22px;
+  }
+
+  .wave-title {
+    font-size: clamp(34px, 14vw, 70px);
+  }
+
+  .wave-controls,
+  .wave-metrics {
+    grid-template-columns: 1fr;
+  }
+}
