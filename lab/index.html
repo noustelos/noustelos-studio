@@ -27,6 +27,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="lab.min.css" />
+  <style>
+    body.page-id-42 .lab-visual-stack {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    body.page-id-42 .lab-code-card {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.86), transparent 32%),
+        linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(233, 227, 216, 0.96));
+      border-color: rgba(31, 41, 55, 0.12);
+      color: rgba(31, 41, 55, 0.96);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    body.page-id-42 .lab-code-card:hover,
+    body.page-id-42 .lab-code-card:focus-within {
+      border-color: rgba(31, 41, 55, 0.18);
+      box-shadow: 0 16px 30px rgba(17, 17, 17, 0.1);
+    }
+
+    body.page-id-42 .lab-code-card .lab-video-header h3 {
+      color: rgba(31, 41, 55, 0.96) !important;
+      -webkit-text-fill-color: rgba(31, 41, 55, 0.96) !important;
+    }
+
+    body.page-id-42 .lab-code-card .lab-video-header p {
+      color: rgba(31, 41, 55, 0.68) !important;
+      -webkit-text-fill-color: rgba(31, 41, 55, 0.68) !important;
+    }
+  </style>
 </head>
 <body class="lab-page page-id-42">
   <div class="page-id-42-easter-zone" aria-hidden="true">
@@ -51,11 +82,17 @@
           <span class="lab-section-title">visual experiments /&gt;</span>
           <span class="lab-drawer-mark" aria-hidden="true">+</span>
         </button>
-        <div class="lab-section-content" id="lab-drawer-visual" hidden>
+        <div class="lab-section-content lab-visual-stack" id="lab-drawer-visual" hidden>
           <a class="lab-card lab-video-card lab-card-link" href="visual-experiments.html" aria-label="Open visual experiments page">
             <div class="lab-video-header">
               <h3>floating stack study</h3>
               <p>open dedicated visual page</p>
+            </div>
+          </a>
+          <a class="lab-card lab-code-card lab-card-link" href="visual-code-fabric.html" aria-label="Open code fabric experiment page">
+            <div class="lab-video-header">
+              <h3>code fabric field</h3>
+              <p>open interactive canvas cloth page</p>
             </div>
           </a>
         </div>
