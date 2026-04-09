@@ -26,6 +26,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="visual-wave-grid.min.css" />
+  <style>
+    .wave-credit {
+      margin: 1rem 0 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(226, 232, 240, 0.76);
+    }
+
+    .wave-credit strong {
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body class="lab-wave-grid-page">
   <canvas class="wave-canvas"></canvas>
@@ -80,6 +94,10 @@
               <input id="waveVelocity" type="range" min="700" max="1800" step="50" value="1200" />
             </label>
           </div>
+
+          <p class="wave-credit">
+            Inspired by original code by <strong>Stijn Van Minnebruggen (@donotfold)</strong>.
+          </p>
         </div>
 
         <div class="wave-metrics" aria-label="Experiment metrics">
@@ -98,31 +116,6 @@
         </div>
       </section>
 
-      <section class="wave-notes" data-shape-mask>
-        <article class="wave-note-card">
-          <strong>01 / motion</strong>
-          <h2>Pointer bloom</h2>
-          <p>
-            Τα shapes μεγαλώνουν με smooth falloff γύρω από το pointer και κάθε hover cycle ανανεώνει scale, rotation και star geometry.
-          </p>
-        </article>
-
-        <article class="wave-note-card">
-          <strong>02 / waves</strong>
-          <h3>Click shock</h3>
-          <p>
-            Κάθε click παράγει wave ring που ταξιδεύει πάνω στο grid και παρακάμπτει προσωρινά τα masked panels για να φαίνεται καθαρά η διάδοση.
-          </p>
-        </article>
-
-        <article class="wave-note-card">
-          <strong>03 / palette</strong>
-          <h3>Gradient mix</h3>
-          <p>
-            Solid και radial gradient fills εναλλάσσονται τυχαία ώστε το πεδίο να παραμένει ζωντανό χωρίς να μοιάζει επαναλαμβανόμενο.
-          </p>
-        </article>
-      </section>
     </section>
 
     <aside class="wave-floating-note" data-shape-mask>

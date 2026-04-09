@@ -21,6 +21,20 @@
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="lab.min.css" />
   <link rel="stylesheet" href="visual-experiments.min.css" />
+  <style>
+    .visual-credit {
+      margin: 1rem 0 0;
+      font-family: "Fira Code", monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(203, 213, 225, 0.78);
+    }
+
+    .visual-credit strong {
+      color: rgba(103, 232, 249, 0.95);
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body class="lab-visual-page">
   <main class="visual-page-shell" aria-labelledby="visual-experiments-title">
@@ -56,15 +70,10 @@
             </div>
           </div>
 
-          <button class="visual-scroll" type="button" aria-label="Μετάβαση στην ανάλυση του experiment">
-            <span class="scroll-indicator" aria-hidden="true">
-              <span class="scroll-wheel"></span>
-            </span>
-            <span class="scroll-copy">
-              <strong>Scroll</strong>
-              <span>δες τα layers και το interaction setup</span>
-            </span>
-          </button>
+          <p class="visual-credit">
+            Inspired by original code by <strong>Kan3an (@Kan3an)</strong>.
+          </p>
+
         </div>
 
         <div class="visual-stage visual-section is-visible" aria-label="Floating visual composition">
@@ -158,135 +167,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="visual-sections" id="experiment-overview">
-      <section class="visual-panel visual-section">
-        <div class="visual-section-heading">
-          <h2>Layer System</h2>
-          <p>
-            Το layout χτίζεται σαν staged composition: κεντρικό panel, floating πληροφορία και σαφής ρυθμός ανάμεσα στα layers ώστε η πληροφορία να διαβάζεται γρήγορα αλλά να δείχνει ζωντανή.
-          </p>
-        </div>
-
-        <div class="visual-study-grid">
-          <article class="study-card">
-            <div>
-              <span class="study-index">01 / depth</span>
-              <h3>Soft orbit badges</h3>
-              <p>
-                Τα badges ακολουθούν ήπιο vertical float και pointer parallax, χωρίς να σπάνε το readability του κεντρικού card.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Depth tags">
-              <span class="study-chip">motion</span>
-              <span class="study-chip">focus</span>
-              <span class="study-chip">hover</span>
-            </div>
-          </article>
-
-          <article class="study-card">
-            <div>
-              <span class="study-index">02 / rhythm</span>
-              <h3>Scroll cue</h3>
-              <p>
-                Ο δείκτης scroll δεν είναι διακοσμητικός μόνο. Καθοδηγεί τον χρήστη στο επόμενο block και κάνει το πρώτο fold πιο σαφές.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Rhythm tags">
-              <span class="study-chip">cue</span>
-              <span class="study-chip">flow</span>
-              <span class="study-chip">navigation</span>
-            </div>
-          </article>
-
-          <article class="study-card">
-            <div>
-              <span class="study-index">03 / balance</span>
-              <h3>Dark neon palette</h3>
-              <p>
-                Η νέα παλέτα ακολουθεί dark glass surfaces με μωβ, cyan και amber highlights ώστε το experiment να δείχνει πιο κοντά σε code-driven hero UI.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Palette tags">
-              <span class="study-chip">dark</span>
-              <span class="study-chip">neon</span>
-              <span class="study-chip">glass</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="visual-panel visual-section">
-        <div class="visual-section-heading">
-          <h2>More Visual Studies</h2>
-          <p>
-            Τα standalone visual experiment pages του UX Lab λειτουργούν σαν μικρές αυτόνομες σκηνές. Πλέον υπάρχει και πέμπτη visual διαδρομή με fullscreen reactive canvas field και click-triggered pulses.
-          </p>
-        </div>
-
-        <div class="visual-related-grid">
-          <a class="study-card study-card-link" href="visual-code-fabric.html" aria-label="Άνοιγμα του Code Fabric experiment">
-            <div>
-              <span class="study-index">01 / canvas</span>
-              <h3>Code fabric</h3>
-              <p>
-                Interactive cloth-like canvas experiment με tactile παραμόρφωση και code texture surface.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Code fabric tags">
-              <span class="study-chip">mesh</span>
-              <span class="study-chip">drag</span>
-              <span class="study-chip">canvas</span>
-            </div>
-          </a>
-
-          <a class="study-card study-card-link" href="visual-text-signal.html" aria-label="Άνοιγμα του Text Signal experiment">
-            <div>
-              <span class="study-index">02 / editorial</span>
-              <h3>Text signal</h3>
-              <p>
-                Pure CSS typography page με scroll-driven reveal και φωτεινή editorial κατεύθυνση.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Text signal tags">
-              <span class="study-chip">css</span>
-              <span class="study-chip">scroll</span>
-              <span class="study-chip">type</span>
-            </div>
-          </a>
-
-          <a class="study-card study-card-link" href="visual-abyss-drift.html" aria-label="Άνοιγμα του Abyss Drift experiment">
-            <div>
-              <span class="study-index">03 / underwater</span>
-              <h3>Abyss drift</h3>
-              <p>
-                Procedural Three.js underwater study με shader-based sea bed, drifting wire capsules και οργανικό swimmer mesh.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Abyss drift tags">
-              <span class="study-chip">webgl</span>
-              <span class="study-chip">shader</span>
-              <span class="study-chip">motion</span>
-            </div>
-          </a>
-
-          <a class="study-card study-card-link" href="visual-wave-grid.html" aria-label="Άνοιγμα του Wave Grid experiment">
-            <div>
-              <span class="study-index">04 / pulse</span>
-              <h3>Wave grid</h3>
-              <p>
-                Fullscreen canvas field με reactive shapes, pointer bloom, click waves και masked overlay panels πάνω στο pattern.
-              </p>
-            </div>
-            <div class="study-lineup" aria-label="Wave grid tags">
-              <span class="study-chip">canvas</span>
-              <span class="study-chip">wave</span>
-              <span class="study-chip">mask</span>
-            </div>
-          </a>
-        </div>
-      </section>
     </section>
 
     <a class="visual-footer" href="index.html" aria-label="Επιστροφή στο UX Lab">

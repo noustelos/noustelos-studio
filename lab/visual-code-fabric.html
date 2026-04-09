@@ -20,6 +20,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Rubik:wght@500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="visual-code-fabric.min.css" />
+  <style>
+    .fabric-credit {
+      margin: 1rem 0 0;
+      font-family: "Fira Code", monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(31, 41, 55, 0.66);
+    }
+
+    .fabric-credit strong {
+      color: rgba(31, 41, 55, 0.9);
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body class="lab-code-fabric-page">
   <main class="fabric-shell" aria-labelledby="code-fabric-title">
@@ -53,6 +67,10 @@
             <span>cloth physics</span>
           </div>
         </div>
+
+        <p class="fabric-credit">
+          Inspired by original code by <strong>Liam Egan (@shubniggurath)</strong>.
+        </p>
       </div>
 
       <div class="fabric-stage-shell visual-section is-visible">
@@ -65,62 +83,6 @@
           <h1 class="fabric-stage-title">CODE FABRIC</h1>
           <p class="fabric-stage-hint">drag / disturb / release</p>
         </div>
-      </div>
-    </section>
-
-    <section class="fabric-notes visual-section is-visible">
-      <div class="fabric-notes-header">
-        <h2>System Notes</h2>
-        <p>
-          Το setup μένει κοντά στο original code idea, αλλά προσαρμόζεται σε standalone page χωρίς εξωτερικά imports, με responsive rebuild και touch-friendly pointer interaction.
-        </p>
-      </div>
-
-      <div class="fabric-notes-grid">
-        <article class="fabric-note-card">
-          <div>
-            <span class="fabric-note-index">01 / mesh</span>
-            <h3>Code cloth</h3>
-            <p>
-              Οι χαρακτήρες γίνονται particles με constraints ώστε να σχηματίζουν εύκαμπτο grid που λυγίζει και επιστρέφει οργανικά.
-            </p>
-          </div>
-          <div class="fabric-note-tags" aria-label="Mesh tags">
-            <span>canvas</span>
-            <span>physics</span>
-            <span>glyphs</span>
-          </div>
-        </article>
-
-        <article class="fabric-note-card">
-          <div>
-            <span class="fabric-note-index">02 / input</span>
-            <h3>Pointer field</h3>
-            <p>
-              Το pointer μπορεί είτε να τραβήξει άμεσα το mesh είτε να το διαταράξει με ήπια force field κίνηση γύρω από τα glyphs.
-            </p>
-          </div>
-          <div class="fabric-note-tags" aria-label="Input tags">
-            <span>drag</span>
-            <span>touch</span>
-            <span>repel</span>
-          </div>
-        </article>
-
-        <article class="fabric-note-card">
-          <div>
-            <span class="fabric-note-index">03 / render</span>
-            <h3>Type motion</h3>
-            <p>
-              Η κάθε γραμμή του code mesh στρέφει ελαφρά το glyph image με βάση το constraint της, ώστε η επιφάνεια να μοιάζει πραγματικά υφασμάτινη.
-            </p>
-          </div>
-          <div class="fabric-note-tags" aria-label="Render tags">
-            <span>rotation</span>
-            <span>render</span>
-            <span>fabric</span>
-          </div>
-        </article>
       </div>
     </section>
 

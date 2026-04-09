@@ -28,6 +28,20 @@
     }
   </script>
   <link rel="stylesheet" href="visual-abyss-drift.min.css" />
+  <style>
+    .abyss-credit {
+      margin: 1rem 0 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(211, 234, 242, 0.74);
+    }
+
+    .abyss-credit strong {
+      color: rgba(111, 228, 255, 0.96);
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body class="lab-abyss-page">
   <main class="abyss-shell" aria-labelledby="abyss-title">
@@ -68,6 +82,10 @@
           <span>Wireframe motion</span>
           <span>Responsive canvas</span>
         </div>
+
+        <p class="abyss-credit">
+          Inspired by original code by <strong>Paul (@prisoner849)</strong>.
+        </p>
       </section>
 
       <section class="abyss-stage-shell" aria-label="Procedural underwater scene">
@@ -85,41 +103,6 @@
           </div>
         </div>
       </section>
-    </section>
-
-    <section class="abyss-notes" aria-labelledby="abyss-notes-title">
-      <div class="abyss-notes-head">
-        <h2 id="abyss-notes-title">Scene Notes</h2>
-        <p>
-          Το sketch μεταφέρθηκε σε responsive stage container ώστε να δουλεύει σαν αυτόνομη UX Lab σελίδα χωρίς να εξαρτάται από full-window body canvas.
-        </p>
-      </div>
-
-      <div class="abyss-note-grid">
-        <article class="abyss-note-card">
-          <strong>01 / terrain</strong>
-          <h3>Wave field</h3>
-          <p>
-            Το sea bed χρησιμοποιεί simplex noise μέσα στο vertex shader για να δημιουργεί συνεχές κυματιστό ανάγλυφο με looped οριζόντια ροή.
-          </p>
-        </article>
-
-        <article class="abyss-note-card">
-          <strong>02 / atmosphere</strong>
-          <h3>Deep fog</h3>
-          <p>
-            Background sphere και fog χτίζουν υδάτινο βάθος, ενώ τα drifting capsules προσθέτουν χαμηλής έντασης parallax γύρω από τον κεντρικό swimmer.
-          </p>
-        </article>
-
-        <article class="abyss-note-card">
-          <strong>03 / creature</strong>
-          <h3>Organic motion</h3>
-          <p>
-            Η κεντρική μορφή παραμορφώνεται στο shader με synchronized body wave και wing-like sway ώστε το wireframe να θυμίζει υποβρύχιο πλάσμα αντί για στατικό mesh.
-          </p>
-        </article>
-      </div>
     </section>
 
     <a class="abyss-footer-link" href="visual-experiments.html" aria-label="Επιστροφή στα Visual Experiments">
