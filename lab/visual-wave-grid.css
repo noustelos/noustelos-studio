@@ -4,8 +4,8 @@
   --wave-panel-soft: rgba(10, 10, 10, 0.62);
   --wave-line: rgba(255, 255, 255, 0.08);
   --wave-line-strong: rgba(255, 255, 255, 0.14);
-  --wave-text: #f8fafc;
-  --wave-muted: rgba(226, 232, 240, 0.72);
+  --wave-text: #ffffff;
+  --wave-muted: rgba(255, 255, 255, 0.72);
   --wave-display: "Sora", sans-serif;
   --wave-body: "Inter", sans-serif;
   --wave-code: "IBM Plex Mono", monospace;
@@ -246,7 +246,7 @@ body.lab-wave-grid-page {
   appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(249, 115, 22, 0.68), rgba(99, 102, 241, 0.8));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.68), rgba(102, 102, 102, 0.8));
   outline: none;
 }
 
@@ -256,7 +256,7 @@ body.lab-wave-grid-page {
   height: 18px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  background: #0f172a;
+  background: #050505;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
   cursor: pointer;
 }
@@ -266,7 +266,7 @@ body.lab-wave-grid-page {
   height: 18px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  background: #0f172a;
+  background: #050505;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
   cursor: pointer;
 }

@@ -12,23 +12,23 @@
   };
 
   var PALETTE = [
-    { type: 'solid', value: '#22c55e' },
-    { type: 'solid', value: '#06b6d4' },
-    { type: 'solid', value: '#f97316' },
-    { type: 'solid', value: '#ef4444' },
-    { type: 'solid', value: '#facc15' },
-    { type: 'solid', value: '#ec4899' },
-    { type: 'solid', value: '#9ca3af' },
-    { type: 'solid', value: '#a78bfa' },
-    { type: 'solid', value: '#60a5fa' },
-    { type: 'solid', value: '#34d399' },
-    { type: 'gradient', stops: ['#6366f1', '#3b82f6'] },
-    { type: 'gradient', stops: ['#06b6d4', '#6366f1'] },
-    { type: 'gradient', stops: ['#22c55e', '#06b6d4'] },
-    { type: 'gradient', stops: ['#f97316', '#ef4444'] },
-    { type: 'gradient', stops: ['#8b5cf6', '#06b6d4'] },
-    { type: 'gradient', stops: ['#3b82f6', '#8b5cf6'] },
-    { type: 'gradient', stops: ['#34d399', '#3b82f6'] }
+    { type: 'solid', value: '#f5f5f5' },
+    { type: 'solid', value: '#d9d9d9' },
+    { type: 'solid', value: '#c4c4c4' },
+    { type: 'solid', value: '#b0b0b0' },
+    { type: 'solid', value: '#9b9b9b' },
+    { type: 'solid', value: '#858585' },
+    { type: 'solid', value: '#707070' },
+    { type: 'solid', value: '#5c5c5c' },
+    { type: 'solid', value: '#474747' },
+    { type: 'solid', value: '#333333' },
+    { type: 'gradient', stops: ['#ffffff', '#bdbdbd'] },
+    { type: 'gradient', stops: ['#e5e5e5', '#8f8f8f'] },
+    { type: 'gradient', stops: ['#d0d0d0', '#5f5f5f'] },
+    { type: 'gradient', stops: ['#bdbdbd', '#2f2f2f'] },
+    { type: 'gradient', stops: ['#f2f2f2', '#6e6e6e'] },
+    { type: 'gradient', stops: ['#cfcfcf', '#3f3f3f'] },
+    { type: 'gradient', stops: ['#9f9f9f', '#1f1f1f'] }
   ];
 
   var SHAPE_TYPES = ['circle', 'pill', 'star', 'star'];
