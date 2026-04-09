@@ -4,13 +4,18 @@
     return;
   }
 
-  const fullCode = [
-    'import { lerp, getPointID } from "utils.js";',
-    'console.clear();',
-    'const CONFIG = { width: 400, height: 400, gridW: 100, gridH: 40, gravity: .2, damping: .99, iterationsPerFrame: 10 };',
-    'function main() { const ctx = c.getContext("2d"); const particles = []; const constraints = []; function runloop(delta) { ctx.clearRect(0,0,w,h); particles.forEach(p=>p.update()); constraints.forEach(c=>c.solve()); drawCode(); } }',
-    'class Particle { constructor({x, y, char}) { this.pos = new Vec2(x, y); this.char = char; } }'
-  ].join(' ');
+  const fullCode = (() => {
+    const alphanumeric = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const glyphCount = 1600;
+
+    return Array.from({ length: glyphCount }, (_, index) => {
+      if (index > 0 && index % 32 === 0) {
+        return ' ';
+      }
+
+      return alphanumeric[Math.floor(Math.random() * alphanumeric.length)];
+    }).join('');
+  })();
 
   const baseConfig = {
     gravity: 0.16,

@@ -1,15 +1,15 @@
 :root {
-  --abyss-bg: #021423;
-  --abyss-bg-deep: #010a12;
-  --abyss-panel: rgba(4, 25, 40, 0.72);
-  --abyss-panel-strong: rgba(4, 25, 40, 0.84);
-  --abyss-line: rgba(109, 176, 210, 0.22);
-  --abyss-line-strong: rgba(111, 220, 255, 0.28);
-  --abyss-text: #ebfbff;
-  --abyss-muted: rgba(211, 234, 242, 0.74);
-  --abyss-accent: #6fe4ff;
-  --abyss-accent-soft: rgba(111, 228, 255, 0.18);
-  --abyss-green: #42d5c5;
+  --abyss-bg: #000000;
+  --abyss-bg-deep: #000000;
+  --abyss-panel: rgba(8, 8, 8, 0.9);
+  --abyss-panel-strong: rgba(6, 6, 6, 0.94);
+  --abyss-line: rgba(255, 255, 255, 0.28);
+  --abyss-line-strong: rgba(255, 255, 255, 0.4);
+  --abyss-text: #f5f5f5;
+  --abyss-muted: rgba(255, 255, 255, 0.86);
+  --abyss-accent: #ffffff;
+  --abyss-accent-soft: rgba(255, 255, 255, 0.18);
+  --abyss-green: #e0e0e0;
   --abyss-shadow: 0 28px 72px rgba(0, 0, 0, 0.34);
   --abyss-shadow-soft: 0 12px 36px rgba(0, 0, 0, 0.2);
   --abyss-display: "Space Grotesk", sans-serif;
@@ -32,10 +32,10 @@ body.lab-abyss-page {
   color: var(--abyss-text);
   font-family: var(--abyss-body);
   background:
-    radial-gradient(circle at 18% 18%, rgba(111, 228, 255, 0.12), transparent 26%),
-    radial-gradient(circle at 82% 12%, rgba(66, 213, 197, 0.08), transparent 28%),
-    radial-gradient(circle at 50% 86%, rgba(6, 66, 88, 0.42), transparent 34%),
-    linear-gradient(180deg, #031c31 0%, var(--abyss-bg) 46%, var(--abyss-bg-deep) 100%);
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.1), transparent 24%),
+    radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.08), transparent 24%),
+    radial-gradient(circle at 50% 86%, rgba(64, 64, 64, 0.42), transparent 32%),
+    linear-gradient(180deg, #121212 0%, #050505 45%, var(--abyss-bg-deep) 100%);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -47,11 +47,11 @@ body.lab-abyss-page::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(111, 228, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(111, 228, 255, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 36px 36px;
   mask-image: radial-gradient(circle at center, black 48%, transparent 92%);
-  opacity: 0.3;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 0;
 }
@@ -88,7 +88,7 @@ body.lab-abyss-page::before {
 
 .abyss-back-link span:last-child,
 .abyss-footer-link span:last-child {
-  color: rgba(211, 234, 242, 0.48);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .abyss-hero {
@@ -104,7 +104,7 @@ body.lab-abyss-page::before {
 .abyss-notes {
   border: 1px solid var(--abyss-line);
   border-radius: 30px;
-  background: linear-gradient(180deg, rgba(5, 31, 49, 0.72), rgba(2, 16, 28, 0.82));
+  background: linear-gradient(180deg, rgba(12, 12, 12, 0.9), rgba(0, 0, 0, 0.96));
   backdrop-filter: blur(18px) saturate(120%);
   -webkit-backdrop-filter: blur(18px) saturate(120%);
   box-shadow: var(--abyss-shadow);
@@ -136,7 +136,7 @@ body.lab-abyss-page::before {
 
 .abyss-title span {
   display: block;
-  color: rgba(111, 228, 255, 0.72);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .abyss-intro {
@@ -158,7 +158,7 @@ body.lab-abyss-page::before {
   padding: 0.84rem 0.88rem;
   border-radius: 18px;
   border: 1px solid var(--abyss-line);
-  background: rgba(2, 16, 28, 0.44);
+  background: rgba(0, 0, 0, 0.72);
   box-shadow: var(--abyss-shadow-soft);
 }
 
@@ -191,7 +191,7 @@ body.lab-abyss-page::before {
   padding: 0.42rem 0.72rem;
   border-radius: 999px;
   border: 1px solid var(--abyss-line);
-  background: rgba(2, 16, 28, 0.54);
+  background: rgba(0, 0, 0, 0.78);
   color: var(--abyss-muted);
   font-family: var(--abyss-code);
   font-size: 11px;
@@ -210,8 +210,8 @@ body.lab-abyss-page::before {
   border: 1px solid var(--abyss-line);
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 22%, rgba(111, 228, 255, 0.1), transparent 26%),
-    linear-gradient(180deg, rgba(8, 38, 58, 0.88), rgba(0, 10, 18, 0.98));
+    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(16, 16, 16, 0.94), rgba(0, 0, 0, 1));
   isolation: isolate;
 }
 
@@ -220,7 +220,7 @@ body.lab-abyss-page::before {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 0%, rgba(111, 228, 255, 0.08), transparent 26%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 26%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 18%, transparent 78%, rgba(0, 0, 0, 0.18));
   pointer-events: none;
   z-index: 2;
@@ -256,19 +256,19 @@ body.lab-abyss-page::before {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(211, 234, 242, 0.18);
+  background: rgba(255, 255, 255, 0.32);
 }
 
 .abyss-stage-bar span:nth-child(1) {
-  background: rgba(111, 228, 255, 0.62);
+  background: rgba(255, 255, 255, 1);
 }
 
 .abyss-stage-bar span:nth-child(2) {
-  background: rgba(66, 213, 197, 0.62);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .abyss-stage-bar span:nth-child(3) {
-  background: rgba(4, 136, 255, 0.56);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .abyss-stage-caption {
@@ -280,7 +280,7 @@ body.lab-abyss-page::before {
   padding: 0.55rem 0.8rem;
   border-radius: 999px;
   border: 1px solid var(--abyss-line-strong);
-  background: rgba(2, 16, 28, 0.54);
+  background: rgba(0, 0, 0, 0.82);
   color: var(--abyss-muted);
   font-family: var(--abyss-code);
   font-size: 11px;
@@ -294,7 +294,7 @@ body.lab-abyss-page::before {
   height: 8px;
   border-radius: 999px;
   background: linear-gradient(180deg, var(--abyss-accent), var(--abyss-green));
-  box-shadow: 0 0 16px rgba(111, 228, 255, 0.42);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
 }
 
 .abyss-stage-hint {
@@ -304,7 +304,7 @@ body.lab-abyss-page::before {
   max-width: 260px;
   border-radius: 18px;
   border: 1px solid var(--abyss-line);
-  background: rgba(2, 16, 28, 0.56);
+  background: rgba(0, 0, 0, 0.84);
   color: var(--abyss-muted);
   font-size: 13px;
   line-height: 1.55;
@@ -361,8 +361,8 @@ body.lab-abyss-page::before {
   border-radius: 22px;
   border: 1px solid var(--abyss-line);
   background:
-    radial-gradient(circle at top right, rgba(111, 228, 255, 0.1), transparent 40%),
-    rgba(2, 16, 28, 0.54);
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 38%),
+    rgba(0, 0, 0, 0.84);
   box-shadow: var(--abyss-shadow-soft);
 }
 

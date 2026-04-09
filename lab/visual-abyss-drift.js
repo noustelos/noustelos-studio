@@ -99,7 +99,7 @@ class SeaBed extends THREE.LineSegments {
     toQuads(geometry);
 
     const material = new THREE.MeshBasicMaterial({
-      color: "#048",
+      color: "#d0d0d0",
       onBeforeCompile: (shader) => {
         shader.uniforms.time = uniforms.time;
         shader.vertexShader = `
@@ -127,8 +127,8 @@ class SeaBed extends THREE.LineSegments {
         `.replace(
           "vec4 diffuseColor = vec4( diffuse, opacity );",
           `
-          vec3 col = mix(diffuse, vec3(0.0, 0.75, 1.0), 1.0 - smoothstep(-0.5, 0.0, vN));
-          col += vec3(0.0, 0.2, 0.1) * (1.0 - smoothstep(10.0, 15.0, length(vPos)));
+          vec3 col = mix(diffuse, vec3(1.0), 1.0 - smoothstep(-0.5, 0.0, vN));
+          col += vec3(0.22) * (1.0 - smoothstep(10.0, 15.0, length(vPos)));
           vec4 diffuseColor = vec4(col, opacity);`
         );
       }
@@ -157,7 +157,7 @@ class Background extends THREE.Mesh {
         }
 
         const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0.1, "#044");
+        gradient.addColorStop(0.1, "#1a1a1a");
         gradient.addColorStop(0.4, `#${scene.background.getHexString()}`);
         context.fillStyle = gradient;
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -179,7 +179,7 @@ class WaterStuff extends THREE.Group {
     this.items = Array.from({ length: 50 }, () => {
       const item = new THREE.Mesh(
         new THREE.CapsuleGeometry(0.25, 2, 3, 7, 3),
-        new THREE.MeshBasicMaterial({ wireframe: true, color: "#068" })
+        new THREE.MeshBasicMaterial({ wireframe: true, color: "#f5f5f5" })
       );
 
       this.setRandom(item, 50 - Math.random() * 100);
@@ -223,7 +223,7 @@ class Thing extends THREE.Group {
     const baseGeometry = new THREE.SphereGeometry(3, 64, 32);
     const lineGeometry = new THREE.EdgesGeometry(baseGeometry, 0.5);
     const lineMaterial = new THREE.LineBasicMaterial({
-      color: "#8ff",
+      color: "#ffffff",
       transparent: true,
       opacity: 0.75
     });
@@ -234,7 +234,7 @@ class Thing extends THREE.Group {
       baseGeometry.clone().deleteAttribute("uv").deleteAttribute("normal")
     );
     const pointsMaterial = new THREE.PointsMaterial({
-      color: "#0ff",
+      color: "#ffffff",
       size: 0.1,
       transparent: true
     });
@@ -301,7 +301,7 @@ class Thing extends THREE.Group {
 }
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color("#024");
+scene.background = new THREE.Color("#000000");
 scene.fog = new THREE.Fog(scene.background, 8, 30);
 
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 500);
