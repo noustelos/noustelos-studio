@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="description" content="Abyss Drift από το UX Lab του Noustelos: procedural Three.js underwater study | Abyss Drift from Noustelos UX Lab: procedural Three.js underwater study with wireframe terrain and drifting forms." />
+  <meta name="description" content="Abyss Drift from Noustelos UX Lab: a procedural Three.js underwater study with wireframe terrain and drifting forms." />
   <meta name="theme-color" content="#000000" />
   <link rel="canonical" href="https://noustelos.gr/lab/visual-abyss-drift.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Abyss Drift | Visual Experiments | UX Lab" />
-  <meta property="og:description" content="Procedural underwater Three.js study με wireframe terrain και volumetric atmosphere | Procedural underwater Three.js study with wireframe terrain and volumetric atmosphere." />
+  <meta property="og:description" content="Procedural underwater Three.js study with wireframe terrain and volumetric atmosphere." />
   <meta property="og:url" content="https://noustelos.gr/lab/visual-abyss-drift.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <title>Abyss Drift | Visual Experiments | UX Lab</title>
@@ -47,22 +47,27 @@
     }
   </style>
 </head>
-<body class="lab-abyss-page">
+<body class="lab-abyss-page" data-i18n-page="abyssDrift">
   <main class="abyss-shell" aria-labelledby="abyss-title">
-    <a class="abyss-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
+    <a class="abyss-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
       <span>UX Lab</span>
       <span>/&gt;</span>
     </a>
+    <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+      <span data-lang-option="en">EN</span>
+      <span class="lang-divider">/</span>
+      <span data-lang-option="gr">EL</span>
+    </button>
 
     <section class="abyss-hero">
       <section class="abyss-copy">
-        <p class="abyss-kicker">Visual Experiments / Study 04</p>
+        <p class="abyss-kicker" data-i18n="page.kicker">Visual Experiment / Study 04</p>
         <h1 id="abyss-title" class="abyss-title">
           Abyss
           <span>Drift</span>
         </h1>
-        <p class="abyss-intro">
-          Μια procedural underwater μελέτη με custom shader noise, wireframe terrain και ατμοσφαιρική κίνηση. A procedural underwater study with custom shader noise, wireframe terrain, and atmospheric motion.
+        <p class="abyss-intro" data-i18n="page.intro">
+          A procedural underwater study with custom shader noise, wireframe terrain, and atmospheric motion.
         </p>
 
         <div class="abyss-meta" aria-label="Experiment metrics">
@@ -99,22 +104,23 @@
             <span></span>
             <span></span>
           </div>
-          <div class="abyss-stage-caption">Live WebGL scene / Ζωντανη WebGL σκηνη</div>
+          <div class="abyss-stage-caption" data-i18n="page.stageCaption">Live WebGL scene</div>
           <div id="abyssCanvasRoot" aria-hidden="true"></div>
           <div class="abyss-stage-hint">
-            <strong>Interaction / Αλληλεπιδραση</strong>
-            Drag για orbit γυρω απο το object. Camera damping και fog κρατουν την κινηση ομαλη σε mobile και desktop. Drag to orbit around the object; damping and fog keep motion smooth on mobile and desktop.
+            <strong data-i18n="page.interactionTitle">Interaction</strong>
+            <span data-i18n="page.interactionBody">Drag to orbit around the object. Camera damping and fog keep motion smooth on mobile and desktop.</span>
           </div>
         </div>
       </section>
     </section>
 
-    <a class="abyss-footer-link" href="visual-experiments.html" aria-label="Επιστροφή στα Visual Experiments / Back to Visual Experiments">
-      <span>Επιστροφή στα Visual Experiments / Back to Visual Experiments</span>
+    <a class="abyss-footer-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <span data-i18n="page.footerLabel">Back to UX Lab</span>
       <span>/&gt;</span>
     </a>
   </main>
 
+  <script src="visual-language-toggle.js"></script>
   <script type="module" src="visual-abyss-drift.min.js"></script>
 </body>
 </html>

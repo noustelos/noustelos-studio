@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="description" content="Text Signal από το UX Lab του Noustelos: pure CSS visual experiment με scroll-driven reveal | Text Signal from Noustelos UX Lab: pure CSS visual experiment with scroll-driven reveal and hover inversion." />
+  <meta name="description" content="Text Signal from Noustelos UX Lab: a pure CSS visual experiment with scroll-driven reveal and hover inversion." />
   <meta name="theme-color" content="#f5f0e7" />
   <link rel="canonical" href="https://noustelos.gr/lab/visual-text-signal.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Text Signal | Visual Experiments | UX Lab" />
-  <meta property="og:description" content="Pure CSS text reveal study με scroll timeline και hover overlays | Pure CSS text reveal study with scroll timeline and hover overlays." />
+  <meta property="og:description" content="Pure CSS text reveal study with scroll timeline and hover overlays." />
   <meta property="og:url" content="https://noustelos.gr/lab/visual-text-signal.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <title>Text Signal | Visual Experiments | UX Lab</title>
@@ -21,22 +21,27 @@
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="visual-text-signal.min.css" />
 </head>
-<body class="lab-text-signal-page">
+<body class="lab-text-signal-page" data-i18n-page="textSignal">
   <main class="signal-shell" aria-labelledby="text-signal-title">
-    <a class="signal-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
+    <a class="signal-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
       <span>UX Lab</span>
       <span>/&gt;</span>
     </a>
+    <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+      <span data-lang-option="en">EN</span>
+      <span class="lang-divider">/</span>
+      <span data-lang-option="gr">EL</span>
+    </button>
 
     <section class="signal-hero">
       <div class="signal-copy">
-        <p class="signal-kicker">Visual Experiments / Theme 03</p>
+        <p class="signal-kicker" data-i18n="page.kicker">Visual Experiments / Theme 03</p>
         <h1 id="text-signal-title" class="signal-title">
           TEXT
           <span>SIGNAL</span>
         </h1>
-        <p class="signal-intro">
-          Μια καθαρή CSS μελέτη σε ρυθμό κειμένου, scroll-driven reveal και έντονο hover inversion χωρίς JavaScript. A pure CSS text study focused on rhythm, scroll-driven reveal, and bold hover inversion without JavaScript.
+        <p class="signal-intro" data-i18n="page.intro">
+          A pure CSS text study focused on rhythm, scroll-driven reveal, and bold hover inversion without JavaScript.
         </p>
         <div class="signal-badges" aria-label="Experiment tags">
           <span>pure css</span>
@@ -48,8 +53,8 @@
 
       <section class="signal-stage" aria-label="Text signal scroll stage">
         <div class="signal-stage-head">
-          <strong>scroll reveal field / πεδιο reveal στο scroll</strong>
-          <span>hover each line to invert the message / hover για αντιστροφη καθε γραμμης</span>
+          <strong data-i18n="page.stageTitle">scroll reveal field</strong>
+          <span data-i18n="page.stageSubtitle">hover each line to invert the message</span>
         </div>
 
         <div class="signal-text-list">
@@ -63,19 +68,12 @@
     </section>
 
     <div class="signal-footer">
-      <a class="signal-footer-link" href="visual-experiments.html" aria-label="Open floating stack page / Ανοιγμα floating stack σελιδας">
-        <span>Πρώτο Visual / Floating Stack</span>
-        <span>/&gt;</span>
-      </a>
-      <a class="signal-footer-link" href="visual-code-fabric.html" aria-label="Open code fabric page / Ανοιγμα code fabric σελιδας">
-        <span>Δεύτερο Visual / Code Fabric</span>
-        <span>/&gt;</span>
-      </a>
-      <a class="signal-footer-link" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
-        <span>Επιστροφή στο UX Lab / Back to UX Lab</span>
+      <a class="signal-footer-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+        <span data-i18n="page.footerLabel">Back to UX Lab</span>
         <span>/&gt;</span>
       </a>
     </div>
   </main>
+  <script src="visual-language-toggle.js"></script>
 </body>
 </html>

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="description" content="Wave Grid από το UX Lab του Noustelos: fullscreen canvas study με reactive geometric grid | Wave Grid from Noustelos UX Lab: fullscreen canvas study with reactive geometric patterns and click waves." />
+  <meta name="description" content="Wave Grid from Noustelos UX Lab: a fullscreen canvas study with reactive geometric patterns and click-triggered waves." />
   <meta name="theme-color" content="#050505" />
   <link rel="canonical" href="https://noustelos.gr/lab/visual-wave-grid.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Wave Grid | Visual Experiments | UX Lab" />
-  <meta property="og:description" content="Canvas-driven geometric field με pointer proximity και click-triggered waves | Canvas-driven geometric field with pointer proximity and click-triggered waves." />
+  <meta property="og:description" content="Canvas-driven geometric field with pointer proximity and click-triggered waves." />
   <meta property="og:url" content="https://noustelos.gr/lab/visual-wave-grid.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Wave Grid | Visual Experiments | UX Lab" />
-  <meta name="twitter:description" content="Canvas-driven geometric field με pointer proximity και click-triggered waves | Canvas-driven geometric field with pointer proximity and click-triggered waves." />
+  <meta name="twitter:description" content="Canvas-driven geometric field with pointer proximity and click-triggered waves." />
   <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.svg" />
   <title>Wave Grid | Visual Experiments | UX Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -45,39 +45,44 @@
     }
   </style>
 </head>
-<body class="lab-wave-grid-page">
+<body class="lab-wave-grid-page" data-i18n-page="waveGrid">
   <canvas class="wave-canvas"></canvas>
 
   <main class="wave-shell" aria-labelledby="wave-grid-title">
     <div class="wave-topbar">
-      <a class="wave-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
+      <a class="wave-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
         <span>UX Lab</span>
         <span>/&gt;</span>
       </a>
+      <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">EL</span>
+      </button>
 
-      <div class="wave-meta-pill" data-shape-mask>Visual Experiments / Study 05</div>
+      <div class="wave-meta-pill" data-shape-mask data-i18n="page.pill">Visual Experiments / Study 05</div>
     </div>
 
     <section class="wave-stage">
       <section class="wave-hero" data-shape-mask>
         <div>
-          <p class="wave-kicker">Canvas Field / Πεδιο καμβα</p>
+          <p class="wave-kicker" data-i18n="page.kicker">Canvas Field</p>
           <h1 id="wave-grid-title" class="wave-title">
             Wave
             <span>Grid</span>
           </h1>
-          <p class="wave-intro">
-            Ένα fullscreen geometric πεδίο που αντιδρά σε pointer proximity και χτίζει κύματα με κάθε click. A fullscreen geometric field that reacts to pointer proximity and builds wave pulses on each click.
+          <p class="wave-intro" data-i18n="page.intro">
+            A fullscreen geometric field that reacts to pointer proximity and builds wave pulses on each click.
           </p>
 
           <div class="wave-actions">
             <button class="wave-button" type="button" id="triggerCenterWave">
               <strong>Wave</strong>
-              <span>Pulse από το κέντρο / Pulse from center</span>
+              <span data-i18n="page.centerPulse">Pulse from center</span>
             </button>
             <button class="wave-button" type="button" id="triggerRandomWave">
               <strong>Random</strong>
-              <span>Τυχαίο σημείο / Random impact point</span>
+              <span data-i18n="page.randomPulse">Random impact point</span>
             </button>
           </div>
 
@@ -92,7 +97,7 @@
 
             <label class="wave-control" for="waveVelocity">
               <span class="wave-control-head">
-                <span>Wave speed / Ταχυτητα κυματος</span>
+                <span data-i18n="page.waveSpeed">Wave speed</span>
                 <output id="waveVelocityValue" for="waveVelocity">1200 /s</output>
               </span>
               <input id="waveVelocity" type="range" min="700" max="1800" step="50" value="1200" />
@@ -108,12 +113,13 @@
 
     </section>
 
-    <a class="wave-footer-link" href="visual-experiments.html" aria-label="Επιστροφή στα Visual Experiments / Back to Visual Experiments">
-      <span>Επιστροφή στα Visual Experiments / Back to Visual Experiments</span>
+    <a class="wave-footer-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <span data-i18n="page.footerLabel">Back to UX Lab</span>
       <span>/&gt;</span>
     </a>
   </main>
 
+  <script src="visual-language-toggle.js"></script>
   <script src="visual-wave-grid.min.js"></script>
 </body>
 </html>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="description" content="Visual Experiments από το UX Lab του Noustelos με floating badges και layered motion | Visual Experiments from Noustelos UX Lab with floating badges and layered motion for a frontend showcase." />
+  <meta name="description" content="Visual Experiments from Noustelos UX Lab with floating badges and layered motion for a frontend showcase." />
   <meta name="theme-color" content="#020617" />
   <link rel="canonical" href="https://noustelos.gr/lab/visual-experiments.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Visual Experiments | UX Lab" />
-  <meta property="og:description" content="Floating stack badges, layered motion και scroll-driven visual study | Floating stack badges, layered motion and a scroll-driven visual study." />
+  <meta property="og:description" content="Floating stack badges, layered motion, and a scroll-driven visual study." />
   <meta property="og:url" content="https://noustelos.gr/lab/visual-experiments.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <title>Visual Experiments | UX Lab</title>
@@ -40,26 +40,31 @@
     }
   </style>
 </head>
-<body class="lab-visual-page">
+<body class="lab-visual-page" data-i18n-page="visualExperiments">
   <main class="visual-page-shell" aria-labelledby="visual-experiments-title">
-    <a class="visual-back-link" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
+    <a class="visual-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
       <span>UX Lab</span>
       <span>/&gt;</span>
     </a>
+    <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+      <span data-lang-option="en">EN</span>
+      <span class="lang-divider">/</span>
+      <span data-lang-option="gr">EL</span>
+    </button>
 
     <section class="visual-hero">
       <div class="visual-hero-grid">
         <div class="visual-copy visual-section is-visible">
-          <p class="visual-eyebrow">Visual Experiments</p>
+          <p class="visual-eyebrow" data-i18n="page.eyebrow">Visual Experiments</p>
           <h1 id="visual-experiments-title" class="visual-title">
             FLOATING
             <span class="muted">STACK</span>
           </h1>
-          <p class="visual-intro">
-            Μια hero μελέτη με layered depth, floating badges και καθαρό scroll rhythm για δυνατό visual storytelling. A hero study with layered depth, floating badges, and clear scroll rhythm for strong visual storytelling.
+          <p class="visual-intro" data-i18n="page.intro">
+            A hero study with layered depth, floating badges, and clear scroll rhythm for strong visual storytelling.
           </p>
 
-          <div class="visual-meta" aria-label="Experiment metrics / Μετρικές experiment">
+          <div class="visual-meta" aria-label="Experiment metrics">
             <div class="visual-meta-card">
               <strong>03</strong>
               <span>stack badges</span>
@@ -97,9 +102,9 @@
               <div class="core-content">
                 <div>
                   <p class="core-kicker">Hero Composition / Prototype</p>
-                  <h2 class="core-headline">Motion-led frontend presence / Frontend παρουσία με έμφαση στο motion</h2>
+                  <h2 class="core-headline">Motion-led frontend presence</h2>
                   <p class="core-body">
-                    Η κεντρική κάρτα λειτουργεί σαν visual anchor, ενώ τα badges κινούνται με ήπιο parallax για αίσθηση βάθους. The main card acts as a visual anchor while badges move with gentle parallax to create depth.
+                    The main card acts as a visual anchor while badges move with gentle parallax to create depth.
                   </p>
 
                   <div class="core-strips">
@@ -125,7 +130,7 @@
                   <div class="core-pills" aria-label="Techniques used">
                     <span class="core-pill">CSS Motion</span>
                     <span class="core-pill">Parallax</span>
-                    <span class="core-pill">Responsive / Προσαρμοστικό</span>
+                    <span class="core-pill">Responsive</span>
                   </div>
                   <span class="core-tag">Study 04</span>
                 </div>
@@ -173,12 +178,13 @@
       </div>
     </section>
 
-    <a class="visual-footer" href="index.html" aria-label="Επιστροφή στο UX Lab / Back to UX Lab">
-      <span>Επιστροφή στο UX Lab / Back to UX Lab</span>
+    <a class="visual-footer" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <span data-i18n="page.footerLabel">Back to UX Lab</span>
       <span>/&gt;</span>
     </a>
   </main>
 
+  <script src="visual-language-toggle.js"></script>
   <script src="visual-experiments.min.js"></script>
 </body>
 </html>
