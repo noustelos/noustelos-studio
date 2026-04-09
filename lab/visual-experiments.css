@@ -1,4 +1,5 @@
 :root {
+  --viewport-h: 100vh;
       --primary: #c084fc;
       --secondary: #a78bfa;
       --accent: #fbbf24;
@@ -29,6 +30,18 @@
       --font-code: "Fira Code", monospace;
     }
 
+    @supports (height: 100svh) {
+      :root {
+        --viewport-h: 100svh;
+      }
+    }
+
+    @supports (height: 100dvh) {
+      :root {
+        --viewport-h: 100dvh;
+      }
+    }
+
     *,
     *::before,
     *::after {
@@ -48,7 +61,7 @@
       --visual-warm: var(--primary);
       --visual-cool: var(--cyan);
       --visual-gold: var(--accent);
-      min-height: 100vh;
+      min-height: var(--viewport-h);
       margin: 0;
       font-family: var(--font-primary);
       color: var(--visual-text);

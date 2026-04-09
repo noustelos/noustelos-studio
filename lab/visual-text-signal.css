@@ -1,4 +1,5 @@
 :root {
+  --viewport-h: 100vh;
   --signal-bg: #f5f0e7;
   --signal-bg-deep: #ece4d7;
   --signal-panel: rgba(255, 255, 255, 0.72);
@@ -14,6 +15,18 @@
   --signal-transition: 0.45s cubic-bezier(0.1, 0.5, 0.5, 1);
 }
 
+@supports (height: 100svh) {
+  :root {
+    --viewport-h: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-h: 100dvh;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -23,7 +36,7 @@ html {
 }
 
 body.lab-text-signal-page {
-  min-height: 100vh;
+  min-height: var(--viewport-h);
   margin: 0;
   color: var(--signal-ink);
   font-family: var(--signal-display);

@@ -1,4 +1,5 @@
 :root {
+  --viewport-h: 100vh;
   --fabric-paper: #ece7de;
   --fabric-paper-deep: #e3ddd2;
   --fabric-ink: #1f2937;
@@ -15,6 +16,18 @@
   --fabric-code: "Fira Code", monospace;
 }
 
+@supports (height: 100svh) {
+  :root {
+    --viewport-h: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-h: 100dvh;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -24,7 +37,7 @@ html {
 }
 
 body.lab-code-fabric-page {
-  min-height: 100vh;
+  min-height: var(--viewport-h);
   margin: 0;
   font-family: var(--fabric-body);
   color: var(--fabric-ink);
@@ -178,7 +191,15 @@ body.lab-code-fabric-page {
   justify-content: center;
   overflow: hidden;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   isolation: isolate;
+}
+
+#container * {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #container::before {

@@ -1,4 +1,6 @@
 :root {
+  --viewport-h: 100vh;
+  --wave-scroll-area: 0px;
   --wave-bg: #050505;
   --wave-panel: rgba(7, 7, 7, 0.82);
   --wave-panel-soft: rgba(10, 10, 10, 0.62);
@@ -11,6 +13,18 @@
   --wave-code: "IBM Plex Mono", monospace;
   --wave-shadow: 0 28px 72px rgba(0, 0, 0, 0.34);
   --wave-transition: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@supports (height: 100svh) {
+  :root {
+    --viewport-h: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-h: 100dvh;
+  }
 }
 
 * {
@@ -45,7 +59,7 @@ body.lab-wave-grid-page {
 .wave-shell {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
+  min-height: calc(var(--viewport-h) + var(--wave-scroll-area));
   width: min(calc(100% - 1.2rem), 1320px);
   margin: 0 auto;
   padding: clamp(1rem, 3vw, 1.5rem) 0 clamp(1.5rem, 5vw, 3rem);
@@ -402,5 +416,70 @@ body.lab-wave-grid-page {
   .wave-controls,
   .wave-metrics {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  :root {
+    --wave-scroll-area: 62vh;
+  }
+
+  .wave-shell {
+    width: min(calc(100% - 0.5rem), 1320px);
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    gap: 0.6rem;
+  }
+
+  .wave-stage {
+    min-height: calc(var(--viewport-h) + 34vh);
+    align-items: start;
+  }
+
+  .wave-meta-pill {
+    display: none;
+  }
+
+  .wave-hero {
+    min-height: min(54vh, 460px);
+    padding: 0.78rem;
+    border-radius: 18px;
+    background: rgba(7, 7, 7, 0.58);
+    backdrop-filter: blur(10px) saturate(115%);
+    -webkit-backdrop-filter: blur(10px) saturate(115%);
+  }
+
+  .wave-intro {
+    margin-top: 0.72rem;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .wave-actions {
+    margin-top: 0.85rem;
+    gap: 0.45rem;
+  }
+
+  .wave-button {
+    padding: 0.62rem 0.74rem;
+  }
+
+  .wave-button span {
+    font-size: 12px;
+  }
+
+  .wave-controls {
+    margin-top: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .wave-control {
+    padding: 0.6rem 0.65rem;
+    border-radius: 14px;
+  }
+
+  .wave-credit {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
   }
 }

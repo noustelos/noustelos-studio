@@ -59,6 +59,9 @@
   var frameCount = 0;
   var maskOverride = false;
   var maskTimeoutId = 0;
+  var resizeRafId = 0;
+  var isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  var hasUserDensityOverride = false;
 
   function rnd(min, max) { return Math.random() * (max - min) + min; }
   function rndInt(min, max) { return Math.floor(rnd(min, max + 1)); }
@@ -72,6 +75,60 @@
   function durationToFactor(seconds) {
     if (seconds <= 0) return 1;
     return 1 - Math.pow(0.05, 1 / (60 * seconds));
+  }
+
+  function getQualityProfile(viewport) {
+    var width = viewport.width;
+
+    if (isCoarsePointer && width <= 767) {
+      return {
+        dprCap: 1.35,
+        defaultGap: 46,
+        waveWidth: 160,
+        enableMasking: false
+      };
+    }
+
+    if (isCoarsePointer && width <= 1366) {
+      return {
+        dprCap: 1.6,
+        defaultGap: 44,
+        waveWidth: 170,
+        enableMasking: true
+      };
+    }
+
+    return {
+      dprCap: 2,
+      defaultGap: 40,
+      waveWidth: 180,
+      enableMasking: true
+    };
+  }
+
+  function getViewportSize() {
+    if (window.visualViewport) {
+      return {
+        width: Math.round(window.visualViewport.width),
+        height: Math.round(window.visualViewport.height)
+      };
+    }
+
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+  }
+
+  function scheduleInit() {
+    if (resizeRafId) {
+      cancelAnimationFrame(resizeRafId);
+    }
+
+    resizeRafId = requestAnimationFrame(function() {
+      resizeRafId = 0;
+      init();
+    });
   }
 
   function drawCircle(context, size) {
@@ -132,8 +189,9 @@
   }
 
   function buildGrid() {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+    var viewport = getViewportSize();
+    var width = viewport.width;
+    var height = viewport.height;
     var cols = Math.floor(width / settings.gap);
     var rows = Math.floor(height / settings.gap);
     var offsetX = (width - (cols - 1) * settings.gap) / 2;
@@ -167,9 +225,16 @@
   }
 
   function init() {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    var dpr = window.devicePixelRatio || 1;
+    var viewport = getViewportSize();
+    var width = viewport.width;
+    var height = viewport.height;
+    var profile = getQualityProfile(viewport);
+    var dpr = Math.min(window.devicePixelRatio || 1, profile.dprCap);
+
+    settings.waveWidth = profile.waveWidth;
+    if (!hasUserDensityOverride) {
+      settings.gap = profile.defaultGap;
+    }
 
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -204,6 +269,8 @@
     var shapes = grid.shapes;
     var width = grid.width;
     var height = grid.height;
+    var profile = getQualityProfile({ width: width, height: height });
+    var maskingEnabled = profile.enableMasking;
     var radius = Math.min(width, height) * (settings.radiusVmin / 100);
     var now = performance.now();
 
@@ -214,10 +281,12 @@
     activity *= 0.93;
 
     frameCount += 1;
-    if (frameCount % 10 === 0) {
+    if (maskingEnabled && frameCount % 10 === 0) {
       maskRects = Array.from(document.querySelectorAll('[data-shape-mask]')).map(function(el) {
         return el.getBoundingClientRect();
       });
+    } else if (!maskingEnabled && maskRects.length) {
+      maskRects = [];
     }
 
     var maxDist = Math.sqrt(width * width + height * height);
@@ -228,7 +297,7 @@
     for (var i = 0; i < shapes.length; i++) {
       var shape = shapes[i];
       var pad = settings.gap / 2;
-      var masked = !maskOverride && maskRects.some(function(rect) {
+      var masked = maskingEnabled && !maskOverride && maskRects.some(function(rect) {
         return shape.x >= rect.left - pad && shape.x <= rect.right + pad &&
                shape.y >= rect.top - pad && shape.y <= rect.bottom + pad;
       });
@@ -304,8 +373,9 @@
   }
 
   function triggerWave(x, y) {
-    var resolvedX = x !== undefined ? x : window.innerWidth / 2;
-    var resolvedY = y !== undefined ? y : window.innerHeight / 2;
+    var viewport = getViewportSize();
+    var resolvedX = x !== undefined ? x : viewport.width / 2;
+    var resolvedY = y !== undefined ? y : viewport.height / 2;
 
     waves.push({ x: resolvedX, y: resolvedY, startTime: performance.now() });
     maskOverride = true;
@@ -314,7 +384,7 @@
       window.clearTimeout(maskTimeoutId);
     }
 
-    var delay = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight) / settings.waveSpeed;
+    var delay = Math.sqrt(viewport.width * viewport.width + viewport.height * viewport.height) / settings.waveSpeed;
     maskTimeoutId = window.setTimeout(function() {
       maskOverride = false;
       maskTimeoutId = 0;
@@ -326,6 +396,7 @@
   }
 
   function onDensityInput(event) {
+    hasUserDensityOverride = true;
     settings.gap = Number(event.target.value);
     refreshControlLabels();
     init();
@@ -340,10 +411,17 @@
     if (rafId) {
       cancelAnimationFrame(rafId);
     }
+    if (resizeRafId) {
+      cancelAnimationFrame(resizeRafId);
+    }
     if (maskTimeoutId) {
       window.clearTimeout(maskTimeoutId);
     }
-    window.removeEventListener('resize', init);
+    window.removeEventListener('resize', scheduleInit);
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', scheduleInit);
+      window.visualViewport.removeEventListener('scroll', scheduleInit);
+    }
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('click', onClick);
     window.removeEventListener('pagehide', onPageHide);
@@ -353,7 +431,11 @@
   init();
   rafId = requestAnimationFrame(tick);
 
-  window.addEventListener('resize', init);
+  window.addEventListener('resize', scheduleInit);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleInit);
+    window.visualViewport.addEventListener('scroll', scheduleInit);
+  }
   window.addEventListener('pointermove', onMove);
   window.addEventListener('click', onClick);
   window.addEventListener('pagehide', onPageHide);
@@ -371,14 +453,16 @@
   if (triggerCenterButton) {
     triggerCenterButton.addEventListener('click', function(event) {
       event.stopPropagation();
-      triggerWave(window.innerWidth / 2, window.innerHeight / 2);
+      var viewport = getViewportSize();
+      triggerWave(viewport.width / 2, viewport.height / 2);
     });
   }
 
   if (triggerRandomButton) {
     triggerRandomButton.addEventListener('click', function(event) {
       event.stopPropagation();
-      triggerWave(rnd(0, window.innerWidth), rnd(0, window.innerHeight));
+      var viewport = getViewportSize();
+      triggerWave(rnd(0, viewport.width), rnd(0, viewport.height));
     });
   }
 

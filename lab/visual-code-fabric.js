@@ -4,9 +4,14 @@
     return;
   }
 
+  const viewportWidth = Math.round(window.visualViewport ? window.visualViewport.width : window.innerWidth);
+  const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const isPhoneViewport = isCoarsePointer && viewportWidth <= 767;
+  const isTabletViewport = isCoarsePointer && viewportWidth > 767 && viewportWidth <= 1366;
+
   const fullCode = (() => {
     const alphanumeric = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const glyphCount = 1600;
+    const glyphCount = isPhoneViewport ? 900 : (isTabletViewport ? 1200 : 1600);
 
     return Array.from({ length: glyphCount }, (_, index) => {
       if (index > 0 && index % 32 === 0) {
@@ -20,11 +25,11 @@
   const baseConfig = {
     gravity: 0.16,
     damping: 0.986,
-    iterationsPerFrame: 6,
+    iterationsPerFrame: isPhoneViewport ? 4 : (isTabletViewport ? 5 : 6),
     compressFactor: 0.76,
     stretchFactor: 1.18,
-    mouseSize: 5400,
-    mouseStrength: 4.8,
+    mouseSize: isPhoneViewport ? 4200 : 5400,
+    mouseStrength: isPhoneViewport ? 4.2 : 4.8,
     contain: false
   };
 
