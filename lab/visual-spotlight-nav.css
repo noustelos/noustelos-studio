@@ -1,0 +1,486 @@
+:root {
+  --viewport-h: 100vh;
+  --spot-bg: #030316;
+  --spot-panel: rgba(5, 8, 30, 0.84);
+  --spot-panel-soft: rgba(6, 10, 35, 0.6);
+  --spot-line: rgba(148, 163, 184, 0.18);
+  --spot-line-strong: rgba(148, 163, 184, 0.3);
+  --spot-text: #f8fafc;
+  --spot-muted: rgba(203, 213, 225, 0.76);
+  --spot-display: "Sora", sans-serif;
+  --spot-body: "Inter", sans-serif;
+  --spot-code: "IBM Plex Mono", monospace;
+  --spot-shadow: 0 24px 60px rgba(2, 6, 23, 0.46);
+  --spot-transition: 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@supports (height: 100svh) {
+  :root {
+    --viewport-h: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-h: 100dvh;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body.lab-spotlight-page {
+  margin: 0;
+  font-family: var(--spot-body);
+  color: var(--spot-text);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(34, 211, 238, 0.14), transparent 30%),
+    radial-gradient(circle at 84% 20%, rgba(244, 114, 182, 0.14), transparent 28%),
+    radial-gradient(circle at 50% 80%, rgba(234, 179, 8, 0.1), transparent 36%),
+    linear-gradient(180deg, #01020d 0%, var(--spot-bg) 55%, #030318 100%);
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.spot-shell {
+  width: min(calc(100% - 1.2rem), 1260px);
+  min-height: var(--viewport-h);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 1.6rem) 0 clamp(1.6rem, 4vw, 2.8rem);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+}
+
+.spot-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.spot-back-link,
+.spot-footer-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.24rem;
+  color: var(--spot-text);
+  text-decoration: none;
+  font-family: var(--spot-code);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color var(--spot-transition), transform var(--spot-transition);
+}
+
+.spot-back-link:hover,
+.spot-back-link:focus-visible,
+.spot-footer-link:hover,
+.spot-footer-link:focus-visible {
+  color: rgba(34, 211, 238, 0.9);
+  transform: translateX(2px);
+}
+
+.spot-back-link span:last-child,
+.spot-footer-link span:last-child {
+  color: rgba(148, 163, 184, 0.58);
+}
+
+.spot-meta-pill {
+  padding: 0.62rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--spot-line);
+  background: rgba(8, 14, 38, 0.72);
+  color: var(--spot-muted);
+  font-family: var(--spot-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.spot-hero {
+  border: 1px solid var(--spot-line);
+  border-radius: 30px;
+  background: linear-gradient(165deg, var(--spot-panel), var(--spot-panel-soft));
+  box-shadow: var(--spot-shadow);
+  padding: clamp(1rem, 3vw, 1.8rem);
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.spot-kicker {
+  margin: 0;
+  font-family: var(--spot-code);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--spot-muted);
+}
+
+.spot-title {
+  margin: 0;
+  font-family: var(--spot-display);
+  font-size: clamp(42px, 8vw, 94px);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+
+.spot-title span {
+  display: block;
+  color: rgba(125, 211, 252, 0.86);
+}
+
+.spot-intro {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--spot-muted);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.7;
+}
+
+.spot-description {
+  margin: 0.25rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.46);
+  color: rgba(226, 232, 240, 0.88);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.spot-credit {
+  margin: 0;
+  padding-top: 0.62rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  max-width: 44ch;
+  font-family: var(--spot-code);
+  font-size: clamp(11px, 1.45vw, 12px);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: rgba(203, 213, 225, 0.78);
+}
+
+.spot-credit strong {
+  color: rgba(34, 211, 238, 0.95);
+  font-weight: 500;
+}
+
+.spotlight {
+  --ray-width: 3rem;
+  --ray-opacity: 0.4;
+  --spot-opacity: 0.4;
+  --v-gap: 140px;
+  --duration: 0.5s;
+  --easing: ease-in-out;
+  --color: #f00;
+  --outset: 0px;
+  --spot-anchor: --spot;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  gap: var(--v-gap);
+  anchor-scope: all;
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 1.8rem 0 0.6rem;
+}
+
+.spotlight:has(a:active) .super-trouper > * {
+  --outset: -2rem;
+  --delay: 0s;
+  --duration: 0.2s;
+}
+
+.spotlight > * {
+  grid-column: 1;
+}
+
+.spots {
+  display: flex;
+  grid-row: 1;
+  grid-column: 1;
+  gap: min(12vw, 8rem);
+}
+
+.spot {
+  width: 0.875rem;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  anchor-name: --spot;
+  position: relative;
+}
+
+.spot:nth-child(2) {
+  anchor-name: --spot-blue;
+}
+
+.spot:nth-child(3) {
+  anchor-name: --spot-green;
+}
+
+.super-trouper {
+  grid-row: 1 / 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ray {
+  height: 100%;
+  mask-image: linear-gradient(0deg, #0000 0.5rem, #000 6rem);
+}
+
+.ray .l-l,
+.ray .l-r,
+.ray .r-l,
+.ray .r-r {
+  --angle: atan(100cqi / 100cqb);
+  container-type: size;
+  position: absolute;
+  mix-blend-mode: screen;
+  left: calc(anchor(--link left) - var(--outset));
+  right: anchor(var(--spot-anchor) center);
+  top: anchor(var(--spot-anchor) center);
+  bottom: calc(anchor(--link bottom) - 1rem);
+  transition: left var(--duration) var(--delay, 0s), right var(--duration) var(--delay, 0s);
+  transition-timing-function: var(--easing);
+}
+
+.ray .l-l::after,
+.ray .l-r::after,
+.ray .r-l::after,
+.ray .r-r::after {
+  --gradient-angle: atan(var(--ray-width) / 100cqb);
+  content: "";
+  opacity: calc(var(--ray-opacity) * sign(max(0px, 1cqi)));
+  width: max(5rem, 100cqi);
+  height: calc(hypot(100cqi, 100cqb) + 15rem);
+  background-image: conic-gradient(at 0% 0%, transparent calc(180deg - var(--gradient-angle)), var(--color) 180deg);
+  position: absolute;
+  left: 100%;
+  top: 0;
+  rotate: var(--angle);
+  transform-origin: left top;
+  z-index: 4;
+  filter: blur(1px);
+}
+
+.ray .l-r {
+  left: anchor(var(--spot-anchor) center);
+  right: calc(anchor(--link left) + var(--outset));
+}
+
+.ray .l-r::after {
+  rotate: calc(var(--angle) * -1);
+  left: 0;
+}
+
+.ray .r-l,
+.ray .r-r {
+  left: calc(anchor(--link right) + var(--outset));
+  right: anchor(var(--spot-anchor) center);
+}
+
+.ray .r-l::after,
+.ray .r-r::after {
+  background-image: conic-gradient(at 100% 0%, var(--color) 180deg, transparent calc(180deg + var(--gradient-angle)));
+  left: auto;
+  right: 0;
+  transform-origin: right top;
+}
+
+.ray .r-r {
+  left: anchor(var(--spot-anchor) center);
+  right: calc(anchor(--link right) - var(--outset));
+}
+
+.ray .r-r::after {
+  rotate: calc(var(--angle) * -1);
+  right: 100%;
+}
+
+.light {
+  position: absolute;
+  left: calc(anchor(--link left) - var(--outset));
+  right: calc(anchor(--link right) - var(--outset));
+  bottom: calc(anchor(--link bottom) - 1.5rem);
+  height: 1rem;
+  background: rgb(from var(--color) r g b / 0.3);
+  border: 1px solid var(--color);
+  opacity: var(--spot-opacity);
+  border-radius: 100%;
+  transition: all var(--duration) var(--delay, 0s);
+  transition-timing-function: var(--easing);
+  filter: blur(2px);
+  mask-image: linear-gradient(#0001, #000);
+}
+
+.spotlight nav {
+  grid-row: 2;
+  padding-block: 2rem;
+  padding-inline: clamp(1rem, 4vw, 4rem);
+  position: relative;
+}
+
+.spotlight nav::before,
+.spotlight nav::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  inset-inline: -2rem;
+  background: linear-gradient(#fff0 50%, rgb(255 255 255 / 0.15));
+  border-bottom: 1px solid rgb(255 255 255 / 0.3);
+  mask-image: linear-gradient(90deg, #0000, #000 20%, 80%, #0000 100%);
+}
+
+.spotlight nav::after {
+  background: linear-gradient(#001, #0000);
+  top: auto;
+  bottom: -5rem;
+  height: 5rem;
+  border: none;
+  opacity: 0.6;
+}
+
+.spotlight nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 0;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.spotlight nav ul:has(a:hover, a:focus-visible) a:not(:hover, :focus-visible) {
+  opacity: 0.3;
+}
+
+.spotlight nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: clamp(18px, 2.4vw, 24px);
+  display: block;
+  padding-inline: 1rem;
+  position: relative;
+  transition-property: opacity, text-shadow;
+  transition-duration: calc(var(--duration) * 1.5);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.spotlight nav a:hover,
+.spotlight nav a:focus-visible {
+  anchor-name: --link;
+  text-shadow: 0 0 0.75rem #0ff, 0 0 1.25rem #f0f;
+}
+
+.spotlight nav a:focus-visible {
+  outline: 2px dotted #fff;
+  outline-offset: 5px;
+  border-radius: 999rem;
+}
+
+.spotlight nav:not(:has(a:hover)) a[aria-current="page"] {
+  anchor-name: --link;
+}
+
+.lang-toggle {
+  align-self: start;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  border: 1px solid var(--spot-line);
+  border-radius: 999px;
+  background: rgba(8, 14, 38, 0.74);
+  color: var(--spot-text);
+  font-family: var(--spot-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.68rem;
+  cursor: pointer;
+  transition: border-color var(--spot-transition), transform var(--spot-transition), background var(--spot-transition);
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  border-color: var(--spot-line-strong);
+  background: rgba(8, 14, 38, 0.9);
+  transform: translateY(-1px);
+}
+
+.lang-toggle [data-lang-option] {
+  opacity: 0.6;
+  transition: opacity var(--spot-transition), color var(--spot-transition);
+}
+
+.lang-toggle [data-lang-option].is-active {
+  opacity: 1;
+  color: #67e8f9;
+}
+
+.lang-toggle .lang-divider {
+  opacity: 0.35;
+}
+
+@media (max-width: 900px) {
+  .spot-topbar {
+    flex-wrap: wrap;
+  }
+
+  .spot-meta-pill {
+    width: 100%;
+    text-align: center;
+  }
+
+  .spotlight {
+    --v-gap: 115px;
+  }
+
+  .spotlight nav {
+    padding-inline: 0.4rem;
+  }
+
+  .spotlight nav a {
+    font-size: clamp(16px, 5vw, 20px);
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 600px) {
+  .spot-shell {
+    width: min(calc(100% - 0.8rem), 1260px);
+  }
+
+  .spot-hero {
+    border-radius: 24px;
+  }
+
+  .spotlight {
+    --v-gap: 102px;
+  }
+
+  .spots {
+    gap: min(16vw, 5rem);
+  }
+}

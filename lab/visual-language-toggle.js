@@ -172,6 +172,48 @@
           footerLabel: 'Επιστροφη στο UX Lab'
         }
       }
+    },
+    spotlightNav: {
+      en: {
+        common: {
+          switchAria: 'Switch language',
+          backToLab: 'Back to UX Lab'
+        },
+        page: {
+          pill: 'Visual Experiments / Study 06',
+          kicker: 'Anchor Light Menu',
+          titleLine2: 'Navigation',
+          intro: 'A navigation concept where anchor-positioned beams project from moving light heads and follow hover focus in real time.',
+          description: 'Description: This study explores CSS Anchor Positioning for synchronized light beams, dynamic focus cues, and cinematic menu feedback.',
+          footerLabel: 'Back to UX Lab',
+          menu: {
+            home: 'Home',
+            about: 'About us',
+            products: 'Products',
+            contact: 'Contact'
+          }
+        }
+      },
+      gr: {
+        common: {
+          switchAria: 'Αλλαγη γλωσσας',
+          backToLab: 'Επιστροφη στο UX Lab'
+        },
+        page: {
+          pill: 'Οπτικα Πειραματα / Study 06',
+          kicker: 'Μελετη Φωτεινου Μενού',
+          titleLine2: 'Πλοηγηση',
+          intro: 'Ενα navigation concept οπου anchor-positioned beams προβαλλονται απο moving light heads και ακολουθουν το hover focus σε πραγματικο χρονο.',
+          description: 'Περιγραφη: Αυτη η μελετη εξερευνα το CSS Anchor Positioning για συγχρονισμενες φωτεινες δεσμες, dynamic focus cues και κινηματογραφικο menu feedback.',
+          footerLabel: 'Επιστροφη στο UX Lab',
+          menu: {
+            home: 'Αρχικη',
+            about: 'Σχετικα',
+            products: 'Προϊοντα',
+            contact: 'Επικοινωνια'
+          }
+        }
+      }
     }
   };
 

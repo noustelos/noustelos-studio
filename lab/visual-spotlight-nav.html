@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="description" content="Spotlight navigation experiment from Noustelos UX Lab with anchor-based light beams and cinematic hover transitions." />
+  <meta name="theme-color" content="#030316" />
+  <link rel="canonical" href="https://noustelos.gr/lab/visual-spotlight-nav.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Spotlight Navigation | Visual Experiments | UX Lab" />
+  <meta property="og:description" content="Anchor-positioned light rays create a cinematic menu spotlight effect." />
+  <meta property="og:url" content="https://noustelos.gr/lab/visual-spotlight-nav.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <title>Spotlight Navigation | Visual Experiments | UX Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.min.css" />
+  <link rel="stylesheet" href="visual-spotlight-nav.min.css" />
+</head>
+<body class="lab-spotlight-page" data-i18n-page="spotlightNav">
+  <main class="spot-shell" aria-labelledby="spotlight-nav-title">
+    <div class="spot-topbar">
+      <a class="spot-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+        <span>UX Lab</span>
+        <span>/&gt;</span>
+      </a>
+      <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">EL</span>
+      </button>
+      <div class="spot-meta-pill" data-i18n="page.pill">Visual Experiments / Study 06</div>
+    </div>
+
+    <section class="spot-hero">
+      <p class="spot-kicker" data-i18n="page.kicker">Anchor Light Menu</p>
+      <h1 id="spotlight-nav-title" class="spot-title">
+        Spotlight
+        <span data-i18n="page.titleLine2">Navigation</span>
+      </h1>
+      <p class="spot-intro" data-i18n="page.intro">
+        A navigation concept where anchor-positioned beams project from moving light heads and follow hover focus in real time.
+      </p>
+
+      <div class="spotlight" aria-label="Spotlight navigation demo">
+        <div class="spots" aria-hidden="true">
+          <div class="spot"></div>
+          <div class="spot"></div>
+          <div class="spot"></div>
+        </div>
+
+        <nav aria-label="Demo navigation">
+          <ul>
+            <li><a href="#" aria-current="page" data-i18n="page.menu.home">Home</a></li>
+            <li><a href="#" data-i18n="page.menu.about">About us</a></li>
+            <li><a href="#" data-i18n="page.menu.products">Products</a></li>
+            <li><a href="#" data-i18n="page.menu.contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="super-trouper" style="--color: #ff0;">
+          <div class="ray">
+            <div class="l-l"></div>
+            <div class="l-r"></div>
+            <div class="r-l"></div>
+            <div class="r-r"></div>
+          </div>
+          <div class="light"></div>
+        </div>
+
+        <div class="super-trouper" style="--color: #0ff; --spot-anchor: --spot-blue; --duration: 0.7s; --delay: 0.4s;">
+          <div class="ray">
+            <div class="l-l"></div>
+            <div class="l-r"></div>
+            <div class="r-l"></div>
+            <div class="r-r"></div>
+          </div>
+          <div class="light"></div>
+        </div>
+
+        <div class="super-trouper" style="--color: #f0f; --spot-anchor: --spot-green; --duration: 0.6s; --delay: 0.2s;">
+          <div class="ray">
+            <div class="l-l"></div>
+            <div class="l-r"></div>
+            <div class="r-l"></div>
+            <div class="r-r"></div>
+          </div>
+          <div class="light"></div>
+        </div>
+      </div>
+
+      <p class="spot-description" data-i18n="page.description">
+        Description: This study explores CSS Anchor Positioning for synchronized light beams, dynamic focus cues, and cinematic menu feedback.
+      </p>
+
+      <p class="spot-credit">
+        Inspired by original code by <strong>Nils Binder (@enbee81)</strong>.
+      </p>
+    </section>
+
+    <a class="spot-footer-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <span data-i18n="page.footerLabel">Back to UX Lab</span>
+      <span>/&gt;</span>
+    </a>
+  </main>
+
+  <script src="visual-language-toggle.js"></script>
+</body>
+</html>
