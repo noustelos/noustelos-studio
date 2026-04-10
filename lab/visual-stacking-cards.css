@@ -1,7 +1,20 @@
 :root {
+  --viewport-h: 100vh;
   --card-height: clamp(260px, 40vw, 520px);
   --card-margin: clamp(20px, 4vw, 56px);
   --card-top-offset: 1em;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --viewport-h: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-h: 100dvh;
+  }
 }
 
 * {
@@ -10,12 +23,19 @@
 
 body.lab-stacking-cards-page {
   margin: 0;
-  min-height: 100vh;
-  padding: 1rem 0 10vh;
+  min-height: var(--viewport-h);
+  padding: calc(1rem + env(safe-area-inset-top)) 0 calc(10vh + env(safe-area-inset-bottom));
   background: #111;
   color: #fff;
   font-family: "Space Grotesk", sans-serif;
   overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+@supports not (overflow: clip) {
+  body.lab-stacking-cards-page {
+    overflow-x: hidden;
+  }
 }
 
 .stack-shell {
@@ -28,9 +48,11 @@ body.lab-stacking-cards-page {
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .stack-back-link,
+.stack-variant-link,
 .stack-footer {
   display: inline-flex;
   align-items: baseline;
@@ -45,6 +67,8 @@ body.lab-stacking-cards-page {
 
 .stack-back-link:hover,
 .stack-back-link:focus-visible,
+.stack-variant-link:hover,
+.stack-variant-link:focus-visible,
 .stack-footer:hover,
 .stack-footer:focus-visible {
   color: #05d9e8;
@@ -52,10 +76,19 @@ body.lab-stacking-cards-page {
 }
 
 .stack-back-link span:last-child,
+.stack-variant-link span:last-child,
 .stack-footer span:last-child {
   font-size: 0.75em;
   transform: translateY(-0.2em);
   color: rgba(148, 163, 184, 0.75);
+}
+
+.stack-variant-link {
+  margin-left: auto;
+  border: 1px solid rgba(5, 217, 232, 0.35);
+  border-radius: 999px;
+  padding: 0.28rem 0.68rem;
+  font-size: clamp(12px, 1.65vw, 14px);
 }
 
 .stack-hero {
@@ -101,6 +134,7 @@ body.lab-stacking-cards-page {
 }
 
 .card {
+  position: -webkit-sticky;
   position: sticky;
   top: 10vh;
   height: var(--card-height);
@@ -218,8 +252,8 @@ body.lab-stacking-cards-page {
 
 .progress-circle {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: calc(22px + env(safe-area-inset-right));
+  bottom: calc(22px + env(safe-area-inset-bottom));
   width: 72px;
   height: 72px;
   z-index: 20;
@@ -261,6 +295,36 @@ body.lab-stacking-cards-page {
   margin-top: 1rem;
 }
 
+@supports not (animation-timeline: scroll()) {
+  .stack-title {
+    animation: none;
+    color: #fff;
+    background: none;
+    -webkit-text-stroke: 0;
+  }
+
+  .card__content {
+    animation: none;
+  }
+
+  .progress-circle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-title,
+  .card__content,
+  .progress-circle circle {
+    animation: none !important;
+  }
+
+  .stack-back-link,
+  .stack-footer {
+    transition: none;
+  }
+}
+
 @media (max-width: 720px) {
   .stack-shell {
     width: min(calc(100% - 1rem), 1200px);
@@ -282,7 +346,7 @@ body.lab-stacking-cards-page {
   .progress-circle {
     width: 64px;
     height: 64px;
-    right: 14px;
-    bottom: 14px;
+    right: calc(14px + env(safe-area-inset-right));
+    bottom: calc(14px + env(safe-area-inset-bottom));
   }
 }
