@@ -1,17 +1,23 @@
 :root {
   --viewport-h: 100vh;
-  --spot-bg: #030316;
-  --spot-panel: rgba(5, 8, 30, 0.84);
-  --spot-panel-soft: rgba(6, 10, 35, 0.6);
-  --spot-line: rgba(148, 163, 184, 0.18);
-  --spot-line-strong: rgba(148, 163, 184, 0.3);
+  --spot-bg: #050505;
+  --spot-panel: rgba(14, 14, 14, 0.86);
+  --spot-panel-soft: rgba(24, 24, 24, 0.62);
+  --spot-line: rgba(180, 180, 180, 0.22);
+  --spot-line-strong: rgba(220, 220, 220, 0.34);
   --spot-text: #f8fafc;
-  --spot-muted: rgba(203, 213, 225, 0.76);
+  --spot-muted: rgba(214, 214, 214, 0.78);
   --spot-display: "Space Grotesk", sans-serif;
   --spot-body: "Space Grotesk", sans-serif;
   --spot-code: "Space Grotesk", sans-serif;
-  --spot-shadow: 0 24px 60px rgba(2, 6, 23, 0.46);
+  --spot-shadow: 0 24px 60px rgba(0, 0, 0, 0.52);
   --spot-transition: 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+
+  --beam-1: #f0f0f0;
+  --beam-2: #b8b8b8;
+  --beam-3: #7f7f7f;
+  --glow-1: #dcdcdc;
+  --glow-2: #9f9f9f;
 }
 
 @supports (height: 100svh) {
@@ -35,19 +41,41 @@ body {
   min-height: 100%;
 }
 
-body.lab-spotlight-page {
+body.lab-spotlight-page-bw {
   margin: 0;
   font-family: var(--spot-body);
   color: var(--spot-text);
   background:
-    radial-gradient(circle at 16% 18%, rgba(34, 211, 238, 0.14), transparent 30%),
-    radial-gradient(circle at 84% 20%, rgba(244, 114, 182, 0.14), transparent 28%),
-    radial-gradient(circle at 50% 80%, rgba(234, 179, 8, 0.1), transparent 36%),
-    linear-gradient(180deg, #01020d 0%, var(--spot-bg) 55%, #030318 100%);
+    radial-gradient(circle at 16% 18%, rgba(233, 233, 233, 0.12), transparent 30%),
+    radial-gradient(circle at 84% 20%, rgba(180, 180, 180, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 80%, rgba(120, 120, 120, 0.12), transparent 36%),
+    linear-gradient(180deg, #020202 0%, var(--spot-bg) 55%, #080808 100%);
   overflow-x: clip;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@supports not (overflow: clip) {
+  body.lab-spotlight-page-bw {
+    overflow-x: hidden;
+  }
+}
+
+body.lab-spotlight-page-bw.is-color {
+  --spot-bg: #030316;
+  --spot-panel: rgba(5, 8, 30, 0.84);
+  --spot-panel-soft: rgba(6, 10, 35, 0.6);
+  --spot-line: rgba(148, 163, 184, 0.18);
+  --spot-line-strong: rgba(148, 163, 184, 0.3);
+  --spot-text: #f8fafc;
+  --spot-muted: rgba(203, 213, 225, 0.76);
+  --spot-shadow: 0 24px 60px rgba(2, 6, 23, 0.46);
+  --beam-1: #ff0;
+  --beam-2: #0ff;
+  --beam-3: #f0f;
+  --glow-1: #0ff;
+  --glow-2: #f0f;
 }
 
 .spot-shell {
@@ -68,7 +96,6 @@ body.lab-spotlight-page {
 }
 
 .spot-back-link,
-.spot-variant-link,
 .spot-footer-link {
   display: inline-flex;
   align-items: baseline;
@@ -84,33 +111,48 @@ body.lab-spotlight-page {
 
 .spot-back-link:hover,
 .spot-back-link:focus-visible,
-.spot-variant-link:hover,
-.spot-variant-link:focus-visible,
 .spot-footer-link:hover,
 .spot-footer-link:focus-visible {
-  color: rgba(34, 211, 238, 0.9);
+  color: var(--beam-1);
   transform: translateX(2px);
 }
 
 .spot-back-link span:last-child,
-.spot-variant-link span:last-child,
 .spot-footer-link span:last-child {
   color: rgba(148, 163, 184, 0.58);
 }
 
-.spot-variant-link {
-  margin-left: auto;
-  padding: 0.32rem 0.7rem;
-  border-radius: 999px;
+.tone-toggle {
+  align-self: start;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
   border: 1px solid var(--spot-line);
-  background: rgba(8, 14, 38, 0.62);
+  border-radius: 999px;
+  background: rgba(12, 12, 12, 0.74);
+  color: var(--spot-text);
+  font-family: var(--spot-code);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.68rem;
+  cursor: pointer;
+  transition: border-color var(--spot-transition), transform var(--spot-transition), background var(--spot-transition);
+}
+
+.tone-toggle:hover,
+.tone-toggle:focus-visible {
+  border-color: var(--spot-line-strong);
+  background: rgba(18, 18, 18, 0.9);
+  transform: translateY(-1px);
 }
 
 .spot-meta-pill {
   padding: 0.62rem 0.9rem;
   border-radius: 999px;
   border: 1px solid var(--spot-line);
-  background: rgba(8, 14, 38, 0.72);
+  background: rgba(12, 12, 12, 0.72);
   color: var(--spot-muted);
   font-family: var(--spot-code);
   font-size: 11px;
@@ -151,7 +193,7 @@ body.lab-spotlight-page {
 
 .spot-title span {
   display: block;
-  color: rgba(125, 211, 252, 0.86);
+  color: var(--beam-2);
 }
 
 .spot-intro {
@@ -186,7 +228,7 @@ body.lab-spotlight-page {
 }
 
 .spot-credit strong {
-  color: rgba(34, 211, 238, 0.95);
+  color: var(--beam-2);
   font-weight: 500;
 }
 
@@ -402,7 +444,7 @@ body.lab-spotlight-page {
 .spotlight nav a:hover,
 .spotlight nav a:focus-visible {
   anchor-name: --link;
-  text-shadow: 0 0 0.75rem #0ff, 0 0 1.25rem #f0f;
+  text-shadow: 0 0 0.75rem var(--glow-1), 0 0 1.25rem var(--glow-2);
 }
 
 .spotlight nav a:focus-visible {
@@ -415,44 +457,26 @@ body.lab-spotlight-page {
   anchor-name: --link;
 }
 
-.lang-toggle {
-  align-self: start;
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  border: 1px solid var(--spot-line);
-  border-radius: 999px;
-  background: rgba(8, 14, 38, 0.74);
-  color: var(--spot-text);
-  font-family: var(--spot-code);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.68rem;
-  cursor: pointer;
-  transition: border-color var(--spot-transition), transform var(--spot-transition), background var(--spot-transition);
-}
+@supports not ((anchor-name: --x) and (left: anchor(--x left))) {
+  .spotlight {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
-.lang-toggle:hover,
-.lang-toggle:focus-visible {
-  border-color: var(--spot-line-strong);
-  background: rgba(8, 14, 38, 0.9);
-  transform: translateY(-1px);
-}
+  .spots,
+  .super-trouper {
+    display: none;
+  }
 
-.lang-toggle [data-lang-option] {
-  opacity: 0.6;
-  transition: opacity var(--spot-transition), color var(--spot-transition);
-}
+  .spotlight nav {
+    padding-inline: 0;
+  }
 
-.lang-toggle [data-lang-option].is-active {
-  opacity: 1;
-  color: #67e8f9;
-}
-
-.lang-toggle .lang-divider {
-  opacity: 0.35;
+  .spotlight nav::before,
+  .spotlight nav::after {
+    inset-inline: 0;
+  }
 }
 
 @media (max-width: 900px) {

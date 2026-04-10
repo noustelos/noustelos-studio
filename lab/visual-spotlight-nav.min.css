@@ -7,9 +7,9 @@
   --spot-line-strong: rgba(148, 163, 184, 0.3);
   --spot-text: #f8fafc;
   --spot-muted: rgba(203, 213, 225, 0.76);
-  --spot-display: "Sora", sans-serif;
-  --spot-body: "Inter", sans-serif;
-  --spot-code: "IBM Plex Mono", monospace;
+  --spot-display: "Space Grotesk", sans-serif;
+  --spot-body: "Space Grotesk", sans-serif;
+  --spot-code: "Space Grotesk", sans-serif;
   --spot-shadow: 0 24px 60px rgba(2, 6, 23, 0.46);
   --spot-transition: 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -68,6 +68,7 @@ body.lab-spotlight-page {
 }
 
 .spot-back-link,
+.spot-variant-link,
 .spot-footer-link {
   display: inline-flex;
   align-items: baseline;
@@ -83,6 +84,8 @@ body.lab-spotlight-page {
 
 .spot-back-link:hover,
 .spot-back-link:focus-visible,
+.spot-variant-link:hover,
+.spot-variant-link:focus-visible,
 .spot-footer-link:hover,
 .spot-footer-link:focus-visible {
   color: rgba(34, 211, 238, 0.9);
@@ -90,8 +93,17 @@ body.lab-spotlight-page {
 }
 
 .spot-back-link span:last-child,
+.spot-variant-link span:last-child,
 .spot-footer-link span:last-child {
   color: rgba(148, 163, 184, 0.58);
+}
+
+.spot-variant-link {
+  margin-left: auto;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--spot-line);
+  background: rgba(8, 14, 38, 0.62);
 }
 
 .spot-meta-pill {
