@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="description" content="UX Lab by Noustelos Studio presents experimental web concepts, interaction studies and prototype interfaces focused on motion, storytelling and accessibility." data-i18n-attr="content:meta.description" />
   <meta name="theme-color" content="#ffffff" />
@@ -28,6 +28,31 @@
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="lab.min.css" />
   <style>
+    body.page-id-42 {
+      padding: calc(4rem + constant(safe-area-inset-top)) constant(safe-area-inset-right) calc(4rem + constant(safe-area-inset-bottom)) constant(safe-area-inset-left);
+      padding: calc(4rem + env(safe-area-inset-top)) env(safe-area-inset-right) calc(4rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    }
+
+    @supports not (overflow: clip) {
+      body.page-id-42 {
+        overflow-x: hidden;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body.page-id-42 {
+        padding: calc(2.4rem + constant(safe-area-inset-top)) constant(safe-area-inset-right) calc(2.4rem + constant(safe-area-inset-bottom)) constant(safe-area-inset-left);
+        padding: calc(2.4rem + env(safe-area-inset-top)) env(safe-area-inset-right) calc(2.4rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body.page-id-42 {
+        padding: calc(1.1rem + constant(safe-area-inset-top)) constant(safe-area-inset-right) calc(1.5rem + constant(safe-area-inset-bottom)) constant(safe-area-inset-left);
+        padding: calc(1.1rem + env(safe-area-inset-top)) env(safe-area-inset-right) calc(1.5rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+      }
+    }
+
     body.page-id-42 .lab-visual-stack {
       display: grid;
       gap: 0.85rem;
@@ -206,6 +231,38 @@
       color: rgba(31, 41, 55, 0.68) !important;
       -webkit-text-fill-color: rgba(31, 41, 55, 0.68) !important;
     }
+
+    body.page-id-42 .lab-interaction-stack {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    body.page-id-42 .lab-interaction-stack .lab-card {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.88), transparent 34%),
+        linear-gradient(150deg, rgba(255, 255, 255, 0.97), rgba(241, 236, 228, 0.96)) !important;
+      border-color: rgba(31, 41, 55, 0.12) !important;
+      color: rgba(31, 41, 55, 0.96) !important;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    body.page-id-42 .lab-interaction-stack .lab-card:hover,
+    body.page-id-42 .lab-interaction-stack .lab-card:focus-within {
+      border-color: rgba(31, 41, 55, 0.18) !important;
+      box-shadow: 0 16px 30px rgba(17, 17, 17, 0.1) !important;
+    }
+
+    body.page-id-42 .lab-interaction-stack .lab-video-header h3,
+    body.page-id-42 .lab-interaction-stack .lab-gravity-header h3 {
+      color: rgba(31, 41, 55, 0.96) !important;
+      -webkit-text-fill-color: rgba(31, 41, 55, 0.96) !important;
+    }
+
+    body.page-id-42 .lab-interaction-stack .lab-video-header p,
+    body.page-id-42 .lab-interaction-stack .lab-gravity-header p {
+      color: rgba(31, 41, 55, 0.68) !important;
+      -webkit-text-fill-color: rgba(31, 41, 55, 0.68) !important;
+    }
   </style>
 </head>
 <body class="lab-page page-id-42">
@@ -238,28 +295,10 @@
               <p>open dedicated visual page</p>
             </div>
           </a>
-          <a class="lab-card lab-code-card lab-card-link" href="visual-code-fabric.html" aria-label="Open code fabric experiment page">
-            <div class="lab-video-header">
-              <h3>code fabric field</h3>
-              <p>open interactive canvas cloth page</p>
-            </div>
-          </a>
           <a class="lab-card lab-video-card lab-signal-card lab-card-link" href="visual-text-signal.html" aria-label="Open text signal experiment page">
             <div class="lab-video-header">
               <h3>text signal reveal</h3>
               <p>open pure css scroll text page</p>
-            </div>
-          </a>
-          <a class="lab-card lab-video-card lab-abyss-card lab-card-link" href="visual-abyss-drift.html" aria-label="Open abyss drift experiment page">
-            <div class="lab-video-header">
-              <h3>abyss drift study</h3>
-              <p>open procedural underwater motion page</p>
-            </div>
-          </a>
-          <a class="lab-card lab-video-card lab-wave-card lab-card-link" href="visual-wave-grid.html" aria-label="Open wave grid experiment page">
-            <div class="lab-video-header">
-              <h3>wave grid pulse</h3>
-              <p>open fullscreen reactive canvas page</p>
             </div>
           </a>
           <a class="lab-card lab-video-card lab-spotlight-card lab-card-link" href="visual-spotlight-nav.html" aria-label="Open spotlight navigation experiment page">
@@ -297,11 +336,29 @@
           <span class="lab-section-title">interaction lab /&gt;</span>
           <span class="lab-drawer-mark" aria-hidden="true">+</span>
         </button>
-        <div class="lab-section-content" id="lab-drawer-interaction" hidden>
+        <div class="lab-section-content lab-interaction-stack" id="lab-drawer-interaction" hidden>
           <a class="lab-card lab-gravity-card lab-card-link" href="gravity-simulation.html" aria-label="Open gravity simulation page">
             <div class="lab-gravity-header">
               <h3>gravity simulation</h3>
               <p>open dedicated sandbox page</p>
+            </div>
+          </a>
+          <a class="lab-card lab-code-card lab-card-link" href="visual-code-fabric.html" aria-label="Open code fabric experiment page">
+            <div class="lab-video-header">
+              <h3>code fabric field</h3>
+              <p>open interactive canvas cloth page</p>
+            </div>
+          </a>
+          <a class="lab-card lab-video-card lab-wave-card lab-card-link" href="visual-wave-grid.html" aria-label="Open wave grid experiment page">
+            <div class="lab-video-header">
+              <h3>wave grid pulse</h3>
+              <p>open fullscreen reactive canvas page</p>
+            </div>
+          </a>
+          <a class="lab-card lab-video-card lab-abyss-card lab-card-link" href="visual-abyss-drift.html" aria-label="Open abyss drift experiment page">
+            <div class="lab-video-header">
+              <h3>abyss drift study</h3>
+              <p>open procedural underwater motion page</p>
             </div>
           </a>
         </div>
