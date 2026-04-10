@@ -174,44 +174,121 @@ class Background extends THREE.Mesh {
 }
 
 class WaterStuff extends THREE.Group {
-  constructor() {
+  constructor(mainThing) {
     super();
-    this.items = Array.from({ length: 50 }, () => {
-      const item = new THREE.Mesh(
-        new THREE.CapsuleGeometry(0.25, 2, 3, 7, 3),
-        new THREE.MeshBasicMaterial({ wireframe: true, color: "#f5f5f5" })
-      );
+    this.mainThing = mainThing;
+    this.time = 0;
+    this.items = Array.from({ length: 2 }, (_, slot) => {
+      const item = new Thing();
+      const [lineSegment, points] = item.children;
+      const isNear = slot === 0;
 
-      this.setRandom(item, 50 - Math.random() * 100);
+      if (lineSegment?.material) {
+        lineSegment.material.opacity = isNear ? 0.64 : 0.34;
+      }
+
+      if (points?.material) {
+        points.material.opacity = isNear ? 0.54 : 0.26;
+        points.material.size = isNear ? 0.09 : 0.055;
+      }
+
+      this.setRandom(item, slot);
       this.add(item);
       return item;
     });
   }
 
-  setRandom(object, xPosition) {
-    const angle = Math.PI * Math.random();
-    const radius = 5 + Math.random() * 10;
+  setRandom(object, slot = 0) {
+    const center = this.mainThing ? this.mainThing.position : new THREE.Vector3(0, 0, 0);
+    const isNear = slot === 0;
+    const anchorAngle = (slot * Math.PI) + (Math.random() - 0.5) * 0.34;
+    const distance = isNear ? 3.2 + Math.random() * 0.9 : 6.8 + Math.random() * 1.8;
+    const yOffset = isNear ? -0.55 + Math.random() * 1.4 : -1.25 + Math.random() * 2.2;
+    const baseScale = isNear ? 0.2 + Math.random() * 0.1 : 0.14 + Math.random() * 0.08;
+    const baseRotation = new THREE.Euler(
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2
+    );
 
     object.position.set(
-      xPosition,
-      Math.sin(angle) * radius,
-      Math.cos(angle) * radius
+      center.x + Math.cos(anchorAngle) * distance,
+      center.y + yOffset,
+      center.z + Math.sin(anchorAngle) * distance
     );
-    object.rotation.setFromVector3(new THREE.Vector3().random().multiplyScalar(Math.PI * 2));
-    object.scale.y = 1 + (Math.random() - 0.5) * 1.5;
+    object.rotation.copy(baseRotation);
+    object.scale.set(baseScale, baseScale, baseScale);
+
+    object.userData.homeAngle = anchorAngle;
+    object.userData.homeDistance = distance;
+    object.userData.baseHeight = yOffset;
+    object.userData.baseRotation = baseRotation;
+    object.userData.baseScale = baseScale;
+    object.userData.phase = Math.random() * Math.PI * 2;
+    object.userData.orbitSpeed = isNear ? 0.09 + Math.random() * 0.035 : -(0.06 + Math.random() * 0.03);
+    object.userData.radiusBreathAmp = isNear ? 0.22 + Math.random() * 0.15 : 0.35 + Math.random() * 0.22;
+    object.userData.bobSpeed = isNear ? 0.34 + Math.random() * 0.24 : 0.24 + Math.random() * 0.2;
+    object.userData.bobAmp = isNear ? 0.12 + Math.random() * 0.12 : 0.1 + Math.random() * 0.12;
+    object.userData.pulseSpeed = isNear ? 0.64 + Math.random() * 0.35 : 0.42 + Math.random() * 0.26;
+    object.userData.pulseAmp = isNear ? 0.028 + Math.random() * 0.018 : 0.016 + Math.random() * 0.014;
+    object.userData.danceAmpX = isNear ? 0.26 + Math.random() * 0.14 : 0.44 + Math.random() * 0.2;
+    object.userData.danceAmpZ = isNear ? 0.18 + Math.random() * 0.12 : 0.34 + Math.random() * 0.18;
+    object.userData.danceSpeed = isNear ? 0.9 + Math.random() * 0.3 : 0.62 + Math.random() * 0.24;
+    object.userData.tiltAmp = isNear ? 0.12 + Math.random() * 0.06 : 0.08 + Math.random() * 0.05;
+    object.userData.profile = isNear ? "near" : "far";
   }
 
   update(delta) {
-    const limit = 50;
+    this.time += delta;
+    const center = this.mainThing ? this.mainThing.position : new THREE.Vector3(0, 0, 0);
 
     this.items.forEach((item) => {
-      let xPosition = item.position.x - delta;
-      item.position.x = xPosition;
+      const data = item.userData;
+      const t = this.time;
+      const phase = data.phase || 0;
 
-      if (xPosition < -limit) {
-        xPosition = (xPosition + limit) % 100;
-        this.setRandom(item, limit + xPosition);
+      const orbitAngle = (data.homeAngle || 0) + t * (data.orbitSpeed || 0.08);
+      const radiusBreath = Math.sin(t * 0.2 + phase) * (data.radiusBreathAmp || 0.3);
+      const distance = (data.homeDistance || 5) + radiusBreath;
+      const homeX = center.x + Math.cos(orbitAngle) * distance;
+      const homeZ = center.z + Math.sin(orbitAngle) * distance;
+      const danceX = Math.sin(t * (data.danceSpeed || 0.8) + phase) * (data.danceAmpX || 0.28);
+      const danceZ = Math.cos(t * ((data.danceSpeed || 0.8) * 0.9) + phase * 1.2) * (data.danceAmpZ || 0.22);
+      const currentX = homeX + danceX;
+      const currentZ = homeZ + danceZ;
+
+      const lookAheadT = t + 0.06;
+      const aheadOrbitAngle = (data.homeAngle || 0) + lookAheadT * (data.orbitSpeed || 0.08);
+      const aheadRadiusBreath = Math.sin(lookAheadT * 0.2 + phase) * (data.radiusBreathAmp || 0.3);
+      const aheadDistance = (data.homeDistance || 5) + aheadRadiusBreath;
+      const aheadHomeX = center.x + Math.cos(aheadOrbitAngle) * aheadDistance;
+      const aheadHomeZ = center.z + Math.sin(aheadOrbitAngle) * aheadDistance;
+      const aheadDanceX = Math.sin(lookAheadT * (data.danceSpeed || 0.8) + phase) * (data.danceAmpX || 0.28);
+      const aheadDanceZ = Math.cos(lookAheadT * ((data.danceSpeed || 0.8) * 0.9) + phase * 1.2) * (data.danceAmpZ || 0.22);
+      const aheadX = aheadHomeX + aheadDanceX;
+      const aheadZ = aheadHomeZ + aheadDanceZ;
+      const travelAngle = Math.atan2(aheadZ - currentZ, aheadX - currentX);
+      const mainSync = Math.sin(uniforms.time.value + phase * 0.35);
+
+      item.position.x = currentX;
+      item.position.z = currentZ;
+      item.position.y =
+        center.y +
+        (data.baseHeight || 0) +
+        Math.sin(t * (data.bobSpeed || 0.5) + phase) * (data.bobAmp || 0.18) +
+        mainSync * 0.08 +
+        Math.sin(t * 0.15 + phase * 0.7) * 0.1;
+
+      if (data.baseRotation) {
+        item.rotation.x = data.baseRotation.x + mainSync * 0.08;
+        item.rotation.y = travelAngle + Math.sin(t * 0.23 + phase) * 0.1;
+        item.rotation.z = data.baseRotation.z + mainSync * (data.tiltAmp || 0.12);
       }
+
+      const pulse = 1 + mainSync * (data.pulseAmp || 0.03);
+      const baseScale = data.baseScale || 0.4;
+      const spread = 1 + Math.cos(uniforms.time.value * 0.8 + phase) * 0.02;
+      item.scale.set(baseScale * spread, baseScale * pulse, baseScale * spread);
     });
   }
 }
@@ -323,7 +400,7 @@ controls.target.set(0, 0.8, 0);
 const background = new Background(scene);
 const thing = new Thing();
 const seaBed = new SeaBed();
-const waterStuff = new WaterStuff();
+const waterStuff = new WaterStuff(thing);
 
 scene.add(background);
 scene.add(thing);
