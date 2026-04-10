@@ -2,117 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="description" content="Visual Experiments from Noustelos UX Lab with floating badges and layered motion for a frontend showcase." />
-  <meta name="theme-color" content="#020617" />
-  <link rel="canonical" href="https://noustelos.gr/lab/visual-experiments.html" />
+  <meta name="description" content="Monochrome Floating Stack Study from Noustelos UX Lab with a toggle between black and white and color mode." />
+  <meta name="theme-color" content="#090909" />
+  <link rel="canonical" href="https://noustelos.gr/lab/visual-experiments-bw.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Visual Experiments | UX Lab" />
-  <meta property="og:description" content="Floating stack badges, layered motion, and a scroll-driven visual study." />
-  <meta property="og:url" content="https://noustelos.gr/lab/visual-experiments.html" />
+  <meta property="og:title" content="Floating Stack Study B/W | Visual Experiments | UX Lab" />
+  <meta property="og:description" content="Monochrome Floating Stack Study with one-click return to the full color version." />
+  <meta property="og:url" content="https://noustelos.gr/lab/visual-experiments-bw.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
-  <title>Visual Experiments | UX Lab</title>
+  <title>Floating Stack Study B/W | Visual Experiments | UX Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.min.css" />
-  <link rel="stylesheet" href="lab.min.css" />
   <link rel="stylesheet" href="visual-experiments.min.css" />
+  <link rel="stylesheet" href="visual-experiments-bw.min.css" />
   <style>
-    .visual-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-    }
-
-    .visual-topbar-actions {
-      margin-left: auto;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-
-    .visual-variant-link {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.2rem;
-      border: 1px solid rgba(103, 232, 249, 0.36);
-      border-radius: 999px;
-      padding: 0.28rem 0.68rem;
-      font-family: "Fira Code", monospace;
-      font-size: clamp(12px, 1.6vw, 13px);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: rgba(241, 245, 249, 0.94);
-      transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .visual-variant-link:hover,
-    .visual-variant-link:focus-visible {
-      color: rgba(103, 232, 249, 1);
-      border-color: rgba(103, 232, 249, 0.62);
-      transform: translateY(-1px);
-    }
-
-    .visual-variant-link span:last-child {
-      font-size: 0.75em;
-      transform: translateY(-0.2em);
-      color: rgba(148, 163, 184, 0.72);
-    }
-
     .visual-credit {
       margin: 1.05rem 0 0;
       padding-top: 0.62rem;
-      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      border-top: 1px solid rgba(148, 163, 184, 0.28);
       max-width: 42ch;
       font-family: "Fira Code", monospace;
       font-size: clamp(11px, 1.45vw, 12px);
       line-height: 1.6;
       letter-spacing: 0.04em;
-      color: rgba(203, 213, 225, 0.78);
+      color: rgba(226, 232, 240, 0.84);
     }
 
     .visual-credit strong {
-      color: rgba(103, 232, 249, 0.95);
+      color: rgba(255, 255, 255, 0.95);
       font-weight: 500;
     }
   </style>
 </head>
-<body class="lab-visual-page" data-i18n-page="visualExperiments">
+<body class="lab-visual-page lab-visual-page-bw" data-tone-mode="bw">
   <main class="visual-page-shell" aria-labelledby="visual-experiments-title">
     <div class="visual-topbar">
-      <a class="visual-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <a class="visual-back-link" href="index.html" aria-label="Back to UX Lab">
         <span>UX Lab</span>
         <span>/&gt;</span>
       </a>
-      <div class="visual-topbar-actions">
-        <a class="visual-variant-link" href="visual-experiments-bw.html" aria-label="Open monochrome variant">
-          <span>Monochrome</span>
-          <span>/&gt;</span>
-        </a>
-        <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
-          <span data-lang-option="en">EN</span>
-          <span class="lang-divider">/</span>
-          <span data-lang-option="gr">EL</span>
-        </button>
-      </div>
+      <button class="tone-toggle" id="toneToggle" type="button" aria-pressed="false">Επιστροφη σε χρωμα</button>
     </div>
+
+    <p class="visual-mode-chip">Μονοχρωμη εκδοση</p>
 
     <section class="visual-hero">
       <div class="visual-hero-grid">
         <div class="visual-copy visual-section is-visible">
-          <p class="visual-eyebrow" data-i18n="page.eyebrow">Visual Experiments</p>
+          <p class="visual-eyebrow">Visual Experiments</p>
           <h1 id="visual-experiments-title" class="visual-title">
             FLOATING
             <span class="muted">STACK</span>
           </h1>
-          <p class="visual-intro" data-i18n="page.intro">
+          <p class="visual-intro">
             A hero study with layered depth, floating badges, and clear scroll rhythm for strong visual storytelling.
           </p>
 
@@ -134,7 +82,6 @@
           <p class="visual-credit">
             Inspired by original code by <strong>Kan3an (@Kan3an)</strong>.
           </p>
-
         </div>
 
         <div class="visual-stage visual-section is-visible" aria-label="Floating visual composition">
@@ -194,8 +141,8 @@
                 <div class="floating-badge-card">
                   <span class="badge-icon badge-icon-react" aria-hidden="true">R</span>
                   <div class="badge-content">
-                    <span class="badge-title">React</span>
-                    <span class="badge-libs">Redux, Router, Hooks</span>
+                    <span class="badge-title">Lorem Ipsum</span>
+                    <span class="badge-libs">dolor sit amet, consectetur</span>
                   </div>
                 </div>
               </div>
@@ -206,8 +153,8 @@
                 <div class="floating-badge-card">
                   <span class="badge-icon badge-icon-node" aria-hidden="true">N</span>
                   <div class="badge-content">
-                    <span class="badge-title">Node.js</span>
-                    <span class="badge-libs">Express, Socket.io, MongoDB</span>
+                    <span class="badge-title">Lorem Ipsum</span>
+                    <span class="badge-libs">sed do eiusmod tempor</span>
                   </div>
                 </div>
               </div>
@@ -218,8 +165,32 @@
                 <div class="floating-badge-card">
                   <span class="badge-icon badge-icon-js" aria-hidden="true">JS</span>
                   <div class="badge-content">
-                    <span class="badge-title">JavaScript</span>
-                    <span class="badge-libs">ES6+, TypeScript, jQuery</span>
+                    <span class="badge-title">Lorem Ipsum</span>
+                    <span class="badge-libs">incididunt ut labore et</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="floating-badge badge-4">
+              <div class="floating-badge-orbit">
+                <div class="floating-badge-card">
+                  <span class="badge-icon badge-icon-react" aria-hidden="true">L</span>
+                  <div class="badge-content">
+                    <span class="badge-title">Lorem Ipsum</span>
+                    <span class="badge-libs">dolore magna aliqua elit</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="floating-badge badge-5">
+              <div class="floating-badge-orbit">
+                <div class="floating-badge-card">
+                  <span class="badge-icon badge-icon-node" aria-hidden="true">05</span>
+                  <div class="badge-content">
+                    <span class="badge-title">Lorem Ipsum</span>
+                    <span class="badge-libs">ut enim ad minim</span>
                   </div>
                 </div>
               </div>
@@ -230,13 +201,13 @@
       </div>
     </section>
 
-    <a class="visual-footer" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
-      <span data-i18n="page.footerLabel">Back to UX Lab</span>
+    <a class="visual-footer" href="index.html" aria-label="Back to UX Lab">
+      <span>Back to UX Lab</span>
       <span>/&gt;</span>
     </a>
   </main>
 
-  <script src="visual-language-toggle.js"></script>
   <script src="visual-experiments.min.js"></script>
+  <script src="visual-experiments-bw.min.js"></script>
 </body>
 </html>

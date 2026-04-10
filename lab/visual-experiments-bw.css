@@ -1,0 +1,171 @@
+body.lab-visual-page-bw {
+  --bw-bg-1: #050505;
+  --bw-bg-2: #121212;
+  --bw-bg-3: #1f1f1f;
+  --bw-text: #f4f4f4;
+  --bw-muted: rgba(220, 220, 220, 0.76);
+  --bw-line: rgba(255, 255, 255, 0.2);
+  --bw-accent: rgba(255, 255, 255, 0.9);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.08), transparent 34%),
+    radial-gradient(circle at 82% 16%, rgba(255, 255, 255, 0.06), transparent 34%),
+    radial-gradient(circle at 50% 84%, rgba(255, 255, 255, 0.05), transparent 38%),
+    linear-gradient(180deg, var(--bw-bg-1) 0%, var(--bw-bg-2) 58%, var(--bw-bg-3) 100%);
+  color: var(--bw-text);
+}
+
+body.lab-visual-page-bw .visual-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+body.lab-visual-page-bw .visual-back-link,
+body.lab-visual-page-bw .visual-footer {
+  color: var(--bw-text);
+}
+
+body.lab-visual-page-bw .visual-back-link:hover,
+body.lab-visual-page-bw .visual-back-link:focus-visible,
+body.lab-visual-page-bw .visual-footer:hover,
+body.lab-visual-page-bw .visual-footer:focus-visible {
+  color: var(--bw-accent);
+}
+
+body.lab-visual-page-bw .tone-toggle {
+  border: 1px solid var(--bw-line);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--bw-text);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-family: "Fira Code", monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+body.lab-visual-page-bw .tone-toggle:hover,
+body.lab-visual-page-bw .tone-toggle:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.lab-visual-page-bw .visual-mode-chip {
+  margin: 0.85rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--bw-line);
+  border-radius: 999px;
+  padding: 0.33rem 0.74rem;
+  font-family: "Fira Code", monospace;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--bw-muted);
+}
+
+body.lab-visual-page-bw .visual-hero {
+  border-color: rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(145deg, rgba(28, 28, 28, 0.9), rgba(8, 8, 8, 0.84)),
+    rgba(12, 12, 12, 0.84);
+}
+
+body.lab-visual-page-bw .visual-hero-grid {
+  filter: grayscale(1) saturate(0.05) contrast(1.08) brightness(1.02);
+}
+
+body.lab-visual-page-bw .visual-title,
+body.lab-visual-page-bw .visual-intro,
+body.lab-visual-page-bw .visual-eyebrow,
+body.lab-visual-page-bw .visual-credit,
+body.lab-visual-page-bw .core-body,
+body.lab-visual-page-bw .core-kicker,
+body.lab-visual-page-bw .core-strip span,
+body.lab-visual-page-bw .badge-libs {
+  color: var(--bw-text);
+}
+
+body.lab-visual-page-bw .visual-title .muted {
+  background: linear-gradient(135deg, #f9f9f9 0%, #cfcfcf 48%, #8c8c8c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.lab-visual-page-bw .visual-meta-card,
+body.lab-visual-page-bw .core-panel,
+body.lab-visual-page-bw .floating-badge-card {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.lab-visual-page-bw .badge-4 {
+  right: -3%;
+  bottom: -3%;
+}
+
+body.lab-visual-page-bw .badge-5 {
+  left: -8%;
+  top: 43%;
+}
+
+body.lab-visual-page-bw .badge-5 .floating-badge-card {
+  width: clamp(120px, 17vw, 170px);
+  min-width: 0;
+  min-height: clamp(120px, 17vw, 170px);
+  border-radius: 999px;
+  padding: 0.9rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.42rem;
+}
+
+body.lab-visual-page-bw .badge-5 .badge-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 13px;
+}
+
+body.lab-visual-page-bw .badge-5 .badge-title {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+body.lab-visual-page-bw .badge-5 .badge-libs {
+  font-size: 9px;
+  max-width: 14ch;
+  line-height: 1.25;
+}
+
+body.lab-visual-page-bw.is-color .visual-hero-grid {
+  filter: none;
+}
+
+body.lab-visual-page-bw.is-color .visual-mode-chip {
+  color: rgba(203, 213, 225, 0.82);
+  border-color: rgba(103, 232, 249, 0.32);
+}
+
+@media (max-width: 680px) {
+  body.lab-visual-page-bw .badge-4 {
+    right: -2%;
+    bottom: -2%;
+  }
+
+  body.lab-visual-page-bw .badge-5 {
+    left: -4%;
+    top: 46%;
+  }
+
+  body.lab-visual-page-bw .tone-toggle {
+    width: 100%;
+  }
+}
