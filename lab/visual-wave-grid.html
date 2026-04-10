@@ -23,103 +23,136 @@
   <title>Wave Grid | Visual Experiments | UX Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.min.css" />
-  <link rel="stylesheet" href="visual-wave-grid.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="visual-wave-grid.css" />
   <style>
-    .wave-credit {
-      margin: 1.05rem 0 0;
-      padding-top: 0.62rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.14);
-      max-width: 42ch;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(11px, 1.45vw, 12px);
-      line-height: 1.6;
-      letter-spacing: 0.04em;
-      color: rgba(255, 255, 255, 0.76);
+    body.lab-wave-grid-page {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #050505;
     }
 
-    .wave-credit strong {
+    .wave-shell {
+      position: static;
+      min-height: 0;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    .wave-top-controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px;
+      border: 1px solid rgba(232, 232, 232, 0.82);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 10px 24px rgba(17, 17, 17, 0.16);
+    }
+
+    .wave-version-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wave-version-link {
+      text-decoration: none;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 232, 232, 1);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: rgba(68, 68, 68, 1);
+      background: rgba(255, 255, 255, 0.94);
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wave-version-link:hover,
+    .wave-version-link:focus-visible {
+      border-color: rgba(115, 123, 133, 0.42);
+      color: rgba(17, 17, 17, 1);
+    }
+
+    .wave-version-link.is-active {
+      background: rgba(17, 17, 17, 1);
       color: rgba(255, 255, 255, 0.95);
-      font-weight: 500;
+      border-color: rgba(17, 17, 17, 1);
+      font-weight: 700;
+    }
+
+    .wave-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 232, 232, 1);
+      text-decoration: none;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: rgba(17, 17, 17, 1);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .wave-back-link:hover,
+    .wave-back-link:focus-visible {
+      border-color: rgba(115, 123, 133, 0.42);
+      color: rgba(17, 17, 17, 1);
+    }
+
+    @media (max-width: 720px) {
+      .wave-top-controls {
+        width: calc(100% - 20px);
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .wave-version-link,
+      .wave-back-link {
+        font-size: 11px;
+        padding: 9px 12px;
+      }
     }
   </style>
 </head>
 <body class="lab-wave-grid-page" data-i18n-page="waveGrid">
   <canvas class="wave-canvas"></canvas>
 
-  <main class="wave-shell" aria-labelledby="wave-grid-title">
-    <div class="wave-topbar">
-      <a class="wave-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+  <main class="wave-shell" aria-label="Wave Grid fullscreen controls">
+    <div class="wave-top-controls">
+      <nav class="wave-version-toggle" aria-label="Toggle wave grid version">
+        <a class="wave-version-link is-active" href="visual-wave-grid.html" aria-current="page">B/W version</a>
+        <a class="wave-version-link" href="visual-wave-grid-original.html">Original color</a>
+      </nav>
+      <a class="wave-back-link" href="index.html" aria-label="Back to UX Lab">
         <span>UX Lab</span>
         <span>/&gt;</span>
       </a>
-      <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
-        <span data-lang-option="en">EN</span>
-        <span class="lang-divider">/</span>
-        <span data-lang-option="gr">EL</span>
-      </button>
-
-      <div class="wave-meta-pill" data-shape-mask data-i18n="page.pill">Visual Experiments / Study 05</div>
     </div>
-
-    <section class="wave-stage">
-      <section class="wave-hero" data-shape-mask>
-        <div>
-          <p class="wave-kicker" data-i18n="page.kicker">Canvas Field</p>
-          <h1 id="wave-grid-title" class="wave-title">
-            Wave
-            <span>Grid</span>
-          </h1>
-          <p class="wave-intro" data-i18n="page.intro">
-            A fullscreen geometric field that reacts to pointer proximity and builds wave pulses on each click.
-          </p>
-
-          <div class="wave-actions">
-            <button class="wave-button" type="button" id="triggerCenterWave">
-              <strong>Wave</strong>
-              <span data-i18n="page.centerPulse">Pulse from center</span>
-            </button>
-            <button class="wave-button" type="button" id="triggerRandomWave">
-              <strong>Random</strong>
-              <span data-i18n="page.randomPulse">Random impact point</span>
-            </button>
-          </div>
-
-          <div class="wave-controls" aria-label="Wave Grid controls">
-            <label class="wave-control" for="gridDensity">
-              <span class="wave-control-head">
-                <span>Density</span>
-                <output id="gridDensityValue" for="gridDensity">40 px</output>
-              </span>
-              <input id="gridDensity" type="range" min="28" max="64" step="4" value="40" />
-            </label>
-
-            <label class="wave-control" for="waveVelocity">
-              <span class="wave-control-head">
-                <span data-i18n="page.waveSpeed">Wave speed</span>
-                <output id="waveVelocityValue" for="waveVelocity">1200 /s</output>
-              </span>
-              <input id="waveVelocity" type="range" min="700" max="1800" step="50" value="1200" />
-            </label>
-          </div>
-
-          <p class="wave-credit">
-            Inspired by original code by <strong>Stijn Van Minnebruggen (@donotfold)</strong>.
-          </p>
-        </div>
-
-      </section>
-
-    </section>
-
-    <a class="wave-footer-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
-      <span data-i18n="page.footerLabel">Back to UX Lab</span>
-      <span>/&gt;</span>
-    </a>
   </main>
 
-  <script src="visual-language-toggle.js"></script>
-  <script src="visual-wave-grid.min.js"></script>
+  <script src="visual-wave-grid.js"></script>
 </body>
 </html>
