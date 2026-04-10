@@ -9,6 +9,7 @@
   --signal-stroke: rgba(31, 41, 55, 0.18);
   --signal-accent: #4246ce;
   --signal-accent-soft: rgba(66, 70, 206, 0.12);
+  --signal-rainbow: linear-gradient(90deg, #ff0033 0%, #ff7a00 16%, #ffd400 32%, #42d96b 48%, #00b5ff 64%, #3f51ff 80%, #8f2dff 100%);
   --signal-code: "Fira Code", monospace;
   --signal-display: "Poppins", sans-serif;
   --signal-shadow: 0 24px 64px rgba(15, 23, 42, 0.12);
@@ -283,13 +284,39 @@ body.lab-text-signal-page::before {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
-.signal-text:nth-child(2n) span {
-  background-color: #e7dfcf;
+.signal-text:nth-child(7n + 1) span {
+  background-color: #ff0033;
+  color: #fff7ef;
+}
+
+.signal-text:nth-child(7n + 2) span {
+  background-color: #ff7a00;
+  color: #fff7ef;
+}
+
+.signal-text:nth-child(7n + 3) span {
+  background-color: #ffd400;
   color: #1f2937;
 }
 
-.signal-text:nth-child(3n) span {
-  background-color: #7be0ff;
+.signal-text:nth-child(7n + 4) span {
+  background-color: #42d96b;
+  color: #0f172a;
+}
+
+.signal-text:nth-child(7n + 5) span {
+  background-color: #00b5ff;
+  color: #f8f7f3;
+}
+
+.signal-text:nth-child(7n + 6) span {
+  background-color: #3f51ff;
+  color: #f8f7f3;
+}
+
+.signal-text:nth-child(7n) span {
+  background-color: #8f2dff;
+  color: #f8f7f3;
 }
 
 .signal-text:last-child span {

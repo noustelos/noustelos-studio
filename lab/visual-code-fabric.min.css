@@ -64,9 +64,10 @@ body.lab-code-fabric-page {
   gap: 0.2rem;
   color: var(--fabric-ink);
   text-decoration: none;
-  font-family: var(--fabric-display);
+  font-family: var(--fabric-code);
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   transition: color var(--fabric-transition), transform var(--fabric-transition);
 }
 

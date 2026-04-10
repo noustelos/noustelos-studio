@@ -642,6 +642,13 @@ body.lab-video-page {
   box-shadow: var(--shadow-soft);
 }
 
+.lab-video-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
 .lab-video-heading {
   margin: 0;
   font-family: "Space Grotesk", sans-serif;
@@ -685,9 +692,13 @@ body.lab-video-page {
   align-items: baseline;
   gap: 0.2rem;
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(14px, 2.2vw, 18px);
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.16em;
+}
+
+.lab-video-back-top {
+  margin-top: 0;
 }
 
 .lab-video-back-mark {
@@ -886,11 +897,34 @@ body.page-id-42.page-id-42-gravity .gravity-ui-inline-subtitle {
   opacity: 0.72;
 }
 
-body.page-id-42.page-id-42-gravity .gravity-ui-back {
+body.page-id-42.page-id-42-gravity .gravity-ui-back,
+body.page-id-42.page-id-42-gravity .gravity-ui-footer {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  text-decoration: none;
   color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+body.page-id-42.page-id-42-gravity .gravity-ui-back:hover,
+body.page-id-42.page-id-42-gravity .gravity-ui-back:focus-visible,
+body.page-id-42.page-id-42-gravity .gravity-ui-footer:hover,
+body.page-id-42.page-id-42-gravity .gravity-ui-footer:focus-visible {
+  color: rgba(255, 255, 255, 0.98);
+  transform: translateX(2px);
+}
+
+body.page-id-42.page-id-42-gravity .gravity-ui-back span:last-child,
+body.page-id-42.page-id-42-gravity .gravity-ui-footer span:last-child {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+body.page-id-42.page-id-42-gravity .gravity-ui-footer {
+  margin-top: 1rem;
 }
 
 body.page-id-42.page-id-42-gravity .gravity-ui-note {
@@ -949,11 +983,34 @@ body.page-id-42.page-id-42-nebula .nebula-ui-title {
   letter-spacing: -0.02em;
 }
 
-body.page-id-42.page-id-42-nebula .nebula-ui-back {
+body.page-id-42.page-id-42-nebula .nebula-ui-back,
+body.page-id-42.page-id-42-nebula .nebula-ui-footer {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  text-decoration: none;
   color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+body.page-id-42.page-id-42-nebula .nebula-ui-back:hover,
+body.page-id-42.page-id-42-nebula .nebula-ui-back:focus-visible,
+body.page-id-42.page-id-42-nebula .nebula-ui-footer:hover,
+body.page-id-42.page-id-42-nebula .nebula-ui-footer:focus-visible {
+  color: rgba(255, 255, 255, 0.98);
+  transform: translateX(2px);
+}
+
+body.page-id-42.page-id-42-nebula .nebula-ui-back span:last-child,
+body.page-id-42.page-id-42-nebula .nebula-ui-footer span:last-child {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+body.page-id-42.page-id-42-nebula .nebula-ui-footer {
+  margin-top: 1rem;
 }
 
 body.page-id-42.page-id-42-nebula .nebula-stage {

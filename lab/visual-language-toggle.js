@@ -38,7 +38,6 @@
           backToLab: 'Back to UX Lab'
         },
         page: {
-          eyebrow: 'Visual Experiments / Theme 02',
           intro: 'A tactile canvas experiment where code transforms into a cloth mesh and responds naturally to drag and release.',
           footerLabel: 'Back to UX Lab',
           stageHint: 'drag / disturb / release'
@@ -50,7 +49,6 @@
           backToLab: 'Επιστροφη στο UX Lab'
         },
         page: {
-          eyebrow: 'Οπτικα Πειραματα / Θεμα 02',
           intro: 'Ενα tactile canvas πειραμα οπου ο κωδικας μετατρεπεται σε cloth mesh και αντιδρα φυσικα σε drag και release.',
           footerLabel: 'Επιστροφη στο UX Lab',
           stageHint: 'τραβηγμα / διαταραχη / απελευθερωση'
@@ -64,7 +62,6 @@
           backToLab: 'Back to UX Lab'
         },
         page: {
-          kicker: 'Visual Experiments / Theme 03',
           intro: 'A pure CSS text study focused on rhythm, scroll-driven reveal, and bold hover inversion without JavaScript.',
           stageTitle: 'scroll reveal field',
           stageSubtitle: 'hover each line to invert the message',
@@ -77,7 +74,6 @@
           backToLab: 'Επιστροφη στο UX Lab'
         },
         page: {
-          kicker: 'Οπτικα Πειραματα / Θεμα 03',
           intro: 'Μια pure CSS text μελετη με εστιαση σε rhythm, scroll-driven reveal και εντονο hover inversion χωρις JavaScript.',
           stageTitle: 'πεδιο αποκαλυψης scroll',
           stageSubtitle: 'περασε το hover σε καθε γραμμη για αντιστροφη μηνυματος',
