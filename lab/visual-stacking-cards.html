@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="description" content="CSS-only stacking cards experiment from Noustelos UX Lab with sticky layers, scroll-driven motion, and 3D depth." />
+  <meta name="theme-color" content="#111111" />
+  <link rel="canonical" href="https://noustelos.gr/lab/visual-stacking-cards.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CSS-Only Stacking Cards | Visual Experiments | UX Lab" />
+  <meta property="og:description" content="Sticky stacking cards with scroll-linked transforms and depth motion, built with CSS only." />
+  <meta property="og:url" content="https://noustelos.gr/lab/visual-stacking-cards.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CSS-Only Stacking Cards | Visual Experiments | UX Lab" />
+  <meta name="twitter:description" content="Sticky stacking cards with scroll-linked transforms and depth motion, built with CSS only." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <title>CSS-Only Stacking Cards | Visual Experiments | UX Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.min.css" />
+  <link rel="stylesheet" href="visual-stacking-cards.min.css" />
+</head>
+<body class="lab-stacking-cards-page" data-i18n-page="stackingCards">
+  <main class="stack-shell" aria-labelledby="stacking-cards-title">
+    <div class="stack-topbar">
+      <a class="stack-back-link" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+        <span>UX Lab</span>
+        <span>/&gt;</span>
+      </a>
+      <button class="lang-toggle" type="button" data-i18n-attr="aria-label:common.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">EL</span>
+      </button>
+    </div>
+
+    <header class="stack-hero">
+      <h1 id="stacking-cards-title" class="stack-title" data-i18n="page.heroTitle">Card Stack</h1>
+    </header>
+
+    <ul id="cards">
+      <li class="card">
+        <article class="card__content">
+          <span class="number">01</span>
+          <h2 data-i18n="page.card1Title">Sticky Stacking</h2>
+          <p data-i18n="page.card1Desc">Utilizes position: sticky to create a stacking context where elements layer on top of one another naturally within the flow.</p>
+        </article>
+      </li>
+      <li class="card">
+        <article class="card__content">
+          <span class="number">02</span>
+          <h2 data-i18n="page.card2Title">Scroll Driven</h2>
+          <p data-i18n="page.card2Desc">Animations are powered by animation-timeline: view(), allowing precise control based on element visibility in the viewport.</p>
+        </article>
+      </li>
+      <li class="card">
+        <article class="card__content">
+          <span class="number">03</span>
+          <h2 data-i18n="page.card3Title">3D Depth</h2>
+          <p data-i18n="page.card3Desc">Combines perspective with 3D transforms to create depth perception, tilting cards backward as they ascend the scroll port.</p>
+        </article>
+      </li>
+      <li class="card">
+        <article class="card__content">
+          <span class="number">04</span>
+          <h2 data-i18n="page.card4Title">Performant</h2>
+          <p data-i18n="page.card4Desc">Animations run on the compositor thread for smooth 60fps motion without layout thrashing and main-thread blocking.</p>
+        </article>
+      </li>
+    </ul>
+
+    <p class="stack-credit">
+      Inspired by original code by <strong>Kara Bharat (@karabharat)</strong>.
+    </p>
+
+    <svg class="progress-circle" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="40"></circle>
+    </svg>
+
+    <header class="stack-outro">
+      <h2 data-i18n="page.outroTitle">The End.</h2>
+    </header>
+
+    <a class="stack-footer" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
+      <span data-i18n="page.footerLabel">Back to UX Lab</span>
+      <span>/&gt;</span>
+    </a>
+  </main>
+
+  <script src="visual-language-toggle.js"></script>
+</body>
+</html>

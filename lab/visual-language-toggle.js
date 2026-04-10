@@ -214,6 +214,46 @@
           }
         }
       }
+    },
+    stackingCards: {
+      en: {
+        common: {
+          switchAria: 'Switch language',
+          backToLab: 'Back to UX Lab'
+        },
+        page: {
+          heroTitle: 'Card Stack',
+          card1Title: 'Sticky Stacking',
+          card1Desc: 'Utilizes position: sticky to create a stacking context where elements layer on top of one another naturally within the flow.',
+          card2Title: 'Scroll Driven',
+          card2Desc: 'Animations are powered by animation-timeline: view(), allowing precise control based on element visibility in the viewport.',
+          card3Title: '3D Depth',
+          card3Desc: 'Combines perspective with 3D transforms to create depth perception, tilting cards backward as they ascend the scroll port.',
+          card4Title: 'Performant',
+          card4Desc: 'Animations run on the compositor thread for smooth 60fps motion without layout thrashing and main-thread blocking.',
+          outroTitle: 'The End.',
+          footerLabel: 'Back to UX Lab'
+        }
+      },
+      gr: {
+        common: {
+          switchAria: 'Αλλαγη γλωσσας',
+          backToLab: 'Επιστροφη στο UX Lab'
+        },
+        page: {
+          heroTitle: 'Card Stack',
+          card1Title: 'Sticky Stacking',
+          card1Desc: 'Αξιοποιει το position: sticky για να δημιουργει stacking context οπου τα elements στρωματωνονται φυσικα μεσα στη ροη.',
+          card2Title: 'Scroll Driven',
+          card2Desc: 'Τα animations κινούνται με animation-timeline: view(), επιτρεποντας ακριβη ελεγχο με βαση την ορατοτητα στο viewport.',
+          card3Title: '3D Depth',
+          card3Desc: 'Συνδυαζει perspective και 3D transforms για αισθηση βαθους, γερνοντας τις καρτες καθως ανεβαινουν στο scroll port.',
+          card4Title: 'Performant',
+          card4Desc: 'Τα animations τρεχουν στο compositor thread για ομαλη κινηση 60fps χωρις layout thrashing και blocking στο main thread.',
+          outroTitle: 'Τελος.',
+          footerLabel: 'Επιστροφη στο UX Lab'
+        }
+      }
     }
   };
 

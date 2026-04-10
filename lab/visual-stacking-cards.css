@@ -1,0 +1,288 @@
+:root {
+  --card-height: clamp(260px, 40vw, 520px);
+  --card-margin: clamp(20px, 4vw, 56px);
+  --card-top-offset: 1em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.lab-stacking-cards-page {
+  margin: 0;
+  min-height: 100vh;
+  padding: 1rem 0 10vh;
+  background: #111;
+  color: #fff;
+  font-family: "Space Grotesk", sans-serif;
+  overflow-x: clip;
+}
+
+.stack-shell {
+  width: min(calc(100% - 1.4rem), 1200px);
+  margin: 0 auto;
+}
+
+.stack-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.stack-back-link,
+.stack-footer {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: clamp(13px, 1.8vw, 16px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.94);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.stack-back-link:hover,
+.stack-back-link:focus-visible,
+.stack-footer:hover,
+.stack-footer:focus-visible {
+  color: #05d9e8;
+  transform: translateX(2px);
+}
+
+.stack-back-link span:last-child,
+.stack-footer span:last-child {
+  font-size: 0.75em;
+  transform: translateY(-0.2em);
+  color: rgba(148, 163, 184, 0.75);
+}
+
+.stack-hero {
+  height: clamp(58vh, 80vh, 88vh);
+  display: grid;
+  place-items: center;
+}
+
+.stack-title {
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: clamp(3rem, 10vw, 10rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  color: transparent;
+  background: linear-gradient(to bottom, #fff 0%, transparent 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.5);
+  animation: fill-text linear both;
+  animation-timeline: scroll();
+  animation-range: 0 50vh;
+}
+
+@keyframes fill-text {
+  to {
+    -webkit-text-stroke: 0;
+    color: #fff;
+  }
+}
+
+#cards {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 92vw;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, var(--card-height));
+  gap: var(--card-margin);
+  padding-bottom: calc(4 * var(--card-margin));
+}
+
+.card {
+  position: sticky;
+  top: 10vh;
+  height: var(--card-height);
+  padding-top: calc(var(--index) * var(--card-top-offset));
+  perspective: 1000px;
+}
+
+.card__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1.25rem, 3.8vw, 3.15rem);
+  border-radius: clamp(22px, 4vw, 50px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  transform-origin: 50% 0%;
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+  animation: scale-card linear forwards;
+  animation-timeline: view();
+  animation-range: exit-crossing 0% exit-crossing 100%;
+}
+
+.card:nth-child(1) {
+  --index: 1;
+}
+
+.card:nth-child(1) .card__content {
+  background: #ff2a6d;
+  --shadow-color: rgba(255, 42, 109, 0.8);
+}
+
+.card:nth-child(2) {
+  --index: 2;
+}
+
+.card:nth-child(2) .card__content {
+  background: #05d9e8;
+  color: #000;
+  --shadow-color: rgba(5, 217, 232, 0.8);
+}
+
+.card:nth-child(3) {
+  --index: 3;
+}
+
+.card:nth-child(3) .card__content {
+  background: #ffe600;
+  color: #000;
+  --shadow-color: rgba(255, 230, 0, 0.8);
+}
+
+.card:nth-child(4) {
+  --index: 4;
+}
+
+.card:nth-child(4) .card__content {
+  background: #fafac6;
+  color: #000;
+  --shadow-color: rgba(250, 250, 198, 0.8);
+}
+
+@keyframes scale-card {
+  to {
+    transform: scale(0.8) translateY(-10vh) rotateX(-20deg);
+    filter: brightness(0.6);
+    border-radius: 20px;
+    box-shadow: 0 50px 80px -10px var(--shadow-color);
+  }
+}
+
+.card h2 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+}
+
+.card p {
+  margin: 0.75rem 0 0;
+  max-width: 38ch;
+  font-size: clamp(1rem, 2.4vw, 1.5rem);
+  line-height: 1.4;
+  opacity: 0.84;
+}
+
+.number {
+  position: absolute;
+  right: clamp(1rem, 2.2vw, 2rem);
+  top: -2rem;
+  font-size: clamp(4rem, 14vw, 10rem);
+  font-weight: 700;
+  opacity: 0.3;
+}
+
+.stack-credit {
+  margin: 1rem auto 0;
+  max-width: 92vw;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 0.65rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(11px, 1.45vw, 13px);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.stack-credit strong {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.progress-circle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 72px;
+  height: 72px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.progress-circle circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 6;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  stroke-dasharray: 251;
+  stroke-dashoffset: 251;
+  animation: progress-spin linear;
+  animation-timeline: scroll();
+}
+
+@keyframes progress-spin {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.stack-outro {
+  height: 50vh;
+  display: grid;
+  place-items: center;
+}
+
+.stack-outro h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stack-footer {
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .stack-shell {
+    width: min(calc(100% - 1rem), 1200px);
+  }
+
+  #cards,
+  .stack-credit {
+    max-width: 96vw;
+  }
+
+  .card {
+    top: 8vh;
+  }
+
+  .card p {
+    max-width: 32ch;
+  }
+
+  .progress-circle {
+    width: 64px;
+    height: 64px;
+    right: 14px;
+    bottom: 14px;
+  }
+}
