@@ -20,6 +20,23 @@ if (isIpadLikeDevice) {
   documentRoot.classList.add('is-ipad');
 }
 
+const safeStorage = {
+  get(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (_e) {
+      return null;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (_e) {
+      // Storage unavailable (e.g. Safari private mode).
+    }
+  }
+};
+
 const brandFontReady = (() => {
   const finalize = () => {
     documentRoot.classList.remove('fonts-pending');
@@ -295,7 +312,7 @@ const applyLanguage = (lang) => {
     });
   }
 
-  localStorage.setItem('siteLanguage', safeLang);
+  safeStorage.set('siteLanguage', safeLang);
 };
 
 const applyDynamicYear = () => {
@@ -359,14 +376,14 @@ const setupCookieConsent = () => {
   }
 
   const consentKey = 'siteCookieConsent';
-  const existingConsent = localStorage.getItem(consentKey);
+  const existingConsent = safeStorage.get(consentKey);
 
   if (!existingConsent) {
     cookieBanner.hidden = false;
   }
 
   const setConsent = (value) => {
-    localStorage.setItem(consentKey, value);
+    safeStorage.set(consentKey, value);
     cookieBanner.hidden = true;
   };
 
@@ -375,7 +392,7 @@ const setupCookieConsent = () => {
 };
 
 const preferredLanguage = (() => {
-  const storedLang = localStorage.getItem('siteLanguage');
+  const storedLang = safeStorage.get('siteLanguage');
 
   if (storedLang === 'en' || storedLang === 'gr') {
     return storedLang;
@@ -406,7 +423,7 @@ if (navToggle && menu) {
 
 if (langToggle) {
   langToggle.addEventListener('click', () => {
-    const currentLang = localStorage.getItem('siteLanguage') || preferredLanguage;
+    const currentLang = safeStorage.get('siteLanguage') || preferredLanguage;
     const nextLang = currentLang === 'en' ? 'gr' : 'en';
     applyLanguage(nextLang);
   });

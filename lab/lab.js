@@ -4,6 +4,15 @@ if (!document.body.classList.contains('page-id-42')) {
   const PAGE_SCOPE = 'body.page-id-42';
   const langToggle = document.querySelector(`${PAGE_SCOPE} .lang-toggle`);
 
+  const safeStorage = {
+    get(key) {
+      try { return localStorage.getItem(key); } catch (_e) { return null; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(key, value); } catch (_e) {}
+    }
+  };
+
   const translations = {
     en: {
       meta: {
@@ -84,12 +93,17 @@ if (!document.body.classList.contains('page-id-42')) {
       const value = getNestedValue(langContent, key);
 
       if (typeof value === 'string') {
-        if (value.includes('<em>') || value.includes('</em>')) {
-          element.innerHTML = value;
+        const emMatch = value.match(/^(.*?)<em>(.*?)<\/em>(.*?)$/);
+        if (emMatch) {
+          element.textContent = '';
+          if (emMatch[1]) element.appendChild(document.createTextNode(emMatch[1]));
+          const em = document.createElement('em');
+          em.textContent = emMatch[2];
+          element.appendChild(em);
+          if (emMatch[3]) element.appendChild(document.createTextNode(emMatch[3]));
         } else {
           element.textContent = value;
         }
-
       }
     });
 
@@ -117,11 +131,11 @@ if (!document.body.classList.contains('page-id-42')) {
       });
     }
 
-    localStorage.setItem('siteLanguage', safeLang);
+    safeStorage.set('siteLanguage', safeLang);
   };
 
   const preferredLanguage = (() => {
-    const storedLang = localStorage.getItem('siteLanguage');
+    const storedLang = safeStorage.get('siteLanguage');
 
     if (storedLang === 'en' || storedLang === 'gr') {
       return storedLang;
@@ -134,7 +148,7 @@ if (!document.body.classList.contains('page-id-42')) {
 
   if (langToggle) {
     langToggle.addEventListener('click', () => {
-      const currentLang = localStorage.getItem('siteLanguage') || preferredLanguage;
+      const currentLang = safeStorage.get('siteLanguage') || preferredLanguage;
       const nextLang = currentLang === 'en' ? 'gr' : 'en';
       applyLanguage(nextLang);
     });

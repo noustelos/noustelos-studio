@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script>(function(){try{if(localStorage.getItem('siteLanguage')==='gr')document.documentElement.lang='el';}catch(e){}})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="description" content="Video Experiments from Noustelos UX Lab featuring portrait studies in rhythm, framing, and atmosphere." />
@@ -14,12 +15,38 @@
   <meta property="og:description" content="Video Experiments with portrait studies in rhythm, framing, and atmosphere." />
   <meta property="og:url" content="https://noustelos.gr/lab/video-experiments.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:video" content="https://noustelos.gr/assets/lab/tree-1-loop.mp4" />
+  <meta property="og:video:type" content="video/mp4" />
   <title>Video Experiments | UX Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.min.css" />
   <link rel="stylesheet" href="lab.min.css" />
+  <style>
+    .lab-video-toggle {
+      display: block;
+      margin: 0.75rem auto 0;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-secondary);
+    }
+    .lab-video-toggle:hover,
+    .lab-video-toggle:focus-visible {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body class="lab-video-page" data-i18n-page="videoExperiments">
   <main class="lab-video-shell" aria-labelledby="video-experiments-title">
@@ -44,34 +71,52 @@
         autoplay
         muted
         loop
-        preload="auto"
+        preload="metadata"
         playsinline
         src="/assets/lab/tree-1-loop.mp4"
         aria-label="Tree portrait mode experiment video"
         data-i18n-attr="aria-label:page.videoAria"
       ></video>
     </div>
+    <button id="videoToggleBtn" class="lab-video-toggle" type="button" aria-label="Pause video">Pause</button>
 
     <a class="lab-video-back" href="index.html" aria-label="Back to UX Lab" data-i18n-attr="aria-label:common.backToLab">
       <span data-i18n="page.footerLabel">Back to UX Lab</span>
       <span class="lab-video-back-mark" aria-hidden="true">/&gt;</span>
     </a>
   </main>
+  <script src="i18n-utils.js"></script>
   <script src="visual-language-toggle.js"></script>
   <script>
-    (function ensureAutoplayLoop() {
+    (function () {
       const video = document.getElementById('treeLoopVideo');
+      const btn = document.getElementById('videoToggleBtn');
+
       if (!video) {
         return;
       }
 
-      video.controls = false;
-      video.muted = true;
-      video.loop = true;
-
       video.play().catch(() => {
         // Autoplay may be blocked by browser policy.
+        if (btn) {
+          btn.textContent = 'Play';
+          btn.setAttribute('aria-label', 'Play video');
+        }
       });
+
+      if (btn) {
+        btn.addEventListener('click', () => {
+          if (video.paused) {
+            video.play().catch(() => {});
+            btn.textContent = 'Pause';
+            btn.setAttribute('aria-label', 'Pause video');
+          } else {
+            video.pause();
+            btn.textContent = 'Play';
+            btn.setAttribute('aria-label', 'Play video');
+          }
+        });
+      }
     })();
   </script>
 </body>
