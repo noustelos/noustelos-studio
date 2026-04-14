@@ -168,10 +168,10 @@ body.page-id-42 .lab-section-content {
   overflow: hidden;
   will-change: max-height, opacity, transform;
   transition:
-    max-height 980ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 680ms ease,
-    transform 840ms cubic-bezier(0.22, 1, 0.36, 1),
-    margin-top 620ms ease;
+    max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 340ms ease,
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 280ms ease;
 }
 
 body.page-id-42 .lab-drawer.is-open .lab-section-content {
@@ -626,9 +626,9 @@ body.lab-video-page {
   place-items: center;
   padding: clamp(1rem, 3vw, 2.2rem);
   background:
-    radial-gradient(circle at 15% 18%, rgba(37, 99, 235, 0.12), transparent 42%),
-    radial-gradient(circle at 86% 78%, rgba(115, 123, 133, 0.14), transparent 44%),
-    var(--bg);
+    radial-gradient(circle at 15% 18%, rgba(37, 99, 235, 0.18), transparent 40%),
+    radial-gradient(circle at 82% 80%, rgba(80, 95, 130, 0.14), transparent 40%),
+    linear-gradient(160deg, #0d1117 0%, #131820 60%, #0a0e15 100%);
 }
 
 .lab-video-shell {
@@ -679,7 +679,10 @@ body.lab-video-page {
   border-radius: 14px;
   background: #000000;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0 16px 34px rgba(17, 17, 17, 0.16);
+  box-shadow:
+    0 2px 8px rgba(17, 17, 17, 0.12),
+    0 16px 34px rgba(17, 17, 17, 0.22),
+    0 32px 60px rgba(17, 17, 17, 0.14);
 }
 
 .lab-video-player::-webkit-media-controls {
@@ -695,6 +698,12 @@ body.lab-video-page {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
+  transition: opacity 150ms ease;
+}
+
+.lab-video-back:hover,
+.lab-video-back:focus-visible {
+  opacity: 0.65;
 }
 
 .lab-video-back-top {
