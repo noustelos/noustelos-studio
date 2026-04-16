@@ -847,3 +847,35 @@ if (sectionNavLinks.length) {
     boot();
   });
 })();
+
+// Scroll reveal animation
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const style = document.createElement('style');
+  style.textContent = [
+    '.reveal{opacity:0;transform:translateY(22px);transition:opacity 440ms ease,transform 440ms ease}',
+    '.reveal.is-visible{opacity:1;transform:translateY(0)}'
+  ].join('');
+  document.head.appendChild(style);
+
+  const observer = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document
+    .querySelectorAll('.project-card, .service-card, .section-heading, .about-block p, .contact-block p')
+    .forEach(function (el) {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+})();

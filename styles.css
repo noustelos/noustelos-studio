@@ -12,7 +12,7 @@
   --max-width: 1100px;
   --container-inline: 2.5rem;
   --nav-height: 5.75rem;
-  --section-space: clamp(64px, 9vw, 120px);
+  --section-space: clamp(80px, 11vw, 140px);
   --grid-gap: clamp(1.25rem, 3.5vw, 2.5rem);
   --content-text-size: 18px;
   --radius: 12px;
@@ -29,7 +29,7 @@ html {
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(17, 17, 17, 0.1);
   color: var(--text-primary);
 }
 
@@ -87,6 +87,8 @@ h3,
 
 .section-heading {
   margin-bottom: 2.75rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--text-primary);
 }
 
 .section-heading h2 {
@@ -295,6 +297,7 @@ h3,
 
 .hero {
   padding: clamp(100px, 14vw, 180px) 0 clamp(60px, 13vw, 170px);
+  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(17, 17, 17, 0.045) 0%, transparent 70%);
 }
 
 /* Hero typography follows the fixed scale from the brief */
@@ -356,7 +359,7 @@ h1 {
   font-size: clamp(42px, 6vw, 64px);
   line-height: 1.04;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
   max-width: 12ch;
 }
@@ -494,8 +497,8 @@ h1 {
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: rgba(37, 99, 235, 0.45);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  border-color: rgba(17, 17, 17, 0.4);
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.06);
 }
 
 .contact-form-note {
@@ -517,8 +520,6 @@ h1 {
   align-items: center;
   gap: 0.38rem;
   margin-left: auto;
-  position: relative;
-  left: -180px;
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(12px, 1.05vw, 14px);
   font-weight: 400;
@@ -560,17 +561,17 @@ h1 {
 }
 
 .button-primary {
-  background: rgba(255, 255, 255, 0.24);
-  border-color: rgba(255, 255, 255, 0.56);
-  color: var(--text-primary);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  box-shadow: 0 14px 32px rgba(17, 17, 17, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.22);
 }
 
 .button-primary:hover,
 .button-primary:focus-visible {
-  background: rgba(255, 255, 255, 0.32);
+  background: #333333;
+  border-color: #333333;
+  opacity: 1;
 }
 
 .button-secondary,
@@ -606,7 +607,7 @@ h1 {
 /* Card system for work and services */
 .project-card,
 .service-card {
-  background: var(--bg);
+  background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 100%);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
@@ -806,18 +807,8 @@ h3 {
 .lab-link:hover,
 .lab-link:focus-visible {
   opacity: 1;
-  color: #00ff00;
-  text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
-  animation: flicker 0.2s infinite alternate;
-}
-
-@keyframes flicker {
-  0% { opacity: 0.9; }
-  20% { opacity: 0.4; }
-  40% { opacity: 0.1; }
-  60% { opacity: 0.8; }
-  80% { opacity: 0.3; }
-  100% { opacity: 0.9; }
+  color: rgba(40, 100, 40, 0.9);
+  text-shadow: 0 0 10px rgba(40, 100, 40, 0.25);
 }
 
 .footer-brand-mark {
@@ -1059,11 +1050,7 @@ h3 {
   }
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
-  .contact-email-link {
-    left: -180px;
-  }
-}
+
 
 @media (max-width: 480px) {
   :root {
