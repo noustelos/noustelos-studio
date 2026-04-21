@@ -26,6 +26,14 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: rgba(17, 17, 17, 0.08);
 }
 
 ::selection {
@@ -121,6 +129,7 @@ h3,
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top);
 }
 
 .nav {
@@ -486,7 +495,9 @@ h1 {
   background: #fff;
   color: var(--text-primary);
   padding: 0.65rem 0.75rem;
-  font: inherit;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .contact-form textarea {
@@ -631,7 +642,8 @@ h1 {
   transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.service-card:hover {
+.service-card:hover,
+.service-card:focus-within {
   border-color: rgba(115, 123, 133, 0.35);
   box-shadow: 0 8px 22px rgba(17, 17, 17, 0.07);
 }
@@ -850,9 +862,9 @@ h3 {
 
 .cookie-banner {
   position: fixed;
-  left: 1rem;
-  right: 1rem;
-  bottom: 1rem;
+  left: max(1rem, env(safe-area-inset-left));
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
   z-index: 2000;
   max-width: 720px;
   margin: 0 auto;
@@ -1098,9 +1110,9 @@ h3 {
   }
 
   .cookie-banner {
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: 0.75rem;
+    left: max(0.75rem, env(safe-area-inset-left));
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 
   .site-footer p {

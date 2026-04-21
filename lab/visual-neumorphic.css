@@ -44,6 +44,8 @@ body.lab-neumorphic-page {
 
 .nm-shell {
   min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
   width: min(calc(100% - 2rem), 820px);
   margin: 0 auto;
   padding: clamp(1.2rem, 3vw, 2rem) 0 clamp(2rem, 5vw, 3.5rem);
