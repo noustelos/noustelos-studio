@@ -213,6 +213,34 @@
         }
       }
     },
+    neumorphic: {
+      en: {
+        common: {
+          switchAria: 'Switch language',
+          backToLab: 'Back to UX Lab'
+        },
+        page: {
+          eyebrow: 'Visual Experiments',
+          title: 'Neumorphic UI',
+          intro: 'A soft-UI study based on neumorphism — using layered shadows and gradients to simulate tactile depth without textures or images.',
+          depthLabel: 'Depth',
+          footerLabel: 'Back to UX Lab'
+        }
+      },
+      gr: {
+        common: {
+          switchAria: 'Αλλαγη γλωσσας',
+          backToLab: 'Επιστροφη στο UX Lab'
+        },
+        page: {
+          eyebrow: 'Οπτικα Πειραματα',
+          title: 'Neumorphic UI',
+          intro: 'Μια soft-UI μελετη βασισμενη στο neumorphism — με layered σκιες και gradients για προσομοιωση απτης βαθυτητας χωρις textures η εικονες.',
+          depthLabel: 'Βαθος',
+          footerLabel: 'Επιστροφη στο UX Lab'
+        }
+      }
+    },
     stackingCards: {
       en: {
         common: {
