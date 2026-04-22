@@ -1,5 +1,6 @@
 {
-  "liveServer.settings.root": ".",
-  "liveServer.settings.file": "index.html",
-  "livePreview.defaultPreviewPath": "/index.html"
+  "liveServer.settings.root": "/",
+  "liveServer.settings.file": "/index.html",
+  "livePreview.defaultPreviewPath": "/index.html",
+  "liveServer.settings.NoBrowser": false
 }
