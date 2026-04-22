@@ -154,7 +154,7 @@ const translations = {
       labAria: 'Open UX Lab',
       universeAria: 'Open universe page',
       topAria: 'Back to top',
-      rights: 'Designed in Santorini | © {{year}} all rights reserved | In collaboration with WebHostPro',
+      rights: 'Designed in Santorini | © {{year}} all rights reserved | In collaboration with <a href="https://webhostpro.gr/" target="_blank" rel="noopener noreferrer">WebHostPro</a>',
       privacy: 'Privacy Policy',
       privacyHref: '/privacy-policy-en.html'
     },
@@ -257,7 +257,7 @@ const translations = {
       labAria: 'Άνοιγμα UX Lab',
       universeAria: 'Άνοιγμα σελίδας universe',
       topAria: 'Επιστροφή στην κορυφή',
-      rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη WebHostPro',
+      rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη <a href="https://webhostpro.gr/" target="_blank" rel="noopener noreferrer">WebHostPro</a>',
       privacy: 'Πολιτική Απορρήτου',
       privacyHref: '/privacy-policy.html'
     },
@@ -284,7 +284,13 @@ const applyLanguage = (lang) => {
     const value = getNestedValue(langContent, key);
 
     if (typeof value === 'string') {
-      element.textContent = value.replace('{{year}}', currentYear);
+      const resolvedValue = value.replace('{{year}}', currentYear);
+
+      if (key === 'footer.rights') {
+        element.innerHTML = resolvedValue;
+      } else {
+        element.textContent = resolvedValue;
+      }
     }
   });
 
