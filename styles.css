@@ -526,6 +526,12 @@ h1 {
   box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.06);
 }
 
+.contact-form input.is-invalid,
+.contact-form textarea.is-invalid {
+  border-color: rgba(220, 38, 38, 0.55);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
 .contact-form-note {
   margin: 0.15rem 0 0;
   font-size: 13px;

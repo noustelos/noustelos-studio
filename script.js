@@ -14,7 +14,7 @@ const cookieAccept = document.querySelector('#cookie-accept');
 const cookieDecline = document.querySelector('#cookie-decline');
 const isIpadLikeDevice =
   /iPad/.test(navigator.userAgent) ||
-  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 
 if (isIpadLikeDevice) {
   documentRoot.classList.add('is-ipad');
@@ -353,6 +353,12 @@ const setupContactForm = () => {
     return;
   }
 
+  contactForm.querySelectorAll('input, textarea').forEach((field) => {
+    field.addEventListener('input', () => {
+      field.classList.remove('is-invalid');
+    });
+  });
+
   contactForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -363,10 +369,17 @@ const setupContactForm = () => {
       return;
     }
 
+    const nameInput = contactForm.querySelector('[name="name"]');
+    const messageInput = contactForm.querySelector('[name="message"]');
     const name = (formData.get('name') || '').toString().trim();
     const message = (formData.get('message') || '').toString().trim();
 
+    nameInput && nameInput.classList.remove('is-invalid');
+    messageInput && messageInput.classList.remove('is-invalid');
+
     if (!name || !message) {
+      if (!name && nameInput) nameInput.classList.add('is-invalid');
+      if (!message && messageInput) messageInput.classList.add('is-invalid');
       return;
     }
 
@@ -822,10 +835,47 @@ if (sectionNavLinks.length) {
       camera.updateProjectionMatrix();
     }
 
+    let animFrameId = null;
+    let isAnimating = false;
+
     function animate() {
+      if (!isAnimating) return;
       displacement.lerp(displacementTarget, EFFECT_LERP);
       renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      animFrameId = requestAnimationFrame(animate);
+    }
+
+    function startAnimation() {
+      if (isAnimating) return;
+      isAnimating = true;
+      animFrameId = requestAnimationFrame(animate);
+    }
+
+    function stopAnimation() {
+      isAnimating = false;
+      if (animFrameId !== null) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+    });
+
+    let resizeTicking = false;
+
+    function onResize() {
+      if (resizeTicking) return;
+      resizeTicking = true;
+      requestAnimationFrame(() => {
+        resize();
+        resizeTicking = false;
+      });
     }
 
     interactionRegion.addEventListener('pointerenter', updatePointer);
@@ -834,10 +884,10 @@ if (sectionNavLinks.length) {
     interactionRegion.addEventListener('pointerup', onPointerUp);
     interactionRegion.addEventListener('pointercancel', onPointerUp);
     interactionRegion.addEventListener('pointerleave', resetPointer);
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', onResize);
 
     resize();
-    animate();
+    startAnimation();
     wrap.classList.remove('webgl-pending');
     wrap.classList.add('is-ready');
   }
