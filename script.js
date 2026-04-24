@@ -91,10 +91,6 @@ const translations = {
         alt: '365orthodoxy project preview',
         desc: 'Landing page for widget promotion.'
       },
-      project2: {
-        alt: 'Discover Diakopto website preview',
-        desc: 'Tourism guide website presenting the region, attractions and experiences.'
-      },
       project3: {
         alt: 'Vouraikos Gorge project preview',
           desc: 'Vouraikos Gorge, Unesco Global Geopark.'
@@ -193,10 +189,6 @@ const translations = {
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
         desc: 'Landing page για προώθηση widget.'
-      },
-      project2: {
-        alt: 'Προεπισκόπηση ιστοσελίδας Discover Diakopto',
-        desc: 'Ιστοσελίδα τουριστικού οδηγού που παρουσιάζει την περιοχή, τα αξιοθέατα και τις εμπειρίες.'
       },
       project3: {
         alt: 'Προεπισκόπηση project Φαράγγι Βουραϊκού',
