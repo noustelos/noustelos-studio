@@ -1,0 +1,7 @@
+version: 1
+policies:
+  - name: Auto-Approve Everything
+    description: Automatically approve all tool calls
+    tools:
+      - "*"
+    decision: approve
