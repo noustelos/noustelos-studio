@@ -12,6 +12,8 @@ const contactForm = document.querySelector('#contact-form');
 const cookieBanner = document.querySelector('#cookie-banner');
 const cookieAccept = document.querySelector('#cookie-accept');
 const cookieDecline = document.querySelector('#cookie-decline');
+const chatbotSection = document.querySelector('#chatbot');
+const chatbotFrame = document.querySelector('.chatbot-embed iframe');
 const isIpadLikeDevice =
   /iPad/.test(navigator.userAgent) ||
   (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
@@ -412,6 +414,41 @@ const setupCookieConsent = () => {
   cookieDecline.addEventListener('click', () => setConsent('declined'));
 };
 
+const setupChatbotEmbed = () => {
+  if (!chatbotSection || !chatbotFrame) {
+    return;
+  }
+
+  const alignChatbotSection = () => {
+    if (window.innerWidth > 600) {
+      return;
+    }
+
+    const rect = chatbotSection.getBoundingClientRect();
+    const isChatbotTarget = window.location.hash === '#chatbot';
+    const isChatbotVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (!isChatbotTarget && !isChatbotVisible) {
+      return;
+    }
+
+    const headerOffset = (siteHeader ? siteHeader.offsetHeight : 0) + 12;
+    const targetTop = window.scrollY + rect.top - headerOffset;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'auto' });
+  };
+
+  chatbotFrame.addEventListener('load', () => {
+    window.setTimeout(alignChatbotSection, 250);
+    window.setTimeout(alignChatbotSection, 900);
+  });
+
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#chatbot') {
+      window.setTimeout(alignChatbotSection, 300);
+    }
+  });
+};
+
 const preferredLanguage = (() => {
   const storedLang = safeStorage.get('siteLanguage');
 
@@ -427,6 +464,7 @@ applyDynamicYear();
 setupMailLinks();
 setupContactForm();
 setupCookieConsent();
+setupChatbotEmbed();
 
 if (navToggle && menu) {
   navToggle.addEventListener('click', () => {
