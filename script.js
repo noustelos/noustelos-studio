@@ -13,6 +13,7 @@ const cookieBanner = document.querySelector('#cookie-banner');
 const cookieAccept = document.querySelector('#cookie-accept');
 const cookieDecline = document.querySelector('#cookie-decline');
 const chatbotSection = document.querySelector('#chatbot');
+const chatbotEmbed = document.querySelector('.chatbot-embed');
 const chatbotFrame = document.querySelector('.chatbot-embed iframe');
 const isIpadLikeDevice =
   /iPad/.test(navigator.userAgent) ||
@@ -437,10 +438,17 @@ const setupChatbotEmbed = () => {
     window.scrollTo({ top: Math.max(0, targetTop), behavior: 'auto' });
   };
 
+  const revealChatbot = () => {
+    chatbotEmbed && chatbotEmbed.classList.add('is-loaded');
+  };
+
   chatbotFrame.addEventListener('load', () => {
+    window.setTimeout(revealChatbot, 1200);
     window.setTimeout(alignChatbotSection, 250);
     window.setTimeout(alignChatbotSection, 900);
   });
+
+  window.setTimeout(revealChatbot, 3500);
 
   window.addEventListener('hashchange', () => {
     if (window.location.hash === '#chatbot') {
