@@ -72,7 +72,8 @@ const translations = {
       work: 'Work',
       services: 'Services',
       about: 'About',
-      contact: 'Contact'
+      contact: 'Contact',
+      chatbot: 'Chat AI'
     },
     lang: {
       switchAria: 'Switch language'
@@ -146,6 +147,10 @@ const translations = {
         note: 'Your email client will open with a prefilled message.'
       }
     },
+    chatbot: {
+      title: 'Chat with the AI Assistant',
+      text: 'Have a question? Ask the AI assistant directly.'
+    },
     footer: {
       labAria: 'Open UX Lab',
       universeAria: 'Open universe page',
@@ -171,7 +176,8 @@ const translations = {
       work: 'Portfolio',
       services: 'Υπηρεσίες',
       about: 'Σχετικά',
-      contact: 'Επικοινωνία'
+      contact: 'Επικοινωνία',
+      chatbot: 'Chat AI'
     },
     lang: {
       switchAria: 'Αλλαγή γλώσσας'
@@ -244,6 +250,10 @@ const translations = {
         submit: 'Αποστολή μέσω εφαρμογής email',
         note: 'Θα ανοίξει η εφαρμογή email με προσυμπληρωμένο μήνυμα.'
       }
+    },
+    chatbot: {
+      title: 'Μίλα με τον AI Assistant',
+      text: 'Έχεις κάποια ερώτηση; Ρώτα τον AI assistant απευθείας.'
     },
     footer: {
       labAria: 'Άνοιγμα UX Lab',
