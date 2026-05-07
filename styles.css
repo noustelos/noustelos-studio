@@ -518,9 +518,8 @@ h1 {
   }
 
   .chatbot-embed iframe {
-    height: 72vh;
-    height: 72svh;
-    min-height: 620px;
+    height: 760px;
+    min-height: 760px;
   }
 }
 
