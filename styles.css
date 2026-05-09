@@ -594,6 +594,18 @@ h1 {
   justify-content: flex-end;
 }
 
+.chat-page-mark {
+  justify-self: center;
+  align-self: start;
+  margin: clamp(0.1rem, 0.8vw, 0.55rem) auto 0;
+  transform: none;
+  z-index: 0;
+}
+
+.is-ipad .chat-page-mark {
+  transform: none;
+}
+
 .chat-page-frame-shell {
   position: relative;
   min-height: 0;
@@ -601,7 +613,7 @@ h1 {
   background: #ffffff;
   color-scheme: light;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   gap: 0.75rem;
 }
 
@@ -1203,6 +1215,15 @@ h3 {
     margin-left: 0;
     margin-top: 1.1rem;
     transform: translateX(var(--hero-mark-shift-x));
+  }
+
+  .chat-page-mark {
+    margin: 0.45rem auto 0;
+    transform: none;
+  }
+
+  .is-ipad .chat-page-mark {
+    transform: none;
   }
 
   .section {

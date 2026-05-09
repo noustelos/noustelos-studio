@@ -23,6 +23,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    document.documentElement.classList.add('fonts-pending');
+  </script>
   <link rel="stylesheet" href="styles.min.css" />
 </head>
 <body class="chat-page-body">
@@ -42,9 +45,14 @@
           loading="eager"
         ></iframe>
       </div>
+      <div class="hero-mark-wrap chat-page-mark webgl-pending" role="img" aria-label="Animated symbol /&gt;">
+        <canvas class="hero-mark-canvas" aria-hidden="true"></canvas>
+        <span class="hero-mark-fallback">/&gt;</span>
+      </div>
       <a class="chat-page-back chat-page-back-bottom" href="index.html">Back to Noustelos_Studio /&gt;</a>
     </div>
   </main>
+  <script src="chat-hero-mark.min.js"></script>
   <script>
     (function () {
       var shell = document.querySelector('.chat-page-frame-shell');
