@@ -130,7 +130,6 @@
         <li><a href="#services" data-i18n="nav.services">Services</a></li>
         <li><a href="#about" data-i18n="nav.about">About</a></li>
         <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
-        <li><a href="#chatbot" data-i18n="nav.chatbot">Chat AI</a></li>
       </ul>
 
       <button class="lang-toggle" type="button">
@@ -295,29 +294,9 @@
       </div>
     </section>
 
-    <!-- 6. Chatbot -->
-    <section class="section" id="chatbot" aria-labelledby="chatbot-title">
-      <div class="container">
-        <div class="section-heading">
-          <h2 id="chatbot-title" data-i18n="chatbot.title">Chat with the AI Assistant</h2>
-        </div>
-        <p data-i18n="chatbot.text">Have a question? Ask the AI assistant directly.</p>
-        <div class="chatbot-embed">
-          <iframe
-            src="https://nik-greek-my-site-bot.hf.space/?__theme=light"
-            frameborder="0"
-            scrolling="no"
-            width="100%"
-            height="700"
-            title="Chat with Noustelos Studio AI"
-            loading="lazy"
-          ></iframe>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <!-- 7. Footer -->
+  <!-- 6. Footer -->
   <footer class="site-footer">
     <div class="container footer-layout">
       <div class="footer-copy">
@@ -339,6 +318,13 @@
       </div>
     </div>
   </footer>
+
+    <div class="ai-chat-widget">
+      <a class="ai-chat-button" href="ai-chat.html" aria-label="Open AI Chat" data-i18n-attr="aria-label:chatbot.openAria">
+        <i class="fa-solid fa-message" aria-hidden="true"></i>
+        <span data-i18n="chatbot.button">AI Chat</span>
+      </a>
+    </div>
 
     <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent banner" hidden>
       <p data-i18n="cookie.text">This site uses essential cookies for language and interface preferences.</p>
