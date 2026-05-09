@@ -317,7 +317,10 @@ test('contact email stays obfuscated in HTML and form target remains configured'
   }
 
   assert.match(html, /<form\b[^>]*id=["']contact-form["'][^>]*novalidate[^>]*>/i);
+  assert.match(html, /<meta\b(?=[^>]*\bname=["']recaptcha-site-key["'])(?=[^>]*\bcontent=["'][^"']+["'])[^>]*>/i);
+  assert.match(html, /<input\b(?=[^>]*\bname=["']g-recaptcha-response["'])(?=[^>]*\btype=["']hidden["'])[^>]*>/i);
   assert.match(read('script.js'), /mailto:info@noustelos\.gr\?subject=/);
+  assert.match(read('script.js'), /grecaptcha\.execute\(recaptchaSiteKey, \{ action \}\)/);
 });
 
 test('footer private routes intentionally stay out of the sitemap when noindex', () => {

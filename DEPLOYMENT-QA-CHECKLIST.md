@@ -42,6 +42,8 @@ Pass criteria:
 3. Verify language toggle works and updates text correctly.
 4. Verify cookie banner appears on first visit and stores decision.
 5. Verify contact form requires name + message and ignores bot honeypot silently.
+6. Replace `REPLACE_WITH_RECAPTCHA_V3_SITE_KEY` in `index.html` with the production Google reCAPTCHA v3 site key before release.
+7. Submit the contact form and confirm the browser requests `https://www.google.com/recaptcha/api.js` only after a valid form submit.
 
 Pass criteria:
 - Full keyboard operability on desktop, clear focus ring, no trapped focus.
@@ -51,9 +53,11 @@ Pass criteria:
 2. Click Direct Email link and verify mail app opens.
 3. Submit contact form with valid values and verify prefilled mail subject/body opens.
 4. Confirm no plain email address is visible in page source.
+5. Verify the generated reCAPTCHA token is validated by the production backend or hosting function before trusting any form submission.
 
 Pass criteria:
 - All contact triggers open mail client with expected recipient/content.
+- reCAPTCHA v3 uses the production site key and server-side verification accepts only valid tokens with an appropriate score threshold.
 
 ## 5) SEO/Metadata Spot Check
 1. Inspect page source and verify:

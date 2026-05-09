@@ -9,6 +9,13 @@ const documentRoot = document.documentElement;
 const currentYear = String(new Date().getFullYear());
 const obfuscatedMailLinks = document.querySelectorAll('.js-contact-mail');
 const contactForm = document.querySelector('#contact-form');
+const contactFormNote = contactForm ? contactForm.querySelector('.contact-form-note') : null;
+const contactSubmitButton = contactForm ? contactForm.querySelector('[type="submit"]') : null;
+const recaptchaTokenInput = contactForm ? contactForm.querySelector('[name="g-recaptcha-response"]') : null;
+const recaptchaSiteKeyMeta = document.querySelector('meta[name="recaptcha-site-key"]');
+const recaptchaSiteKey = ((recaptchaSiteKeyMeta ? recaptchaSiteKeyMeta.getAttribute('content') : '') || '').trim();
+const recaptchaPlaceholderPattern = /^(?:REPLACE_WITH|YOUR_)/i;
+const isRecaptchaConfigured = Boolean(recaptchaSiteKey && !recaptchaPlaceholderPattern.test(recaptchaSiteKey));
 const cookieBanner = document.querySelector('#cookie-banner');
 const cookieAccept = document.querySelector('#cookie-accept');
 const cookieDecline = document.querySelector('#cookie-decline');
@@ -144,7 +151,9 @@ const translations = {
         nameLabel: 'Name',
         messageLabel: 'Project details',
         submit: 'Send via email app',
-        note: 'Your email client will open with a prefilled message.'
+        note: 'Your email client will open with a prefilled message.',
+        checking: 'Checking request...',
+        verificationError: 'We could not verify this request. Please try again.'
       }
     },
     chatbot: {
@@ -248,7 +257,9 @@ const translations = {
         nameLabel: 'Όνομα',
         messageLabel: 'Λεπτομέρειες έργου',
         submit: 'Αποστολή μέσω εφαρμογής email',
-        note: 'Θα ανοίξει η εφαρμογή email με προσυμπληρωμένο μήνυμα.'
+        note: 'Θα ανοίξει η εφαρμογή email με προσυμπληρωμένο μήνυμα.',
+        checking: 'Γίνεται έλεγχος αιτήματος...',
+        verificationError: 'Δεν μπορέσαμε να επαληθεύσουμε το αίτημα. Δοκίμασε ξανά.'
       }
     },
     chatbot: {
@@ -329,6 +340,74 @@ const applyDynamicYear = () => {
   });
 };
 
+const getCurrentLanguageContent = () => {
+  const storedLang = safeStorage.get('siteLanguage');
+  const safeLang = translations[storedLang] ? storedLang : 'en';
+
+  return translations[safeLang];
+};
+
+const setContactFormNote = (key) => {
+  if (!contactFormNote) {
+    return;
+  }
+
+  const value = getNestedValue(getCurrentLanguageContent(), key);
+
+  if (typeof value === 'string') {
+    contactFormNote.textContent = value;
+  }
+};
+
+const loadRecaptcha = (() => {
+  let recaptchaLoadPromise = null;
+
+  return () => {
+    if (!isRecaptchaConfigured) {
+      return Promise.resolve(null);
+    }
+
+    if (window.grecaptcha && typeof window.grecaptcha.execute === 'function') {
+      return Promise.resolve(window.grecaptcha);
+    }
+
+    if (recaptchaLoadPromise) {
+      return recaptchaLoadPromise;
+    }
+
+    recaptchaLoadPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(recaptchaSiteKey)}`;
+      script.async = true;
+      script.defer = true;
+      script.dataset.recaptchaV3 = 'true';
+      script.onload = () => resolve(window.grecaptcha || null);
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+
+    return recaptchaLoadPromise;
+  };
+})();
+
+const executeRecaptcha = async (action) => {
+  if (!isRecaptchaConfigured) {
+    return null;
+  }
+
+  const grecaptcha = await loadRecaptcha();
+
+  if (!grecaptcha || typeof grecaptcha.ready !== 'function' || typeof grecaptcha.execute !== 'function') {
+    throw new Error('reCAPTCHA is unavailable');
+  }
+
+  return new Promise((resolve, reject) => {
+    grecaptcha.ready(() => {
+      grecaptcha.execute(recaptchaSiteKey, { action }).then(resolve).catch(reject);
+    });
+  });
+};
+
 const setupMailLinks = () => {
   if (!obfuscatedMailLinks.length) {
     return;
@@ -361,7 +440,7 @@ const setupContactForm = () => {
     });
   });
 
-  contactForm.addEventListener('submit', (event) => {
+  contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new FormData(contactForm);
@@ -385,9 +464,38 @@ const setupContactForm = () => {
       return;
     }
 
+    if (contactSubmitButton) {
+      contactSubmitButton.disabled = true;
+    }
+
+    try {
+      setContactFormNote(isRecaptchaConfigured ? 'contact.form.checking' : 'contact.form.note');
+      const recaptchaToken = await executeRecaptcha('contact_submit');
+
+      if (recaptchaTokenInput) {
+        recaptchaTokenInput.value = recaptchaToken || '';
+      }
+    } catch (_error) {
+      setContactFormNote('contact.form.verificationError');
+
+      if (contactSubmitButton) {
+        contactSubmitButton.disabled = false;
+      }
+
+      return;
+    }
+
     const subject = encodeURIComponent(`New website inquiry from ${name}`);
     const body = encodeURIComponent(`Name: ${name}\n\nProject details:\n${message}`);
     window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
+
+    window.setTimeout(() => {
+      if (contactSubmitButton) {
+        contactSubmitButton.disabled = false;
+      }
+
+      setContactFormNote('contact.form.note');
+    }, 1200);
   });
 };
 
