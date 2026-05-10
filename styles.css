@@ -1159,6 +1159,44 @@ h3 {
   }
 }
 
+@media (min-width: 780px) and (max-width: 1099px) and (orientation: portrait) {
+  .menu {
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.95rem 1rem 1.1rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    gap: 0.7rem;
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .menu a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .nav-toggle {
+    display: grid;
+  }
+
+  .lang-toggle {
+    margin-left: 0.5rem;
+  }
+}
+
 @media (max-width: 767px) {
   :root {
     --container-inline: 1.5rem;
