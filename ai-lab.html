@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script>(function(){try{if(localStorage.getItem('siteLanguage')==='gr')document.documentElement.lang='el';}catch(e){}})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="AI Lab by Noustelos Studio. Explore playful bots and conversational experiments." />
+  <meta name="description" content="AI Lab by Noustelos Studio. Custom AI personas, knowledge integration and ready-to-deploy chat spaces for brands, researchers and small businesses." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="canonical" href="https://noustelos.gr/ai-lab.html" />
@@ -33,6 +34,10 @@
 
     .ai-lab-heading {
       margin-bottom: 0.4rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+      flex-wrap: wrap;
     }
 
     .ai-lab-heading h1 {
@@ -56,11 +61,127 @@
       color: var(--glass-gray-text);
     }
 
+    .ai-lab-title-demo {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--glass-gray-text);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(13px, 1.45vw, 16px);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 150ms ease, transform 150ms ease;
+    }
+
+    .ai-lab-title-demo:hover,
+    .ai-lab-title-demo:focus-visible {
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .ai-lab-page .lang-toggle {
+      margin-left: 0.65rem;
+    }
+
     .ai-lab-intro {
       margin: 0;
       max-width: 62ch;
       color: var(--text-secondary);
       font-size: var(--content-text-size);
+    }
+
+    .ai-lab-offering {
+      display: grid;
+      gap: 1.15rem;
+      margin-top: 0.8rem;
+    }
+
+    .ai-lab-lede {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--text-secondary);
+      font-size: var(--content-text-size);
+    }
+
+    .ai-lab-section-title {
+      margin: 0.4rem 0 0;
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+    }
+
+    .ai-lab-offer-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ai-lab-offer-card {
+      min-height: 100%;
+      padding: 1.2rem;
+    }
+
+    .ai-lab-offer-card h3 {
+      font-size: 20px;
+    }
+
+    .ai-lab-offer-card p {
+      margin: 0.7rem 0 0;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.58;
+    }
+
+    .ai-lab-fit {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      border-left: 2px solid var(--text-primary);
+      background: rgba(17, 17, 17, 0.025);
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.58;
+    }
+
+    .ai-lab-demo-intro {
+      margin-top: 1.2rem;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .ai-lab-demo-label {
+      margin: 0;
+      display: inline-flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0.16em;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(30px, 4vw, 46px);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .ai-lab-demo-label::after {
+      content: "/>";
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--glass-gray-text);
+      transform: translateY(-0.26em);
+    }
+
+    .ai-lab-demo-intro {
+      justify-items: center;
+      text-align: center;
+    }
+
+    .ai-lab-demo-intro .ai-lab-intro {
+      justify-self: stretch;
+      text-align: left;
     }
 
     .ai-lab-card .card-content {
@@ -74,11 +195,12 @@
 
     .ai-lab-frame {
       position: fixed;
+      top: max(0.75rem, env(safe-area-inset-top));
       right: max(1rem, env(safe-area-inset-right));
       bottom: max(1rem, env(safe-area-inset-bottom));
       z-index: 3200;
-      width: min(92vw, 920px);
-      height: min(84svh, 760px);
+      width: min(calc(100vw - 2rem), 1120px);
+      height: auto;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       overflow: hidden;
@@ -156,6 +278,7 @@
     }
 
     .ai-lab-frame.is-minimized {
+      top: auto;
       height: auto;
       width: min(92vw, 320px);
       grid-template-rows: auto;
@@ -323,14 +446,22 @@
 
     @media (max-width: 767px) {
       .ai-lab-frame {
+        top: max(0.75rem, env(safe-area-inset-top));
         left: max(0.75rem, env(safe-area-inset-left));
         right: max(0.75rem, env(safe-area-inset-right));
         width: auto;
-        height: min(84svh, 700px);
+        height: auto;
       }
 
       .ai-lab-frame.is-minimized {
+        top: auto;
         width: auto;
+      }
+    }
+
+    @media (min-width: 720px) {
+      .ai-lab-offer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
@@ -355,12 +486,18 @@
       </button>
 
       <ul class="menu" id="site-menu">
-        <li><a href="/index.html#work">Work</a></li>
-        <li><a href="/index.html#services">Services</a></li>
-        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/index.html#work" data-ai-i18n="nav.work">Work</a></li>
+        <li><a href="/index.html#services" data-ai-i18n="nav.services">Services</a></li>
+        <li><a href="/index.html#about" data-ai-i18n="nav.about">About</a></li>
         <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
-        <li><a href="/index.html#contact">Contact</a></li>
+        <li><a href="/index.html#contact" data-ai-i18n="nav.contact">Contact</a></li>
       </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language" data-ai-i18n-attr="aria-label:lang.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
     </nav>
   </header>
 
@@ -368,13 +505,49 @@
     <section class="container ai-lab-wrap" aria-labelledby="ai-lab-title">
       <div class="section-heading ai-lab-heading">
         <h1 id="ai-lab-title">AI Lab</h1>
+        <button class="ai-lab-title-demo" id="demo-jump" type="button">Live Demo</button>
       </div>
-      <p class="ai-lab-intro">Talk to our bots at your own risk. They may leave you both wiser and laughing out loud.</p>
+
+      <section class="ai-lab-offering" aria-labelledby="ai-lab-offering-title">
+        <h2 class="ai-lab-section-title" id="ai-lab-offering-title" data-ai-i18n="offering.title">Digital Personality &amp; Strategic Knowledge</h2>
+        <p class="ai-lab-lede" data-ai-i18n="offering.lede">At AI Lab, we turn artificial intelligence from a faceless tool into a specialized collaborator that understands your business, works with your content and speaks in your voice.</p>
+
+        <h2 class="ai-lab-section-title" data-ai-i18n="offering.what">What We Offer</h2>
+        <div class="ai-lab-offer-grid">
+          <article class="service-card ai-lab-offer-card">
+            <h3>Custom Personas</h3>
+            <p data-ai-i18n="offering.personas">Bots with a clear personality and tone of voice, from strictly professional to sharper, more conversational, sarcastic or friendly.</p>
+          </article>
+
+          <article class="service-card ai-lab-offer-card">
+            <h3>Knowledge Integration (RAG)</h3>
+            <p data-ai-i18n="offering.knowledge">Your bot does not answer in vague generalities. It connects with your own material, such as PDFs, notes or knowledge bases, to provide more accurate and grounded responses.</p>
+          </article>
+
+          <article class="service-card ai-lab-offer-card">
+            <h3>Ready-to-Deploy Spaces</h3>
+            <p data-ai-i18n="offering.spaces">We deliver functional AI environments, such as Hugging Face Spaces, ready to use directly or embed into your website.</p>
+          </article>
+
+          <article class="service-card ai-lab-offer-card">
+            <h3>Logic Framing</h3>
+            <p data-ai-i18n="offering.logic">We define reasoning rules and logic filters, such as Stoic framing, so answers stay useful, meaningful and free from unnecessary noise.</p>
+          </article>
+        </div>
+
+        <p class="ai-lab-fit" data-ai-i18n="offering.fit"><strong>Ideal for:</strong> writers, researchers, small businesses and digital widgets that need character, knowledge and a clear strategic voice.</p>
+      </section>
+
+      <div class="ai-lab-demo-intro" id="live-demo">
+        <p class="ai-lab-demo-label" data-ai-i18n="demo.label">Live demo</p>
+        <p class="ai-lab-intro" data-ai-i18n="demo.line1">Talk to our bots at your own risk.</p>
+        <p class="ai-lab-intro" data-ai-i18n="demo.line2">They may leave you both wiser and laughing out loud.</p>
+      </div>
 
       <article class="project-card ai-lab-card">
         <div class="card-content">
           <h2>Epictetus meets George Carlin</h2>
-          <button class="button button-primary" id="chat-launch" type="button" aria-controls="chat-frame" aria-expanded="false">CHAT</button>
+          <button class="button button-primary" id="chat-launch" type="button" aria-controls="chat-frame" aria-expanded="false" data-chat-state="closed">CHAT</button>
         </div>
       </article>
 
@@ -397,23 +570,23 @@
         </div>
       </div>
 
-      <button class="ai-lab-privacy-trigger" id="privacy-trigger" type="button">Σημείωση ιδιωτικότητας</button>
+      <button class="ai-lab-privacy-trigger" id="privacy-trigger" type="button" data-ai-i18n="privacy.trigger">Privacy note</button>
 
-      <a class="button button-secondary ai-lab-back-link" href="/index.html#top">Back to Noustelos_Studio</a>
+      <a class="button button-secondary ai-lab-back-link" href="/index.html#top" data-ai-i18n="back">Back to Noustelos_Studio</a>
     </section>
   </main>
 
   <div class="ai-lab-privacy-modal" id="privacy-modal" hidden>
     <div class="ai-lab-privacy-panel" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
       <div class="ai-lab-privacy-head">
-        <h3 id="privacy-title">Εδω μπορείτε να μιλήσετε ελεύθερα.</h3>
-        <button class="ai-lab-privacy-close" id="privacy-close" type="button" aria-label="Κλείσιμο">x</button>
+        <h3 id="privacy-title" data-ai-i18n="privacy.title">You can speak freely here.</h3>
+        <button class="ai-lab-privacy-close" id="privacy-close" type="button" aria-label="Close" data-ai-i18n-attr="aria-label:privacy.closeAria">x</button>
       </div>
       <div class="ai-lab-privacy-body">
-        <p>Θέλουμε να γνωρίζετε ότι αυτό το bot έχει σχεδιαστεί με σεβασμό στην ιδιωτική σας ζωή:</p>
-        <p><strong>Καμία Καταγραφή:</strong> Οι συνομιλίες σας ΔΕΝ αποθηκεύονται σε καμία βάση δεδομένων. Μόλις κλείσετε το παράθυρο του browser ή κάνετε ανανέωση (refresh), η συζήτηση διαγράφεται οριστικά.</p>
-        <p><strong>Προσωρινή Μνήμη:</strong> Το bot «θυμάται» τι είπατε μόνο για όσο διαρκεί η τρέχουσα συνεδρία, ώστε να μπορεί να σας απαντάει με συνέπεια.</p>
-        <p><strong>Ασφάλεια Δεδομένων:</strong> Δεν χρησιμοποιούμε τα λεγόμενά σας για την εκπαίδευση μελλοντικών μοντέλων, ούτε τα μοιραζόμαστε με τρίτους φορείς.</p>
+        <p data-ai-i18n="privacy.p1">We want you to know that this bot is designed with respect for your privacy:</p>
+        <p data-ai-i18n="privacy.p2"><strong>No Logging:</strong> Your conversations are NOT stored in any database. Once you close the browser window or refresh the page, the conversation is permanently cleared.</p>
+        <p data-ai-i18n="privacy.p3"><strong>Temporary Memory:</strong> The bot remembers what you said only for the duration of the current session, so it can respond consistently.</p>
+        <p data-ai-i18n="privacy.p4"><strong>Data Safety:</strong> We do not use your messages to train future models, and we do not share them with third parties.</p>
       </div>
     </div>
   </div>
@@ -422,13 +595,215 @@
     (function () {
       var navToggle = document.querySelector('.nav-toggle');
       var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
       var launchButton = document.querySelector('#chat-launch');
+      var demoJump = document.querySelector('#demo-jump');
+      var liveDemo = document.querySelector('#live-demo');
       var chatFrame = document.querySelector('#chat-frame');
       var minimizeButton = document.querySelector('#chat-minimize');
       var closeButton = document.querySelector('#chat-close');
       var privacyTrigger = document.querySelector('#privacy-trigger');
       var privacyModal = document.querySelector('#privacy-modal');
       var privacyClose = document.querySelector('#privacy-close');
+
+      var translations = {
+        en: {
+          meta: {
+            title: 'AI Lab | Noustelos Studio',
+            description: 'AI Lab by Noustelos Studio. Custom AI personas, knowledge integration and ready-to-deploy chat spaces for brands, researchers and small businesses.'
+          },
+          nav: {
+            work: 'Work',
+            services: 'Services',
+            about: 'About',
+            contact: 'Contact'
+          },
+          lang: {
+            switchAria: 'Switch language'
+          },
+          offering: {
+            title: 'Digital Personality & Strategic Knowledge',
+            lede: 'At AI Lab, we turn artificial intelligence from a faceless tool into a specialized collaborator that understands your business, works with your content and speaks in your voice.',
+            what: 'What We Offer',
+            personas: 'Bots with a clear personality and tone of voice, from strictly professional to sharper, more conversational, sarcastic or friendly.',
+            knowledge: 'Your bot does not answer in vague generalities. It connects with your own material, such as PDFs, notes or knowledge bases, to provide more accurate and grounded responses.',
+            spaces: 'We deliver functional AI environments, such as Hugging Face Spaces, ready to use directly or embed into your website.',
+            logic: 'We define reasoning rules and logic filters, such as Stoic framing, so answers stay useful, meaningful and free from unnecessary noise.',
+            fit: '<strong>Ideal for:</strong> writers, researchers, small businesses and digital widgets that need character, knowledge and a clear strategic voice.'
+          },
+          demo: {
+            label: 'Live demo',
+            line1: 'Talk to our bots at your own risk.',
+            line2: 'They may leave you both wiser and laughing out loud.'
+          },
+          chat: {
+            closed: 'CHAT',
+            open: 'CHAT OPEN',
+            minimized: 'CHAT MINIMIZED',
+            minimizeAria: 'Minimize chat',
+            restoreAria: 'Restore chat',
+            closeAria: 'Close chat'
+          },
+          privacy: {
+            trigger: 'Privacy note',
+            title: 'You can speak freely here.',
+            closeAria: 'Close',
+            p1: 'We want you to know that this bot is designed with respect for your privacy:',
+            p2: '<strong>No Logging:</strong> Your conversations are NOT stored in any database. Once you close the browser window or refresh the page, the conversation is permanently cleared.',
+            p3: '<strong>Temporary Memory:</strong> The bot remembers what you said only for the duration of the current session, so it can respond consistently.',
+            p4: '<strong>Data Safety:</strong> We do not use your messages to train future models, and we do not share them with third parties.'
+          },
+          back: 'Back to Noustelos_Studio'
+        },
+        gr: {
+          meta: {
+            title: 'AI Lab | Noustelos Studio',
+            description: 'Το AI Lab του Noustelos Studio δημιουργεί custom AI personas, knowledge integration και έτοιμα chat spaces για brands, ερευνητές και μικρές επιχειρήσεις.'
+          },
+          nav: {
+            work: 'Portfolio',
+            services: 'Υπηρεσίες',
+            about: 'Σχετικά',
+            contact: 'Επικοινωνία'
+          },
+          lang: {
+            switchAria: 'Αλλαγή γλώσσας'
+          },
+          offering: {
+            title: 'Ψηφιακή Προσωπικότητα & Στρατηγική Γνώση',
+            lede: 'Στο AI Lab μετατρέπουμε την Τεχνητή Νοημοσύνη από απρόσωπο εργαλείο σε εξειδικευμένο συνεργάτη που γνωρίζει την επιχείρησή σας, κατανοεί το περιεχόμενό σας και μιλάει με το δικό σας ύφος.',
+            what: 'Τι προσφέρουμε',
+            personas: 'Bots με ξεκάθαρη προσωπικότητα και τόνο επικοινωνίας, από αυστηρά επαγγελματικό έως πιο σαρκαστικό, άμεσο ή φιλικό.',
+            knowledge: 'Το bot δεν απαντά γενικά. Συνδέεται με το δικό σας υλικό, όπως PDF, σημειώσεις ή βάσεις γνώσης, ώστε να δίνει πιο ακριβείς και τεκμηριωμένες απαντήσεις.',
+            spaces: 'Παραδίδουμε λειτουργικά AI περιβάλλοντα, όπως Hugging Face Spaces, έτοιμα για χρήση ή ενσωμάτωση στο site σας.',
+            logic: 'Ορίζουμε κανόνες σκέψης και φίλτρα λογικής, όπως η Στωική μέθοδος, ώστε οι απαντήσεις να παραμένουν χρήσιμες, ουσιαστικές και χωρίς περιττό θόρυβο.',
+            fit: '<strong>Ιδανικό για:</strong> συγγραφείς, ερευνητές, μικρές επιχειρήσεις και digital widgets που χρειάζονται χαρακτήρα, γνώση και καθαρή στρατηγική φωνή.'
+          },
+          demo: {
+            label: 'Live demo',
+            line1: 'Μιλήστε με τα bots μας με δική σας ευθύνη.',
+            line2: 'Μπορεί να σας αφήσουν και λίγο σοφότερους και να σας κάνουν να γελάσετε πραγματικά.'
+          },
+          chat: {
+            closed: 'CHAT',
+            open: 'CHAT OPEN',
+            minimized: 'CHAT MINIMIZED',
+            minimizeAria: 'Ελαχιστοποίηση chat',
+            restoreAria: 'Επαναφορά chat',
+            closeAria: 'Κλείσιμο chat'
+          },
+          privacy: {
+            trigger: 'Σημείωση ιδιωτικότητας',
+            title: 'Εδώ μπορείτε να μιλήσετε ελεύθερα.',
+            closeAria: 'Κλείσιμο',
+            p1: 'Θέλουμε να γνωρίζετε ότι αυτό το bot έχει σχεδιαστεί με σεβασμό στην ιδιωτική σας ζωή:',
+            p2: '<strong>Καμία Καταγραφή:</strong> Οι συνομιλίες σας ΔΕΝ αποθηκεύονται σε καμία βάση δεδομένων. Μόλις κλείσετε το παράθυρο του browser ή κάνετε ανανέωση (refresh), η συζήτηση διαγράφεται οριστικά.',
+            p3: '<strong>Προσωρινή Μνήμη:</strong> Το bot «θυμάται» τι είπατε μόνο για όσο διαρκεί η τρέχουσα συνεδρία, ώστε να μπορεί να σας απαντάει με συνέπεια.',
+            p4: '<strong>Ασφάλεια Δεδομένων:</strong> Δεν χρησιμοποιούμε τα λεγόμενά σας για την εκπαίδευση μελλοντικών μοντέλων, ούτε τα μοιραζόμαστε με τρίτους φορείς.'
+          },
+          back: 'Back to Noustelos_Studio'
+        }
+      };
+
+      var safeStorage = {
+        get: function (key) {
+          try {
+            return localStorage.getItem(key);
+          } catch (_e) {
+            return null;
+          }
+        },
+        set: function (key, value) {
+          try {
+            localStorage.setItem(key, value);
+          } catch (_e) {}
+        }
+      };
+
+      var getNestedValue = function (obj, path) {
+        return path.split('.').reduce(function (acc, key) {
+          return acc && acc[key] !== undefined ? acc[key] : null;
+        }, obj);
+      };
+
+      var currentLanguage = 'en';
+
+      var getChatLabel = function () {
+        if (!launchButton) return '';
+
+        var state = launchButton.getAttribute('data-chat-state') || 'closed';
+        return translations[currentLanguage].chat[state] || translations[currentLanguage].chat.closed;
+      };
+
+      var applyLanguage = function (lang) {
+        currentLanguage = translations[lang] ? lang : 'en';
+        var langContent = translations[currentLanguage];
+
+        document.documentElement.lang = currentLanguage === 'gr' ? 'el' : 'en';
+        document.title = langContent.meta.title;
+
+        var description = document.querySelector('meta[name="description"]');
+        if (description) {
+          description.setAttribute('content', langContent.meta.description);
+        }
+
+        document.querySelectorAll('[data-ai-i18n]').forEach(function (element) {
+          var key = element.getAttribute('data-ai-i18n');
+          var value = getNestedValue(langContent, key);
+
+          if (typeof value === 'string') {
+            if (key === 'offering.fit' || key.indexOf('privacy.p') === 0) {
+              element.innerHTML = value;
+            } else {
+              element.textContent = value;
+            }
+          }
+        });
+
+        document.querySelectorAll('[data-ai-i18n-attr]').forEach(function (element) {
+          element
+            .getAttribute('data-ai-i18n-attr')
+            .split(';')
+            .map(function (entry) { return entry.trim(); })
+            .filter(Boolean)
+            .forEach(function (mapping) {
+              var parts = mapping.split(':').map(function (part) { return part.trim(); });
+              var value = getNestedValue(langContent, parts[1]);
+
+              if (parts[0] && typeof value === 'string') {
+                element.setAttribute(parts[0], value);
+              }
+            });
+        });
+
+        if (launchButton) {
+          launchButton.textContent = getChatLabel();
+        }
+
+        if (minimizeButton) {
+          var isMinimized = chatFrame && chatFrame.classList.contains('is-minimized');
+          minimizeButton.setAttribute('aria-label', isMinimized ? langContent.chat.restoreAria : langContent.chat.minimizeAria);
+        }
+
+        if (closeButton) {
+          closeButton.setAttribute('aria-label', langContent.chat.closeAria);
+        }
+
+        if (langToggle) {
+          langToggle.querySelectorAll('[data-lang-option]').forEach(function (option) {
+            option.classList.toggle('is-active', option.getAttribute('data-lang-option') === currentLanguage);
+          });
+        }
+
+        safeStorage.set('siteLanguage', currentLanguage);
+      };
+
+      var preferredLanguage = (function () {
+        var storedLang = safeStorage.get('siteLanguage');
+        return storedLang === 'gr' || storedLang === 'en' ? storedLang : 'en';
+      })();
+
+      applyLanguage(preferredLanguage);
 
       if (navToggle && menu) {
         navToggle.addEventListener('click', function () {
@@ -444,21 +819,53 @@
         });
       }
 
-      if (launchButton && chatFrame) {
-        launchButton.addEventListener('click', function () {
+      var openChat = function () {
+        if (chatFrame && launchButton) {
           chatFrame.removeAttribute('hidden');
           chatFrame.classList.remove('is-minimized');
           launchButton.setAttribute('aria-expanded', 'true');
-          launchButton.textContent = 'CHAT OPEN';
+          launchButton.setAttribute('data-chat-state', 'open');
+          launchButton.textContent = getChatLabel();
+        }
+      };
+
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          applyLanguage(currentLanguage === 'en' ? 'gr' : 'en');
         });
+      }
+
+      if (launchButton && chatFrame) {
+        launchButton.addEventListener('click', openChat);
+      }
+
+      if (demoJump) {
+        demoJump.addEventListener('click', function () {
+          if (liveDemo) {
+            liveDemo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+
+          openChat();
+        });
+      }
+
+      if (window.location.hash === '#live-demo') {
+        window.setTimeout(function () {
+          if (liveDemo) {
+            liveDemo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+
+          openChat();
+        }, 150);
       }
 
       if (minimizeButton && chatFrame && launchButton) {
         minimizeButton.addEventListener('click', function () {
           var isMinimized = chatFrame.classList.toggle('is-minimized');
           minimizeButton.textContent = isMinimized ? '+' : '-';
-          minimizeButton.setAttribute('aria-label', isMinimized ? 'Restore chat' : 'Minimize chat');
-          launchButton.textContent = isMinimized ? 'CHAT MINIMIZED' : 'CHAT OPEN';
+          launchButton.setAttribute('data-chat-state', isMinimized ? 'minimized' : 'open');
+          minimizeButton.setAttribute('aria-label', isMinimized ? translations[currentLanguage].chat.restoreAria : translations[currentLanguage].chat.minimizeAria);
+          launchButton.textContent = getChatLabel();
         });
       }
 
@@ -467,8 +874,9 @@
           chatFrame.setAttribute('hidden', '');
           chatFrame.classList.remove('is-minimized');
           minimizeButton.textContent = '-';
-          minimizeButton.setAttribute('aria-label', 'Minimize chat');
-          launchButton.textContent = 'CHAT';
+          minimizeButton.setAttribute('aria-label', translations[currentLanguage].chat.minimizeAria);
+          launchButton.setAttribute('data-chat-state', 'closed');
+          launchButton.textContent = getChatLabel();
           launchButton.setAttribute('aria-expanded', 'false');
         });
       }

@@ -134,6 +134,11 @@ const translations = {
       card3: {
         title: 'Creative Web Projects',
         desc: 'Visual storytelling and experimental interactive web experiences.'
+      },
+      card4: {
+        title: 'AI Lab',
+        desc: 'Custom-trained bots for business workflows and personal knowledge needs, designed with clear personality, useful context and practical deployment.',
+        cta: 'View the Live Demo'
       }
     },
     about: {
@@ -240,6 +245,11 @@ const translations = {
       card3: {
         title: 'Δημιουργικά Web Projects',
         desc: 'Οπτική αφήγηση και πειραματικές διαδραστικές web εμπειρίες.'
+      },
+      card4: {
+        title: 'AI Lab',
+        desc: 'Αναλαμβάνουμε την εκπαίδευση custom bots για την επιχείρηση και τις προσωπικές σου ανάγκες, με ξεκάθαρη προσωπικότητα, χρήσιμο περιεχόμενο και πρακτική ενσωμάτωση.',
+        cta: 'Δείτε το Live Demo'
       }
     },
     about: {
