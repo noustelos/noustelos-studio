@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="AI Lab by Noustelos Studio. Explore playful bots and conversational experiments." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/ai-lab.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AI Lab | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+      padding-bottom: clamp(4rem, 8vw, 6rem);
+      background: radial-gradient(ellipse 85% 60% at 50% 0%, rgba(17, 17, 17, 0.05) 0%, transparent 72%);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ai-lab-heading {
+      margin-bottom: 0.4rem;
+    }
+
+    .ai-lab-heading h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .ai-lab-heading h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--glass-gray-text);
+    }
+
+    .ai-lab-intro {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--text-secondary);
+      font-size: var(--content-text-size);
+    }
+
+    .ai-lab-card .card-content {
+      gap: 0.8rem;
+    }
+
+    .ai-lab-card p {
+      margin: 0;
+      max-width: 48ch;
+    }
+
+    .ai-lab-frame {
+      position: fixed;
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      z-index: 3200;
+      width: min(92vw, 920px);
+      height: min(84svh, 760px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 18px 44px rgba(17, 17, 17, 0.2);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .ai-lab-frame[hidden] {
+      display: none;
+    }
+
+    .ai-lab-window-bar {
+      min-height: 2.8rem;
+      padding: 0.45rem 0.55rem 0.45rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .ai-lab-window-title {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .ai-lab-window-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .ai-lab-window-control {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--text-primary);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.95rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .ai-lab-window-control:hover,
+    .ai-lab-window-control:focus-visible {
+      background: var(--surface-light);
+      border-color: var(--text-secondary);
+      transform: translateY(-1px);
+    }
+
+    .ai-lab-window-body {
+      min-height: 0;
+    }
+
+    .ai-lab-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #ffffff;
+    }
+
+    .ai-lab-frame.is-minimized {
+      height: auto;
+      width: min(92vw, 320px);
+      grid-template-rows: auto;
+    }
+
+    .ai-lab-frame.is-minimized .ai-lab-window-body {
+      display: none;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    .ai-lab-back-link {
+      justify-self: start;
+    }
+
+    .ai-lab-privacy-trigger {
+      justify-self: start;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+      transition: color 150ms ease;
+      animation: privacyPulse 2.2s ease-in-out infinite;
+    }
+
+    .ai-lab-privacy-trigger::before {
+      content: "";
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.82);
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+      animation: privacyDotPulse 2.2s ease-in-out infinite;
+    }
+
+    .ai-lab-privacy-trigger:hover,
+    .ai-lab-privacy-trigger:focus-visible {
+      color: var(--text-primary);
+      animation-play-state: paused;
+    }
+
+    .ai-lab-privacy-trigger:hover::before,
+    .ai-lab-privacy-trigger:focus-visible::before {
+      animation-play-state: paused;
+    }
+
+    @keyframes privacyPulse {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      45% {
+        transform: translateY(-1px);
+      }
+
+      60% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes privacyDotPulse {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.42);
+      }
+
+      55% {
+        box-shadow: 0 0 0 9px rgba(37, 99, 235, 0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ai-lab-privacy-trigger,
+      .ai-lab-privacy-trigger::before {
+        animation: none;
+      }
+    }
+
+    .ai-lab-privacy-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 3300;
+      display: grid;
+      place-items: center;
+      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+      background: rgba(17, 17, 17, 0.42);
+    }
+
+    .ai-lab-privacy-modal[hidden] {
+      display: none;
+    }
+
+    .ai-lab-privacy-panel {
+      width: min(100%, 620px);
+      max-height: min(84svh, 760px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 20px 48px rgba(17, 17, 17, 0.25);
+      padding: 1.1rem 1.15rem;
+    }
+
+    .ai-lab-privacy-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ai-lab-privacy-head h3 {
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 22px);
+    }
+
+    .ai-lab-privacy-close {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--text-primary);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 150ms ease, border-color 150ms ease;
+    }
+
+    .ai-lab-privacy-close:hover,
+    .ai-lab-privacy-close:focus-visible {
+      background: var(--surface-light);
+      border-color: var(--text-secondary);
+    }
+
+    .ai-lab-privacy-body p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.62;
+    }
+
+    .ai-lab-privacy-body p + p {
+      margin-top: 0.78rem;
+    }
+
+    @media (max-width: 767px) {
+      .ai-lab-frame {
+        left: max(0.75rem, env(safe-area-inset-left));
+        right: max(0.75rem, env(safe-area-inset-right));
+        width: auto;
+        height: min(84svh, 700px);
+      }
+
+      .ai-lab-frame.is-minimized {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap" aria-labelledby="ai-lab-title">
+      <div class="section-heading ai-lab-heading">
+        <h1 id="ai-lab-title">AI Lab</h1>
+      </div>
+      <p class="ai-lab-intro">Talk to our bots at your own risk. They may leave you both wiser and laughing out loud.</p>
+
+      <article class="project-card ai-lab-card">
+        <div class="card-content">
+          <h2>Epictetus meets George Carlin</h2>
+          <button class="button button-primary" id="chat-launch" type="button" aria-controls="chat-frame" aria-expanded="false">CHAT</button>
+        </div>
+      </article>
+
+      <div class="ai-lab-frame" id="chat-frame" hidden>
+        <div class="ai-lab-window-bar">
+          <p class="ai-lab-window-title">Epictetus meets George Carlin</p>
+          <div class="ai-lab-window-controls">
+            <button class="ai-lab-window-control" id="chat-minimize" type="button" aria-label="Minimize chat">-</button>
+            <button class="ai-lab-window-control" id="chat-close" type="button" aria-label="Close chat">x</button>
+          </div>
+        </div>
+        <div class="ai-lab-window-body">
+          <iframe
+            src="https://nik-greek-epictetus.hf.space"
+            title="Epictetus meets George Carlin chat"
+            loading="lazy"
+            allow="clipboard-write"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+      </div>
+
+      <button class="ai-lab-privacy-trigger" id="privacy-trigger" type="button">Σημείωση ιδιωτικότητας</button>
+
+      <a class="button button-secondary ai-lab-back-link" href="/index.html#top">Back to Noustelos_Studio</a>
+    </section>
+  </main>
+
+  <div class="ai-lab-privacy-modal" id="privacy-modal" hidden>
+    <div class="ai-lab-privacy-panel" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+      <div class="ai-lab-privacy-head">
+        <h3 id="privacy-title">Εδω μπορείτε να μιλήσετε ελεύθερα.</h3>
+        <button class="ai-lab-privacy-close" id="privacy-close" type="button" aria-label="Κλείσιμο">x</button>
+      </div>
+      <div class="ai-lab-privacy-body">
+        <p>Θέλουμε να γνωρίζετε ότι αυτό το bot έχει σχεδιαστεί με σεβασμό στην ιδιωτική σας ζωή:</p>
+        <p><strong>Καμία Καταγραφή:</strong> Οι συνομιλίες σας ΔΕΝ αποθηκεύονται σε καμία βάση δεδομένων. Μόλις κλείσετε το παράθυρο του browser ή κάνετε ανανέωση (refresh), η συζήτηση διαγράφεται οριστικά.</p>
+        <p><strong>Προσωρινή Μνήμη:</strong> Το bot «θυμάται» τι είπατε μόνο για όσο διαρκεί η τρέχουσα συνεδρία, ώστε να μπορεί να σας απαντάει με συνέπεια.</p>
+        <p><strong>Ασφάλεια Δεδομένων:</strong> Δεν χρησιμοποιούμε τα λεγόμενά σας για την εκπαίδευση μελλοντικών μοντέλων, ούτε τα μοιραζόμαστε με τρίτους φορείς.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var launchButton = document.querySelector('#chat-launch');
+      var chatFrame = document.querySelector('#chat-frame');
+      var minimizeButton = document.querySelector('#chat-minimize');
+      var closeButton = document.querySelector('#chat-close');
+      var privacyTrigger = document.querySelector('#privacy-trigger');
+      var privacyModal = document.querySelector('#privacy-modal');
+      var privacyClose = document.querySelector('#privacy-close');
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      if (launchButton && chatFrame) {
+        launchButton.addEventListener('click', function () {
+          chatFrame.removeAttribute('hidden');
+          chatFrame.classList.remove('is-minimized');
+          launchButton.setAttribute('aria-expanded', 'true');
+          launchButton.textContent = 'CHAT OPEN';
+        });
+      }
+
+      if (minimizeButton && chatFrame && launchButton) {
+        minimizeButton.addEventListener('click', function () {
+          var isMinimized = chatFrame.classList.toggle('is-minimized');
+          minimizeButton.textContent = isMinimized ? '+' : '-';
+          minimizeButton.setAttribute('aria-label', isMinimized ? 'Restore chat' : 'Minimize chat');
+          launchButton.textContent = isMinimized ? 'CHAT MINIMIZED' : 'CHAT OPEN';
+        });
+      }
+
+      if (closeButton && chatFrame && launchButton && minimizeButton) {
+        closeButton.addEventListener('click', function () {
+          chatFrame.setAttribute('hidden', '');
+          chatFrame.classList.remove('is-minimized');
+          minimizeButton.textContent = '-';
+          minimizeButton.setAttribute('aria-label', 'Minimize chat');
+          launchButton.textContent = 'CHAT';
+          launchButton.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      if (privacyTrigger && privacyModal) {
+        privacyTrigger.addEventListener('click', function () {
+          privacyModal.removeAttribute('hidden');
+        });
+      }
+
+      if (privacyClose && privacyModal) {
+        privacyClose.addEventListener('click', function () {
+          privacyModal.setAttribute('hidden', '');
+        });
+      }
+
+      if (privacyModal) {
+        privacyModal.addEventListener('click', function (event) {
+          if (event.target === privacyModal) {
+            privacyModal.setAttribute('hidden', '');
+          }
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && privacyModal && !privacyModal.hasAttribute('hidden')) {
+          privacyModal.setAttribute('hidden', '');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
