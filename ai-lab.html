@@ -302,11 +302,17 @@
       background: #ffffff;
     }
 
-    .ai-lab-frame gradio-app h1 {
+    #chat-frame gradio-app h1 {
       width: 100% !important;
       max-width: 100% !important;
       margin-inline: 0 !important;
       text-align: left !important;
+      white-space: nowrap !important;
+    }
+
+    #rita-chat-frame gradio-app h1 {
+      width: 100% !important;
+      max-width: 100% !important;
       white-space: nowrap !important;
     }
 
@@ -322,15 +328,24 @@
     }
 
     @media (max-width: 520px) {
-      .ai-lab-frame gradio-app h1 {
+      #chat-frame gradio-app h1 {
+        font-size: 16px !important;
+        line-height: 1.2 !important;
+      }
+
+      #rita-chat-frame gradio-app h1 {
         font-size: 16px !important;
         line-height: 1.2 !important;
       }
     }
 
     @media (max-width: 380px) {
-      .ai-lab-frame gradio-app h1 {
+      #chat-frame gradio-app h1 {
         font-size: 13px !important;
+      }
+
+      #rita-chat-frame gradio-app h1 {
+        font-size: 14px !important;
       }
     }
 
@@ -632,13 +647,7 @@
           </div>
         </div>
         <div class="ai-lab-window-body">
-          <iframe
-            src="https://nik-greek-rita.hf.space?__theme=light"
-            title="Rita Meets Carl Sagan chat"
-            loading="lazy"
-            allow="clipboard-write"
-            referrerpolicy="strict-origin-when-cross-origin"
-          ></iframe>
+          <gradio-app src="https://nik-greek-rita.hf.space?__theme=light" theme_mode="light"></gradio-app>
         </div>
       </div>
 
