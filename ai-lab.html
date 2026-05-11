@@ -193,6 +193,23 @@
       max-width: 48ch;
     }
 
+    .ai-lab-rita-card {
+      overflow: hidden;
+    }
+
+    .ai-lab-rita-card .card-content {
+      gap: 1rem;
+    }
+
+    .ai-lab-rita-copy {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .ai-lab-rita-copy h2 {
+      margin: 0;
+    }
+
     .ai-lab-frame {
       position: fixed;
       top: max(0.75rem, env(safe-area-inset-top));
@@ -546,7 +563,10 @@
 
       <article class="project-card ai-lab-card">
         <div class="card-content">
-          <h2>Epictetus meets George Carlin</h2>
+          <div class="ai-lab-rita-copy">
+            <h2>Epictetus meets George Carlin</h2>
+            <p data-ai-i18n="chatCards.epictetusTagline">A Stoic, foul-mouthed bot</p>
+          </div>
           <button class="button button-primary" id="chat-launch" type="button" aria-controls="chat-frame" aria-expanded="false" data-chat-state="closed">CHAT</button>
         </div>
       </article>
@@ -563,6 +583,35 @@
           <iframe
             src="https://nik-greek-epictetus.hf.space"
             title="Epictetus meets George Carlin chat"
+            loading="lazy"
+            allow="clipboard-write"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+      </div>
+
+      <article class="project-card ai-lab-card ai-lab-rita-card" aria-labelledby="rita-sagan-title">
+        <div class="card-content">
+          <div class="ai-lab-rita-copy">
+            <h2 id="rita-sagan-title">Rita Meets Carl Sagan</h2>
+            <p data-ai-i18n="chatCards.ritaTagline">Talk about the stars, not star signs</p>
+          </div>
+          <button class="button button-primary" id="rita-chat-launch" type="button" aria-controls="rita-chat-frame" aria-expanded="false" data-chat-state="closed">CHAT</button>
+        </div>
+      </article>
+
+      <div class="ai-lab-frame" id="rita-chat-frame" hidden>
+        <div class="ai-lab-window-bar">
+          <p class="ai-lab-window-title">Rita Meets Carl Sagan</p>
+          <div class="ai-lab-window-controls">
+            <button class="ai-lab-window-control" id="rita-chat-minimize" type="button" aria-label="Minimize chat">-</button>
+            <button class="ai-lab-window-control" id="rita-chat-close" type="button" aria-label="Close chat">x</button>
+          </div>
+        </div>
+        <div class="ai-lab-window-body">
+          <iframe
+            src="https://nik-greek-rita.hf.space"
+            title="Rita Meets Carl Sagan chat"
             loading="lazy"
             allow="clipboard-write"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -597,11 +646,15 @@
       var menu = document.querySelector('#site-menu');
       var langToggle = document.querySelector('.lang-toggle');
       var launchButton = document.querySelector('#chat-launch');
+      var ritaLaunchButton = document.querySelector('#rita-chat-launch');
       var demoJump = document.querySelector('#demo-jump');
       var liveDemo = document.querySelector('#live-demo');
       var chatFrame = document.querySelector('#chat-frame');
+      var ritaChatFrame = document.querySelector('#rita-chat-frame');
       var minimizeButton = document.querySelector('#chat-minimize');
+      var ritaMinimizeButton = document.querySelector('#rita-chat-minimize');
       var closeButton = document.querySelector('#chat-close');
+      var ritaCloseButton = document.querySelector('#rita-chat-close');
       var privacyTrigger = document.querySelector('#privacy-trigger');
       var privacyModal = document.querySelector('#privacy-modal');
       var privacyClose = document.querySelector('#privacy-close');
@@ -643,6 +696,10 @@
             minimizeAria: 'Minimize chat',
             restoreAria: 'Restore chat',
             closeAria: 'Close chat'
+          },
+          chatCards: {
+            epictetusTagline: 'A Stoic, foul-mouthed bot',
+            ritaTagline: 'Talk about the stars, not star signs'
           },
           privacy: {
             trigger: 'Privacy note',
@@ -692,6 +749,10 @@
             restoreAria: 'Επαναφορά chat',
             closeAria: 'Κλείσιμο chat'
           },
+          chatCards: {
+            epictetusTagline: 'Στωικά αθυρόστομο bot',
+            ritaTagline: 'Μιλήστε για τα αστέρια, όχι για τα ζώδια'
+          },
           privacy: {
             trigger: 'Σημείωση ιδιωτικότητας',
             title: 'Εδώ μπορείτε να μιλήσετε ελεύθερα.',
@@ -728,10 +789,10 @@
 
       var currentLanguage = 'en';
 
-      var getChatLabel = function () {
-        if (!launchButton) return '';
+      var getChatLabel = function (button) {
+        if (!button) return '';
 
-        var state = launchButton.getAttribute('data-chat-state') || 'closed';
+        var state = button.getAttribute('data-chat-state') || 'closed';
         return translations[currentLanguage].chat[state] || translations[currentLanguage].chat.closed;
       };
 
@@ -777,7 +838,11 @@
         });
 
         if (launchButton) {
-          launchButton.textContent = getChatLabel();
+          launchButton.textContent = getChatLabel(launchButton);
+        }
+
+        if (ritaLaunchButton) {
+          ritaLaunchButton.textContent = getChatLabel(ritaLaunchButton);
         }
 
         if (minimizeButton) {
@@ -785,8 +850,17 @@
           minimizeButton.setAttribute('aria-label', isMinimized ? langContent.chat.restoreAria : langContent.chat.minimizeAria);
         }
 
+        if (ritaMinimizeButton) {
+          var isRitaMinimized = ritaChatFrame && ritaChatFrame.classList.contains('is-minimized');
+          ritaMinimizeButton.setAttribute('aria-label', isRitaMinimized ? langContent.chat.restoreAria : langContent.chat.minimizeAria);
+        }
+
         if (closeButton) {
           closeButton.setAttribute('aria-label', langContent.chat.closeAria);
+        }
+
+        if (ritaCloseButton) {
+          ritaCloseButton.setAttribute('aria-label', langContent.chat.closeAria);
         }
 
         if (langToggle) {
@@ -819,13 +893,47 @@
         });
       }
 
-      var openChat = function () {
-        if (chatFrame && launchButton) {
-          chatFrame.removeAttribute('hidden');
-          chatFrame.classList.remove('is-minimized');
-          launchButton.setAttribute('aria-expanded', 'true');
-          launchButton.setAttribute('data-chat-state', 'open');
-          launchButton.textContent = getChatLabel();
+      var closeChat = function (frame, button, minimizeControl) {
+        if (frame && button && minimizeControl) {
+          frame.setAttribute('hidden', '');
+          frame.classList.remove('is-minimized');
+          minimizeControl.textContent = '-';
+          minimizeControl.setAttribute('aria-label', translations[currentLanguage].chat.minimizeAria);
+          button.setAttribute('data-chat-state', 'closed');
+          button.textContent = getChatLabel(button);
+          button.setAttribute('aria-expanded', 'false');
+        }
+      };
+
+      var openChat = function (frame, button, minimizeControl) {
+        if (frame && button) {
+          if (frame !== chatFrame) {
+            closeChat(chatFrame, launchButton, minimizeButton);
+          }
+
+          if (frame !== ritaChatFrame) {
+            closeChat(ritaChatFrame, ritaLaunchButton, ritaMinimizeButton);
+          }
+
+          frame.removeAttribute('hidden');
+          frame.classList.remove('is-minimized');
+          if (minimizeControl) {
+            minimizeControl.textContent = '-';
+            minimizeControl.setAttribute('aria-label', translations[currentLanguage].chat.minimizeAria);
+          }
+          button.setAttribute('aria-expanded', 'true');
+          button.setAttribute('data-chat-state', 'open');
+          button.textContent = getChatLabel(button);
+        }
+      };
+
+      var toggleMinimizedChat = function (frame, button, minimizeControl) {
+        if (frame && button && minimizeControl) {
+          var isMinimized = frame.classList.toggle('is-minimized');
+          minimizeControl.textContent = isMinimized ? '+' : '-';
+          button.setAttribute('data-chat-state', isMinimized ? 'minimized' : 'open');
+          minimizeControl.setAttribute('aria-label', isMinimized ? translations[currentLanguage].chat.restoreAria : translations[currentLanguage].chat.minimizeAria);
+          button.textContent = getChatLabel(button);
         }
       };
 
@@ -836,7 +944,15 @@
       }
 
       if (launchButton && chatFrame) {
-        launchButton.addEventListener('click', openChat);
+        launchButton.addEventListener('click', function () {
+          openChat(chatFrame, launchButton, minimizeButton);
+        });
+      }
+
+      if (ritaLaunchButton && ritaChatFrame) {
+        ritaLaunchButton.addEventListener('click', function () {
+          openChat(ritaChatFrame, ritaLaunchButton, ritaMinimizeButton);
+        });
       }
 
       if (demoJump) {
@@ -845,7 +961,7 @@
             liveDemo.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
 
-          openChat();
+          openChat(chatFrame, launchButton, minimizeButton);
         });
       }
 
@@ -859,23 +975,25 @@
 
       if (minimizeButton && chatFrame && launchButton) {
         minimizeButton.addEventListener('click', function () {
-          var isMinimized = chatFrame.classList.toggle('is-minimized');
-          minimizeButton.textContent = isMinimized ? '+' : '-';
-          launchButton.setAttribute('data-chat-state', isMinimized ? 'minimized' : 'open');
-          minimizeButton.setAttribute('aria-label', isMinimized ? translations[currentLanguage].chat.restoreAria : translations[currentLanguage].chat.minimizeAria);
-          launchButton.textContent = getChatLabel();
+          toggleMinimizedChat(chatFrame, launchButton, minimizeButton);
+        });
+      }
+
+      if (ritaMinimizeButton && ritaChatFrame && ritaLaunchButton) {
+        ritaMinimizeButton.addEventListener('click', function () {
+          toggleMinimizedChat(ritaChatFrame, ritaLaunchButton, ritaMinimizeButton);
         });
       }
 
       if (closeButton && chatFrame && launchButton && minimizeButton) {
         closeButton.addEventListener('click', function () {
-          chatFrame.setAttribute('hidden', '');
-          chatFrame.classList.remove('is-minimized');
-          minimizeButton.textContent = '-';
-          minimizeButton.setAttribute('aria-label', translations[currentLanguage].chat.minimizeAria);
-          launchButton.setAttribute('data-chat-state', 'closed');
-          launchButton.textContent = getChatLabel();
-          launchButton.setAttribute('aria-expanded', 'false');
+          closeChat(chatFrame, launchButton, minimizeButton);
+        });
+      }
+
+      if (ritaCloseButton && ritaChatFrame && ritaLaunchButton && ritaMinimizeButton) {
+        ritaCloseButton.addEventListener('click', function () {
+          closeChat(ritaChatFrame, ritaLaunchButton, ritaMinimizeButton);
         });
       }
 
