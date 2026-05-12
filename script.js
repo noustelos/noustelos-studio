@@ -546,6 +546,12 @@ setupMailLinks();
 setupContactForm();
 setupCookieConsent();
 
+if (isRecaptchaConfigured) {
+  loadRecaptcha().catch(() => {
+    // Keep contact flow functional even if Google script is blocked.
+  });
+}
+
 if (navToggle && menu) {
   navToggle.addEventListener('click', () => {
     const isOpen = menu.classList.toggle('open');
