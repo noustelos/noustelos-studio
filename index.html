@@ -107,6 +107,8 @@
   </script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link" data-i18n="nav.skipLink">Skip to main content</a>
+
   <!-- Header -->
   <header class="site-header" id="top">
     <nav class="container nav" aria-label="Main navigation" data-i18n-attr="aria-label:nav.mainAria">
@@ -134,7 +136,7 @@
         <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
       </ul>
 
-      <button class="lang-toggle" type="button">
+      <button class="lang-toggle" type="button" aria-label="Switch language" data-i18n-attr="aria-label:lang.switchAria">
         <span data-lang-option="en">EN</span>
         <span class="lang-divider">/</span>
         <span data-lang-option="gr">GR</span>
@@ -142,7 +144,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main-content">
     <!-- 1. Hero -->
     <section class="hero section" id="home" aria-labelledby="hero-title">
       <div class="container hero-content">
@@ -297,7 +299,9 @@
             <input id="contact-name" name="name" type="text" autocomplete="name" required />
 
             <label for="contact-message" data-i18n="contact.form.messageLabel">Project details</label>
-            <textarea id="contact-message" name="message" rows="4" required></textarea>
+            <textarea id="contact-message" name="message" rows="4" required aria-required="true"></textarea>
+
+            <div id="contact-status" class="contact-status" role="status" aria-live="polite"></div>
 
             <div class="contact-honeypot" aria-hidden="true">
               <label for="website">Leave this field empty</label>

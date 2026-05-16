@@ -76,6 +76,7 @@ const translations = {
     nav: {
       mainAria: 'Main navigation',
       toggleAria: 'Toggle menu',
+      skipLink: 'Skip to main content',
       work: 'Work',
       services: 'Services',
       about: 'About',
@@ -191,6 +192,7 @@ const translations = {
     nav: {
       mainAria: 'Κύρια πλοήγηση',
       toggleAria: 'Εναλλαγή μενού',
+      skipLink: 'Παράλειψη στο περιεχόμενο',
       work: 'Portfolio',
       services: 'Υπηρεσίες',
       about: 'Σχετικά',
@@ -505,6 +507,16 @@ const setupContactForm = () => {
 
     const subject = encodeURIComponent(`New website inquiry from ${name}`);
     const body = encodeURIComponent(`Name: ${name}\n\nProject details:\n${message}`);
+    
+    if (contactFormNote) {
+      contactFormNote.textContent = ''; // Clear it to avoid double announcement
+    }
+    
+    const statusEl = document.querySelector('#contact-status');
+    if (statusEl) {
+      statusEl.textContent = 'Opening email client...';
+    }
+
     window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
 
     window.setTimeout(() => {
@@ -561,16 +573,54 @@ if (isRecaptchaConfigured) {
 }
 
 if (navToggle && menu) {
-  navToggle.addEventListener('click', () => {
-    const isOpen = menu.classList.toggle('open');
+  const menuLinks = menu.querySelectorAll('a');
+  const firstFocusable = navToggle;
+  const lastFocusable = menuLinks[menuLinks.length - 1];
+
+  const toggleMenu = (forceClose = false) => {
+    const isOpen = forceClose ? false : !menu.classList.contains('open');
+    menu.classList.toggle('open', isOpen);
     navToggle.setAttribute('aria-expanded', String(isOpen));
+    
+    // Manage inert or visibility if needed, but here we just manage focus
+    if (isOpen) {
+      // Small delay to ensure menu is visible before focusing if needed, 
+      // but let's stick to standard behavior.
+    }
+  };
+
+  navToggle.addEventListener('click', () => toggleMenu());
+
+  menuLinks.forEach((link) => {
+    link.addEventListener('click', () => toggleMenu(true));
   });
 
-  menu.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      menu.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', 'false');
-    });
+  // Esc key support
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (menu.classList.contains('open')) {
+        toggleMenu(true);
+        navToggle.focus();
+      }
+      if (cookieBanner && !cookieBanner.hidden) {
+        cookieBanner.hidden = true;
+      }
+    }
+    
+    // Focus Trap for Menu
+    if (e.key === 'Tab' && menu.classList.contains('open')) {
+      if (e.shiftKey) { // Shift + Tab
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else { // Tab
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    }
   });
 }
 
