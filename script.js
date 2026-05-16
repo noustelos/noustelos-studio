@@ -71,7 +71,7 @@ const translations = {
   en: {
     meta: {
       title: 'Noustelos Studio Santorini | Web Design & Development',
-      description: 'Noustelos Studio in Santorini designs fast, SEO-ready websites for tourism brands, hotels and local businesses with clean UX, storytelling and high performance.'
+      description: 'Noustelos Studio creates custom AI-assisted websites, landing pages and creative web projects in Santorini, shaped with human design judgment and final QA.'
     },
     nav: {
       mainAria: 'Main navigation',
@@ -87,8 +87,8 @@ const translations = {
       switchAria: 'Switch language'
     },
     hero: {
-      title: 'Modern Websites for Tourism & Creative Projects',
-      subtitle: 'Clean design. Fast performance. Clear storytelling.',
+      title: 'Websites with Clarity, Character & Direction',
+      subtitle: 'Custom digital builds for tourism, hospitality and creative ideas, designed in Santorini and refined with AI-assisted workflows.',
       intro: 'Designed and built by Nick Karadimas',
       ctaWork: 'View My Work',
       ctaContact: 'Contact'
@@ -98,71 +98,73 @@ const translations = {
       viewProject: 'View Project',
       project1: {
         alt: '365orthodoxy project preview',
-        desc: 'Landing page for widget promotion.'
+        desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
       },
       project3: {
         alt: 'Vouraikos Gorge project preview',
-          desc: 'Vouraikos Gorge, Unesco Global Geopark.'
+          desc: 'A destination website for Vouraikos Gorge, presenting the UNESCO Global Geopark with concise information and a sense of place.'
       },
       project4: {
         alt: 'Odontotos railway project preview',
-        desc: 'Tourism landing page for the Odontotos railway and Vouraikos Gorge. Video hero, immersive storytelling and mobile optimization.'
+        desc: 'A tourism page for the Odontotos railway and Vouraikos Gorge, built around video, clear trip context and mobile-first discovery.'
       },
       project5: {
         alt: 'Honeymoon Beach Studios project preview',
-        desc: 'Simple, clean, SEO optimised webpage for a family owned hotel.'
+        desc: 'A clean hotel page for a family-owned stay, designed to present rooms, location and booking context without unnecessary noise.'
       },
       project6: {
         alt: 'Daily Inspiration Widget project preview',
-        desc: 'Daily Bible inspiration and feast-day reminders. Minimalist design, glass-style visuals, and smooth, intuitive UX.'
+        desc: 'A daily inspiration widget for Orthodox readers, pairing Bible passages and feast-day reminders with a quiet, app-like interface.'
       },
       project7: {
         alt: 'Artemis project preview',
         title: 'Ethical dog training and care',
-        desc: "Conversion-focused landing page for Artemis Antoniou's digital dog behavior guide. Editorial design, interactive quiz and calm, trust-led storytelling."
+        desc: "A calm landing page for Artemis Antoniou's dog behavior guide, combining editorial copy, a quiz and trust-led product storytelling."
       },
       project8: {
         alt: 'Water Cycle Systems project preview',
-        desc: 'Landing page for pool care services for private and commercial spaces in Santorini.'
+        desc: 'A service landing page for pool care in Santorini, giving homeowners and businesses a clear view of maintenance options.'
       }
     },
     services: {
       title: 'Services',
       card1: {
         title: 'Website Design',
-        desc: 'Modern responsive websites for tourism businesses and local companies.'
+        desc: 'Custom responsive websites for hotels, tourism projects, local businesses and independent brands that need a clear, polished online presence.'
       },
       card2: {
         title: 'Landing Pages',
-        desc: 'High-conversion landing pages for products, campaigns and events.'
+        desc: 'Focused landing pages for campaigns, products and services, built to explain the offer quickly and guide visitors toward action.'
       },
       card3: {
         title: 'Creative Web Projects',
-        desc: 'Visual storytelling and experimental interactive web experiences.'
+        desc: 'Visual storytelling, interactive sections and experimental web concepts for projects that need more character than a standard business page.'
       },
       card4: {
         title: 'AI Lab',
-        desc: 'Custom-trained bots for business workflows and personal knowledge needs, designed with clear personality, useful context and practical deployment.',
+        desc: 'AI-assisted tools, bots and content systems designed around real business needs, useful context and a clear personality.',
         cta: 'View the Live Demo'
       }
     },
     about: {
       title: 'About',
       p1: "I'm Nick Karadimas, a creative web designer and developer based in Santorini.",
-      p2: 'I build modern websites that focus on clarity, performance, and visual storytelling, combining clean design with practical functionality so businesses can present themselves clearly online.',
-      p3: 'I also leverage cutting-edge tools and AI-assisted workflows to streamline creative processes, help improve efficiency, and deliver high-quality results for clients, while keeping creative judgment and craftsmanship at the center of every project.'
+      p2: 'I build custom websites and landing pages for tourism, hospitality, local businesses and creative projects. My work combines clear structure, visual storytelling, responsive design and practical functionality.',
+      p3: 'I use AI-assisted workflows to move faster, explore stronger directions and refine details, but every project is shaped through human judgment, taste and final quality control. The goal is not to produce another template. The goal is to create a site that feels specific, useful and well-directed.'
     },
     contact: {
       title: "Let's Work Together",
-      text: 'If you need a modern website or landing page, feel free to contact me.',
-      email: 'Email',
-      directEmail: 'Direct Email',
+      text: 'If you have a project that needs clear structure, strong visual direction and a clean online presence, get in touch.',
+      email: 'Email Nick',
+      github: 'GitHub Profile',
+      directEmail: 'Studio Email',
       form: {
-        nameLabel: 'Name',
-        messageLabel: 'Project details',
-        submit: 'Send via email app',
-        note: 'Your email client will open with a prefilled message.',
+        nameLabel: 'Your name',
+        messageLabel: 'Project brief',
+        submit: 'Open email draft',
+        note: 'This opens your email app with the message ready.',
         checking: 'Checking request...',
+        opening: 'Opening email draft...',
         verificationError: 'We could not verify this request. Please try again.'
       }
     },
@@ -187,7 +189,7 @@ const translations = {
   gr: {
     meta: {
       title: 'Noustelos Studio Santorini | Web Design & Ανάπτυξη',
-      description: 'Το Noustelos Studio στη Σαντορίνη σχεδιάζει γρήγορες, SEO-ready ιστοσελίδες για τουριστικά brands, ξενοδοχεία και τοπικές επιχειρήσεις, με καθαρό UX και δυνατή απόδοση.'
+      description: 'Το Noustelos Studio δημιουργεί custom AI-assisted ιστοσελίδες, landing pages και creative web projects στη Σαντορίνη, με ανθρώπινη σχεδιαστική κρίση και τελικό QA.'
     },
     nav: {
       mainAria: 'Κύρια πλοήγηση',
@@ -203,8 +205,8 @@ const translations = {
       switchAria: 'Αλλαγή γλώσσας'
     },
     hero: {
-      title: 'Μοντέρνες Ιστοσελίδες για Τουρισμό & Δημιουργικά Projects',
-      subtitle: 'Καθαρός σχεδιασμός. Γρήγορη απόδοση. Σαφές storytelling.',
+      title: 'Ιστοσελίδες με Σαφήνεια, Χαρακτήρα & Κατεύθυνση',
+      subtitle: 'Custom digital builds για τουρισμό, φιλοξενία και δημιουργικές ιδέες, σχεδιασμένα στη Σαντορίνη και refined με AI-assisted workflows.',
       intro: 'Σχεδιασμός και ανάπτυξη: Νίκος Καραδήμας',
       ctaWork: 'Δες τη Δουλειά μου',
       ctaContact: 'Επικοινωνία'
@@ -214,71 +216,73 @@ const translations = {
       viewProject: 'Δες το Project',
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
-        desc: 'Landing page για προώθηση widget.'
+        desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.'
       },
       project3: {
         alt: 'Προεπισκόπηση project Φαράγγι Βουραϊκού',
-          desc: 'Φαράγγι Βουραϊκού, Unesco Global Geopark.'
+          desc: 'Destination website για το Φαράγγι Βουραϊκού, που παρουσιάζει το UNESCO Global Geopark με καθαρή πληροφορία και αίσθηση τόπου.'
       },
       project4: {
         alt: 'Προεπισκόπηση project Οδοντωτός σιδηρόδρομος',
-        desc: 'Τουριστικό landing page για τον Οδοντωτό και το Φαράγγι Βουραϊκού. Video hero, immersive storytelling και mobile optimization.'
+        desc: 'Τουριστική σελίδα για τον Οδοντωτό και το Φαράγγι Βουραϊκού, με video, ξεκάθαρο trip context και mobile-first ανακάλυψη.'
       },
       project5: {
         alt: 'Προεπισκόπηση project Honeymoon Beach Studios',
-        desc: 'Απλή, καθαρή, SEO optimised ιστοσελίδα για οικογενειακό ξενοδοχείο.'
+        desc: 'Καθαρή hotel σελίδα για οικογενειακή διαμονή, σχεδιασμένη να παρουσιάζει δωμάτια, τοποθεσία και booking context χωρίς περιττό θόρυβο.'
       },
       project6: {
         alt: 'Προεπισκόπηση project Daily Inspiration Widget',
-        desc: 'Καθημερινή βιβλική έμπνευση και υπενθυμίσεις εορτολογίου. Minimalist design, glass-style visuals και ομαλό, διαισθητικό UX.'
+        desc: 'Daily inspiration widget για Ορθόδοξους αναγνώστες, με βιβλικά αποσπάσματα, υπενθυμίσεις εορτολογίου και ήσυχο app-like interface.'
       },
       project7: {
         alt: 'Προεπισκόπηση project Artemis',
         title: 'Ηθική εκπαίδευση και φροντίδα σκύλων',
-        desc: 'Landing page με έμφαση στις μετατροπές για τον ψηφιακό οδηγό συμπεριφοράς σκύλων της Artemis Antoniou. Editorial αισθητική, διαδραστικό quiz και ήρεμο, αξιόπιστο storytelling.'
+        desc: 'Ήρεμο landing page για τον οδηγό συμπεριφοράς σκύλων της Artemis Antoniou, με editorial κείμενο, quiz και trust-led product storytelling.'
       },
       project8: {
         alt: 'Προεπισκόπηση project Water Cycle Systems',
-        desc: 'Landing page για υπηρεσίες φροντίδας πισίνας για ιδιωτικούς και επαγγελματικούς χώρους στη Σαντορίνη.'
+        desc: 'Service landing page για φροντίδα πισίνας στη Σαντορίνη, δίνοντας σε ιδιοκτήτες και επιχειρήσεις καθαρή εικόνα των υπηρεσιών.'
       }
     },
     services: {
       title: 'Υπηρεσίες',
       card1: {
         title: 'Σχεδιασμός Ιστοσελίδων',
-        desc: 'Μοντέρνες responsive ιστοσελίδες για τουριστικές επιχειρήσεις και τοπικές εταιρείες.'
+        desc: 'Custom responsive ιστοσελίδες για ξενοδοχεία, τουριστικά projects, τοπικές επιχειρήσεις και ανεξάρτητα brands που χρειάζονται καθαρή, προσεγμένη online παρουσία.'
       },
       card2: {
         title: 'Landing Pages',
-        desc: 'Landing pages υψηλής μετατροπής για προϊόντα, καμπάνιες και events.'
+        desc: 'Στοχευμένα landing pages για καμπάνιες, προϊόντα και υπηρεσίες, χτισμένα για να εξηγούν γρήγορα την πρόταση και να οδηγούν τον επισκέπτη σε δράση.'
       },
       card3: {
         title: 'Δημιουργικά Web Projects',
-        desc: 'Οπτική αφήγηση και πειραματικές διαδραστικές web εμπειρίες.'
+        desc: 'Visual storytelling, διαδραστικές ενότητες και πειραματικά web concepts για projects που χρειάζονται περισσότερο χαρακτήρα από μια απλή business σελίδα.'
       },
       card4: {
         title: 'AI Lab',
-        desc: 'Αναλαμβάνουμε την εκπαίδευση custom bots για την επιχείρηση και τις προσωπικές σου ανάγκες, με ξεκάθαρη προσωπικότητα, χρήσιμο περιεχόμενο και πρακτική ενσωμάτωση.',
+        desc: 'AI-assisted εργαλεία, bots και content systems σχεδιασμένα γύρω από πραγματικές ανάγκες, χρήσιμο context και ξεκάθαρη προσωπικότητα.',
         cta: 'Δείτε το Live Demo'
       }
     },
     about: {
       title: 'Σχετικά',
       p1: 'Είμαι ο Νίκος Καραδήμας, creative web designer και developer με βάση τη Σαντορίνη.',
-      p2: 'Δημιουργώ μοντέρνες ιστοσελίδες με έμφαση στη σαφήνεια, την απόδοση και το visual storytelling, συνδυάζοντας καθαρό design με πρακτική λειτουργικότητα ώστε οι επιχειρήσεις να παρουσιάζονται ξεκάθαρα online.',
-      p3: 'Αξιοποιώ επίσης σύγχρονα εργαλεία και AI-assisted workflows για να επιταχύνω δημιουργικές διαδικασίες, να αυξάνω την αποτελεσματικότητα και να προσφέρω υψηλής ποιότητας αποτελέσματα, κρατώντας πάντα την ανθρώπινη κρίση και τη δημιουργικότητα στο επίκεντρο.'
+      p2: 'Χτίζω custom ιστοσελίδες και landing pages για τουρισμό, φιλοξενία, τοπικές επιχειρήσεις και δημιουργικά projects. Η δουλειά μου συνδυάζει καθαρή δομή, visual storytelling, responsive design και πρακτική λειτουργικότητα.',
+      p3: 'Χρησιμοποιώ AI-assisted workflows για να κινούμαι πιο γρήγορα, να εξερευνώ πιο δυνατές κατευθύνσεις και να τελειοποιώ λεπτομέρειες, αλλά κάθε project διαμορφώνεται μέσα από ανθρώπινη κρίση, γούστο και τελικό quality control. Ο στόχος δεν είναι να παραχθεί άλλο ένα template. Ο στόχος είναι να δημιουργηθεί ένα site που νιώθει συγκεκριμένο, χρήσιμο και καλά κατευθυνόμενο.'
     },
     contact: {
       title: 'Ας Συνεργαστούμε',
-      text: 'Αν χρειάζεσαι μια μοντέρνα ιστοσελίδα ή landing page, μπορείς να επικοινωνήσεις μαζί μου.',
-      email: 'Email',
-      directEmail: 'Άμεσο Email',
+      text: 'Αν έχεις ένα project που χρειάζεται καθαρή δομή, δυνατή οπτική κατεύθυνση και προσεγμένη online παρουσία, επικοινώνησε μαζί μου.',
+      email: 'Email στον Νίκο',
+      github: 'GitHub Profile',
+      directEmail: 'Studio Email',
       form: {
-        nameLabel: 'Όνομα',
-        messageLabel: 'Λεπτομέρειες έργου',
-        submit: 'Αποστολή μέσω εφαρμογής email',
-        note: 'Θα ανοίξει η εφαρμογή email με προσυμπληρωμένο μήνυμα.',
+        nameLabel: 'Το όνομά σου',
+        messageLabel: 'Σύντομο project brief',
+        submit: 'Άνοιγμα email draft',
+        note: 'Ανοίγει την εφαρμογή email με το μήνυμα έτοιμο.',
         checking: 'Γίνεται έλεγχος αιτήματος...',
+        opening: 'Άνοιγμα email draft...',
         verificationError: 'Δεν μπορέσαμε να επαληθεύσουμε το αίτημα. Δοκίμασε ξανά.'
       }
     },
@@ -505,8 +509,8 @@ const setupContactForm = () => {
       return;
     }
 
-    const subject = encodeURIComponent(`New website inquiry from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\n\nProject details:\n${message}`);
+    const subject = encodeURIComponent(`Project inquiry from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\n\nProject brief:\n${message}`);
     
     if (contactFormNote) {
       contactFormNote.textContent = ''; // Clear it to avoid double announcement
@@ -514,7 +518,7 @@ const setupContactForm = () => {
     
     const statusEl = document.querySelector('#contact-status');
     if (statusEl) {
-      statusEl.textContent = 'Opening email client...';
+      statusEl.textContent = getNestedValue(getCurrentLanguageContent(), 'contact.form.opening') || 'Opening email draft...';
     }
 
     window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
