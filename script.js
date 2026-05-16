@@ -76,7 +76,6 @@ const translations = {
     nav: {
       mainAria: 'Main navigation',
       toggleAria: 'Toggle menu',
-      skipLink: 'Skip to main content',
       work: 'Work',
       services: 'Services',
       about: 'About',
@@ -194,7 +193,6 @@ const translations = {
     nav: {
       mainAria: 'Κύρια πλοήγηση',
       toggleAria: 'Εναλλαγή μενού',
-      skipLink: 'Παράλειψη στο περιεχόμενο',
       work: 'Portfolio',
       services: 'Υπηρεσίες',
       about: 'Σχετικά',
