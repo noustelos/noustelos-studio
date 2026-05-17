@@ -175,7 +175,7 @@ const translations = {
       labAria: 'Open UX Lab',
       universeAria: 'Open universe page',
       topAria: 'Back to top',
-      rights: 'Designed in Santorini | © {{year}} all rights reserved | In collaboration with <a href="https://webhostpro.gr/" target="_blank" rel="noopener noreferrer">WebHostPro</a>',
+      rights: 'Designed in Santorini | © {{year}} all rights reserved',
       privacy: 'Privacy Policy',
       privacyHref: '/privacy-policy-en.html'
     },
@@ -292,7 +292,7 @@ const translations = {
       labAria: 'Άνοιγμα UX Lab',
       universeAria: 'Άνοιγμα σελίδας universe',
       topAria: 'Επιστροφή στην κορυφή',
-      rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται | Σε συνεργασία με τη <a href="https://webhostpro.gr/" target="_blank" rel="noopener noreferrer">WebHostPro</a>',
+      rights: 'Σχεδιασμένο στη Σαντορίνη | © {{year}} όλα τα δικαιώματα διατηρούνται',
       privacy: 'Πολιτική Απορρήτου',
       privacyHref: '/privacy-policy.html'
     },
