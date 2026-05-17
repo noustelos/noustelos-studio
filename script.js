@@ -121,7 +121,7 @@ const translations = {
         desc: "A calm landing page for Artemis Antoniou's dog behavior guide, combining editorial copy, a quiz and trust-led product storytelling."
       },
       project8: {
-        alt: 'Water Cycle Systems project preview',
+        alt: 'Water Cycle System project preview',
         desc: 'A service landing page for pool care in Santorini, giving homeowners and businesses a clear view of maintenance options.'
       }
     },
@@ -238,7 +238,7 @@ const translations = {
         desc: 'Ήρεμο landing page για τον οδηγό συμπεριφοράς σκύλων της Artemis Antoniou, με editorial κείμενο, quiz και trust-led product storytelling.'
       },
       project8: {
-        alt: 'Προεπισκόπηση project Water Cycle Systems',
+        alt: 'Προεπισκόπηση project Water Cycle System',
         desc: 'Service landing page για φροντίδα πισίνας στη Σαντορίνη, δίνοντας σε ιδιοκτήτες και επιχειρήσεις καθαρή εικόνα των υπηρεσιών.'
       }
     },
