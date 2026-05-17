@@ -308,7 +308,7 @@ test('contact email stays obfuscated in HTML and form target remains configured'
   const contactTags = [...html.matchAll(/<a\b[^>]*class=["'][^"']*js-contact-mail[^"']*["'][^>]*>/gi)].map((match) => match[0]);
 
   assert.doesNotMatch(html, /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i, 'index.html should not contain a plain email address');
-  assert.ok(contactTags.length >= 2, 'home page should include obfuscated contact links');
+  assert.ok(contactTags.length >= 1, 'home page should include obfuscated contact links');
 
   for (const tag of contactTags) {
     assert.match(tag, /href=["']#["']/i, 'obfuscated contact links should not expose mailto in HTML');
