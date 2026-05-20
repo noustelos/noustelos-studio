@@ -504,6 +504,38 @@ h1 {
   gap: 0.8rem;
 }
 
+.launch-strip {
+  border-block: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.02), rgba(255, 255, 255, 0.92) 54%, rgba(17, 17, 17, 0.025));
+}
+
+.launch-strip-inner {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 1.7fr) auto;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.2rem);
+  padding-block: 1.05rem;
+}
+
+.launch-kicker,
+.service-kicker {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--glass-gray-text);
+}
+
+.launch-copy {
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 .ai-chat-widget {
   position: fixed;
   right: 1.15rem;
@@ -775,10 +807,15 @@ h1 {
 
 .contact-honeypot {
   position: absolute;
-  left: -9999px;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: 0;
+  border: 0;
   overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .contact-email-link {
@@ -893,6 +930,11 @@ h1 {
   box-shadow: 0 14px 34px rgba(17, 17, 17, 0.1);
 }
 
+.project-card-featured {
+  background: linear-gradient(145deg, #ffffff 0%, #f4f5f5 100%);
+  border-color: rgba(96, 103, 113, 0.22);
+}
+
 .service-card {
   transition: border-color 180ms ease, box-shadow 180ms ease;
 }
@@ -948,6 +990,23 @@ h3 {
 .card-content .button-link {
   margin-top: auto;
   align-self: flex-start;
+}
+
+.project-secondary-copy {
+  font-size: 0.95rem;
+}
+
+.service-card-highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  border-style: solid;
+  background: linear-gradient(145deg, #ffffff 0%, #f6f6f6 100%);
+}
+
+.service-card-highlight .button-link {
+  margin-top: auto;
 }
 
 .project-meta {
@@ -1304,6 +1363,16 @@ h3 {
   .hero-actions,
   .contact-actions {
     margin-top: 2rem;
+  }
+
+  .launch-strip-inner {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    padding-block: 1.15rem;
+  }
+
+  .launch-strip-inner .button {
+    justify-self: flex-start;
   }
 
   .contact-form {

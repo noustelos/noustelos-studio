@@ -92,9 +92,20 @@ const translations = {
       ctaWork: 'View My Work',
       ctaContact: 'Contact'
     },
+    launch: {
+      aria: 'AI Lab new release',
+      kicker: 'AI Lab / New Release',
+      copy: 'AskSantorini.ai is now live — a practical AI guide for visitors exploring Santorini.',
+      cta: 'View the project'
+    },
     work: {
       title: 'Selected Work',
       viewProject: 'View Project',
+      askSantorini: {
+        label: 'Featured Launch',
+        desc: 'A free AI guide for Santorini visitors, designed to answer practical questions about beaches, sunsets, tours, food, transport and what to do today.',
+        secondary: 'Built as a fast, premium MVP with a clear path toward affiliate tours, local partnerships and hotel concierge tools.'
+      },
       project1: {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
@@ -143,6 +154,12 @@ const translations = {
         title: 'AI Lab',
         desc: 'AI-assisted tools, bots and content systems designed around real business needs, useful context and a clear personality.',
         cta: 'View the Live Demo'
+      },
+      highlight: {
+        kicker: 'AI Lab Highlight',
+        title: 'AskSantorini.ai',
+        desc: 'A live experiment in practical tourism AI: a lightweight visitor assistant for Santorini, built around real questions, local context and commercial use cases such as tours, hotel concierge pages and partner recommendations.',
+        cta: 'Explore AskSantorini.ai'
       }
     },
     about: {
@@ -209,9 +226,20 @@ const translations = {
       ctaWork: 'Δες τη Δουλειά μου',
       ctaContact: 'Επικοινωνία'
     },
+    launch: {
+      aria: 'Νέα κυκλοφορία AI Lab',
+      kicker: 'AI Lab / Νέα Κυκλοφορία',
+      copy: 'Το AskSantorini.ai είναι live — ένας πρακτικός AI οδηγός για επισκέπτες που εξερευνούν τη Σαντορίνη.',
+      cta: 'Δες το project'
+    },
     work: {
       title: 'Επιλεγμένα Έργα',
       viewProject: 'Δες το Project',
+      askSantorini: {
+        label: 'Featured Launch',
+        desc: 'Ένας δωρεάν AI οδηγός για επισκέπτες της Σαντορίνης, σχεδιασμένος να απαντά σε πρακτικές ερωτήσεις για παραλίες, ηλιοβασιλέματα, tours, φαγητό, μετακινήσεις και τι να κάνεις σήμερα.',
+        secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.'
+      },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
         desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.'
@@ -260,6 +288,12 @@ const translations = {
         title: 'AI Lab',
         desc: 'AI-assisted εργαλεία, bots και content systems σχεδιασμένα γύρω από πραγματικές ανάγκες, χρήσιμο context και ξεκάθαρη προσωπικότητα.',
         cta: 'Δείτε το Live Demo'
+      },
+      highlight: {
+        kicker: 'AI Lab Highlight',
+        title: 'AskSantorini.ai',
+        desc: 'Ένα live πείραμα σε πρακτικό tourism AI: ένας ελαφρύς visitor assistant για τη Σαντορίνη, χτισμένος γύρω από πραγματικές ερωτήσεις, τοπικό context και εμπορικά use cases όπως tours, hotel concierge pages και partner recommendations.',
+        cta: 'Explore AskSantorini.ai'
       }
     },
     about: {
