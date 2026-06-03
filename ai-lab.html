@@ -65,8 +65,49 @@
       font-weight: 600;
     }
 
-    .ai-lab-strip {
+    .ai-lab-bands {
       margin-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-desc-strip {
+      border-block: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(17, 17, 17, 0.02), rgba(255, 255, 255, 0.92) 54%, rgba(17, 17, 17, 0.025));
+    }
+
+    .ai-lab-desc-inner {
+      display: grid;
+      grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 1.7fr);
+      align-items: start;
+      gap: clamp(1rem, 3vw, 2.2rem);
+      padding-block: 1.35rem;
+    }
+
+    .ai-lab-desc-copy {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .ai-lab-desc-copy p {
+      margin: 0;
+      font-size: clamp(1rem, 1.8vw, 1.12rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .ai-lab-desc-live {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .ai-lab-strip {
+      border-top: 0;
+    }
+
+    @media (max-width: 767px) {
+      .ai-lab-desc-inner {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+      }
     }
   </style>
 </head>
@@ -112,6 +153,18 @@
       </div>
     </section>
 
+    <div class="ai-lab-bands">
+    <section class="ai-lab-desc-strip" aria-label="AI Lab description">
+      <div class="container ai-lab-desc-inner">
+        <p class="launch-kicker" data-ai-i18n="desc.kicker">AI Lab</p>
+        <div class="ai-lab-desc-copy">
+          <p data-ai-i18n="desc.line1">Agentic AI platforms built for professional use.</p>
+          <p data-ai-i18n="desc.line2">Real-time data. Intelligent routing. Closed-loop workflows.</p>
+          <p class="ai-lab-desc-live" data-ai-i18n="desc.live">Currently live: AskSantorini.ai</p>
+        </div>
+      </div>
+    </section>
+
     <section class="launch-strip ai-lab-strip" aria-label="AI Lab new release" data-ai-i18n-attr="aria-label:launch.aria">
       <div class="container launch-strip-inner">
         <p class="launch-kicker" data-ai-i18n="launch.kicker">AI Lab / New Release</p>
@@ -119,6 +172,7 @@
         <a class="button button-link" href="https://asksantorini.ai" target="_blank" rel="noopener noreferrer" data-ai-i18n="launch.cta">View the project</a>
       </div>
     </section>
+    </div>
   </main>
 
   <script>
@@ -142,6 +196,12 @@
           lang: {
             switchAria: 'Switch language'
           },
+          desc: {
+            kicker: 'AI Lab',
+            line1: 'Agentic AI platforms built for professional use.',
+            line2: 'Real-time data. Intelligent routing. Closed-loop workflows.',
+            live: 'Currently live: AskSantorini.ai'
+          },
           launch: {
             aria: 'AI Lab new release',
             kicker: 'AI Lab / New Release',
@@ -162,6 +222,12 @@
           },
           lang: {
             switchAria: 'Αλλαγή γλώσσας'
+          },
+          desc: {
+            kicker: 'AI Lab',
+            line1: 'Σχεδιάζουμε και αναπτύσσουμε agentic AI platforms για επαγγελματική χρήση.',
+            line2: 'Συστήματα που αποφασίζουν, δρουν και παράγουν μετρήσιμα αποτελέσματα.',
+            live: 'Ήδη σε παραγωγή: AskSantorini.ai'
           },
           launch: {
             aria: 'Νέα κυκλοφορία AI Lab',
