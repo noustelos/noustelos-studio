@@ -95,7 +95,7 @@ const translations = {
     launch: {
       aria: 'AI Lab new release',
       kicker: 'AI Lab / New Release',
-      copy: 'AskSantorini.ai is now live — a practical AI guide for visitors exploring Santorini.',
+      copy: 'AskSantorini.ai is now live — an AI-powered concierge platform that connects travelers with verified local businesses in Santorini. Real-time answers, intelligent routing, and a closed-loop booking system. No app. No sign-up. Just ask.',
       cta: 'View the project'
     },
     work: {
@@ -229,7 +229,7 @@ const translations = {
     launch: {
       aria: 'Νέα κυκλοφορία AI Lab',
       kicker: 'AI Lab / Νέα Κυκλοφορία',
-      copy: 'Το AskSantorini.ai είναι live — ένας πρακτικός AI οδηγός για επισκέπτες που εξερευνούν τη Σαντορίνη.',
+      copy: 'Το AskSantorini.ai είναι πλέον live — μια AI-powered concierge πλατφόρμα που συνδέει ταξιδιώτες με επαληθευμένες τοπικές επιχειρήσεις στη Σαντορίνη. Απαντήσεις σε πραγματικό χρόνο, έξυπνη δρομολόγηση και ένα ολοκληρωμένο σύστημα κράτησης. Χωρίς app. Χωρίς εγγραφή. Απλώς ρώτα.',
       cta: 'Δες το project'
     },
     work: {
