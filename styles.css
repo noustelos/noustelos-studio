@@ -1174,6 +1174,113 @@ h3 {
   }
 }
 
+/* ============================================================
+   SERVICES — editorial index, matching the Work section.
+   Service cards have no .card-content wrapper, so the grid lives
+   directly on .service-card.
+   ============================================================ */
+#services .section-heading {
+  margin-bottom: 1.25rem;
+}
+
+#services .services-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+#services .service-card {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(2.4rem, 4.2vw, 3.6rem) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  column-gap: clamp(2rem, 7vw, 7rem);
+  row-gap: 0.55rem;
+  align-items: baseline;
+}
+
+#services .service-card:hover,
+#services .service-card:focus-within {
+  border-color: var(--line);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Highlight kicker (e.g. "AI Lab Highlight") — full-width tracked eyebrow.
+   p.service-kicker specificity beats the generic .service-card p below. */
+#services .service-card p.service-kicker {
+  grid-column: 1 / -1;
+  margin: 0 0 0.4rem;
+  color: var(--glass-gray-text);
+  letter-spacing: 0.14em;
+  font-size: 0.66rem;
+}
+
+#services .service-card h3 {
+  grid-column: 1;
+  grid-row: span 4;
+  margin: 0;
+  font-size: clamp(28px, 3.7vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+
+#services .service-card p {
+  grid-column: 2;
+  margin: 0;
+  max-width: 54ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+#services .service-card .button-link {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 0.5rem;
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  background: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+#services .service-card .button-link::after {
+  content: " \2192";
+  font-family: inherit;
+  font-size: 1em;
+  color: var(--text-primary);
+  opacity: 1;
+  transform: none;
+  margin-left: 0.35rem;
+}
+
+#services .service-card .button-link:hover::after,
+#services .service-card .button-link:focus-visible::after {
+  transform: translateX(4px);
+}
+
+@media (max-width: 720px) {
+  #services .service-card {
+    grid-template-columns: 1fr;
+    row-gap: 0.7rem;
+  }
+  #services .service-card h3 {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  #services .service-card p,
+  #services .service-card .button-link {
+    grid-column: 1;
+  }
+}
+
 .about-block,
 .contact-block {
   max-width: 780px;
