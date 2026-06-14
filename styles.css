@@ -896,6 +896,18 @@ h1 {
   color: var(--text-primary);
 }
 
+/* Outline buttons tie into the CTA ink on hover: border + text shift
+   to graphite with a faint wash (Contact, GitHub, launch "View the project") */
+.button-secondary:hover,
+.button-secondary:focus-visible,
+.launch-strip .button-link:hover,
+.launch-strip .button-link:focus-visible {
+  border-color: var(--cta);
+  color: var(--cta);
+  background: rgba(41, 50, 63, 0.06);
+  opacity: 1;
+}
+
 .button-link::after {
   content: " />";
   display: inline-block;
