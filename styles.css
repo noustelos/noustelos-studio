@@ -15,7 +15,7 @@
   --section-space: clamp(80px, 11vw, 140px);
   --grid-gap: clamp(1.25rem, 3.5vw, 2.5rem);
   --content-text-size: 18px;
-  --radius: 12px;
+  --radius: 3px; /* global corner radius — sharp/editorial; was 12px */
   --shadow-soft: 0 8px 24px rgba(17, 17, 17, 0.07);
 }
 
@@ -100,11 +100,16 @@ h3,
 
 .section {
   padding: var(--section-space) 0;
+  border-top: 1px solid var(--line); /* #4 separation: hairline rule between sections */
 }
 
+.hero.section {
+  border-top: 0;
+}
+
+/* Sections separate via hairlines + whitespace rhythm, not fills */
 .section-muted {
-  background: var(--surface-light);
-  box-shadow: inset 0 1px 0 var(--line), inset 0 -1px 0 var(--line);
+  background: none;
 }
 
 .section-heading {
@@ -277,7 +282,7 @@ h3,
   gap: 0.32rem;
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition: border-color 150ms ease, background 150ms ease;
 }
@@ -304,7 +309,7 @@ h3,
   justify-content: center;
   gap: 0.35rem;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--bg);
   font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
@@ -338,6 +343,7 @@ h3,
 .hero {
   padding: clamp(100px, 14vw, 180px) 0 clamp(60px, 13vw, 170px);
   background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(17, 17, 17, 0.045) 0%, transparent 70%);
+  overflow: hidden; /* lets the /> mark bleed off the right edge without horizontal scroll */
 }
 
 /* Hero typography follows the fixed scale from the brief */
@@ -359,12 +365,16 @@ h3,
 
 @media (min-width: 1100px) {
   .hero-content {
-    width: fit-content;
+    width: 100%;
   }
 
+  /* Bold /> bleeding off the right edge — confident editorial gesture */
   .hero-mark-wrap {
-    margin-top: clamp(1.3rem, 2.7vw, 2.45rem);
-    transform: none;
+    --hero-mark-size: clamp(20rem, 52vw, 46rem);
+    margin-top: clamp(-2rem, -2vw, -0.5rem);
+    margin-left: 0;
+    justify-self: end;
+    transform: translateX(26%);
   }
 }
 
@@ -505,8 +515,8 @@ h1 {
 }
 
 .launch-strip {
-  border-block: 1px solid var(--line);
-  background: linear-gradient(90deg, rgba(17, 17, 17, 0.02), rgba(255, 255, 255, 0.92) 54%, rgba(17, 17, 17, 0.025));
+  border-top: 1px solid var(--line); /* single hairline; the following .section adds the lower rule */
+  background: none;
 }
 
 .launch-strip-inner {
@@ -560,7 +570,7 @@ h1 {
   min-height: 3.15rem;
   padding: 0.78rem 1.05rem;
   border: 1px solid rgba(17, 17, 17, 0.12);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: #111111;
   color: #ffffff;
   font-family: "Space Grotesk", sans-serif;
@@ -679,7 +689,7 @@ h1 {
   inset: 0;
   z-index: 1;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: #ffffff;
   box-shadow: 0 14px 36px rgba(17, 17, 17, 0.08);
   opacity: 1;
@@ -699,7 +709,7 @@ h1 {
   height: 100%;
   min-height: 520px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: #ffffff;
   box-shadow: 0 14px 36px rgba(17, 17, 17, 0.08);
   color-scheme: light;
@@ -750,7 +760,7 @@ h1 {
   .chat-page-frame-wrap,
   .chat-page-frame {
     min-height: 520px;
-    border-radius: 8px;
+    border-radius: var(--radius);
   }
 }
 
@@ -772,7 +782,7 @@ h1 {
 .contact-form textarea {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: #fff;
   color: var(--text-primary);
   padding: 0.65rem 0.75rem;
@@ -850,7 +860,7 @@ h1 {
   justify-content: center;
   min-height: 2.9rem;
   padding: 0.62rem 1.25rem;
-  border-radius: 10px;
+  border-radius: var(--radius);
   border: 1px solid transparent;
   font-size: 14px;
   font-weight: 600;
@@ -1026,12 +1036,141 @@ h3 {
   align-items: center;
   padding: 0.35rem 0.65rem;
   border: 1px dashed var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-secondary);
   background: rgba(0, 0, 0, 0.02);
+}
+
+/* ============================================================
+   WORK — editorial index (single-column full-width rows)
+   Borderless entries separated by hairline rules. Title left,
+   description + "View Project ->" right. Scoped to #work so the
+   Services card grid is untouched. #id specificity wins over the
+   shared .project-card / .card-content rules above.
+   ============================================================ */
+#work .section-heading {
+  margin-bottom: 1.25rem;
+}
+
+#work .projects-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+#work .project-card,
+#work .project-card-featured {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 0;
+  transition: none;
+}
+
+#work .project-card:hover,
+#work .project-card:focus-within {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--line);
+}
+
+#work .card-content {
+  padding: clamp(2.4rem, 4.2vw, 3.6rem) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  column-gap: clamp(2rem, 7vw, 7rem);
+  row-gap: 0.55rem;
+  align-items: baseline;
+}
+
+/* Featured eyebrow becomes a tracked gray label (no pill) */
+#work .work-status-label {
+  grid-column: 1 / -1;
+  border: 0;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  margin-bottom: 0.4rem;
+  color: var(--glass-gray-text);
+  letter-spacing: 0.14em;
+  font-size: 0.66rem;
+}
+
+#work .project-card h3 {
+  grid-column: 1;
+  grid-row: span 3;
+  margin: 0;
+  font-size: clamp(28px, 3.7vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+
+#work .project-card h3 a {
+  color: var(--text-primary);
+}
+
+#work .card-content p {
+  grid-column: 2;
+  margin: 0;
+  max-width: 54ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+#work .project-secondary-copy {
+  color: var(--glass-gray-text);
+  font-size: 0.95rem;
+}
+
+#work .card-content .button-link {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 0.5rem;
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  background: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+/* "View Project ->" : persistent arrow (the /> motif stays the
+   brand mark on headings & hero; -> is the directional CTA here) */
+#work .card-content .button-link::after {
+  content: " \2192";
+  font-family: inherit;
+  font-size: 1em;
+  color: var(--text-primary);
+  opacity: 1;
+  transform: none;
+  margin-left: 0.35rem;
+}
+
+#work .card-content .button-link:hover::after,
+#work .card-content .button-link:focus-visible::after {
+  transform: translateX(4px);
+}
+
+@media (max-width: 720px) {
+  #work .card-content {
+    grid-template-columns: 1fr;
+    row-gap: 0.7rem;
+  }
+  #work .project-card h3 {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  #work .card-content p,
+  #work .card-content .button-link {
+    grid-column: 1;
+  }
 }
 
 .about-block,
@@ -1184,7 +1323,7 @@ h3 {
   margin: 0 auto;
   padding: 0.85rem;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.97);
   box-shadow: 0 10px 30px rgba(17, 17, 17, 0.12);
 }
