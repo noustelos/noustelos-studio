@@ -2,7 +2,8 @@
   --bg: #f7f4ee; /* warm paper — Wallpaper-style, softens the austerity of pure white/black */
   --text-primary: #211e19; /* warm ink instead of pure black */
   --text-secondary: #5b554d;
-  --ink-hover: #38322a; /* warm lifted ink for button hovers */
+  --cta: #29323f; /* CTA ink — graphite (replaces black on buttons/CTAs/contact) */
+  --cta-hover: #3a4656;
   --accent: #2563eb;
   --glass-gray-bg: rgba(164, 170, 179, 0.28);
   --glass-gray-bg-hover: rgba(164, 170, 179, 0.4);
@@ -572,7 +573,7 @@ h1 {
   padding: 0.78rem 1.05rem;
   border: 1px solid rgba(17, 17, 17, 0.12);
   border-radius: var(--radius);
-  background: var(--text-primary);
+  background: var(--cta);
   color: #ffffff;
   font-family: "Space Grotesk", sans-serif;
   font-size: 14px;
@@ -589,7 +590,7 @@ h1 {
 
 .ai-chat-button:hover,
 .ai-chat-button:focus-visible {
-  background: var(--ink-hover);
+  background: var(--cta-hover);
   transform: translateY(-2px);
   box-shadow: 0 18px 40px rgba(17, 17, 17, 0.25);
 }
@@ -875,16 +876,16 @@ h1 {
 }
 
 .button-primary {
-  background: var(--text-primary);
-  border-color: var(--text-primary);
+  background: var(--cta);
+  border-color: var(--cta);
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(17, 17, 17, 0.22);
 }
 
 .button-primary:hover,
 .button-primary:focus-visible {
-  background: var(--ink-hover);
-  border-color: var(--ink-hover);
+  background: var(--cta-hover);
+  border-color: var(--cta-hover);
   opacity: 1;
 }
 
@@ -1139,7 +1140,7 @@ h3 {
   background: none;
   font-size: 0.9rem;
   letter-spacing: 0.02em;
-  color: var(--text-primary);
+  color: var(--cta);
 }
 
 /* "View Project ->" : persistent arrow (the /> motif stays the
@@ -1148,7 +1149,7 @@ h3 {
   content: " \2192";
   font-family: inherit;
   font-size: 1em;
-  color: var(--text-primary);
+  color: var(--cta);
   opacity: 1;
   transform: none;
   margin-left: 0.35rem;
@@ -1248,14 +1249,14 @@ h3 {
   background: none;
   font-size: 0.9rem;
   letter-spacing: 0.02em;
-  color: var(--text-primary);
+  color: var(--cta);
 }
 
 #services .service-card .button-link::after {
   content: " \2192";
   font-family: inherit;
   font-size: 1em;
-  color: var(--text-primary);
+  color: var(--cta);
   opacity: 1;
   transform: none;
   margin-left: 0.35rem;
