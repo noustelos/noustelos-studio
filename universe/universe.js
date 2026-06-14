@@ -121,7 +121,7 @@
 				drawLockupLines(8);
 				ctx.filter = "none";
 			} else {
-				ctx.fillStyle = "#111111";
+				ctx.fillStyle = "#211e19";
 				ctx.font = markFont;
 				ctx.fillText("/>", markX, markY);
 				drawLockupLines(0);
