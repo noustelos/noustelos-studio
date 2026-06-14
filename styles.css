@@ -140,7 +140,7 @@ h3,
   font-size: 0.46em;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--glass-gray-text);
+  color: var(--hero-mark); /* /> motif unified with the hero mark */
 }
 
 /* Sticky header */
@@ -223,7 +223,7 @@ h3,
   font-size: 0.74em;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--glass-gray-text);
+  color: var(--hero-mark); /* /> motif (logo + footer) unified with the hero mark */
   transform: translateY(-0.32em);
   opacity: 1;
   transition: color 150ms ease, opacity 120ms ease;
@@ -231,7 +231,8 @@ h3,
 
 .logo:hover .logo-mark,
 .logo:focus-visible .logo-mark {
-  color: rgba(115, 123, 133, 0.95);
+  color: var(--hero-mark);
+  opacity: 0.78;
 }
 
 .menu {
@@ -917,7 +918,7 @@ h1 {
   transform: translateX(-4px);
   font-family: "Space Grotesk", sans-serif;
   font-size: 0.78em;
-  color: var(--glass-gray-text);
+  color: var(--hero-mark); /* /> link motif unified with the hero mark */
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
@@ -1403,7 +1404,7 @@ h3 {
   font-size: 0.74em;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--glass-gray-text);
+  color: var(--hero-mark); /* /> motif (logo + footer) unified with the hero mark */
   transform: translateY(-0.32em);
 }
 
@@ -1417,7 +1418,7 @@ h3 {
   font-size: clamp(38px, 5.5vw, 58px);
   line-height: 0.78;
   letter-spacing: 0.02em;
-  color: var(--glass-gray-text);
+  color: var(--hero-mark); /* footer back-to-top /> unified with the hero mark */
   transition: color 150ms ease, transform 150ms ease;
 }
 
