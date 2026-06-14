@@ -777,9 +777,13 @@ if (sectionNavLinks.length) {
     const EFFECT_LERP = useDesktopSubtle ? 0.12 : 0.22;
     const PROXIMITY_PADDING = useDesktopSubtle ? 18 : 0;
     const BASE_ROTATION = 0;
+    const heroMarkStyles = getComputedStyle(document.documentElement);
     const heroMarkColor =
-      getComputedStyle(document.documentElement).getPropertyValue('--glass-gray-text').trim() || '#737b85';
-    const heroMarkAlpha = 0.5;
+      heroMarkStyles.getPropertyValue('--hero-mark').trim() ||
+      heroMarkStyles.getPropertyValue('--glass-gray-text').trim() ||
+      '#737b85';
+    const heroMarkAlpha =
+      parseFloat(heroMarkStyles.getPropertyValue('--hero-mark-alpha')) || 0.5;
 
     let renderer;
 

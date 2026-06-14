@@ -9,6 +9,8 @@
   --glass-gray-bg-hover: rgba(164, 170, 179, 0.4);
   --glass-gray-border: rgba(255, 255, 255, 0.42);
   --glass-gray-text: #606771; /* Darker for WCAG AA (4.5:1) */
+  --hero-mark: #6f665b; /* hero /> mark colour — warm taupe watermark (canvas + fallback) */
+  --hero-mark-alpha: 0.18; /* hero /> mark opacity — ghosted for an elegant Wallpaper feel */
   --surface-light: #efe9df;
   --line: #e4ded3;
   --max-width: 1100px;
@@ -457,8 +459,8 @@ h1 {
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.03em;
-  color: var(--glass-gray-text);
-  opacity: 0.5;
+  color: var(--hero-mark);
+  opacity: var(--hero-mark-alpha);
   transform-origin: 50% 56%;
   pointer-events: none;
   transition: opacity 120ms ease;
@@ -473,7 +475,7 @@ h1 {
 }
 
 .hero-mark-wrap.no-webgl .hero-mark-fallback {
-  opacity: 0.5;
+  opacity: var(--hero-mark-alpha);
   transform: rotateZ(0deg);
   filter: none;
 }
