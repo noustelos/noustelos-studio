@@ -222,6 +222,13 @@
       padding-top: 0;
       border-top: 0;
     }
+
+    /* ── FAQ CTA — closes the writeup, routes to the deep-dive ──── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
   </style>
 </head>
 <body>
@@ -395,6 +402,11 @@
 
         <h3>Status</h3>
         <p>Live in production and iterating. Designed, built, and operated solo.</p>
+
+        <!-- ── FAQ CTA ──────────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="/ai-lab-faq.html" data-ai-i18n="faqCta.label">FAQ &amp; Technical Deep-Dive</a>
+        </div>
       </article>
     </section>
   </main>
@@ -431,6 +443,9 @@
             kicker: 'AI Lab / New Release',
             copy: 'AskSantorini.ai is now live — an AI-powered concierge platform that connects travelers with verified local businesses in Santorini. Real-time answers, intelligent routing, and a closed-loop booking system. No app. No sign-up. Just ask.',
             cta: 'View the project'
+          },
+          faqCta: {
+            label: 'FAQ & Technical Deep-Dive'
           }
         },
         gr: {
@@ -458,6 +473,9 @@
             kicker: 'AI Lab / Νέα Κυκλοφορία',
             copy: 'Το AskSantorini.ai είναι πλέον live — μια AI-powered concierge πλατφόρμα που συνδέει ταξιδιώτες με επαληθευμένες τοπικές επιχειρήσεις στη Σαντορίνη. Απαντήσεις σε πραγματικό χρόνο, έξυπνη δρομολόγηση και ένα ολοκληρωμένο σύστημα κράτησης. Χωρίς app. Χωρίς εγγραφή. Απλώς ρώτα.',
             cta: 'Δες το project'
+          },
+          faqCta: {
+            label: 'Συχνές Ερωτήσεις & Τεχνική Ανάλυση'
           }
         }
       };
