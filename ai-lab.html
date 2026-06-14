@@ -109,6 +109,119 @@
         gap: 0.6rem;
       }
     }
+
+    /* ── AskSantorini.ai project article ───────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(2.5rem, 6vw, 4.5rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+
+    .project-article h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code:not(.project-diagram code) {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* ASCII architecture diagram — exact monospace alignment preserved */
+    .project-diagram {
+      margin: 0.4rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-diagram code {
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -173,6 +286,117 @@
       </div>
     </section>
     </div>
+
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="asksantorini-title">
+      <article>
+        <h2 id="asksantorini-title">AskSantorini.ai</h2>
+
+        <blockquote class="project-lead">
+          An edge-native AI travel concierge for the island of Santorini — conversational, source-grounded recommendations backed by a real affiliate booking engine, running end-to-end on serverless infrastructure with no host to patch and no always-on database.
+        </blockquote>
+
+        <h3>TL;DR</h3>
+        <p>A serverless <strong>AI travel concierge for Santorini</strong> that answers visitors from live, source-grounded search and turns that intent into real affiliate bookings — a consumer chat frontend, a transactional booking backend, and a zero-host ops layer, all running at the edge.</p>
+        <ul>
+          <li><strong>What</strong> — conversational concierge + affiliate discount-code booking engine</li>
+          <li><strong>Stack</strong> — Cloudflare Workers · D1 · KV · Gemini 2.5 Flash + Search Grounding · Google Places · Apps Script + Sheets</li>
+          <li><strong>Edge-native</strong> — no server, no container, no always-on DB; push-to-<code>main</code> ships to the global edge</li>
+          <li><strong>Built by</strong> — solo: architecture, decisions, and ops (AI-assisted execution)</li>
+          <li><strong>Status</strong> — live in production</li>
+        </ul>
+
+        <h3>Overview</h3>
+        <p>AskSantorini.ai is a conversational assistant that helps visitors plan their time on the island — where to eat, what to see, how to get around — and turns that intent into actual reservations through an affiliate discount-code system.</p>
+        <p>It lives at the intersection of two things that don’t usually share a codebase: a consumer-facing LLM chat experience, and a transactional booking backend with partner management, email, and analytics. The entire stack runs at the edge — no traditional server, no container, no persistent VM.</p>
+        <p><em>Built and maintained solo as an AI-assisted product: I own the architecture and the decisions; an AI coding agent handles execution under a strategy-first, gated workflow. The interesting part of that process isn’t the code generation — it’s the discipline around it (reviewable diffs, rollback-first deploys, verify-before-merge).</em></p>
+
+        <h3>Tech Stack</h3>
+        <h4>Compute &amp; edge</h4>
+        <ul>
+          <li><strong>Cloudflare Workers</strong> — split into a static-assets <em>frontend</em> worker and a <em>backend</em> API worker</li>
+          <li>Zero-config CI/CD: push to <code>main</code> → instant global edge deploy</li>
+        </ul>
+        <h4>AI &amp; data enrichment</h4>
+        <ul>
+          <li><strong>Google Gemini 2.5 Flash</strong> with <strong>Google Search Grounding</strong> — live, citation-backed answers instead of frozen training-data knowledge</li>
+          <li><strong>Gemini Function Calling</strong> — structured, on-demand data fetches driven by query intent</li>
+          <li><strong>Google Places API</strong> — venue data, geocoding, directions</li>
+        </ul>
+        <h4>Persistence</h4>
+        <ul>
+          <li><strong>Cloudflare D1</strong> (SQLite at the edge) — reservation + booking records</li>
+          <li><strong>Cloudflare KV</strong> — low-latency affiliate configuration store</li>
+        </ul>
+        <h4>Ops layer (serverless, zero hosting)</h4>
+        <ul>
+          <li><strong>Google Apps Script</strong> — transactional email + analytics pipeline</li>
+          <li><strong>Google Sheets</strong> as the affiliate source-of-truth, synced to KV on edit via an Apps Script trigger</li>
+        </ul>
+
+        <h3>Architecture</h3>
+        <p>The system is intentionally split into two Workers with a clean separation of concerns:</p>
+        <ul>
+          <li>A <strong>frontend worker</strong> serving the static client, git-connected for continuous deployment.</li>
+          <li>A <strong>backend worker</strong> that owns every binding — KV, D1, secrets — and exposes the chat + booking API.</li>
+        </ul>
+
+        <pre class="project-diagram"><code>[User Request]
+      │
+      ├──&gt; (Frontend Worker) ──&gt; Serves Static Assets (HTML/CSS/JS)
+      │
+      └──&gt; (Backend Worker)  ──&gt; [Lock: Production CORS]
+                │
+                ├──&gt; Gemini 2.5 Flash + Search Grounding
+                ├──&gt; Cloudflare KV (Affiliate Data - Fast Reads)
+                ├──&gt; Cloudflare D1 (Reservations - SQLite Ledger)
+                └──&gt; Google Apps Script (Email &amp; Analytics Pipeline)</code></pre>
+
+        <p>The chat path is a single POST handler. A user message hits the backend, which composes a system instruction (the concierge persona), calls Gemini with Search Grounding for a current and sourced answer, and — depending on the detected intent — either enriches the response with Google Places data or routes to a lighter directions / “Open in Maps” flow. Cross-origin access is locked to the production origin so the backend never behaves as an open relay.</p>
+        <p>The booking side is where it stops being a demo. Affiliates are managed in a spreadsheet — the single source of truth a non-technical partner can actually edit — which syncs to KV for fast edge reads. When a user redeems a discount, the backend mints a reservation in D1, sends a mobile-optimized confirmation email through the Apps Script layer, and notifies the partner. Codes are generated, validated, and can be reissued, all at the edge.</p>
+
+        <h3>Key Features</h3>
+        <ul>
+          <li><strong>Source-grounded conversational concierge</strong> — a warm, deliberately un-gimmicky local persona that answers from live grounded search rather than stale model knowledge.</li>
+          <li><strong>Affiliate booking engine</strong> — discount-code reservation flow, partner-editable affiliate management via Sheets → KV, plus transactional confirmation and partner-notification emails.</li>
+          <li><strong>Intent-aware location handling</strong> — routes between rich Places results and a lightweight directions path based on what the user is actually asking for.</li>
+          <li><strong>Enumeration-resistant codes</strong> — crypto-random booking codes with collision-retry, fully backward-compatible with the legacy format.</li>
+          <li><strong>Operational kill switch</strong> — a secret-gated mechanism to instantly disable the assistant during a cost or abuse runaway, with a paired re-enable path.</li>
+        </ul>
+
+        <h3>Engineering Highlights</h3>
+        <p>A handful of problems that were more interesting than they first appeared:</p>
+
+        <section class="project-highlight">
+          <h4>Choosing the right rate-limiting primitive</h4>
+          <p>The chat endpoint fronts a paid LLM and paid Places calls, so an unthrottled abuse loop is a direct, metered cost leak. The first cut used the KV store as a per-IP counter — and it failed under exactly the burst it was built to stop. KV tops out around one write per second per key, meaning a flood against the same key creates an eventual consistency bottleneck where counter-writes get rejected; the fail-open safety path then lets everything through. The fix was the platform’s native rate-limiting binding — an atomic, purpose-built primitive with no write bottleneck. The takeaway, don’t build a high-frequency rate limiter on an eventually-consistent KV store, was caught at the verification step and never reached production.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Hardening edge static serving</h4>
+          <p>Zero-config static serving is wonderfully convenient right up until you notice it will cheerfully serve your entire repo root — source, config, migrations — to anyone who guesses a path. The fix was an explicit asset-ignore manifest plus a standing rule: “is this file publicly reachable?” is now a deploy-time invariant, not an afterthought.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Gated, reversible deploys</h4>
+          <p>Production changes follow a strict branch → preview → verify → merge flow, with the rollback target identified before any live action and an explicit confirmation gate at each irreversible step. More than once, that discipline caught a bad change at verification instead of in front of users — including the rate-limiter rewrite above.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>A back office with nothing to host</h4>
+          <p>Email, analytics, and the partner-facing admin surface all run on Apps Script + Sheets. The result: no server to patch, scales to zero, and a non-engineer can administer affiliates directly.</p>
+        </section>
+
+        <h3>Roadmap</h3>
+        <ul>
+          <li><strong>Multi-tenant Edge Architecture.</strong> The architecture is being generalized into a shared worker core plus a per-instance config bundle — environment variables, persona / system-instruction, knowledge base, affiliate data, and visual theme tokens — so a new destination launches as a config-and-theme file rather than a fork. First sibling instance ships with its own distinct AI persona, not a renamed clone.</li>
+          <li><strong>Tiered Places activation.</strong> Gemini Function Calling to fetch venue visuals on demand — text-only for broad queries, rich detail cards for specific venues — cutting both UI clutter and API spend.</li>
+          <li><strong>Privacy &amp; consent hardening.</strong> Enforced consent gating and data-deletion flows to a GDPR-grade standard.</li>
+        </ul>
+
+        <h3>Status</h3>
+        <p>Live in production and iterating. Designed, built, and operated solo.</p>
+      </article>
+    </section>
   </main>
 
   <script>
