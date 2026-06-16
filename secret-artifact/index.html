@@ -304,6 +304,65 @@
     .artifact-send:active { transform: scale(0.96); }
     .artifact-send:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
+    /* ============ Mic / dictation button ============ */
+    .artifact-mic {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      padding: 0;
+      color: var(--glow-cyan);
+      background: rgba(10, 10, 22, 0.8);
+      border: 1px solid rgba(34, 230, 255, 0.45);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: color 0.18s, background 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s;
+    }
+    .artifact-mic:hover { box-shadow: 0 0 16px rgba(34, 230, 255, 0.35); }
+    .artifact-mic:active { transform: scale(0.96); }
+    .artifact-mic svg { width: 20px; height: 20px; }
+    /* Listening: solid neon cyan, gently pulsing. */
+    .artifact-mic.is-listening {
+      color: #05050d;
+      background: var(--glow-cyan);
+      border-color: var(--glow-cyan);
+      animation: mic-pulse 1.3s ease-in-out infinite;
+    }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34, 230, 255, 0.5); }
+      50%      { box-shadow: 0 0 18px 5px rgba(34, 230, 255, 0.6); }
+    }
+
+    /* ============ Per-bubble replay (read aloud) ============ */
+    .bubble-text { white-space: pre-wrap; word-wrap: break-word; }
+    .bubble-replay {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      width: 22px;
+      height: 22px;
+      margin-left: 0.5rem;
+      padding: 0;
+      color: var(--glow-magenta);
+      background: transparent;
+      border: 1px solid rgba(255, 43, 214, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .bubble-replay:hover { opacity: 1; box-shadow: 0 0 12px rgba(255, 43, 214, 0.45); }
+    .bubble-replay svg { width: 11px; height: 11px; }
+    /* While this bubble is being spoken aloud, flip it to cyan. */
+    .bubble-replay.is-speaking {
+      opacity: 1;
+      color: var(--glow-cyan);
+      border-color: var(--glow-cyan);
+      box-shadow: 0 0 12px rgba(34, 230, 255, 0.5);
+    }
+
     /* ============ Boot splash / intro ============ */
     .intro {
       position: fixed;
@@ -386,7 +445,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .pulse-dot, .typing span, .bubble, .intro-word { animation: none; }
+      .pulse-dot, .typing span, .bubble, .intro-word, .artifact-mic.is-listening { animation: none; }
       /* Keep the bar filled (still acts as a visible boot indicator). */
       .intro-bar::after { animation: none; transform: scaleX(1); }
     }
@@ -433,6 +492,13 @@
         data-1p-ignore
         data-lpignore="true"
       />
+      <button class="artifact-mic" id="mic" type="button" title="Dictate (speech to text)" aria-label="Dictate your message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="2.5" width="6" height="11" rx="3"></rect>
+          <path d="M5 11a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="18" x2="12" y2="21.5"></line>
+        </svg>
+      </button>
       <button class="artifact-send" id="send" type="submit">SEND</button>
     </form>
   </main>
@@ -527,7 +593,26 @@
     function addBubble(text, role) {
       const el = document.createElement('div');
       el.className = 'bubble ' + role;
-      el.textContent = text;
+      if (role === 'bot') {
+        // Bot bubbles get a text span + a neon replay (read-aloud) button.
+        // Keeping the text in its own span means the button glyph never
+        // leaks into what we speak.
+        const span = document.createElement('span');
+        span.className = 'bubble-text';
+        span.textContent = text;
+        el.appendChild(span);
+
+        const replay = document.createElement('button');
+        replay.type = 'button';
+        replay.className = 'bubble-replay';
+        replay.title = 'Read aloud';
+        replay.setAttribute('aria-label', 'Read this message aloud');
+        replay.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+        replay.addEventListener('click', () => speak(text, replay));
+        el.appendChild(replay);
+      } else {
+        el.textContent = text;
+      }
       stream.appendChild(el);
       stream.scrollTop = stream.scrollHeight;
       return el;
@@ -571,6 +656,9 @@
 
     async function handleSubmit(event) {
       event.preventDefault();
+      // This runs inside a user gesture — unlock iOS speech output so the
+      // Artifact's reply can be read aloud automatically when it arrives.
+      unlockTTS();
       const value = input.value.trim();
       if (!value || sendBtn.disabled) return;
 
@@ -604,9 +692,11 @@
       try {
         const reply = await invoke();
         setBusy(false);
-        addBubble(reply, 'bot');
+        const botEl = addBubble(reply, 'bot');
         history.push({ role: 'model', text: reply });
         saveHistory();
+        // Auto read-aloud the fresh reply (history replay never speaks).
+        speak(reply, botEl.querySelector('.bubble-replay'));
       } catch (err) {
         setBusy(false);
         if (err && err.locked) {
@@ -638,6 +728,110 @@
     form.addEventListener('submit', handleSubmit);
     resetBtn.addEventListener('click', handleReset);
     lockBtn.addEventListener('click', () => lock('🔒 Locked. Enter the passphrase to chat.'));
+
+    // ===== Voice: Text-to-Speech (read aloud) ====================
+    const synth = window.speechSynthesis;
+    let ttsUnlocked = false;
+    let speakingBtn = null;
+
+    // Match the spoken language to the text: Greek glyphs → el-GR, else en-US.
+    function detectLang(text) {
+      // Greek block (U+0370–U+03FF) or Greek Extended (U+1F00–U+1FFF) → Greek.
+      return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(text) ? 'el-GR' : 'en-US';
+    }
+    function pickVoice(lang) {
+      const voices = synth ? synth.getVoices() : [];
+      const base = lang.split('-')[0];
+      return voices.find((v) => v.lang === lang)
+          || voices.find((v) => v.lang && v.lang.replace('_', '-').startsWith(base))
+          || null;
+    }
+    // iOS only allows speech after a user gesture; speaking an empty utterance
+    // during a tap grants permission for later programmatic (auto-read) speech.
+    function unlockTTS() {
+      if (!synth || ttsUnlocked) return;
+      try { synth.speak(new SpeechSynthesisUtterance('')); ttsUnlocked = true; } catch {}
+    }
+    function speak(text, btn) {
+      if (!synth || !text) return;
+      synth.cancel(); // stop any in-flight speech cleanly before starting
+      if (speakingBtn) speakingBtn.classList.remove('is-speaking');
+      speakingBtn = null;
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = detectLang(text);
+      const v = pickVoice(u.lang);
+      if (v) u.voice = v;
+      u.rate = 1; u.pitch = 1;
+
+      if (btn) {
+        speakingBtn = btn;
+        btn.classList.add('is-speaking');
+        const clear = () => {
+          btn.classList.remove('is-speaking');
+          if (speakingBtn === btn) speakingBtn = null;
+        };
+        u.onend = clear;
+        u.onerror = clear;
+      }
+      synth.speak(u);
+    }
+    // Voices can load asynchronously — touch the list once they're ready.
+    if (synth && typeof synth.onvoiceschanged !== 'undefined') {
+      synth.onvoiceschanged = () => { pickVoice('el-GR'); };
+    }
+    // Stop speech if the page is hidden or navigated away from.
+    window.addEventListener('pagehide', () => { if (synth) synth.cancel(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && synth) synth.cancel();
+    });
+
+    // ===== Voice: Speech-to-Text (dictation) =====================
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const micBtn = document.getElementById('mic');
+    let listening = false;
+
+    if (SR) {
+      const recognition = new SR();
+      // Prefer Greek for a Greek browser, else fall back to the browser locale.
+      recognition.lang = (navigator.language && navigator.language.startsWith('el'))
+        ? 'el-GR' : (navigator.language || 'en-US');
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.continuous = false;
+
+      function stopListeningUI() {
+        listening = false;
+        micBtn.classList.remove('is-listening');
+      }
+
+      recognition.addEventListener('result', (e) => {
+        const transcript = Array.from(e.results)
+          .map((r) => r[0].transcript)
+          .join(' ')
+          .trim();
+        if (!transcript) return;
+        input.value = transcript;
+        // Auto-send through the existing form flow (handleSubmit → invoke).
+        if (typeof form.requestSubmit === 'function') form.requestSubmit();
+        else handleSubmit(new Event('submit'));
+      });
+      recognition.addEventListener('end', stopListeningUI);
+      recognition.addEventListener('error', stopListeningUI);
+
+      micBtn.addEventListener('click', () => {
+        unlockTTS(); // same tap also unlocks read-aloud on iOS
+        if (listening) { recognition.stop(); return; }
+        try {
+          listening = true;
+          micBtn.classList.add('is-listening');
+          recognition.start();
+        } catch { stopListeningUI(); }
+      });
+    } else {
+      // Dictation unavailable (e.g. iOS Safari) — hide the mic gracefully.
+      micBtn.style.display = 'none';
+    }
 
     applyLockUI();
 
