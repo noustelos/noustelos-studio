@@ -168,7 +168,13 @@ function extractReply(data) {
     return "(empty response)";
   }
   const parts = (cand.content && cand.content.parts) || [];
-  const text = parts.map((p) => p.text || "").join("").trim();
+  // Gemma 4 is a "thinking" model: it returns its reasoning as separate parts
+  // flagged `thought: true` (and thinking can't be disabled via config on this
+  // model). Keep only the user-facing answer; fall back to all parts if the
+  // answer somehow lives only in thought parts.
+  const answerParts = parts.filter((p) => !p.thought);
+  const usable = answerParts.length ? answerParts : parts;
+  const text = usable.map((p) => p.text || "").join("").trim();
   return text || "(empty response)";
 }
 
