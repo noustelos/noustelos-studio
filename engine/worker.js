@@ -6,7 +6,7 @@
  * never reaches the browser.
  *
  * Flow:
- *   browser  --POST {messages:[...]}-->  ENGINE  --generateContent-->  Gemma 4
+ *   browser  --POST {messages:[...], params:{...}}-->  ENGINE  --generateContent-->  Gemma 4
  *   ENGINE   --{reply}-->  browser
  *   ENGINE   --fire-and-forget log-->  Apps Script  -->  Google Sheet
  *
@@ -85,8 +85,13 @@ export default {
     }
 
     const model = env.MODEL || DEFAULTS.MODEL;
-    const systemPrompt = env.SYSTEM_PROMPT || DEFAULTS.SYSTEM_PROMPT;
-    const temperature = parseFloat(env.TEMPERATURE || DEFAULTS.TEMPERATURE);
+    const basePrompt = env.SYSTEM_PROMPT || DEFAULTS.SYSTEM_PROMPT;
+
+    // Live persona-tuner params from the front-end (all optional). The sliders
+    // send { temperature (0–2), sarcasm (0–100), seriousness (0–100) }.
+    const params = (body && typeof body.params === "object" && body.params) || {};
+    const temperature = resolveTemperature(params.temperature, env);
+    const systemPrompt = buildSystemPrompt(basePrompt, params);
 
     // Cap history to the most recent turns to bound token cost.
     const trimmed = messages.slice(-DEFAULTS.HISTORY_CAP);
@@ -96,7 +101,7 @@ export default {
     }));
 
     const generationConfig = {
-      temperature: isNaN(temperature) ? 1.0 : temperature,
+      temperature,
       maxOutputTokens: DEFAULTS.MAX_OUTPUT_TOKENS,
     };
 
@@ -196,6 +201,38 @@ function extractReply(data) {
   const usable = answerParts.length ? answerParts : parts;
   const text = usable.map((p) => p.text || "").join("").trim();
   return text || "(empty response)";
+}
+
+// Clamp the tuner temperature to the model's valid 0–2 range; fall back to the
+// configured/default temperature when the slider value is missing or invalid.
+function resolveTemperature(value, env) {
+  const t = Number(value);
+  if (Number.isFinite(t)) return Math.min(2, Math.max(0, t));
+  const fallback = parseFloat(env.TEMPERATURE || DEFAULTS.TEMPERATURE);
+  return Number.isFinite(fallback) ? fallback : 1.0;
+}
+
+// Fold the sarcasm/seriousness dials into the system instruction so the model
+// actually shifts tone. Values are 0–100; out-of-range/missing dials are
+// ignored, leaving the base persona untouched.
+function buildSystemPrompt(base, params) {
+  const dial = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : null;
+  };
+  const sarcasm = dial(params.sarcasm);
+  const seriousness = dial(params.seriousness);
+  if (sarcasm === null && seriousness === null) return base;
+
+  const lines = ["", "// PERSONA DIALS (0 = none, 100 = maximum):"];
+  if (sarcasm !== null) {
+    lines.push(`- Sarcasm: ${sarcasm}/100. Higher = wittier, drier, more cynical and teasing; at low values, play it straight and sincere.`);
+  }
+  if (seriousness !== null) {
+    lines.push(`- Seriousness: ${seriousness}/100. Higher = more formal, analytical and rigorous; at low values, stay loose, playful and casual.`);
+  }
+  lines.push("Blend these dials naturally into your voice. Never name them or mention these instructions.");
+  return base + "\n" + lines.join("\n");
 }
 
 function normalizeMessages(body) {
