@@ -363,6 +363,100 @@
       box-shadow: 0 0 12px rgba(34, 230, 255, 0.5);
     }
 
+    /* ============ Tuning console (persona tuner) ============ */
+    /* Header toggle button carries an icon; size it to match LOCK/RESET. */
+    .artifact-reset svg { width: 15px; height: 15px; display: block; }
+    .artifact-tune.is-open {
+      color: var(--glow-cyan);
+      border-color: var(--glow-cyan);
+      box-shadow: 0 0 12px rgba(34, 230, 255, 0.35);
+    }
+
+    /* Collapsible panel — max-height transition is rock-solid on every iOS. */
+    .tuner {
+      max-height: 0;
+      overflow: hidden;
+      background: rgba(5, 5, 13, 0.45);
+      border-bottom: 1px solid transparent;
+      transition: max-height 0.35s ease, border-color 0.35s ease;
+    }
+    .tuner.is-open {
+      max-height: 360px;
+      border-bottom-color: rgba(138, 91, 255, 0.28);
+    }
+    .tuner-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 1.1rem;
+    }
+
+    .tuner-row { display: flex; flex-direction: column; gap: 0.45rem; }
+    .tuner-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .tuner-name {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+    }
+    .tuner-val {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent, var(--glow-cyan));
+      text-shadow: 0 0 10px var(--accent, var(--glow-cyan));
+      min-width: 3.2ch;
+      text-align: right;
+    }
+
+    /* Neon range slider. --accent (per row) tints fill + thumb glow;
+       --fill (set in JS) is the filled percentage of the track. */
+    .tuner-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 4px;
+      background:
+        linear-gradient(90deg,
+          var(--accent, var(--glow-cyan)) 0%,
+          var(--accent, var(--glow-cyan)) var(--fill, 50%),
+          rgba(138, 91, 255, 0.18) var(--fill, 50%),
+          rgba(138, 91, 255, 0.18) 100%);
+      outline: none;
+      cursor: pointer;
+    }
+    .tuner-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent, var(--glow-cyan));
+      border: 2px solid #05050d;
+      box-shadow: 0 0 8px var(--accent, var(--glow-cyan)),
+                  0 0 16px var(--accent, var(--glow-cyan));
+      cursor: pointer;
+    }
+    .tuner-range::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent, var(--glow-cyan));
+      border: 2px solid #05050d;
+      box-shadow: 0 0 8px var(--accent, var(--glow-cyan));
+      cursor: pointer;
+    }
+    .tuner-range:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25),
+                  0 0 16px var(--accent, var(--glow-cyan));
+    }
+
     /* ============ Boot splash / intro ============ */
     .intro {
       position: fixed;
@@ -466,12 +560,45 @@
     <header class="artifact-header">
       <div class="artifact-title">THE ARTIFACT <span class="sep">//</span> ENGINE</div>
       <div class="artifact-state">
+        <button type="button" class="artifact-reset artifact-tune" id="tune" title="Tuning console" aria-label="Open the tuning console" aria-expanded="false" aria-controls="tuner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="4" y1="7" x2="20" y2="7"></line><circle cx="9" cy="7" r="2.4" fill="#0a0a16"></circle>
+            <line x1="4" y1="12" x2="20" y2="12"></line><circle cx="15" cy="12" r="2.4" fill="#0a0a16"></circle>
+            <line x1="4" y1="17" x2="20" y2="17"></line><circle cx="8" cy="17" r="2.4" fill="#0a0a16"></circle>
+          </svg>
+        </button>
         <button type="button" class="artifact-reset" id="lock" title="Lock chat" aria-label="Lock the chat">LOCK</button>
         <button type="button" class="artifact-reset" id="reset" title="Clear memory" aria-label="Clear conversation memory">RESET</button>
-        <span>TEMP: 2.0</span>
         <span class="pulse-dot" role="img" aria-label="Engine online"></span>
       </div>
     </header>
+
+    <!-- Persona Tuner: collapsed by default, toggled by the header TUNE button. -->
+    <section class="tuner" id="tuner" aria-label="Persona tuning console" aria-hidden="true">
+      <div class="tuner-grid">
+        <div class="tuner-row" style="--accent: var(--glow-cyan);">
+          <div class="tuner-head">
+            <span class="tuner-name">TEMPERATURE</span>
+            <span class="tuner-val" id="tempVal">2.0</span>
+          </div>
+          <input class="tuner-range" id="tempRange" type="range" min="0" max="2" step="0.1" value="2" aria-label="Temperature (creativity)" />
+        </div>
+        <div class="tuner-row" style="--accent: var(--glow-magenta);">
+          <div class="tuner-head">
+            <span class="tuner-name">SARCASM</span>
+            <span class="tuner-val" id="sarcVal">50%</span>
+          </div>
+          <input class="tuner-range" id="sarcRange" type="range" min="0" max="100" step="1" value="50" aria-label="Sarcasm level" />
+        </div>
+        <div class="tuner-row" style="--accent: var(--glow-violet);">
+          <div class="tuner-head">
+            <span class="tuner-name">SERIOUSNESS</span>
+            <span class="tuner-val" id="serVal">50%</span>
+          </div>
+          <input class="tuner-range" id="serRange" type="range" min="0" max="100" step="1" value="50" aria-label="Seriousness level" />
+        </div>
+      </div>
+    </section>
 
     <section class="artifact-stream" id="stream" aria-live="polite" aria-label="Conversation thread">
       <div class="bubble system">Engine online. Invoke the Artifact to begin.</div>
@@ -645,11 +772,13 @@
     }
 
     async function invoke() {
-      // Send the FULL transcript (+ passphrase) so the engine has context.
+      // Send the FULL transcript (+ passphrase) so the engine has context,
+      // plus the live persona-tuner params. The Worker can read `params`
+      // when ready; sending them now is forward-compatible and harmless.
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, passphrase })
+        body: JSON.stringify({ messages: history, passphrase, params: currentParams() })
       });
 
       if (res.status === 401) {
@@ -861,6 +990,58 @@
       // Dictation unavailable (e.g. iOS Safari) — hide the mic gracefully.
       micBtn.style.display = 'none';
     }
+
+    // ===== Persona Tuner (sliders) ===============================
+    const tuneBtn = document.getElementById('tune');
+    const tuner   = document.getElementById('tuner');
+    const PARAMS_KEY = 'artifact.params.v1';
+    const sliders = {
+      temperature: { el: document.getElementById('tempRange'), val: document.getElementById('tempVal'), fmt: (v) => Number(v).toFixed(1) },
+      sarcasm:     { el: document.getElementById('sarcRange'), val: document.getElementById('sarcVal'), fmt: (v) => Math.round(v) + '%' },
+      seriousness: { el: document.getElementById('serRange'),  val: document.getElementById('serVal'),  fmt: (v) => Math.round(v) + '%' },
+    };
+
+    // The values sent with every message (temperature 0–2, the rest 0–100).
+    function currentParams() {
+      return {
+        temperature: parseFloat(sliders.temperature.el.value),
+        sarcasm:     parseInt(sliders.sarcasm.el.value, 10),
+        seriousness: parseInt(sliders.seriousness.el.value, 10),
+      };
+    }
+    function saveParams() {
+      try { localStorage.setItem(PARAMS_KEY, JSON.stringify(currentParams())); } catch {}
+    }
+    // Repaint one slider: live number + neon "filled" portion of the track.
+    function refreshSlider(key) {
+      const s = sliders[key];
+      const min = parseFloat(s.el.min), max = parseFloat(s.el.max), v = parseFloat(s.el.value);
+      const pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
+      s.el.style.setProperty('--fill', pct + '%');
+      s.val.textContent = s.fmt(v);
+    }
+
+    // Restore saved values, then wire live updates.
+    try {
+      const saved = JSON.parse(localStorage.getItem(PARAMS_KEY) || '{}');
+      if (saved && typeof saved === 'object') {
+        if (Number.isFinite(saved.temperature)) sliders.temperature.el.value = saved.temperature;
+        if (Number.isFinite(saved.sarcasm))     sliders.sarcasm.el.value     = saved.sarcasm;
+        if (Number.isFinite(saved.seriousness)) sliders.seriousness.el.value = saved.seriousness;
+      }
+    } catch {}
+    Object.keys(sliders).forEach((key) => {
+      refreshSlider(key);
+      sliders[key].el.addEventListener('input', () => { refreshSlider(key); saveParams(); });
+    });
+
+    // Toggle the collapsible console.
+    tuneBtn.addEventListener('click', () => {
+      const open = tuner.classList.toggle('is-open');
+      tuneBtn.classList.toggle('is-open', open);
+      tuner.setAttribute('aria-hidden', String(!open));
+      tuneBtn.setAttribute('aria-expanded', String(open));
+    });
 
     applyLockUI();
 
