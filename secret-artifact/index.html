@@ -430,11 +430,15 @@
       body { padding: 0; }
       .artifact {
         position: fixed;
-        inset: 0;
-        /* Height is pinned to the REAL visible viewport (set in JS from
-           visualViewport), so the chat fills the screen exactly — and the
-           input stays above the keyboard instead of drifting off-screen.
-           Falls back to 100svh/100dvh where the var isn't set yet. */
+        /* Anchor only the TOP — NOT bottom. Pinning bottom (inset:0) forces
+           full layout-viewport height and makes the browser ignore the height
+           below, leaving the input hidden behind the keyboard. */
+        top: 0;
+        left: 0;
+        right: 0;
+        /* Height = the REAL visible viewport (set in JS from visualViewport),
+           so when the keyboard opens the container shrinks and the input stays
+           just above it. Falls back to 100svh/100dvh until JS runs. */
         height: 100svh;
         height: var(--app-height, 100dvh);
         max-width: 100%;
@@ -518,6 +522,10 @@
     const sendBtn = document.getElementById('send');
     const resetBtn = document.getElementById('reset');
     const lockBtn = document.getElementById('lock');
+
+    // Replay-button glyphs: ▶ when idle, ■ while this bubble is being read.
+    const PLAY_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+    const STOP_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
 
     // ===== Access gate ===========================================
     // The chat is locked until the passphrase is entered. The passphrase is
@@ -607,8 +615,12 @@
         replay.className = 'bubble-replay';
         replay.title = 'Read aloud';
         replay.setAttribute('aria-label', 'Read this message aloud');
-        replay.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-        replay.addEventListener('click', () => speak(text, replay));
+        replay.innerHTML = PLAY_ICON;
+        // Toggle: play if idle, stop if this bubble is currently being read.
+        replay.addEventListener('click', () => {
+          if (replay.classList.contains('is-speaking')) stopSpeak();
+          else speak(text, replay);
+        });
         el.appendChild(replay);
       } else {
         el.textContent = text;
@@ -752,10 +764,24 @@
       if (!synth || ttsUnlocked) return;
       try { synth.speak(new SpeechSynthesisUtterance('')); ttsUnlocked = true; } catch {}
     }
+    // Reset a replay button back to its idle ▶ state.
+    function resetBtnIcon(btn) {
+      if (!btn) return;
+      btn.classList.remove('is-speaking');
+      btn.innerHTML = PLAY_ICON;
+      btn.title = 'Read aloud';
+      btn.setAttribute('aria-label', 'Read this message aloud');
+    }
+    // Stop any read-aloud in progress (used by the bubble's ■ toggle).
+    function stopSpeak() {
+      if (synth) synth.cancel();
+      resetBtnIcon(speakingBtn);
+      speakingBtn = null;
+    }
     function speak(text, btn) {
       if (!synth || !text) return;
       synth.cancel(); // stop any in-flight speech cleanly before starting
-      if (speakingBtn) speakingBtn.classList.remove('is-speaking');
+      resetBtnIcon(speakingBtn);
       speakingBtn = null;
 
       const u = new SpeechSynthesisUtterance(text);
@@ -767,8 +793,11 @@
       if (btn) {
         speakingBtn = btn;
         btn.classList.add('is-speaking');
+        btn.innerHTML = STOP_ICON;           // becomes a STOP button while reading
+        btn.title = 'Stop';
+        btn.setAttribute('aria-label', 'Stop reading');
         const clear = () => {
-          btn.classList.remove('is-speaking');
+          resetBtnIcon(btn);
           if (speakingBtn === btn) speakingBtn = null;
         };
         u.onend = clear;
@@ -793,9 +822,9 @@
 
     if (SR) {
       const recognition = new SR();
-      // Prefer Greek for a Greek browser, else fall back to the browser locale.
-      recognition.lang = (navigator.language && navigator.language.startsWith('el'))
-        ? 'el-GR' : (navigator.language || 'en-US');
+      // Default to Greek — this is a Greek-first chat, and the browser locale
+      // (often en on iOS) was making it transcribe Greek speech as English.
+      recognition.lang = 'el-GR';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
       recognition.continuous = false;
@@ -851,6 +880,15 @@
       vv.addEventListener('scroll', setAppHeight);
     }
     window.addEventListener('orientationchange', setAppHeight);
+
+    // When the keyboard opens, re-measure and keep the latest messages (and the
+    // input) in view so you can always see what you're typing.
+    input.addEventListener('focus', () => {
+      setTimeout(() => {
+        setAppHeight();
+        stream.scrollTop = stream.scrollHeight;
+      }, 300);
+    });
 
     // Don't pop the keyboard on load for touch devices — let the user tap in.
     // Desktop still gets the convenience focus (after the splash clears).
