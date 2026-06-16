@@ -16,20 +16,10 @@
  *   GUEST_PASSPHRASE    (secret, optional)  guest code — also unlocks; logged as
  *                                           "guest". Delete it to revoke guests.
  *   SHEETS_WEBHOOK_URL  (secret, optional)  Apps Script web-app URL for logging
- *   TURNSTILE_SECRET    (secret, optional)  Cloudflare Turnstile secret key —
- *                                           if set, guests must pass the CAPTCHA
- *   SESSION_SECRET      (secret, optional)  HMAC key for guest session tokens
  *   ALLOWED_ORIGIN      (var,   optional)   default "https://noustelos.gr"
  *   MODEL               (var,   optional)   default "gemma-4-31b-it"
  *   TEMPERATURE         (var,   optional)   default "1.0"  (header shows 2.0 = max)
  *   SYSTEM_PROMPT       (var,   optional)   persona / system instruction
- *   GUEST_DAILY_LIMIT   (var,   optional)   per-IP guest messages/day (default 20)
- *   GLOBAL_DAILY_LIMIT  (var,   optional)   total guest messages/day (default 500)
- *   RL                  (KV,    optional)   namespace for rate-limit counters
- *
- * Guardrails (Turnstile + session token + rate limit) apply to the GUEST role
- * only — the owner code is always exempt. Each is skipped if its secret/binding
- * is absent, so configure them BEFORE publishing the guest code.
  */
 
 const DEFAULTS = {
@@ -89,41 +79,10 @@ export default {
       who = validPassphrases.get(provided);
     }
 
-    const clientIp = request.headers.get("CF-Connecting-IP") || "0.0.0.0";
-
     // Lightweight unlock check used by the UI to validate the passphrase
-    // without spending a model call. For GUESTS this is also where the
-    // Turnstile (anti-bot) challenge is enforced and a short-lived session
-    // token is minted — so each later message doesn't need a fresh CAPTCHA.
+    // without spending a model call.
     if (body.verify) {
-      if (who === "guest" && env.TURNSTILE_SECRET) {
-        const human = await verifyTurnstile(env.TURNSTILE_SECRET, body.turnstileToken, clientIp);
-        if (!human) {
-          return json({ error: "captcha" }, 403, corsOrigin);
-        }
-      }
-      const session = env.SESSION_SECRET ? await issueSession(env.SESSION_SECRET, who) : "";
-      return json({ ok: true, session }, 200, corsOrigin);
-    }
-
-    // --- Guest guardrails (owner is exempt) ------------------------------
-    // Guests must carry a valid session token (proof they passed Turnstile)
-    // and are bounded by per-IP + global daily rate limits. If the relevant
-    // secrets/bindings aren't configured yet, the check is skipped (so the
-    // engine keeps working) — configure them before publishing the code.
-    if (who === "guest") {
-      if (env.SESSION_SECRET) {
-        const ok = await validateSession(env.SESSION_SECRET, body.session, "guest");
-        if (!ok) {
-          return json({ error: "session", message: "Verify again to keep chatting." }, 401, corsOrigin);
-        }
-      }
-      if (env.RL) {
-        const limit = await checkRateLimit(env, clientIp);
-        if (!limit.ok) {
-          return json({ error: "rate_limited", message: limit.message }, 429, corsOrigin);
-        }
-      }
+      return json({ ok: true }, 200, corsOrigin);
     }
 
     const messages = normalizeMessages(body);
@@ -270,98 +229,6 @@ function collectPassphrases(env) {
   add(env.GUEST_PASSPHRASE, "guest");
   add(env.PASSPHRASES, "guest");
   return map;
-}
-
-// ===== Anti-abuse: Turnstile + session tokens + rate limit ====
-// All of these apply ONLY to the "guest" role (the publicly-shown code).
-
-// Verify a Cloudflare Turnstile token server-side.
-async function verifyTurnstile(secret, token, ip) {
-  if (!token) return false;
-  try {
-    const form = new URLSearchParams();
-    form.append("secret", secret);
-    form.append("response", String(token));
-    if (ip) form.append("remoteip", ip);
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: form,
-    });
-    const data = await res.json();
-    return !!data.success;
-  } catch {
-    return false;
-  }
-}
-
-// Short-lived HMAC-signed token = "this client passed Turnstile recently", so
-// we don't burn a CAPTCHA on every message. Bound to the role + an expiry.
-const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
-
-function b64urlEncode(bytes) {
-  let bin = "";
-  for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-function b64urlToBytes(str) {
-  const pad = str.length % 4 ? "=".repeat(4 - (str.length % 4)) : "";
-  const bin = atob(str.replace(/-/g, "+").replace(/_/g, "/") + pad);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
-}
-async function hmac(secret, message) {
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
-  return b64urlEncode(new Uint8Array(sig));
-}
-async function issueSession(secret, role) {
-  const payload = b64urlEncode(
-    new TextEncoder().encode(JSON.stringify({ role, exp: Date.now() + SESSION_TTL_MS }))
-  );
-  return payload + "." + (await hmac(secret, payload));
-}
-async function validateSession(secret, token, expectedRole) {
-  if (typeof token !== "string" || !token.includes(".")) return false;
-  const [payload, sig] = token.split(".");
-  if (sig !== (await hmac(secret, payload))) return false; // signature must match
-  try {
-    const data = JSON.parse(new TextDecoder().decode(b64urlToBytes(payload)));
-    return data.role === expectedRole && typeof data.exp === "number" && data.exp > Date.now();
-  } catch {
-    return false;
-  }
-}
-
-// Per-IP + global daily caps via KV. Eventually-consistent counters are fine
-// for abuse mitigation (worst case: a little over the cap under burst load).
-async function checkRateLimit(env, ip) {
-  const day = new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
-  const perIp = parseInt(env.GUEST_DAILY_LIMIT || "20", 10) || 20;
-  const global = parseInt(env.GLOBAL_DAILY_LIMIT || "500", 10) || 500;
-  const ipKey = `rl:ip:${ip}:${day}`;
-  const globalKey = `rl:global:${day}`;
-
-  const [ipRaw, globalRaw] = await Promise.all([env.RL.get(ipKey), env.RL.get(globalKey)]);
-  const ipCount = parseInt(ipRaw || "0", 10);
-  const globalCount = parseInt(globalRaw || "0", 10);
-
-  if (ipCount >= perIp) {
-    return { ok: false, message: `Daily limit reached (${perIp} messages). Come back tomorrow.` };
-  }
-  if (globalCount >= global) {
-    return { ok: false, message: "The Artifact is resting — daily public limit reached. Try tomorrow." };
-  }
-
-  const ttl = 60 * 60 * 26; // ~26h so day-keyed counters self-expire
-  await Promise.all([
-    env.RL.put(ipKey, String(ipCount + 1), { expirationTtl: ttl }),
-    env.RL.put(globalKey, String(globalCount + 1), { expirationTtl: ttl }),
-  ]);
-  return { ok: true };
 }
 
 // Clamp the tuner temperature to the model's valid 0–2 range; fall back to the
