@@ -45,20 +45,31 @@ passphrase is missing/wrong. A `{ "verify": true, "passphrase": "…" }` call ju
 validates the passphrase without spending a model call.
 
 ### Features built on the Artifact (all front-end unless noted)
-- **Persona Tuner** — collapsible "Tuning Console" toggled by the header `#tune`
+- **Persona Tuner** — "Tuning Console" toggled by the header `#tune`
   sliders/hamburger icon. Sliders: temperature (cyan), sarcasm (magenta),
   seriousness (violet). Values persist in `localStorage` (`artifact.params.v1`)
-  and ride along in `params`. **Engine side:** `worker.js` `resolveTemperature`
-  (clamp 0–2, falls back to `env.TEMPERATURE`) + `buildSystemPrompt` (folds the
-  dials into the systemInstruction).
+  and ride along in `params`. The panel is a **floating dropdown OVERLAY**
+  (`position:absolute`, anchored under the header via a JS-measured `--header-h`)
+  — it floats over the chat and does NOT reflow it; auto-closes on send and on
+  outside tap. (Was an in-flow `max-height` block; that shoved the conversation
+  around on iPhone — don't go back to that.) **Engine side:** `worker.js`
+  `resolveTemperature` (clamp 0–2, falls back to `env.TEMPERATURE`) +
+  `buildSystemPrompt` (folds the dials into the systemInstruction).
 - **Voice** — dictation via `webkitSpeechRecognition` (hard-set `el-GR`, mic
   hidden where unsupported, auto-sends transcript); read-aloud via
   `speechSynthesis` (lang auto-detected Greek/English) with a per-bubble ▶/■
   play/stop toggle and auto-read of fresh replies. TTS unlocked on a send/mic tap
-  for iOS.
+  for iOS. **Voice gender:** `pickVoice` prefers a male-named voice (`MALE_VOICE`
+  regex — API exposes no gender); when only a female voice exists (Greek
+  "Melina" on iOS has no native male), pitch drops to 0.7 to masculinise. A true
+  male Greek voice would need cloud TTS via the Worker.
 - **Boot splash** — 5s neon "ARTIFACT" intro that fades into the chat.
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
   top-only (NOT `inset:0`), so the input stays above the keyboard.
+- **iOS focus discipline** — on touch devices the page NEVER programmatically
+  focuses the input (`isTouch` + `focusInput()` no-op; all convenience focus
+  calls route through it). Auto-focus on touch was popping the keyboard at random
+  during voice turns — keep focus user-initiated on touch.
 - **Passphrase gate** — server-side in the Worker (`PASSPHRASE` secret). UI masks
   input via CSS `-webkit-text-security` (NOT `type=password` — that popped the
   password manager). History stays visible while locked; LOCK button re-locks.
