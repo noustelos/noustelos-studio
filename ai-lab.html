@@ -118,6 +118,11 @@
 
     .project-article { gap: 1.4rem; }
 
+    /* Grid item must be allowed to shrink, otherwise the wide ASCII
+       diagram forces it past the viewport and the page drifts sideways
+       on mobile instead of the diagram scrolling internally. */
+    .project-article > article { min-width: 0; }
+
     .project-article h2 {
       margin: 0;
       font-family: "Space Grotesk", sans-serif;
