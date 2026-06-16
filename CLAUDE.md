@@ -70,9 +70,16 @@ validates the passphrase without spending a model call.
   focuses the input (`isTouch` + `focusInput()` no-op; all convenience focus
   calls route through it). Auto-focus on touch was popping the keyboard at random
   during voice turns — keep focus user-initiated on touch.
-- **Passphrase gate** — server-side in the Worker (`PASSPHRASE` secret). UI masks
-  input via CSS `-webkit-text-security` (NOT `type=password` — that popped the
-  password manager). History stays visible while locked; LOCK button re-locks.
+- **Passphrase gate** — server-side in the Worker. Accepts MULTIPLE codes:
+  `PASSPHRASE` (→ logged as "owner"), `GUEST_PASSPHRASE` (→ "guest"), and/or a
+  comma-separated `PASSPHRASES`. `collectPassphrases()` maps each code→role; the
+  matched role is logged to the Sheet "Who" column. Revoke a guest with
+  `wrangler secret delete GUEST_PASSPHRASE` (instant, runtime — no redeploy).
+  Conversations never mix (memory is per-device localStorage; Worker stateless).
+  UI: input is a PLAIN text field — NO `type=password`, NO `-webkit-text-security`
+  (both made iOS treat it as a credential → AutoFill bar raised the keyboard and
+  a saved password haunted the chat input). Locked state shown by magenta border +
+  UNLOCK button (passphrase is visible while typing, by design). LOCK re-locks.
 
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
