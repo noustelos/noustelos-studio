@@ -1,3 +1,9 @@
 # macOS Finder metadata
 .DS_Store
 **/.DS_Store
+
+# Node / Wrangler (engine tooling — never commit these)
+node_modules/
+**/node_modules/
+.wrangler/
+**/.wrangler/
