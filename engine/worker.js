@@ -12,6 +12,8 @@
  *
  * Secrets / vars (set with wrangler — see README.md):
  *   GOOGLE_API_KEY      (secret, required)  key from Google AI Studio
+ *   PASSPHRASE          (secret, optional)  if set, chat is gated — requests
+ *                                           must include a matching passphrase
  *   SHEETS_WEBHOOK_URL  (secret, optional)  Apps Script web-app URL for logging
  *   ALLOWED_ORIGIN      (var,   optional)   default "https://noustelos.gr"
  *   MODEL               (var,   optional)   default "gemma-4-31b-it"
@@ -57,6 +59,22 @@ export default {
       body = await request.json();
     } catch {
       return json({ error: "Invalid JSON body" }, 400, corsOrigin);
+    }
+
+    // --- Passphrase gate (optional) ---
+    // The real access control lives here, server-side, so it can't be bypassed
+    // by reading the page source or POSTing to the Worker directly.
+    if (env.PASSPHRASE) {
+      const provided = typeof body.passphrase === "string" ? body.passphrase : "";
+      if (provided !== env.PASSPHRASE) {
+        return json({ error: "locked" }, 401, corsOrigin);
+      }
+    }
+
+    // Lightweight unlock check used by the UI to validate the passphrase
+    // without spending a model call.
+    if (body.verify) {
+      return json({ ok: true }, 200, corsOrigin);
     }
 
     const messages = normalizeMessages(body);
