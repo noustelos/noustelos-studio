@@ -272,6 +272,14 @@
       border-color: var(--glow-cyan);
       box-shadow: 0 0 0 1px var(--glow-cyan), 0 0 16px rgba(34, 230, 255, 0.25);
     }
+    .artifact-toolbar.is-locked .artifact-input {
+      border-color: rgba(255, 43, 214, 0.55);
+      letter-spacing: 0.2em;
+    }
+    .artifact-toolbar.is-locked .artifact-input:focus {
+      border-color: var(--glow-magenta);
+      box-shadow: 0 0 0 1px var(--glow-magenta), 0 0 16px rgba(255, 43, 214, 0.3);
+    }
 
     .artifact-send {
       flex: 0 0 auto;
@@ -307,6 +315,7 @@
     <header class="artifact-header">
       <div class="artifact-title">THE ARTIFACT <span class="sep">//</span> ENGINE</div>
       <div class="artifact-state">
+        <button type="button" class="artifact-reset" id="lock" title="Lock chat" aria-label="Lock the chat">LOCK</button>
         <button type="button" class="artifact-reset" id="reset" title="Clear memory" aria-label="Clear conversation memory">RESET</button>
         <span>TEMP: 2.0</span>
         <span class="pulse-dot" role="img" aria-label="Engine online"></span>
@@ -348,6 +357,54 @@
     const input   = document.getElementById('input');
     const sendBtn = document.getElementById('send');
     const resetBtn = document.getElementById('reset');
+    const lockBtn = document.getElementById('lock');
+
+    // ===== Access gate ===========================================
+    // The chat is locked until the passphrase is entered. The passphrase is
+    // NEVER stored in this file — it is validated server-side by the engine,
+    // so the gate can't be bypassed by reading the source or hitting the
+    // Worker directly. Previous conversations stay visible while locked.
+    const KEY_STORE = 'artifact.key';
+    let passphrase = readKey();
+    let unlocked = !!passphrase;
+
+    function readKey() {
+      try { return sessionStorage.getItem(KEY_STORE) || ''; } catch { return ''; }
+    }
+
+    function applyLockUI() {
+      if (unlocked) {
+        input.type = 'text';
+        input.placeholder = 'Invoke the Artifact...';
+        sendBtn.textContent = 'SEND';
+        lockBtn.style.display = '';
+        form.classList.remove('is-locked');
+      } else {
+        input.type = 'password';
+        input.placeholder = '🔒 Type the passphrase to unlock...';
+        sendBtn.textContent = 'UNLOCK';
+        lockBtn.style.display = 'none';
+        form.classList.add('is-locked');
+      }
+    }
+
+    async function verifyPassphrase(pass) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ verify: true, passphrase: pass })
+      });
+      return res.ok;
+    }
+
+    function lock(message) {
+      unlocked = false;
+      passphrase = '';
+      try { sessionStorage.removeItem(KEY_STORE); } catch {}
+      applyLockUI();
+      if (message) addBubble(message, 'system');
+      input.focus();
+    }
 
     // ===== Memory =================================================
     // The brains keep the full transcript and persist it in localStorage,
@@ -396,13 +453,18 @@
     }
 
     async function invoke() {
-      // Send the FULL transcript so the engine has multi-turn context.
+      // Send the FULL transcript (+ passphrase) so the engine has context.
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history })
+        body: JSON.stringify({ messages: history, passphrase })
       });
 
+      if (res.status === 401) {
+        const e = new Error('locked');
+        e.locked = true;
+        throw e;
+      }
       if (!res.ok) {
         throw new Error('Engine responded with status ' + res.status);
       }
@@ -414,9 +476,30 @@
 
     async function handleSubmit(event) {
       event.preventDefault();
-      const message = input.value.trim();
-      if (!message || sendBtn.disabled) return;
+      const value = input.value.trim();
+      if (!value || sendBtn.disabled) return;
 
+      // While locked, the entry is a passphrase attempt — not a message.
+      if (!unlocked) {
+        sendBtn.disabled = true;
+        let ok = false;
+        try { ok = await verifyPassphrase(value); } catch {}
+        sendBtn.disabled = false;
+        input.value = '';
+        if (ok) {
+          passphrase = value;
+          try { sessionStorage.setItem(KEY_STORE, passphrase); } catch {}
+          unlocked = true;
+          applyLockUI();
+          addBubble('Access granted. Invoke the Artifact.', 'system');
+        } else {
+          addBubble('🔒 Wrong passphrase — the chat stays locked.', 'system');
+        }
+        input.focus();
+        return;
+      }
+
+      const message = value;
       addBubble(message, 'user');
       history.push({ role: 'user', text: message });
       saveHistory();
@@ -430,12 +513,17 @@
         history.push({ role: 'model', text: reply });
         saveHistory();
       } catch (err) {
-        // Systemic fallback — the engine stays graceful on any exception.
         setBusy(false);
-        addBubble(
-          '// SIGNAL LOST — the Artifact could not be reached. Check the engine endpoint and try again.',
-          'system'
-        );
+        if (err && err.locked) {
+          // Engine rejected the passphrase — re-lock and ask again.
+          lock('🔒 Session locked — enter the passphrase again.');
+        } else {
+          // Systemic fallback — the engine stays graceful on any exception.
+          addBubble(
+            '// SIGNAL LOST — the Artifact could not be reached. Check the engine endpoint and try again.',
+            'system'
+          );
+        }
         console.error('[Artifact] fetch failed:', err);
       }
 
@@ -454,6 +542,9 @@
     // SEND button click + Enter keypress both submit via the form.
     form.addEventListener('submit', handleSubmit);
     resetBtn.addEventListener('click', handleReset);
+    lockBtn.addEventListener('click', () => lock('🔒 Locked. Enter the passphrase to chat.'));
+
+    applyLockUI();
     input.focus();
   </script>
 </body>
