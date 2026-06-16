@@ -13,7 +13,9 @@
  *   4. Copy the web-app URL (ends in /exec) and set it on the Worker:
  *        npx wrangler secret put SHEETS_WEBHOOK_URL
  *
- *   NOTE: re-paste + Save (no re-deploy needed) to pick up the "Who" column.
+ *   To pick up the "Who" column on an EXISTING deployment: paste + Save, then
+ *   Deploy > Manage deployments > (edit ✏️) > Version: "New version" > Deploy.
+ *   Same /exec URL is kept, so SHEETS_WEBHOOK_URL stays valid.
  *
  * Payload from the Worker (JSON POST):
  *   { userMessage, botReply, model, at, who }   // who = "owner" | "guest" | ""
