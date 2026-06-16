@@ -61,14 +61,17 @@ export default {
       return json({ error: "Invalid JSON body" }, 400, corsOrigin);
     }
 
-    // --- Passphrase gate (optional) ---
+    // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
-    // by reading the page source or POSTing to the Worker directly.
-    if (env.PASSPHRASE) {
-      // Trim both sides so a stray space/newline (easy to introduce when
-      // entering the secret) never causes a silent mismatch.
+    // by reading the page source or POSTing to the Worker directly. Any code in
+    // the accepted set unlocks — so you can hand a collaborator their own code
+    // and revoke it independently without changing yours.
+    const validPassphrases = collectPassphrases(env);
+    if (validPassphrases.size) {
+      // Trim so a stray space/newline (easy to introduce when entering the
+      // secret) never causes a silent mismatch.
       const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
-      if (provided !== env.PASSPHRASE.trim()) {
+      if (!validPassphrases.has(provided)) {
         return json({ error: "locked" }, 401, corsOrigin);
       }
     }
@@ -201,6 +204,26 @@ function extractReply(data) {
   const usable = answerParts.length ? answerParts : parts;
   const text = usable.map((p) => p.text || "").join("").trim();
   return text || "(empty response)";
+}
+
+// Gather every accepted passphrase into a Set. Supports a single PASSPHRASE, a
+// dedicated GUEST_PASSPHRASE, and/or a comma-separated PASSPHRASES list — any
+// match unlocks. Backward compatible: with only PASSPHRASE set, behaves exactly
+// as before. Add/rotate a guest code by setting GUEST_PASSPHRASE (or appending
+// to PASSPHRASES); revoke it by removing that secret — your own code is untouched.
+function collectPassphrases(env) {
+  const set = new Set();
+  const add = (raw) => {
+    if (typeof raw !== "string") return;
+    for (const part of raw.split(",")) {
+      const t = part.trim();
+      if (t) set.add(t);
+    }
+  };
+  add(env.PASSPHRASE);
+  add(env.GUEST_PASSPHRASE);
+  add(env.PASSPHRASES);
+  return set;
 }
 
 // Clamp the tuner temperature to the model's valid 0–2 range; fall back to the
