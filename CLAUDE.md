@@ -86,7 +86,17 @@ validates the passphrase without spending a model call.
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
   filters them out. Google API occasionally returns transient 500s (no retry yet).
 - **Sheets logging** needs `ctx.waitUntil` in the Worker (an unawaited fetch gets
-  cancelled by the Workers runtime).
+  cancelled by the Workers runtime). The Sheet has 5 columns:
+  `Timestamp | User message | Bot reply | Model | Who`. The Apps Script logger
+  (`engine/apps-script.gs`) has NO auth — a direct `POST {…, who}` to the `/exec`
+  URL writes a row (handy for diagnostics, bypassing the chat/passphrase). It
+  auto-backfills the "Who" header on an older 4-col sheet.
+- **Apps Script web-app deployment trap**: editing + Save does NOT update the live
+  `/exec` — it stays pinned to a version. Update via Deploy > Manage deployments >
+  ✏️ > Version: "New version" > Deploy (SAME `/exec` URL). DON'T use "New
+  deployment" — that mints a NEW URL while the Worker's `SHEETS_WEBHOOK_URL` still
+  points at the old code. If the "Who" header never appears, the old version is
+  still live. `SHEETS_WEBHOOK_URL` is set via `wrangler secret put` from engine/.
 - The Worker uses `wrangler`, **not** a git-connected Cloudflare Pages build (a
   repo-root build scans `node_modules` >25MB and fails).
 - Memory is per-device (localStorage), not synced across devices.
