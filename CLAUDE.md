@@ -101,6 +101,21 @@ validates the passphrase without spending a model call.
   repo-root build scans `node_modules` >25MB and fails).
 - Memory is per-device (localStorage), not synced across devices.
 
+## Parked / NOT live — public Artifact (do not resurrect without asking)
+A "show the Artifact publicly in the AI Lab" feature was started then cancelled.
+It is **reverted off `main`** and parked on branch **`artifact-public-wip`**.
+- That branch has Stage 1 only: Worker guest-guardrails (Cloudflare Turnstile +
+  HMAC session tokens + KV per-IP/global rate limit) in `engine/worker.js` +
+  `wrangler.toml`. It was NEVER deployed. The planned public page
+  (`ai-artifact.html` with visible guest code 2026 + info panel) was NOT built.
+- **Guests currently cannot reach the Artifact**: no public page, no nav link.
+  Only the hidden owner page (`secret-artifact/`, noindex, unlinked) exists.
+- `GUEST_PASSPHRASE` (`2026`) is still set on the live Worker but is harmless
+  while nothing public talks to it. To fully retire guests:
+  `wrangler secret delete GUEST_PASSPHRASE`.
+- To revive: `git cherry-pick`/merge from `artifact-public-wip`, then do the
+  Turnstile/KV/secrets setup documented in that branch's `wrangler.toml`.
+
 ## Other repo areas (not the Artifact)
 - `index.html`, `ai-lab.html`, `ai-lab-faq.html`, `ai-chat.html`,
   `privacy-policy*.html` — portfolio/marketing pages.
