@@ -12,8 +12,9 @@
  *
  * Secrets / vars (set with wrangler — see README.md):
  *   GOOGLE_API_KEY      (secret, required)  key from Google AI Studio
- *   PASSPHRASE          (secret, optional)  if set, chat is gated — requests
- *                                           must include a matching passphrase
+ *   PASSPHRASE          (secret, optional)  owner code — if set, chat is gated
+ *   GUEST_PASSPHRASE    (secret, optional)  guest code — also unlocks; logged as
+ *                                           "guest". Delete it to revoke guests.
  *   SHEETS_WEBHOOK_URL  (secret, optional)  Apps Script web-app URL for logging
  *   ALLOWED_ORIGIN      (var,   optional)   default "https://noustelos.gr"
  *   MODEL               (var,   optional)   default "gemma-4-31b-it"
@@ -67,6 +68,7 @@ export default {
     // the accepted set unlocks — so you can hand a collaborator their own code
     // and revoke it independently without changing yours.
     const validPassphrases = collectPassphrases(env);
+    let who = ""; // role of whoever's chatting — logged to the Sheet
     if (validPassphrases.size) {
       // Trim so a stray space/newline (easy to introduce when entering the
       // secret) never causes a silent mismatch.
@@ -74,6 +76,7 @@ export default {
       if (!validPassphrases.has(provided)) {
         return json({ error: "locked" }, 401, corsOrigin);
       }
+      who = validPassphrases.get(provided);
     }
 
     // Lightweight unlock check used by the UI to validate the passphrase
@@ -122,6 +125,7 @@ export default {
         userMessage: lastUserText(trimmed),
         botReply: reply,
         model,
+        who,
       }, ctx);
 
       return json({ reply }, 200, corsOrigin);
@@ -206,24 +210,25 @@ function extractReply(data) {
   return text || "(empty response)";
 }
 
-// Gather every accepted passphrase into a Set. Supports a single PASSPHRASE, a
-// dedicated GUEST_PASSPHRASE, and/or a comma-separated PASSPHRASES list — any
-// match unlocks. Backward compatible: with only PASSPHRASE set, behaves exactly
-// as before. Add/rotate a guest code by setting GUEST_PASSPHRASE (or appending
-// to PASSPHRASES); revoke it by removing that secret — your own code is untouched.
+// Map every accepted passphrase → a role label (for the Sheet "Who" column).
+// Supports a single PASSPHRASE (→ "owner"), a dedicated GUEST_PASSPHRASE
+// (→ "guest"), and/or a comma-separated PASSPHRASES list (→ "guest"). Any match
+// unlocks. Backward compatible: with only PASSPHRASE set, behaves as before.
+// Add/rotate a guest code by setting GUEST_PASSPHRASE; revoke it by removing
+// that secret — your own code is untouched.
 function collectPassphrases(env) {
-  const set = new Set();
-  const add = (raw) => {
+  const map = new Map();
+  const add = (raw, role) => {
     if (typeof raw !== "string") return;
     for (const part of raw.split(",")) {
       const t = part.trim();
-      if (t) set.add(t);
+      if (t && !map.has(t)) map.set(t, role); // first definer wins
     }
   };
-  add(env.PASSPHRASE);
-  add(env.GUEST_PASSPHRASE);
-  add(env.PASSPHRASES);
-  return set;
+  add(env.PASSPHRASE, "owner");
+  add(env.GUEST_PASSPHRASE, "guest");
+  add(env.PASSPHRASES, "guest");
+  return map;
 }
 
 // Clamp the tuner temperature to the model's valid 0–2 range; fall back to the

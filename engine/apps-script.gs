@@ -5,7 +5,7 @@
  *
  * Setup:
  *   1. Create a Google Sheet. First row headers (optional, auto-created):
- *        Timestamp | User message | Bot reply | Model
+ *        Timestamp | User message | Bot reply | Model | Who
  *   2. Extensions > Apps Script. Paste this file. Save.
  *   3. Deploy > New deployment > type "Web app".
  *        - Execute as: Me
@@ -13,9 +13,13 @@
  *   4. Copy the web-app URL (ends in /exec) and set it on the Worker:
  *        npx wrangler secret put SHEETS_WEBHOOK_URL
  *
+ *   NOTE: re-paste + Save (no re-deploy needed) to pick up the "Who" column.
+ *
  * Payload from the Worker (JSON POST):
- *   { userMessage, botReply, model, at }
+ *   { userMessage, botReply, model, at, who }   // who = "owner" | "guest" | ""
  */
+
+var HEADERS = ["Timestamp", "User message", "Bot reply", "Model", "Who"];
 
 function doPost(e) {
   try {
@@ -24,7 +28,10 @@ function doPost(e) {
 
     // Add headers once, if the sheet is empty.
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Timestamp", "User message", "Bot reply", "Model"]);
+      sheet.appendRow(HEADERS);
+    } else if (sheet.getLastColumn() < HEADERS.length) {
+      // Older sheet without the "Who" column — add the missing header(s).
+      sheet.getRange(1, HEADERS.length).setValue(HEADERS[HEADERS.length - 1]);
     }
 
     sheet.appendRow([
@@ -32,6 +39,7 @@ function doPost(e) {
       data.userMessage || "",
       data.botReply || "",
       data.model || "",
+      data.who || "",
     ]);
 
     return ContentService
