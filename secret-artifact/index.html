@@ -275,11 +275,12 @@
     }
     .artifact-toolbar.is-locked .artifact-input {
       border-color: rgba(255, 43, 214, 0.55);
-      letter-spacing: 0.3em;
-      /* Mask the passphrase without making it a real password field (which
-         would trigger the browser's password manager on every submit). */
-      -webkit-text-security: disc;
-      text-security: disc;
+      letter-spacing: 0.18em;
+      /* NOTE: no -webkit-text-security here. It visually masked the passphrase
+         but iOS/WebKit treats a text-security field as a PASSWORD field — which
+         popped the AutoFill "Passwords" accessory (raising the keyboard) and got
+         a credential saved for the domain that then haunted the chat input. A
+         plain text field keeps iOS from ever treating this as a login. */
     }
     .artifact-toolbar.is-locked .artifact-input:focus {
       border-color: var(--glow-magenta);
@@ -628,9 +629,11 @@
         class="artifact-input"
         id="input"
         type="text"
+        name="artifact-message"
         placeholder="Invoke the Artifact..."
         aria-label="Message the Artifact"
         maxlength="4000"
+        enterkeyhint="send"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="off"
@@ -689,9 +692,11 @@
     }
 
     function applyLockUI() {
-      // NOTE: the input stays type="text" always — masking while locked is done
-      // with CSS (-webkit-text-security) so the browser never treats it as a
-      // credential field and never pops the password manager.
+      // The input is ALWAYS a plain type="text" field — no password type and no
+      // -webkit-text-security masking. Either of those makes iOS treat it as a
+      // credential (AutoFill bar raises the keyboard; a saved password then
+      // haunts the chat input). The locked state is signalled by the magenta
+      // border + UNLOCK button instead of dot-masking.
       if (unlocked) {
         input.placeholder = 'Invoke the Artifact...';
         sendBtn.textContent = 'SEND';
@@ -1125,12 +1130,14 @@
     window.addEventListener('orientationchange', setAppHeight);
 
     // When the keyboard opens, re-measure and keep the latest messages (and the
-    // input) in view so you can always see what you're typing.
+    // input) in view. Fire at several ticks because the keyboard (and any iOS
+    // accessory bar) animate in over a few hundred ms — a single measure can
+    // land mid-animation and leave the input misaligned.
     input.addEventListener('focus', () => {
-      setTimeout(() => {
+      [100, 300, 600].forEach((t) => setTimeout(() => {
         setAppHeight();
         stream.scrollTop = stream.scrollHeight;
-      }, 300);
+      }, t));
     });
 
     // ===== Boot splash =====
