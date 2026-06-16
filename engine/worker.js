@@ -65,8 +65,10 @@ export default {
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly.
     if (env.PASSPHRASE) {
-      const provided = typeof body.passphrase === "string" ? body.passphrase : "";
-      if (provided !== env.PASSPHRASE) {
+      // Trim both sides so a stray space/newline (easy to introduce when
+      // entering the secret) never causes a silent mismatch.
+      const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+      if (provided !== env.PASSPHRASE.trim()) {
         return json({ error: "locked" }, 401, corsOrigin);
       }
     }
