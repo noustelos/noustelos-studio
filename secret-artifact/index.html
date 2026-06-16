@@ -73,6 +73,7 @@
 
     /* ============ Glassmorphic chat container ============ */
     .artifact {
+      position: relative; /* positioning context for the tuner dropdown overlay */
       width: 100%;
       max-width: 760px;
       height: min(92dvh, 880px);
@@ -372,17 +373,31 @@
       box-shadow: 0 0 12px rgba(34, 230, 255, 0.35);
     }
 
-    /* Collapsible panel — max-height transition is rock-solid on every iOS. */
+    /* Dropdown OVERLAY anchored under the header — floats over the chat instead
+       of reflowing it, so it always appears cleanly above the conversation and
+       the answer/input never get shoved around. --header-h is measured in JS. */
     .tuner {
-      max-height: 0;
-      overflow: hidden;
-      background: rgba(5, 5, 13, 0.45);
-      border-bottom: 1px solid transparent;
-      transition: max-height 0.35s ease, border-color 0.35s ease;
+      position: absolute;
+      top: var(--header-h, 56px);
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: rgba(10, 10, 22, 0.97);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      backdrop-filter: blur(10px) saturate(140%);
+      border-bottom: 1px solid rgba(138, 91, 255, 0.32);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      transform: translateY(-12px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.26s ease, transform 0.26s ease, visibility 0.26s ease;
     }
     .tuner.is-open {
-      max-height: 360px;
-      border-bottom-color: rgba(138, 91, 255, 0.28);
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
     .tuner-grid {
       display: flex;
@@ -654,6 +669,12 @@
     const PLAY_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
     const STOP_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
 
+    // Touch devices (iPhone): never programmatically pop the keyboard — let the
+    // user tap the field themselves. focusInput() is therefore a no-op on touch,
+    // which stops the input from "doing its own thing" during voice turns.
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    function focusInput() { if (!isTouch) input.focus(); }
+
     // ===== Access gate ===========================================
     // The chat is locked until the passphrase is entered. The passphrase is
     // NEVER stored in this file — it is validated server-side by the engine,
@@ -699,7 +720,7 @@
       try { sessionStorage.removeItem(KEY_STORE); } catch {}
       applyLockUI();
       if (message) addBubble(message, 'system');
-      input.focus();
+      focusInput();
     }
 
     // ===== Memory =================================================
@@ -819,10 +840,13 @@
         } else {
           addBubble('🔒 Wrong passphrase — the chat stays locked.', 'system');
         }
-        input.focus();
+        focusInput();
         return;
       }
 
+      // Tuning while chatting? Get the panel out of the way so it never sits
+      // over the incoming answer.
+      closeTuner();
       const message = value;
       addBubble(message, 'user');
       history.push({ role: 'user', text: message });
@@ -853,7 +877,7 @@
         console.error('[Artifact] fetch failed:', err);
       }
 
-      input.focus();
+      focusInput();
     }
 
     function handleReset() {
@@ -862,7 +886,7 @@
       // Clear all bubbles, then restore the system greeting.
       stream.innerHTML = '';
       addBubble('Memory wiped. Invoke the Artifact to begin anew.', 'system');
-      input.focus();
+      focusInput();
     }
 
     // SEND button click + Enter keypress both submit via the form.
@@ -880,13 +904,23 @@
       // Greek block (U+0370–U+03FF) or Greek Extended (U+1F00–U+1FFF) → Greek.
       return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(text) ? 'el-GR' : 'en-US';
     }
+    // Known male voice names across Apple/Google/Edge TTS engines. The Web
+    // Speech API doesn't expose gender, so we match by name.
+    const MALE_VOICE = /(male|daniel|arthur|oliver|aaron|fred|alex|tom\b|reed|rocko|gordon|nathan|rishi|george|james|albert|bruce|junior|ralph|diego|jorge|carlos|luca|thomas|markus|yannis|dimitris)/i;
     function pickVoice(lang) {
       const voices = synth ? synth.getVoices() : [];
       const base = lang.split('-')[0];
-      return voices.find((v) => v.lang === lang)
-          || voices.find((v) => v.lang && v.lang.replace('_', '-').startsWith(base))
+      const norm = (v) => (v.lang || '').replace('_', '-');
+      const inLang = voices.filter((v) => norm(v).toLowerCase().startsWith(base));
+      const pool = inLang.length ? inLang : voices;
+      // Prefer a male-named voice in the right language; else any in-language
+      // voice; else the first available.
+      return pool.find((v) => MALE_VOICE.test(v.name))
+          || pool.find((v) => norm(v) === lang)
+          || pool[0]
           || null;
     }
+    function isMaleVoice(v) { return !!(v && MALE_VOICE.test(v.name)); }
     // iOS only allows speech after a user gesture; speaking an empty utterance
     // during a tap grants permission for later programmatic (auto-read) speech.
     function unlockTTS() {
@@ -917,7 +951,11 @@
       u.lang = detectLang(text);
       const v = pickVoice(u.lang);
       if (v) u.voice = v;
-      u.rate = 1; u.pitch = 1;
+      // Male tone: a true male voice sounds natural at normal pitch; when only a
+      // female voice exists (e.g. Greek "Melina" on iOS), drop the pitch to
+      // masculinise it as far as the engine allows.
+      u.rate = 1;
+      u.pitch = isMaleVoice(v) ? 0.95 : 0.7;
 
       if (btn) {
         speakingBtn = btn;
@@ -1035,12 +1073,36 @@
       sliders[key].el.addEventListener('input', () => { refreshSlider(key); saveParams(); });
     });
 
-    // Toggle the collapsible console.
-    tuneBtn.addEventListener('click', () => {
-      const open = tuner.classList.toggle('is-open');
+    // The dropdown overlay anchors under the header — measure its height so the
+    // panel always sits exactly below it (header height shifts with text/zoom).
+    const headerEl = document.querySelector('.artifact-header');
+    function setHeaderHeight() {
+      if (headerEl) {
+        document.documentElement.style.setProperty('--header-h', headerEl.offsetHeight + 'px');
+      }
+    }
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+    window.addEventListener('orientationchange', setHeaderHeight);
+
+    function setTuner(open) {
+      tuner.classList.toggle('is-open', open);
       tuneBtn.classList.toggle('is-open', open);
       tuner.setAttribute('aria-hidden', String(!open));
       tuneBtn.setAttribute('aria-expanded', String(open));
+    }
+    function closeTuner() { setTuner(false); }
+
+    tuneBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setHeaderHeight(); // re-measure right before opening
+      setTuner(!tuner.classList.contains('is-open'));
+    });
+    // Tap anywhere outside the panel (or the chat) closes it — keeps things tidy.
+    document.addEventListener('click', (e) => {
+      if (!tuner.classList.contains('is-open')) return;
+      if (tuner.contains(e.target) || tuneBtn.contains(e.target)) return;
+      closeTuner();
     });
 
     applyLockUI();
@@ -1070,11 +1132,6 @@
         stream.scrollTop = stream.scrollHeight;
       }, 300);
     });
-
-    // Don't pop the keyboard on load for touch devices — let the user tap in.
-    // Desktop still gets the convenience focus (after the splash clears).
-    const isTouch = ('ontouchstart' in window) ||
-                    (navigator.maxTouchPoints > 0);
 
     // ===== Boot splash =====
     // Show the ARTIFACT intro for 5s, fade it out, then remove it from the DOM.
