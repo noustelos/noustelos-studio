@@ -304,17 +304,101 @@
     .artifact-send:active { transform: scale(0.96); }
     .artifact-send:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
+    /* ============ Boot splash / intro ============ */
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.6rem;
+      background:
+        radial-gradient(ellipse 120% 80% at 50% 42%, rgba(138, 91, 255, 0.24), transparent 60%),
+        radial-gradient(ellipse 90% 60% at 90% 110%, rgba(255, 43, 214, 0.12), transparent 55%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-0));
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+    .intro.is-hidden { opacity: 0; visibility: hidden; }
+
+    .intro-word {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 12vw, 5rem);
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      text-indent: 0.32em; /* offset trailing letter-spacing → stays centered */
+      background: linear-gradient(135deg, var(--glow-cyan), var(--glow-magenta));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 18px rgba(34, 230, 255, 0.45))
+              drop-shadow(0 0 36px rgba(255, 43, 214, 0.30));
+      animation: intro-flicker 2.6s ease-in-out infinite;
+    }
+    @keyframes intro-flicker {
+      0%, 100% { opacity: 1;    }
+      48%      { opacity: 0.78; }
+      50%      { opacity: 0.95; }
+      52%      { opacity: 0.78; }
+    }
+
+    .intro-bar {
+      width: min(220px, 52vw);
+      height: 2px;
+      background: rgba(138, 91, 255, 0.22);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .intro-bar::after {
+      content: "";
+      display: block;
+      height: 100%;
+      width: 100%;
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--glow-cyan), var(--glow-magenta));
+      box-shadow: 0 0 12px rgba(34, 230, 255, 0.6);
+      animation: intro-load 5s linear forwards;
+    }
+    @keyframes intro-load {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
     @media (max-width: 480px) {
+      /* Lock the page so it can't "float" / scroll loose behind the chat. */
+      html, body { height: 100%; overflow: hidden; }
       body { padding: 0; }
-      .artifact { height: 100dvh; max-width: 100%; border-radius: 0; border-left: none; border-right: none; }
+      .artifact {
+        position: fixed;
+        inset: 0;
+        /* Height is pinned to the REAL visible viewport (set in JS from
+           visualViewport), so the chat fills the screen exactly — and the
+           input stays above the keyboard instead of drifting off-screen.
+           Falls back to 100svh/100dvh where the var isn't set yet. */
+        height: 100svh;
+        height: var(--app-height, 100dvh);
+        max-width: 100%;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .pulse-dot, .typing span, .bubble { animation: none; }
+      .pulse-dot, .typing span, .bubble, .intro-word { animation: none; }
+      /* Keep the bar filled (still acts as a visible boot indicator). */
+      .intro-bar::after { animation: none; transform: scaleX(1); }
     }
   </style>
 </head>
 <body>
+  <!-- Boot splash: shows for 5s, then fades into the chat. -->
+  <div class="intro" id="intro" role="status" aria-label="The Artifact booting">
+    <div class="intro-word">ARTIFACT</div>
+    <div class="intro-bar" aria-hidden="true"></div>
+  </div>
+
   <main class="artifact" aria-label="The Artifact chat engine">
     <header class="artifact-header">
       <div class="artifact-title">THE ARTIFACT <span class="sep">//</span> ENGINE</div>
@@ -556,7 +640,37 @@
     lockBtn.addEventListener('click', () => lock('🔒 Locked. Enter the passphrase to chat.'));
 
     applyLockUI();
-    input.focus();
+
+    // ===== iOS viewport fit ======================================
+    // iOS Safari's dvh/svh units don't track the keyboard or the URL bar
+    // reliably, which makes the chat "float" until you pinch + reload. We
+    // instead pin the container to the actual visible viewport reported by
+    // visualViewport, updating it whenever the keyboard or address bar moves.
+    const vv = window.visualViewport;
+    function setAppHeight() {
+      const h = vv ? vv.height : window.innerHeight;
+      document.documentElement.style.setProperty('--app-height', h + 'px');
+    }
+    setAppHeight();
+    if (vv) {
+      vv.addEventListener('resize', setAppHeight);
+      vv.addEventListener('scroll', setAppHeight);
+    }
+    window.addEventListener('orientationchange', setAppHeight);
+
+    // Don't pop the keyboard on load for touch devices — let the user tap in.
+    // Desktop still gets the convenience focus (after the splash clears).
+    const isTouch = ('ontouchstart' in window) ||
+                    (navigator.maxTouchPoints > 0);
+
+    // ===== Boot splash =====
+    // Show the ARTIFACT intro for 5s, fade it out, then remove it from the DOM.
+    const intro = document.getElementById('intro');
+    setTimeout(() => {
+      intro.classList.add('is-hidden');
+      if (!isTouch) input.focus();
+      setTimeout(() => intro.remove(), 800); // after the fade transition
+    }, 5000);
   </script>
 </body>
 </html>
