@@ -116,12 +116,30 @@
     .artifact-state {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.65rem;
       font-family: var(--font-mono);
       font-size: 0.72rem;
       letter-spacing: 0.08em;
       color: var(--ink-dim);
       white-space: nowrap;
+    }
+
+    .artifact-reset {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+      background: transparent;
+      border: 1px solid rgba(138, 91, 255, 0.4);
+      border-radius: 8px;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      transition: color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .artifact-reset:hover {
+      color: var(--glow-magenta);
+      border-color: var(--glow-magenta);
+      box-shadow: 0 0 12px rgba(255, 43, 214, 0.3);
     }
 
     .pulse-dot {
@@ -289,6 +307,7 @@
     <header class="artifact-header">
       <div class="artifact-title">THE ARTIFACT <span class="sep">//</span> ENGINE</div>
       <div class="artifact-state">
+        <button type="button" class="artifact-reset" id="reset" title="Clear memory" aria-label="Clear conversation memory">RESET</button>
         <span>TEMP: 2.0</span>
         <span class="pulse-dot" role="img" aria-label="Engine online"></span>
       </div>
@@ -328,6 +347,30 @@
     const form    = document.getElementById('toolbar');
     const input   = document.getElementById('input');
     const sendBtn = document.getElementById('send');
+    const resetBtn = document.getElementById('reset');
+
+    // ===== Memory =================================================
+    // The brains keep the full transcript and persist it in localStorage,
+    // so the Artifact remembers the conversation across reloads. Every turn
+    // the entire history is sent to the engine for true multi-turn context.
+    const STORE_KEY = 'artifact.history.v1';
+    let history = loadHistory();
+
+    function loadHistory() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(history));
+      } catch { /* storage full / disabled — memory stays in-session only */ }
+    }
 
     function addBubble(text, role) {
       const el = document.createElement('div');
@@ -337,6 +380,9 @@
       stream.scrollTop = stream.scrollHeight;
       return el;
     }
+
+    // Replay saved history on load (skip the static system greeting).
+    history.forEach((m) => addBubble(m.text, m.role === 'model' ? 'bot' : 'user'));
 
     function setBusy(busy) {
       sendBtn.disabled = busy;
@@ -349,12 +395,12 @@
       }
     }
 
-    async function invoke(message) {
-      // Clean POST payload — exactly { message: "text" } as the contract.
+    async function invoke() {
+      // Send the FULL transcript so the engine has multi-turn context.
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ messages: history })
       });
 
       if (!res.ok) {
@@ -372,13 +418,17 @@
       if (!message || sendBtn.disabled) return;
 
       addBubble(message, 'user');
+      history.push({ role: 'user', text: message });
+      saveHistory();
       input.value = '';
       setBusy(true);
 
       try {
-        const reply = await invoke(message);
+        const reply = await invoke();
         setBusy(false);
         addBubble(reply, 'bot');
+        history.push({ role: 'model', text: reply });
+        saveHistory();
       } catch (err) {
         // Systemic fallback — the engine stays graceful on any exception.
         setBusy(false);
@@ -392,8 +442,18 @@
       input.focus();
     }
 
+    function handleReset() {
+      history = [];
+      saveHistory();
+      // Clear all bubbles, then restore the system greeting.
+      stream.innerHTML = '';
+      addBubble('Memory wiped. Invoke the Artifact to begin anew.', 'system');
+      input.focus();
+    }
+
     // SEND button click + Enter keypress both submit via the form.
     form.addEventListener('submit', handleSubmit);
+    resetBtn.addEventListener('click', handleReset);
     input.focus();
   </script>
 </body>

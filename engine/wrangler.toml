@@ -1,0 +1,24 @@
+# THE ARTIFACT // ENGINE  —  Cloudflare Worker config
+#
+# Deploy:
+#   cd engine
+#   npx wrangler login
+#   npx wrangler secret put GOOGLE_API_KEY        # paste key from Google AI Studio
+#   npx wrangler secret put SHEETS_WEBHOOK_URL     # (optional) Apps Script web-app URL
+#   npx wrangler deploy
+#
+# After deploy, wrangler prints the live URL, e.g.:
+#   https://artifact-engine.<your-subdomain>.workers.dev
+# Put that URL + "/api/chat" into the brains page (secret-artifact/index.html).
+
+name = "artifact-engine"
+main = "worker.js"
+compatibility_date = "2026-06-16"
+
+# Non-secret config. Secrets (GOOGLE_API_KEY, SHEETS_WEBHOOK_URL) are set via
+# `wrangler secret put`, NOT here.
+[vars]
+ALLOWED_ORIGIN = "https://noustelos.gr"
+MODEL = "gemma-4-31b-it"
+TEMPERATURE = "1.0"          # header reads "TEMP: 2.0"; set to "2.0" for max creativity
+SYSTEM_PROMPT = "You are The Artifact, a sharp, concise AI engine for the Noustelos Studio. Answer helpfully and stay on topic."
