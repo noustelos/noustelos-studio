@@ -274,7 +274,11 @@
     }
     .artifact-toolbar.is-locked .artifact-input {
       border-color: rgba(255, 43, 214, 0.55);
-      letter-spacing: 0.2em;
+      letter-spacing: 0.3em;
+      /* Mask the passphrase without making it a real password field (which
+         would trigger the browser's password manager on every submit). */
+      -webkit-text-security: disc;
+      text-security: disc;
     }
     .artifact-toolbar.is-locked .artifact-input:focus {
       border-color: var(--glow-magenta);
@@ -338,6 +342,12 @@
         placeholder="Invoke the Artifact..."
         aria-label="Message the Artifact"
         maxlength="4000"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        data-1p-ignore
+        data-lpignore="true"
       />
       <button class="artifact-send" id="send" type="submit">SEND</button>
     </form>
@@ -373,14 +383,15 @@
     }
 
     function applyLockUI() {
+      // NOTE: the input stays type="text" always — masking while locked is done
+      // with CSS (-webkit-text-security) so the browser never treats it as a
+      // credential field and never pops the password manager.
       if (unlocked) {
-        input.type = 'text';
         input.placeholder = 'Invoke the Artifact...';
         sendBtn.textContent = 'SEND';
         lockBtn.style.display = '';
         form.classList.remove('is-locked');
       } else {
-        input.type = 'password';
         input.placeholder = '🔒 Type the passphrase to unlock...';
         sendBtn.textContent = 'UNLOCK';
         lockBtn.style.display = 'none';

@@ -35,7 +35,7 @@ const DEFAULTS = {
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const allowedOrigin = env.ALLOWED_ORIGIN || DEFAULTS.ALLOWED_ORIGIN;
     const origin = request.headers.get("Origin") || "";
     const corsOrigin = isAllowed(origin, allowedOrigin) ? origin : allowedOrigin;
@@ -114,7 +114,7 @@ export default {
         userMessage: lastUserText(trimmed),
         botReply: reply,
         model,
-      });
+      }, ctx);
 
       return json({ reply }, 200, corsOrigin);
     } catch (err) {
@@ -219,15 +219,19 @@ function lastUserText(messages) {
   return "";
 }
 
-function logToSheet(webhookUrl, payload) {
+function logToSheet(webhookUrl, payload, ctx) {
   if (!webhookUrl) return;
   try {
-    // Don't await — never block or fail the user's reply on logging.
-    fetch(webhookUrl, {
+    // Don't block the user's reply on logging — but keep the request alive
+    // past the response with ctx.waitUntil, or the Workers runtime cancels it.
+    const p = fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, at: new Date().toISOString() }),
     }).catch(() => {});
+    if (ctx && typeof ctx.waitUntil === "function") {
+      ctx.waitUntil(p);
+    }
   } catch {
     /* swallow — logging is best-effort */
   }
