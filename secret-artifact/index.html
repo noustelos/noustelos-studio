@@ -1071,15 +1071,25 @@
       // pickVoice would choose. Handled locally, no model call.
       if (/^\/?\s*voices$/.test(cmd) || cmd === 'φωνές' || cmd === 'φωνες') {
         input.value = '';
-        const list = (synth ? synth.getVoices() : [])
-          .filter((v) => /^(el|en)/i.test(v.lang || ''))
-          .map((v) => `• ${v.name} [${v.lang}]${isPremiumVoice(v) ? ' ✓enhanced' : ''}`)
-          .join('\n') || '(none exposed)';
-        const elPick = pickVoice('el-GR'), enPick = pickVoice('en-US');
-        addBubble(
-          `Voices on this device (el/en):\n${list}\n\nGreek → ${elPick ? elPick.name : '—'}\nEnglish → ${enPick ? enPick.name : '—'}`,
-          'system'
-        );
+        // iOS Safari loads voices lazily — getVoices() is often [] until the
+        // engine is "warmed up". Nudge it, then retry for ~3s before reporting.
+        unlockTTS();
+        try { synth && synth.getVoices(); } catch {}
+        let tries = 0;
+        const renderVoices = () => {
+          const all = synth ? synth.getVoices() : [];
+          if (!all.length && tries < 12) { tries++; setTimeout(renderVoices, 250); return; }
+          const list = all
+            .filter((v) => /^(el|en)/i.test(v.lang || ''))
+            .map((v) => `• ${v.name} [${v.lang}]${isPremiumVoice(v) ? ' ✓enhanced' : ''}`)
+            .join('\n') || '(no el/en voices exposed)';
+          const elPick = pickVoice('el-GR'), enPick = pickVoice('en-US');
+          addBubble(
+            `Voices exposed: ${all.length} total\n${list}\n\nGreek → ${elPick ? elPick.name : '—'}\nEnglish → ${enPick ? enPick.name : '—'}`,
+            'system'
+          );
+        };
+        renderVoices();
         focusInput();
         return;
       }
