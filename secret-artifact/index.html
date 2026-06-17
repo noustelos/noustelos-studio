@@ -779,7 +779,14 @@
       var add = value.match(/^\s*(?:\/remember|remember|θυμ[ήη]σου|να\s+θυμ[άα]σαι)(?=[\s:：,—–-]|$)[\s:：,—–-]*(.+)$/is);
       if (add && add[1].trim()) return { type: 'add', fact: add[1] };
       if (/^\s*\/?(?:memory|μν[ήη]μη)\s*[?;]?\s*$/i.test(value)) return { type: 'list' };
-      if (/^\s*\/?(?:forget(?:\s+all)?|ξ[έε]χασ[έε]?\s*τα|σβ[ήη]σε\s+τη\s+μν[ήη]μη)\s*$/i.test(value)) return { type: 'clear' };
+      // forget: optional argument. A number → drop just that one; "all"/"τα"/
+      // "όλα"/"τη μνήμη"/nothing → clear everything.
+      var forget = value.match(/^\s*\/?(?:forget|ξ[έε]χασ[έε]?|σβ[ήη]σε)(?:\s+(all|τα|όλα|ολα|τη\s+μν[ήη]μη|\d+))?\s*$/i);
+      if (forget) {
+        var arg = forget[1] || '';
+        var idx = /^\d+$/.test(arg) ? parseInt(arg, 10) : null;
+        return { type: 'forget', index: idx };
+      }
       return null;
     }
     function runMemoryCommand(cmd) {
@@ -790,11 +797,22 @@
         else addBubble('🧠 Κράτησα στη μνήμη: “' + r + '”. Θα τη θυμάμαι και σε επόμενες κουβέντες.', 'system');
       } else if (cmd.type === 'list') {
         if (!memory.length) addBubble('🧠 Η μνήμη είναι άδεια. Πες «θυμήσου …» για να προσθέσεις κάτι.', 'system');
-        else addBubble('🧠 Θυμάμαι (' + memory.length + '):\n' + memory.map((m, i) => (i + 1) + '. ' + m).join('\n') + '\n\n(«/forget» για καθάρισμα.)', 'system');
-      } else if (cmd.type === 'clear') {
-        const n = memory.length;
-        memory = []; saveMemory();
-        addBubble(n ? '🧠 Καθάρισα τη μνήμη (' + n + ').' : '🧠 Η μνήμη ήταν ήδη άδεια.', 'system');
+        else addBubble('🧠 Θυμάμαι (' + memory.length + '):\n' + memory.map((m, i) => (i + 1) + '. ' + m).join('\n') + '\n\n(«/forget 2» σβήνει τη #2, «/forget» όλα.)', 'system');
+      } else if (cmd.type === 'forget') {
+        if (cmd.index != null) {
+          const i = cmd.index - 1;
+          if (i < 0 || i >= memory.length) {
+            addBubble('🧠 Δεν υπάρχει μνήμη #' + cmd.index + '. («/memory» για τη λίστα.)', 'system');
+          } else {
+            const removed = memory.splice(i, 1)[0];
+            saveMemory();
+            addBubble('🧠 Έσβησα τη #' + cmd.index + ': “' + removed + '”.' + (memory.length ? '' : ' Η μνήμη είναι πλέον άδεια.'), 'system');
+          }
+        } else {
+          const n = memory.length;
+          memory = []; saveMemory();
+          addBubble(n ? '🧠 Καθάρισα όλη τη μνήμη (' + n + ').' : '🧠 Η μνήμη ήταν ήδη άδεια.', 'system');
+        }
       }
     }
 

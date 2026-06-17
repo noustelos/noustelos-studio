@@ -60,8 +60,10 @@ answer, so the typing dots stay during reasoning, then tokens stream in.
 ### Features built on the Artifact (all front-end unless noted)
 - **Long-term memory (Gemma only, RAG-lite)** — a small curated set of pinned
   facts, SEPARATE from the transcript. The user adds one by typing `θυμήσου …` /
-  `να θυμάσαι …` / `remember …` / `/remember …`; `/memory` (`μνήμη`) lists them,
-  `/forget` (`ξέχασέ τα`, `σβήσε τη μνήμη`) clears. Commands are parsed + handled
+  `να θυμάσαι …` / `remember …` / `/remember …`; `/memory` (`μνήμη`) lists them
+  numbered, `/forget N` drops just #N (`σβήσε 2`, `ξέχασε 2`), `/forget`
+  (`ξέχασέ τα`, `σβήσε τη μνήμη`, `/forget all`) clears all (numbering renumbers
+  after a delete). Commands are parsed + handled
   **locally** (no model call) in `parseMemoryCommand`/`runMemoryCommand`, gated
   to `persona==='gemma'`. Stored in `localStorage` (`artifact.memory.gemma.v1`,
   per-device), capped 100 facts × 500 chars, and ride along as `memory:[…]` on
