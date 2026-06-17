@@ -311,6 +311,8 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
     );
   }
 
+  console.log("artifact stream upstream", upstream.status, "body:", !!upstream.body);
+
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter();
   const encoder = new TextEncoder();
@@ -320,11 +322,18 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
     const decoder = new TextDecoder();
     let buf = "";
     let full = "";
+    let hb = 0;
     try {
+      // Open the pipe immediately so the client connection never sits idle (a
+      // long "thinking" phase emits no answer tokens, and an idle SSE stream can
+      // get cut by the browser/proxy → "SIGNAL LOST"). ":" lines are SSE
+      // comments the client ignores.
+      await writer.write(encoder.encode(`: open\n\n`));
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         buf += decoder.decode(value, { stream: true });
+        let emitted = false;
         let nl;
         while ((nl = buf.indexOf("\n")) >= 0) {
           const line = buf.slice(0, nl).replace(/\r$/, "");
@@ -337,12 +346,17 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
           const delta = extractDelta(data);
           if (delta) {
             full += delta;
+            emitted = true;
             await writer.write(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
           }
         }
+        // Chunk carried only thinking / non-text → keep the connection warm.
+        if (!emitted) { hb++; await writer.write(encoder.encode(`: hb\n\n`)); }
       }
       await writer.write(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+      console.log("artifact stream done", "chars:", full.length, "heartbeats:", hb);
     } catch (err) {
+      console.error("artifact stream error:", String((err && err.stack) || err));
       await writer.write(encoder.encode(`data: ${JSON.stringify({ error: String((err && err.message) || err) })}\n\n`));
     } finally {
       try { await writer.close(); } catch { /* already closed */ }

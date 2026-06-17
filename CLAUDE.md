@@ -56,6 +56,15 @@ Sheet on completion (`worker.js` `streamReply`/`extractDelta`). The front-end
 bubble token-by-token; the bubble's read-aloud button speaks the span's CURRENT
 text so a streamed answer still plays in full. Thinking still happens BEFORE the
 answer, so the typing dots stay during reasoning, then tokens stream in.
+**Heartbeats (don't remove):** during the thinking phase Gemma emits many chunks
+with ZERO answer tokens, so the Worker→browser SSE would sit idle for seconds and
+the connection gets cut → "SIGNAL LOST" mid-thought (reproduced on both WiFi and
+5G, so not a proxy issue). `streamReply` therefore writes an SSE comment `: open`
+immediately and `: hb` on every answer-less chunk (comment lines start with `:`,
+which the client ignores) to keep the pipe warm. It also `console.log`s
+`artifact stream upstream <status>` and `artifact stream done chars:N heartbeats:N`
+(and `console.error`s `artifact stream error:`) — watch them with
+`cd engine && npx wrangler tail`. A healthy turn logs e.g. `chars:497 heartbeats:44`.
 
 ### Features built on the Artifact (all front-end unless noted)
 - **Long-term memory (Gemma only, RAG-lite)** — a small curated set of pinned

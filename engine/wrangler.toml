@@ -23,11 +23,10 @@ compatibility_date = "2026-06-16"
 #   npx wrangler kv namespace create ARTIFACT_KV   # prints an id
 #   npx wrangler secret put KILL_SWITCH            # your KILL phrase
 #   npx wrangler secret put ANTIDOTE               # your REVIVE phrase
-# Paste the printed id below, UNCOMMENT this block, then `npx wrangler deploy`.
 # Without this binding the engine just replies "kv-missing" (stays online).
-# [[kv_namespaces]]
-# binding = "ARTIFACT_KV"
-# id = "PASTE_THE_ID_HERE"
+[[kv_namespaces]]
+binding = "ARTIFACT_KV"
+id = "cf3dc5c8bed24967a86eab9937261ff8"
 
 # Non-secret config. Secrets (GOOGLE_API_KEY, SHEETS_WEBHOOK_URL) are set via
 # `wrangler secret put`, NOT here.
