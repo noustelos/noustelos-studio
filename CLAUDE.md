@@ -156,7 +156,13 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   on symbols or read emoji names aloud.
 - **Boot splash** — 5s neon "ARTIFACT" intro that fades into the chat.
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
-  top-only (NOT `inset:0`), so the input stays above the keyboard.
+  top-only (NOT `inset:0`), so the input stays above the keyboard. `setAppHeight`
+  writes BOTH `--app-height` (= `vv.height`) and `--app-top` (= `vv.offsetTop`);
+  the fixed `.artifact` uses `top: var(--app-top)` so when iOS scrolls the visual
+  viewport down to fit the keyboard, the whole chat follows and the input stays
+  on screen. (Height-only/`top:0` left the input pushed BELOW the visible area —
+  the user had to scroll to find the passphrase/input field. Don't drop the
+  offsetTop tracking.)
 - **iOS focus discipline** — on touch devices the page NEVER programmatically
   focuses the input (`isTouch` + `focusInput()` no-op; all convenience focus
   calls route through it). Auto-focus on touch was popping the keyboard at random

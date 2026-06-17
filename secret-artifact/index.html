@@ -578,8 +578,11 @@
         position: fixed;
         /* Anchor only the TOP — NOT bottom. Pinning bottom (inset:0) forces
            full layout-viewport height and makes the browser ignore the height
-           below, leaving the input hidden behind the keyboard. */
-        top: 0;
+           below, leaving the input hidden behind the keyboard. --app-top tracks
+           visualViewport.offsetTop so when the keyboard scrolls the visual
+           viewport down, the whole chat follows and the input stays visible
+           (without it, top:0 kept the chat pinned above the visible area). */
+        top: var(--app-top, 0px);
         left: 0;
         right: 0;
         /* Height = the REAL visible viewport (set in JS from visualViewport),
@@ -1494,7 +1497,11 @@
     const vv = window.visualViewport;
     function setAppHeight() {
       const h = vv ? vv.height : window.innerHeight;
+      // offsetTop = how far iOS scrolled the visual viewport down to fit the
+      // keyboard; the fixed chat must shift by the same amount to stay on screen.
+      const top = vv ? vv.offsetTop : 0;
       document.documentElement.style.setProperty('--app-height', h + 'px');
+      document.documentElement.style.setProperty('--app-top', top + 'px');
     }
     setAppHeight();
     if (vv) {
