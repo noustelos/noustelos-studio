@@ -473,6 +473,42 @@
                   0 0 16px var(--accent, var(--glow-cyan));
     }
 
+    /* Quick presets — one-tap slider combos, each tinted by its --accent so it
+       echoes the neon track colours. Sits above the sliders inside the panel. */
+    .tuner-presets {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 1.1rem 0;
+    }
+    .tuner-preset {
+      flex: 1 1 0;
+      min-width: 0;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      color: var(--ink-dim);
+      text-align: center;
+      padding: 0.5rem 0.35rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(138, 91, 255, 0.22);
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease,
+                  box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .tuner-preset:hover {
+      color: var(--accent, var(--glow-cyan));
+      border-color: var(--accent, var(--glow-cyan));
+    }
+    .tuner-preset.is-active {
+      color: var(--accent, var(--glow-cyan));
+      border-color: var(--accent, var(--glow-cyan));
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 12px -2px var(--accent, var(--glow-cyan));
+      text-shadow: 0 0 8px var(--accent, var(--glow-cyan));
+    }
+
     /* ============ Boot splash / intro ============ */
     .intro {
       position: fixed;
@@ -591,6 +627,11 @@
 
     <!-- Persona Tuner: collapsed by default, toggled by the header TUNE button. -->
     <section class="tuner" id="tuner" aria-label="Persona tuning console" aria-hidden="true">
+      <div class="tuner-presets" role="group" aria-label="Quick presets">
+        <button type="button" class="tuner-preset" data-preset="brainstorm" style="--accent: var(--glow-cyan);">Brainstorming</button>
+        <button type="button" class="tuner-preset" data-preset="mirror" style="--accent: var(--glow-magenta);">The Mirror</button>
+        <button type="button" class="tuner-preset" data-preset="architect" style="--accent: var(--glow-violet);">The Architect</button>
+      </div>
       <div class="tuner-grid">
         <div class="tuner-row" style="--accent: var(--glow-cyan);">
           <div class="tuner-head">
@@ -1310,10 +1351,44 @@
         if (Number.isFinite(saved.seriousness)) sliders.seriousness.el.value = saved.seriousness;
       }
     } catch {}
+    // One-tap presets — each sets all three sliders at once. The active button
+    // lights up only while the live values still match it (cleared on any drag).
+    const PRESETS = {
+      brainstorm: { temperature: 1.9, sarcasm: 27, seriousness: 18 },
+      mirror:     { temperature: 0.9, sarcasm: 72, seriousness: 54 },
+      architect:  { temperature: 0.3, sarcasm: 0,  seriousness: 90 },
+    };
+    const presetBtns = Array.from(document.querySelectorAll('.tuner-preset'));
+    function updateActivePreset() {
+      const cur = currentParams();
+      presetBtns.forEach((btn) => {
+        const p = PRESETS[btn.dataset.preset];
+        const match = p &&
+          Math.abs(cur.temperature - p.temperature) < 0.05 &&
+          cur.sarcasm === p.sarcasm &&
+          cur.seriousness === p.seriousness;
+        btn.classList.toggle('is-active', !!match);
+      });
+    }
+    function applyPreset(name) {
+      const p = PRESETS[name];
+      if (!p) return;
+      sliders.temperature.el.value = p.temperature;
+      sliders.sarcasm.el.value     = p.sarcasm;
+      sliders.seriousness.el.value = p.seriousness;
+      Object.keys(sliders).forEach(refreshSlider);
+      saveParams();
+      updateActivePreset();
+    }
+    presetBtns.forEach((btn) => {
+      btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+    });
+
     Object.keys(sliders).forEach((key) => {
       refreshSlider(key);
-      sliders[key].el.addEventListener('input', () => { refreshSlider(key); saveParams(); });
+      sliders[key].el.addEventListener('input', () => { refreshSlider(key); saveParams(); updateActivePreset(); });
     });
+    updateActivePreset();
 
     // The dropdown overlay anchors under the header — measure its height so the
     // panel always sits exactly below it (header height shifts with text/zoom).
