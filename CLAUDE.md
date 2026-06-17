@@ -103,7 +103,14 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   (`position:absolute`, anchored under the header via a JS-measured `--header-h`)
   — it floats over the chat and does NOT reflow it; auto-closes on send and on
   outside tap. (Was an in-flow `max-height` block; that shoved the conversation
-  around on iPhone — don't go back to that.) **Engine side:** `worker.js`
+  around on iPhone — don't go back to that.) **Quick presets:** three one-tap
+  buttons at the top of the panel (`.tuner-preset`, `PRESETS` map in JS) set all
+  three sliders at once, each tinted by the matching slider accent —
+  *Brainstorming* (cyan: temp 1.9 / sarcasm 27 / seriousness 18), *The Mirror*
+  (magenta: 0.9 / 72 / 54), *The Architect* (violet: 0.3 / 0 / 90). Applying one
+  persists to `artifact.params.v1` like a manual drag; the active button lights
+  up only while the live values still match it (`updateActivePreset`, cleared on
+  any slider input). **Engine side:** `worker.js`
   `resolveTemperature` (clamp 0–2, falls back to `env.TEMPERATURE`) +
   `buildSystemPrompt` (folds the dials into the systemInstruction).
 - **Voice** — dictation via `webkitSpeechRecognition` (hard-set `el-GR`, mic
