@@ -184,6 +184,25 @@ export default {
       maxOutputTokens: DEFAULTS.MAX_OUTPUT_TOKENS,
     };
 
+    // Web search opt-in (Gemma only): the user grounds a single answer in live
+    // Google Search results by prefixing the message with a trigger (/search,
+    // "search …", "ψάξε …"). When present we strip the trigger from the prompt
+    // and attach tools:[{googleSearch:{}}] for THIS turn only — off by default,
+    // and never for DION (a creative voice, not a research tool).
+    let tools;
+    if (persona !== "dion") {
+      for (let i = contents.length - 1; i >= 0; i--) {
+        if (contents[i].role !== "user") continue;
+        const stripped = stripSearchTrigger(contents[i].parts[0].text);
+        if (stripped !== null) {
+          tools = [{ googleSearch: {} }];
+          // Keep the original text if nothing followed the trigger word.
+          if (stripped) contents[i].parts[0].text = stripped;
+        }
+        break;
+      }
+    }
+
     // --- Streaming path (Server-Sent Events) ---
     // The front-end sends { stream: true } to get tokens as they're produced,
     // instead of waiting for the whole reply. We proxy Google's SSE stream,
@@ -196,6 +215,7 @@ export default {
         contents,
         generationConfig,
         systemPrompt,
+        tools,
         corsOrigin,
         ctx,
         onComplete: (full) => logToSheet(env.SHEETS_WEBHOOK_URL, {
@@ -215,6 +235,7 @@ export default {
         contents,
         generationConfig,
         systemPrompt,
+        tools,
       });
 
       // Fire-and-forget archive to Google Sheets via Apps Script.
@@ -239,13 +260,15 @@ export default {
  * not enabled"); if that happens we transparently retry by folding the system
  * prompt into the first user turn.
  */
-async function callGemma({ apiKey, model, contents, generationConfig, systemPrompt }) {
+async function callGemma({ apiKey, model, contents, generationConfig, systemPrompt, tools }) {
   const url = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const toolsField = tools && tools.length ? { tools } : {};
 
   const withSystem = {
     systemInstruction: { parts: [{ text: systemPrompt }] },
     contents,
     generationConfig,
+    ...toolsField,
   };
 
   let res = await postJson(url, apiKey, withSystem);
@@ -255,7 +278,7 @@ async function callGemma({ apiKey, model, contents, generationConfig, systemProm
     if (/system\s*instruction|systemInstruction|developer instruction/i.test(errText)) {
       // Fallback: prepend system prompt to the first user message.
       const folded = foldSystemIntoFirstTurn(contents, systemPrompt);
-      res = await postJson(url, apiKey, { contents: folded, generationConfig });
+      res = await postJson(url, apiKey, { contents: folded, generationConfig, ...toolsField });
     }
   }
 
@@ -277,20 +300,22 @@ async function callGemma({ apiKey, model, contents, generationConfig, systemProm
  * starts (we still have the status/headers then). onComplete(fullText) fires
  * once the stream finishes, for fire-and-forget Sheet logging.
  */
-async function streamReply({ apiKey, model, contents, generationConfig, systemPrompt, corsOrigin, ctx, onComplete }) {
+async function streamReply({ apiKey, model, contents, generationConfig, systemPrompt, tools, corsOrigin, ctx, onComplete }) {
   const url = `${API_BASE}/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+  const toolsField = tools && tools.length ? { tools } : {};
 
   let upstream = await postJson(url, apiKey, {
     systemInstruction: { parts: [{ text: systemPrompt }] },
     contents,
     generationConfig,
+    ...toolsField,
   });
 
   if (upstream.status === 400) {
     const errText = await upstream.clone().text();
     if (/system\s*instruction|systemInstruction|developer instruction/i.test(errText)) {
       const folded = foldSystemIntoFirstTurn(contents, systemPrompt);
-      upstream = await postJson(url, apiKey, { contents: folded, generationConfig });
+      upstream = await postJson(url, apiKey, { contents: folded, generationConfig, ...toolsField });
     }
   }
 
@@ -506,6 +531,20 @@ function matchControlPhrase(text, env) {
   if (env.KILL_SWITCH && t === String(env.KILL_SWITCH).trim()) return "kill";
   if (env.ANTIDOTE && t === String(env.ANTIDOTE).trim()) return "antidote";
   return null;
+}
+
+// Leading opt-in for web search. Greek isn't ASCII \w, so we anchor with a
+// separator lookahead instead of \b (same caveat as the memory commands).
+const SEARCH_TRIGGER = /^\s*(?:\/search|search|ψάξε|ψαξε|γκούγκλαρε|γκουγκλαρε)(?=[\s,.:!;·]|$)/iu;
+
+// If `text` starts with a search trigger, return the text with the trigger
+// stripped (and trimmed); otherwise null. An empty-string return means the
+// trigger was present but no query followed — the caller keeps the original.
+function stripSearchTrigger(text) {
+  const s = String(text || "");
+  const m = s.match(SEARCH_TRIGGER);
+  if (!m) return null;
+  return s.slice(m[0].length).replace(/^[\s,.:!;·]+/, "").trim();
 }
 
 // Toggle the persisted kill flag. Needs a bound ARTIFACT_KV namespace; without

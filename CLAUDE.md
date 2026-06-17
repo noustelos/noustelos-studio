@@ -67,6 +67,22 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
 `cd engine && npx wrangler tail`. A healthy turn logs e.g. `chars:497 heartbeats:44`.
 
 ### Features built on the Artifact (all front-end unless noted)
+- **Web search (Gemma only, opt-in grounding — ENGINE-side)** — the user grounds
+  a SINGLE answer in live Google Search by prefixing the message with a trigger:
+  `/search …`, `search …`, `ψάξε …` (also `γκούγκλαρε …`). Off by default and
+  never for DION. Handled entirely in `worker.js` (no front-end change):
+  `stripSearchTrigger` matches a LEADING trigger (anchored with a separator
+  lookahead, not `\b` — Greek isn't ASCII `\w`, same caveat as the memory
+  commands), strips it from the prompt for that turn, and the handler attaches
+  `tools:[{ googleSearch: {} }]` to the Google request (folded into BOTH
+  `streamReply` and `callGemma`, incl. their systemInstruction-400 fallbacks).
+  Field is `googleSearch` (the Gemini-2+ name) — NOT the deprecated 1.5
+  `googleSearchRetrieval`. `gemma-4-31b-it` supports grounding via the Gemini
+  API; the AI Studio toggle does NOT carry into our API calls (every request is
+  stateless), so the tool MUST be sent per-request. The model decides whether to
+  actually search; we only make the tool available when the trigger is present.
+  Grounding metadata (citations) is NOT surfaced — only the answer text streams.
+  **Needs `cd engine && npx wrangler deploy`** (engine change, not front-end).
 - **Long-term memory (Gemma only, RAG-lite)** — a small curated set of pinned
   facts, SEPARATE from the transcript. The user adds one by typing `θυμήσου …` /
   `να θυμάσαι …` / `remember …` / `/remember …`; `/memory` (`μνήμη`) lists them
