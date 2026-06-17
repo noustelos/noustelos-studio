@@ -34,9 +34,16 @@
  *   mem-clear                   -> wipe all facts
  * Only the WORKER calls these (it holds the token + gates owner), so the list
  * stays private. OPTIONAL hardening: set a Script Property MEM_TOKEN (Project
- * Settings > Script Properties); when set, mem-* calls must carry a matching
- * token or are rejected. The Worker sends it from its own MEM_TOKEN secret.
- * Logging stays token-free.
+ * Settings > Script Properties); when set, mem-* AND drive-* calls must carry a
+ * matching token or are rejected. The Worker sends it from its own MEM_TOKEN
+ * secret. Logging stays token-free.
+ *
+ * Owner Drive folder: { action: "drive-list" | "drive-read" } reads the owner's
+ * Drive "Artifact" folder (this script runs AS the owner — no separate OAuth).
+ *   drive-list -> { ok, folderFound, files:[{name,type}] }
+ *   drive-read -> { ok, folderFound, text }  (Docs + text/md/csv/json; capped)
+ * Adding DriveApp/DocumentApp needs Drive + Documents scopes → the owner must
+ * RE-AUTHORIZE on the next deploy (a one-time consent screen).
  */
 
 var HEADERS = ["Timestamp", "User message", "Bot reply", "Model", "Who"];
@@ -44,6 +51,8 @@ var HEADERS = ["Timestamp", "User message", "Bot reply", "Model", "Who"];
 var PERSONA_TABS = { dion: "DION" };
 var MEMORY_TAB = "Memory";
 var MEMORY_HEADERS = ["Fact", "Added"];
+var DRIVE_FOLDER = "Artifact";   // Drive folder Gemma reads on /docs
+var DRIVE_MAX_CHARS = 12000;     // total text budget folded into the prompt
 
 function doPost(e) {
   try {
@@ -51,6 +60,10 @@ function doPost(e) {
     // Owner-memory actions are routed to the Memory tab, not the log.
     if (data.action && String(data.action).indexOf("mem-") === 0) {
       return handleMemory(data);
+    }
+    // Owner Drive-folder reads (the "Artifact" folder), not the log.
+    if (data.action && String(data.action).indexOf("drive-") === 0) {
+      return handleDrive(data);
     }
     var sheet = sheetForPersona(data.persona);
 
@@ -176,6 +189,81 @@ function memClear() {
   var last = sheet.getLastRow();
   if (last > 1) sheet.deleteRows(2, last - 1);
   return { ok: true, memory: [] };
+}
+
+// ===== Owner Drive folder ("Artifact") ==================================
+// Reads files the owner drops in their Drive "Artifact" folder so Gemma can use
+// them as reference (on /docs). Runs as the script owner, so it uses the owner's
+// own Drive — no separate OAuth client. NOTE: adding DriveApp/DocumentApp means
+// the script needs Drive + Documents scopes; the owner re-authorizes on the next
+// deploy (consent screen). Only Google Docs + text/md/csv/json are extracted;
+// PDFs/images/Office files are skipped (would need OCR/conversion).
+
+function handleDrive(data) {
+  var required = "";
+  try { required = PropertiesService.getScriptProperties().getProperty("MEM_TOKEN") || ""; } catch (e) {}
+  if (required && String(data.token || "") !== required) {
+    return jsonOut({ ok: false, error: "bad-token" });
+  }
+  try {
+    switch (data.action) {
+      case "drive-list": return jsonOut(driveList());
+      case "drive-read": return jsonOut(driveRead());
+      default:           return jsonOut({ ok: false, error: "unknown-action" });
+    }
+  } catch (err) {
+    return jsonOut({ ok: false, error: String(err) });
+  }
+}
+
+function driveFolder() {
+  var it = DriveApp.getFoldersByName(DRIVE_FOLDER);
+  return it.hasNext() ? it.next() : null;
+}
+
+function driveList() {
+  var folder = driveFolder();
+  if (!folder) return { ok: true, folderFound: false, files: [] };
+  var files = [], it = folder.getFiles();
+  while (it.hasNext()) {
+    var f = it.next();
+    files.push({ name: f.getName(), type: f.getMimeType() });
+  }
+  return { ok: true, folderFound: true, files: files };
+}
+
+function driveRead() {
+  var folder = driveFolder();
+  if (!folder) return { ok: true, folderFound: false, text: "" };
+  var parts = [], total = 0, it = folder.getFiles();
+  while (it.hasNext() && total < DRIVE_MAX_CHARS) {
+    var f = it.next();
+    var text = extractFileText(f);
+    if (!text) continue;
+    var chunk = "### " + f.getName() + "\n" + text.trim();
+    if (total + chunk.length > DRIVE_MAX_CHARS) {
+      chunk = chunk.slice(0, Math.max(0, DRIVE_MAX_CHARS - total)) + "\n…(truncated)";
+    }
+    parts.push(chunk);
+    total += chunk.length;
+  }
+  return { ok: true, folderFound: true, text: parts.join("\n\n") };
+}
+
+// Extract plain text from a file, or "" if the type isn't supported.
+function extractFileText(file) {
+  var mime = file.getMimeType();
+  try {
+    if (mime === MimeType.GOOGLE_DOCS) {
+      return DocumentApp.openById(file.getId()).getBody().getText();
+    }
+    if (mime === MimeType.PLAIN_TEXT || mime === "text/markdown" ||
+        mime === MimeType.CSV || mime === "application/json" ||
+        String(mime).indexOf("text/") === 0) {
+      return file.getBlob().getDataAsString();
+    }
+  } catch (e) { return ""; }
+  return ""; // PDF / images / Office — skipped for now
 }
 
 // Returns the tab for a persona, creating a named tab on first use. Unknown or

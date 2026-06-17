@@ -141,6 +141,12 @@ export default {
       return handleMemoryOp(env, body.memoryOp, corsOrigin);
     }
 
+    // --- Owner Drive folder ops (the /docs command lists the "Artifact" folder) ---
+    if (body.driveOp && typeof body.driveOp === "object") {
+      if (who !== "owner") return json({ error: "forbidden" }, 403, corsOrigin);
+      return handleDriveOp(env, body.driveOp, corsOrigin);
+    }
+
     const messages = normalizeMessages(body);
     if (!messages.length) {
       return json({ error: "No message provided" }, 400, corsOrigin);
@@ -178,6 +184,13 @@ export default {
     // history trimming and new sessions. DION has no memory; guests get none.
     if (persona !== "dion" && who === "owner") {
       basePrompt += renderMemoryBlock(await getOwnerMemory(env));
+    }
+
+    // Reference documents (owner only, on demand): when the front-end's /docs
+    // mode is on it sends useDocs:true, and we fold the owner's Drive "Artifact"
+    // folder text into the prompt for THIS turn. Off by default (token cost).
+    if (persona !== "dion" && who === "owner" && (body.useDocs === true || body.useDocs === "true")) {
+      basePrompt += renderDriveBlock(await getDriveContent(env));
     }
 
     // Live persona-tuner params from the front-end (all optional). The sliders
@@ -604,6 +617,61 @@ async function handleMemoryOp(env, op, corsOrigin) {
   const facts = ok && Array.isArray(data.memory) ? data.memory : [];
   if (ok) await putMemoryCache(env, facts);
   return json({ ok, memory: facts, status: data && data.status, fact: data && data.fact, error: data && data.error }, 200, corsOrigin);
+}
+
+// --- Owner Drive folder ("Artifact"), read via the same Apps Script /exec ---
+// Same shape as memory: owner-only, KV-cached (longer TTL — files change less
+// often than chat), folded into the prompt only when the front-end asks (/docs).
+const DRIVE_CACHE_TTL = 5 * 60 * 1000;
+
+async function getDriveContent(env) {
+  if (!env.SHEETS_WEBHOOK_URL) return "";
+  if (env.ARTIFACT_KV) {
+    try {
+      const raw = await env.ARTIFACT_KV.get("drive:cache");
+      if (raw) {
+        const c = JSON.parse(raw);
+        if (c && typeof c.text === "string" && (Date.now() - c.at) < DRIVE_CACHE_TTL) return c.text;
+      }
+    } catch { /* fall through to a live read */ }
+  }
+  const data = await sheetsMemoryCall(env, "drive-read");
+  const text = data && data.ok && typeof data.text === "string" ? data.text : "";
+  if (env.ARTIFACT_KV) {
+    try { await env.ARTIFACT_KV.put("drive:cache", JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
+  }
+  return text;
+}
+
+function renderDriveBlock(text) {
+  if (!text || !text.trim()) return "";
+  return "\n\n// REFERENCE DOCUMENTS — files the user placed in their Drive 'Artifact' folder. " +
+    "Treat them as authoritative context and use them when relevant:\n" + text;
+}
+
+// /docs list/refresh, routed from the front-end. Owner-gated by the caller.
+async function handleDriveOp(env, op, corsOrigin) {
+  if (!env.SHEETS_WEBHOOK_URL) return json({ error: "drive-unconfigured" }, 200, corsOrigin);
+  const type = op && typeof op.type === "string" ? op.type : "";
+  if (type === "list") {
+    const data = await sheetsMemoryCall(env, "drive-list");
+    return json({
+      ok: !!(data && data.ok),
+      folderFound: !!(data && data.folderFound),
+      files: (data && Array.isArray(data.files)) ? data.files : [],
+      error: data && data.error,
+    }, 200, corsOrigin);
+  }
+  if (type === "refresh") {
+    // Force a live re-read and refresh the cache (e.g. after dropping new files).
+    const data = await sheetsMemoryCall(env, "drive-read");
+    const text = data && data.ok && typeof data.text === "string" ? data.text : "";
+    if (env.ARTIFACT_KV) {
+      try { await env.ARTIFACT_KV.put("drive:cache", JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
+    }
+    return json({ ok: !!(data && data.ok), chars: text.length }, 200, corsOrigin);
+  }
+  return json({ error: "bad-op" }, 200, corsOrigin);
 }
 
 // Engine offline iff the chat-set KV "kill" flag is on. State lives ONLY in KV

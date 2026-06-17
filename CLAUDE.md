@@ -111,6 +111,22 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   **Optional token:** set Apps Script Script-Property `MEM_TOKEN` + Worker secret
   `MEM_TOKEN` to gate the mem-* endpoints (logging stays token-free). **Changing
   it needs BOTH `wrangler deploy` AND an Apps Script "New version" redeploy.**
+- **Reference documents (Drive "Artifact" folder, Gemma + OWNER only, on-demand)**
+  — the owner drops files in their Drive folder named **`Artifact`** and loads them
+  into a conversation with **`/docs`** (`/docs on`/`/docs off`, also `διάβασε τα
+  αρχεία`). While on, the front-end is just a flag (`docsOn`, IN-MEMORY → resets on
+  reload, keeps the token cost opt-in) that sends `useDocs:true` on each Gemma
+  turn; the engine folds the folder's text into a `// REFERENCE DOCUMENTS` block
+  (`worker.js` `getDriveContent` → `renderDriveBlock`), KV-cached 5min
+  (`drive:cache`). **No separate OAuth/API project:** the Apps Script runs AS the
+  owner, so `engine/apps-script.gs` `driveList`/`driveRead` use `DriveApp` on the
+  owner's own Drive (gated by the same optional `MEM_TOKEN`). `drive-list` (file
+  names, shown when toggling on) and `drive-read` (concatenated text, capped
+  `DRIVE_MAX_CHARS`=12000, `### filename` headers) — only **Google Docs + text/
+  md/csv/json** are extracted; **PDF/images/Office are skipped** (need OCR/convert).
+  Front-end `driveOp()` lists; `worker.js` `handleDriveOp` (owner-gated) lists/
+  refreshes. ⚠️ Adding `DriveApp`/`DocumentApp` needs Drive+Documents scopes → the
+  owner must **RE-AUTHORIZE on the next Apps Script deploy** (one-time consent).
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active

@@ -835,6 +835,42 @@
       if (data && Array.isArray(data.memory)) { try { localStorage.setItem(FLAG, '1'); } catch {} }
     }
 
+    // ===== Reference documents (Drive "Artifact" folder, owner-only) =====
+    // /docs loads the owner's Drive "Artifact" folder into THIS conversation:
+    // while on, each Gemma turn sends useDocs:true and the engine folds the
+    // folder text into the prompt. In-memory (resets on reload) to keep the
+    // token cost opt-in. /docs off stops it. The engine reads the folder as the
+    // owner (no separate OAuth) and the front-end never sees the files directly.
+    let docsOn = false;
+    async function driveOp(op) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passphrase, persona: 'gemma', driveOp: op })
+      });
+      if (res.status === 401) { lock('🔒 Session locked — enter the passphrase again.'); return null; }
+      return res.json().catch(() => ({}));
+    }
+    // `lc` is the lowercased command. Decides on/off, lists files when turning on.
+    async function toggleDocs(lc) {
+      const wantOff = /\boff\b/.test(lc) || lc.indexOf('σταμ') === 0;
+      const wantOn = /\bon\b/.test(lc) || lc.indexOf('διάβ') === 0 || lc.indexOf('διαβ') === 0;
+      const next = wantOff ? false : (wantOn ? true : !docsOn);
+      if (!next) { docsOn = false; addBubble('📁 Σταμάτησα να διαβάζω τον φάκελο Artifact.', 'system'); return; }
+      const data = await driveOp({ type: 'list' });
+      if (!data) return;
+      if (data.error === 'forbidden') { addBubble('📁 Τα αρχεία είναι μόνο για τον owner.', 'system'); return; }
+      if (data.error === 'drive-unconfigured') { addBubble('📁 Δεν είναι ρυθμισμένη η πρόσβαση στο Drive (λείπει το engine setup).', 'system'); return; }
+      if (!data.ok) { addBubble('📁 Κάτι πήγε στραβά με το Drive. Δοκίμασε ξανά.', 'system'); return; }
+      if (!data.folderFound) { addBubble('📁 Δεν βρήκα φάκελο «Artifact» στο Drive σου.', 'system'); return; }
+      const files = (data.files || []).filter((f) => f && f.name);
+      if (!files.length) { addBubble('📁 Ο φάκελος «Artifact» είναι άδειος.', 'system'); return; }
+      docsOn = true;
+      addBubble('📁 Διαβάζω τον φάκελο Artifact σε αυτή την κουβέντα (' + files.length + '):\n'
+        + files.map((f, i) => (i + 1) + '. ' + f.name).join('\n')
+        + '\n\n(«/docs off» για να σταματήσω. Μόνο Docs/txt/md/csv διαβάζονται — PDF/εικόνες όχι.)', 'system');
+    }
+
     // Memory commands (Gemma only). Returns a command object or null.
     function parseMemoryCommand(value) {
       // NB: \b is unreliable with Greek (non-ASCII isn't a JS \w), so we use a
@@ -969,9 +1005,11 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: history, passphrase, persona, stream: true, params: currentParams()
+          messages: history, passphrase, persona, stream: true, params: currentParams(),
           // Long-term memory is no longer sent from here — the engine reads the
           // owner's facts straight from the Sheet "Memory" tab (cross-device).
+          // /docs mode: ask the engine to fold the Drive "Artifact" folder in.
+          useDocs: persona === 'gemma' && docsOn ? true : undefined
         })
       });
 
@@ -1131,6 +1169,15 @@
         if (memCmd) {
           input.value = '';
           runMemoryCommand(memCmd);
+          focusInput();
+          return;
+        }
+        // /docs — load the Drive "Artifact" folder into this conversation.
+        const lc = value.trim().toLowerCase();
+        if (/^\/?docs(\s+(on|off))?$/.test(lc) || lc.indexOf('διάβασε τα αρχεία') === 0 ||
+            lc.indexOf('διαβασε τα αρχεια') === 0 || lc.indexOf('σταμάτα τα αρχεία') === 0) {
+          input.value = '';
+          await toggleDocs(lc);
           focusInput();
           return;
         }
