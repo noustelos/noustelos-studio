@@ -139,10 +139,17 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   hidden where unsupported, auto-sends transcript); read-aloud via
   `speechSynthesis` (lang auto-detected Greek/English) with a per-bubble ▶/■
   play/stop toggle and auto-read of fresh replies. TTS unlocked on a send/mic tap
-  for iOS. **Voice gender:** `pickVoice` prefers a male-named voice (`MALE_VOICE`
-  regex — API exposes no gender); when only a female voice exists (Greek
-  "Melina" on iOS has no native male), pitch drops to 0.7 to masculinise. A true
-  male Greek voice would need cloud TTS via the Worker.
+  for iOS. **Voice quality (naturalness over gender):** `pickVoice` prefers the
+  premium/enhanced system voices — by name `samantha` (English) / `melina`
+  (Greek), then any `premium|enhanced` voice in-language (`isPremiumVoice` checks
+  `voiceURI`/`name`), then exact-locale, then first available. These exist only
+  if the user has DOWNLOADED them (iOS/macOS Settings → Accessibility → Spoken
+  Content → Voices); otherwise it falls back. We deliberately DROPPED the old
+  male-voice preference + pitch-0.7 masculinisation (sounded robotic) — now
+  `rate=0.92`, `pitch=0.9` for a slightly slower, slightly lower, non-screechy
+  read. `cleanForSpeech` strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/
+  keycap) and markdown markers (`* _ \` # > ~ |`) before speaking so the engine
+  doesn't pause on symbols or read emoji names aloud.
 - **Boot splash** — 5s neon "ARTIFACT" intro that fades into the chat.
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
   top-only (NOT `inset:0`), so the input stays above the keyboard.

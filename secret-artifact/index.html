@@ -1187,23 +1187,31 @@
       // Greek block (U+0370–U+03FF) or Greek Extended (U+1F00–U+1FFF) → Greek.
       return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(text) ? 'el-GR' : 'en-US';
     }
-    // Known male voice names across Apple/Google/Edge TTS engines. The Web
-    // Speech API doesn't expose gender, so we match by name.
-    const MALE_VOICE = /(male|daniel|arthur|oliver|aaron|fred|alex|tom\b|reed|rocko|gordon|nathan|rishi|george|james|albert|bruce|junior|ralph|diego|jorge|carlos|luca|thomas|markus|yannis|dimitris)/i;
+    // Prefer Apple/Google "premium"/"enhanced" voices — their intonation is far
+    // more natural than the default compact voices. We can't query gender (the
+    // Web Speech API doesn't expose it), so we match the known-natural named
+    // voices first: Samantha for English, Melina for Greek.
+    const PREMIUM_NAME = { en: /samantha/i, el: /melina/i };
+    const PREMIUM_TAG = /premium|enhanced/i;
+    function isPremiumVoice(v) {
+      return !!v && (PREMIUM_TAG.test(v.voiceURI || '') || PREMIUM_TAG.test(v.name || ''));
+    }
     function pickVoice(lang) {
       const voices = synth ? synth.getVoices() : [];
       const base = lang.split('-')[0];
       const norm = (v) => (v.lang || '').replace('_', '-');
       const inLang = voices.filter((v) => norm(v).toLowerCase().startsWith(base));
       const pool = inLang.length ? inLang : voices;
-      // Prefer a male-named voice in the right language; else any in-language
-      // voice; else the first available.
-      return pool.find((v) => MALE_VOICE.test(v.name))
+      const named = PREMIUM_NAME[base];
+      // premium Samantha/Melina → any Samantha/Melina → any premium/enhanced in
+      // this language → exact locale match → first available.
+      return (named && pool.find((v) => named.test(v.name) && isPremiumVoice(v)))
+          || (named && pool.find((v) => named.test(v.name)))
+          || pool.find(isPremiumVoice)
           || pool.find((v) => norm(v) === lang)
           || pool[0]
           || null;
     }
-    function isMaleVoice(v) { return !!(v && MALE_VOICE.test(v.name)); }
     // iOS only allows speech after a user gesture; speaking an empty utterance
     // during a tap grants permission for later programmatic (auto-read) speech.
     function unlockTTS() {
@@ -1224,8 +1232,21 @@
       resetBtnIcon(speakingBtn);
       speakingBtn = null;
     }
+    // Strip emojis & markdown punctuation before speaking so the TTS engine
+    // doesn't stumble on symbols (pausing on "*"/">"/"#") or read emoji names
+    // aloud. Sentence punctuation is kept — it drives natural prosody.
+    function cleanForSpeech(text) {
+      return String(text || '')
+        .replace(/\p{Extended_Pictographic}/gu, '')   // emojis
+        .replace(/[\u200D\uFE0F\u20E3]/g, "")           // ZWJ / variation selector / keycap
+        .replace(/[*_`#>~|]/g, ' ')                   // markdown markers
+        .replace(/\s+/g, ' ')                       // collapse whitespace
+        .trim();
+    }
     function speak(text, btn) {
-      if (!synth || !text) return;
+      if (!synth) return;
+      text = cleanForSpeech(text);
+      if (!text) return;
       synth.cancel(); // stop any in-flight speech cleanly before starting
       resetBtnIcon(speakingBtn);
       speakingBtn = null;
@@ -1234,11 +1255,11 @@
       u.lang = detectLang(text);
       const v = pickVoice(u.lang);
       if (v) u.voice = v;
-      // Male tone: a true male voice sounds natural at normal pitch; when only a
-      // female voice exists (e.g. Greek "Melina" on iOS), drop the pitch to
-      // masculinise it as far as the engine allows.
-      u.rate = 1;
-      u.pitch = isMaleVoice(v) ? 0.95 : 0.7;
+      // Slightly slower + slightly lower than default: a hair under 1.0 reads as
+      // "considered" rather than rushed, and a gently lowered pitch keeps the
+      // premium voice from sounding thin/screechy (without masculinising it).
+      u.rate = 0.92;
+      u.pitch = 0.9;
 
       if (btn) {
         speakingBtn = btn;
