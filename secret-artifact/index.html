@@ -698,7 +698,7 @@
       // haunts the chat input). The locked state is signalled by the magenta
       // border + UNLOCK button instead of dot-masking.
       if (unlocked) {
-        input.placeholder = 'Invoke the Artifact...';
+        input.placeholder = persona === 'dion' ? 'Ask Dion, agápi mou...' : 'Invoke the Artifact...';
         sendBtn.textContent = 'SEND';
         lockBtn.style.display = '';
         form.classList.remove('is-locked');
@@ -728,16 +728,31 @@
       focusInput();
     }
 
+    // ===== Persona ================================================
+    // Two voices share this UI: the default 'gemma' (The Artifact) and 'dion'
+    // (the Mykonos concierge). Typing the bare word DION or GEMMA while unlocked
+    // flips between them — no model call is spent on the switch. The active
+    // persona rides along in every request so the engine picks the right system
+    // prompt. Each persona keeps its OWN transcript (separate localStorage key),
+    // so the conversations never bleed into each other.
+    const PERSONA_KEY = 'artifact.persona.v1';
+    function loadPersona() {
+      try { return localStorage.getItem(PERSONA_KEY) === 'dion' ? 'dion' : 'gemma'; }
+      catch { return 'gemma'; }
+    }
+    let persona = loadPersona();
+    // gemma keeps the original key so existing memory survives; dion gets its own.
+    function storeKeyFor(p) { return p === 'dion' ? 'artifact.history.dion.v1' : 'artifact.history.v1'; }
+
     // ===== Memory =================================================
     // The brains keep the full transcript and persist it in localStorage,
     // so the Artifact remembers the conversation across reloads. Every turn
     // the entire history is sent to the engine for true multi-turn context.
-    const STORE_KEY = 'artifact.history.v1';
     let history = loadHistory();
 
     function loadHistory() {
       try {
-        const raw = localStorage.getItem(STORE_KEY);
+        const raw = localStorage.getItem(storeKeyFor(persona));
         const parsed = raw ? JSON.parse(raw) : [];
         return Array.isArray(parsed) ? parsed : [];
       } catch {
@@ -747,7 +762,7 @@
 
     function saveHistory() {
       try {
-        localStorage.setItem(STORE_KEY, JSON.stringify(history));
+        localStorage.setItem(storeKeyFor(persona), JSON.stringify(history));
       } catch { /* storage full / disabled — memory stays in-session only */ }
     }
 
@@ -804,7 +819,7 @@
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, passphrase, params: currentParams() })
+        body: JSON.stringify({ messages: history, passphrase, persona, params: currentParams() })
       });
 
       if (res.status === 401) {
@@ -845,6 +860,16 @@
         } else {
           addBubble('🔒 Wrong passphrase — the chat stays locked.', 'system');
         }
+        focusInput();
+        return;
+      }
+
+      // Persona switch: the bare word DION / GEMMA (case-insensitive) is a
+      // control command, not a message — flip voices and bail before sending.
+      const cmd = value.toLowerCase();
+      if (cmd === 'dion' || cmd === 'gemma') {
+        input.value = '';
+        switchPersona(cmd);
         focusInput();
         return;
       }
@@ -892,6 +917,26 @@
       stream.innerHTML = '';
       addBubble('Memory wiped. Invoke the Artifact to begin anew.', 'system');
       focusInput();
+    }
+
+    function personaLabel(p) { return p === 'dion' ? 'Dion — Mykonos Concierge' : 'The Artifact'; }
+
+    function switchPersona(target) {
+      if (target === persona) {
+        addBubble(`Already speaking with ${personaLabel(target)}.`, 'system');
+        return;
+      }
+      try { stopSpeak(); } catch {}      // silence any in-flight read-aloud
+      persona = target;
+      try { localStorage.setItem(PERSONA_KEY, persona); } catch {}
+      // Swap in the target persona's own transcript and repaint the window.
+      history = loadHistory();
+      stream.innerHTML = '';
+      history.forEach((m) => addBubble(m.text, m.role === 'model' ? 'bot' : 'user'));
+      applyLockUI();                      // refresh the placeholder to the new voice
+      addBubble(target === 'dion'
+        ? '✨ Concierge active — you are now speaking with Dion. (Type GEMMA to return.)'
+        : 'Back with The Artifact. (Type DION for the Mykonos concierge.)', 'system');
     }
 
     // SEND button click + Enter keypress both submit via the form.

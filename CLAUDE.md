@@ -38,6 +38,7 @@ Confusingly named, so pin it down:
 ```json
 { "messages": [{"role":"user|model","text":"..."}],
   "passphrase": "…",
+  "persona": "gemma|dion",
   "params": { "temperature": 0-2, "sarcasm": 0-100, "seriousness": 0-100 } }
 ```
 The engine returns `{ "reply": "…" }`, or `401 {"error":"locked"}` if the
@@ -45,6 +46,21 @@ passphrase is missing/wrong. A `{ "verify": true, "passphrase": "…" }` call ju
 validates the passphrase without spending a model call.
 
 ### Features built on the Artifact (all front-end unless noted)
+- **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
+  While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
+  voices with NO model call — it's a control command, not a message. Active
+  persona persists in `localStorage` (`artifact.persona.v1`) and rides along as
+  `persona` in every request. **Separate transcripts:** each persona keeps its
+  own history key (`gemma` → `artifact.history.v1` (unchanged, keeps old memory);
+  `dion` → `artifact.history.dion.v1`); switching repaints the stream from the
+  active persona's history — the conversations never mix. **Engine side:**
+  `worker.js` reads `body.persona`; `"dion"` selects `DEFAULTS.DION_SYSTEM_PROMPT`
+  (the Mykonos concierge persona, kept INLINE — it's a creative voice, not a
+  secret; `env.DION_SYSTEM_PROMPT` overrides), anything else = the default Gemma
+  `SYSTEM_PROMPT`. The persona dials still fold in on top of either. **Logging:**
+  `persona` is sent to the Sheet and routes the row to a per-persona tab (see
+  Gotchas). Add a persona = add a `DEFAULTS.*_SYSTEM_PROMPT`, a front-end keyword,
+  and a `PERSONA_TABS` entry in `apps-script.gs`.
 - **Persona Tuner** — "Tuning Console" toggled by the header `#tune`
   sliders/hamburger icon. Sliders: temperature (cyan), sarcasm (magenta),
   seriousness (violet). Values persist in `localStorage` (`artifact.params.v1`)
@@ -87,7 +103,11 @@ validates the passphrase without spending a model call.
   filters them out. Google API occasionally returns transient 500s (no retry yet).
 - **Sheets logging** needs `ctx.waitUntil` in the Worker (an unawaited fetch gets
   cancelled by the Workers runtime). The Sheet has 5 columns:
-  `Timestamp | User message | Bot reply | Model | Who`. The Apps Script logger
+  `Timestamp | User message | Bot reply | Model | Who`. **Per-persona tabs:** the
+  Worker sends `persona` in the log payload; `apps-script.gs` `sheetForPersona()`
+  routes `dion` rows to a `DION` tab (auto-created with the same headers on first
+  use, via the `PERSONA_TABS` map), everything else to the default active sheet.
+  The Apps Script logger
   (`engine/apps-script.gs`) has NO auth — a direct `POST {…, who}` to the `/exec`
   URL writes a row (handy for diagnostics, bypassing the chat/passphrase). It
   auto-backfills the "Who" header on an older 4-col sheet.
