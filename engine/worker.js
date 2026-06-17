@@ -302,7 +302,8 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
   };
 
   if (!upstream.ok || !upstream.body) {
-    const errText = upstream.body ? (await upstream.text()).slice(0, 300) : "no stream body";
+    const errText = upstream.body ? (await upstream.text()).slice(0, 500) : "no stream body";
+    console.error("artifact stream upstream FAIL", upstream.status, errText);
     const enc = new TextEncoder();
     const msg = `Google API ${upstream.status}: ${errText}`;
     return new Response(
