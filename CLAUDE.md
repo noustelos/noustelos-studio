@@ -40,6 +40,7 @@ Confusingly named, so pin it down:
   "passphrase": "…",
   "persona": "gemma|dion",
   "stream": true,
+  "memory": ["pinned fact", "…"],
   "params": { "temperature": 0-2, "sarcasm": 0-100, "seriousness": 0-100 } }
 ```
 The engine returns `{ "reply": "…" }`, or `401 {"error":"locked"}` if the
@@ -57,6 +58,18 @@ text so a streamed answer still plays in full. Thinking still happens BEFORE the
 answer, so the typing dots stay during reasoning, then tokens stream in.
 
 ### Features built on the Artifact (all front-end unless noted)
+- **Long-term memory (Gemma only, RAG-lite)** — a small curated set of pinned
+  facts, SEPARATE from the transcript. The user adds one by typing `θυμήσου …` /
+  `να θυμάσαι …` / `remember …` / `/remember …`; `/memory` (`μνήμη`) lists them,
+  `/forget` (`ξέχασέ τα`, `σβήσε τη μνήμη`) clears. Commands are parsed + handled
+  **locally** (no model call) in `parseMemoryCommand`/`runMemoryCommand`, gated
+  to `persona==='gemma'`. Stored in `localStorage` (`artifact.memory.gemma.v1`,
+  per-device), capped 100 facts × 500 chars, and ride along as `memory:[…]` on
+  every Gemma request — NOT for DION. **Engine side:** `worker.js`
+  `renderMemoryBlock` folds them into a `// PERSISTENT MEMORY` block appended to
+  the system prompt (so they survive the 40-turn trim AND a "Memory wiped" reset;
+  `/forget` is the only thing that clears them). Greek `\b` caveat: the command
+  regex uses a separator lookahead, not `\b` (Greek isn't ASCII `\w`).
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active

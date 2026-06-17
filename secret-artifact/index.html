@@ -744,7 +744,61 @@
     // gemma keeps the original key so existing memory survives; dion gets its own.
     function storeKeyFor(p) { return p === 'dion' ? 'artifact.history.dion.v1' : 'artifact.history.v1'; }
 
-    // ===== Memory =================================================
+    // ===== Long-term memory (Gemma only) =========================
+    // A small, curated set of facts the user explicitly pins ("θυμήσου …").
+    // Unlike the transcript, these are NEVER trimmed and survive a memory wipe /
+    // new session — they ride along as `memory:[…]` on every Gemma request and
+    // the engine folds them into the system instruction. DION has no memory.
+    const MEMORY_KEY = 'artifact.memory.gemma.v1';
+    const MEMORY_MAX = 100;        // max pinned facts
+    const MEMORY_FACT_MAX = 500;   // max chars per fact
+    function loadMemory() {
+      try { const a = JSON.parse(localStorage.getItem(MEMORY_KEY) || '[]'); return Array.isArray(a) ? a : []; }
+      catch { return []; }
+    }
+    let memory = loadMemory();
+    function saveMemory() {
+      try { localStorage.setItem(MEMORY_KEY, JSON.stringify(memory)); } catch { /* storage full/off */ }
+    }
+    function addMemory(fact) {
+      fact = (fact || '').trim().replace(/\s+/g, ' ')
+        .replace(/^(?:ότι|οτι|πως|πώς|that)\s+/i, '')   // "θυμήσου ότι X" → "X"
+        .slice(0, MEMORY_FACT_MAX);
+      if (!fact) return 'empty';
+      if (memory.some((m) => m.toLowerCase() === fact.toLowerCase())) return 'dup';
+      memory.push(fact);
+      if (memory.length > MEMORY_MAX) memory = memory.slice(-MEMORY_MAX);
+      saveMemory();
+      return fact;
+    }
+
+    // Memory commands (Gemma only). Returns a command object or null.
+    function parseMemoryCommand(value) {
+      // NB: \b is unreliable with Greek (non-ASCII isn't a JS \w), so we use a
+      // lookahead for a separator/end instead — works for Greek and English.
+      var add = value.match(/^\s*(?:\/remember|remember|θυμ[ήη]σου|να\s+θυμ[άα]σαι)(?=[\s:：,—–-]|$)[\s:：,—–-]*(.+)$/is);
+      if (add && add[1].trim()) return { type: 'add', fact: add[1] };
+      if (/^\s*\/?(?:memory|μν[ήη]μη)\s*[?;]?\s*$/i.test(value)) return { type: 'list' };
+      if (/^\s*\/?(?:forget(?:\s+all)?|ξ[έε]χασ[έε]?\s*τα|σβ[ήη]σε\s+τη\s+μν[ήη]μη)\s*$/i.test(value)) return { type: 'clear' };
+      return null;
+    }
+    function runMemoryCommand(cmd) {
+      if (cmd.type === 'add') {
+        const r = addMemory(cmd.fact);
+        if (r === 'dup') addBubble('🧠 Το έχω ήδη στη μνήμη.', 'system');
+        else if (r === 'empty') addBubble('🧠 Δεν κατάλαβα τι να θυμηθώ — πες «θυμήσου …».', 'system');
+        else addBubble('🧠 Κράτησα στη μνήμη: “' + r + '”. Θα τη θυμάμαι και σε επόμενες κουβέντες.', 'system');
+      } else if (cmd.type === 'list') {
+        if (!memory.length) addBubble('🧠 Η μνήμη είναι άδεια. Πες «θυμήσου …» για να προσθέσεις κάτι.', 'system');
+        else addBubble('🧠 Θυμάμαι (' + memory.length + '):\n' + memory.map((m, i) => (i + 1) + '. ' + m).join('\n') + '\n\n(«/forget» για καθάρισμα.)', 'system');
+      } else if (cmd.type === 'clear') {
+        const n = memory.length;
+        memory = []; saveMemory();
+        addBubble(n ? '🧠 Καθάρισα τη μνήμη (' + n + ').' : '🧠 Η μνήμη ήταν ήδη άδεια.', 'system');
+      }
+    }
+
+    // ===== Transcript memory =====================================
     // The brains keep the full transcript and persist it in localStorage,
     // so the Artifact remembers the conversation across reloads. Every turn
     // the entire history is sent to the engine for true multi-turn context.
@@ -825,7 +879,11 @@
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, passphrase, persona, stream: true, params: currentParams() })
+        body: JSON.stringify({
+          messages: history, passphrase, persona, stream: true, params: currentParams(),
+          // Pinned long-term facts — Gemma only; omitted (undefined → dropped) for DION.
+          memory: persona === 'gemma' && memory.length ? memory : undefined
+        })
       });
 
       if (res.status === 401) {
@@ -923,6 +981,17 @@
         switchPersona(cmd);
         focusInput();
         return;
+      }
+
+      // Long-term memory commands — Gemma only, handled locally (no model call).
+      if (persona === 'gemma') {
+        const memCmd = parseMemoryCommand(value);
+        if (memCmd) {
+          input.value = '';
+          runMemoryCommand(memCmd);
+          focusInput();
+          return;
+        }
       }
 
       // Tuning while chatting? Get the panel out of the way so it never sits

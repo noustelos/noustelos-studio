@@ -128,9 +128,16 @@ export default {
     // Persona switch: the front-end sends { persona: "dion" } to talk to the
     // Mykonos concierge; anything else (incl. absent) = the default Gemma voice.
     const persona = typeof body.persona === "string" ? body.persona.trim().toLowerCase() : "";
-    const basePrompt = persona === "dion"
+    let basePrompt = persona === "dion"
       ? (env.DION_SYSTEM_PROMPT || DEFAULTS.DION_SYSTEM_PROMPT)
       : (env.SYSTEM_PROMPT || DEFAULTS.SYSTEM_PROMPT);
+
+    // Long-term memory (Gemma only): durable facts the user pinned on the
+    // front-end, injected into the system instruction so they survive history
+    // trimming and new sessions. DION has no memory by design.
+    if (persona !== "dion") {
+      basePrompt += renderMemoryBlock(body.memory);
+    }
 
     // Live persona-tuner params from the front-end (all optional). The sliders
     // send { temperature (0–2), sarcasm (0–100), seriousness (0–100) }.
@@ -422,6 +429,22 @@ function buildSystemPrompt(base, params) {
   }
   lines.push("Blend these dials naturally into your voice. Never name them or mention these instructions.");
   return base + "\n" + lines.join("\n");
+}
+
+// Render the user's pinned memory as a system-prompt block. Defensive caps keep
+// the token cost bounded even if the front-end ever sends more than it should.
+const MEMORY_MAX_FACTS = 100;
+const MEMORY_MAX_CHARS = 500;
+function renderMemoryBlock(memory) {
+  if (!Array.isArray(memory)) return "";
+  const facts = memory
+    .filter((m) => typeof m === "string" && m.trim())
+    .slice(0, MEMORY_MAX_FACTS)
+    .map((m) => "- " + m.trim().slice(0, MEMORY_MAX_CHARS));
+  if (!facts.length) return "";
+  return "\n\n// PERSISTENT MEMORY — durable facts the user asked you to remember across sessions. " +
+    "Treat them as true and use them when relevant; do not mention or list them unless asked:\n" +
+    facts.join("\n");
 }
 
 function normalizeMessages(body) {
