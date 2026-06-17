@@ -112,13 +112,24 @@ function memorySheet() {
   return sheet;
 }
 
-// Facts live in column A, rows 2..N (row 1 is the header). Blank cells skipped.
-function memFacts(sheet) {
+// Non-blank facts in column A (rows 2..N) WITH their actual sheet row. Robust to
+// manual edits: blank rows are skipped, and any extra columns the owner adds for
+// their own notes (e.g. a "Notes" column) are ignored — the engine reads col A
+// only, so those notes stay invisible to Gemma.
+function memRows(sheet) {
   var last = sheet.getLastRow();
   if (last < 2) return [];
-  return sheet.getRange(2, 1, last - 1, 1).getValues()
-    .map(function (r) { return String(r[0] || "").trim(); })
-    .filter(function (s) { return s; });
+  var vals = sheet.getRange(2, 1, last - 1, 1).getValues();
+  var out = [];
+  for (var i = 0; i < vals.length; i++) {
+    var fact = String(vals[i][0] || "").trim();
+    if (fact) out.push({ fact: fact, row: i + 2 }); // data starts on row 2
+  }
+  return out;
+}
+
+function memFacts(sheet) {
+  return memRows(sheet).map(function (r) { return r.fact; });
 }
 
 function memList() { return { ok: true, memory: memFacts(memorySheet()) }; }
@@ -150,12 +161,14 @@ function memImport(facts) {
 
 function memForget(index) {
   var sheet = memorySheet();
-  var facts = memFacts(sheet);
+  var rows = memRows(sheet);
   var i = parseInt(index, 10);
-  if (!i || i < 1 || i > facts.length) return { ok: true, memory: facts, status: "notfound" };
-  var removed = facts[i - 1];
-  sheet.deleteRow(i + 1); // header is row 1, so fact #i sits on row i+1
-  return { ok: true, memory: memFacts(sheet), status: "removed", fact: removed };
+  if (!i || i < 1 || i > rows.length) {
+    return { ok: true, memory: rows.map(function (r) { return r.fact; }), status: "notfound" };
+  }
+  var removed = rows[i - 1];
+  sheet.deleteRow(removed.row); // the fact's ACTUAL row — gap-safe under hand-edits
+  return { ok: true, memory: memFacts(sheet), status: "removed", fact: removed.fact };
 }
 
 function memClear() {
