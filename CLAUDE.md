@@ -125,8 +125,12 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   `DRIVE_MAX_CHARS`=12000, `### filename` headers) — only **Google Docs + text/
   md/csv/json** are extracted; **PDF/images/Office are skipped** (need OCR/convert).
   Front-end `driveOp()` lists; `worker.js` `handleDriveOp` (owner-gated) lists/
-  refreshes. ⚠️ Adding `DriveApp`/`DocumentApp` needs Drive+Documents scopes → the
-  owner must **RE-AUTHORIZE on the next Apps Script deploy** (one-time consent).
+  refreshes. ⚠️ Adding `DriveApp`/`DocumentApp` needs Drive+Documents scopes. The
+  Apps Script "New version" deploy did NOT prompt for them — the consent is
+  triggered by **RUNNING a function in the editor**: pick `driveList` → ▶ Run →
+  Review permissions → Allow (once). Until that's done, `drive-*` throws and
+  `/docs` shows the error. Folder must be named exactly `Artifact` in **My Drive**
+  (`getFoldersByName` doesn't search Shared drives). VERIFIED LIVE 2026-06-17.
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active
