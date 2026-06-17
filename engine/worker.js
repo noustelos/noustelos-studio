@@ -150,6 +150,30 @@ export default {
       maxOutputTokens: DEFAULTS.MAX_OUTPUT_TOKENS,
     };
 
+    // --- Streaming path (Server-Sent Events) ---
+    // The front-end sends { stream: true } to get tokens as they're produced,
+    // instead of waiting for the whole reply. We proxy Google's SSE stream,
+    // strip the model's "thinking" parts, and emit `data: {"delta":"…"}` lines.
+    // The full answer is logged to the Sheet once the stream finishes.
+    if (body.stream === true || body.stream === "true") {
+      return streamReply({
+        apiKey: env.GOOGLE_API_KEY,
+        model,
+        contents,
+        generationConfig,
+        systemPrompt,
+        corsOrigin,
+        ctx,
+        onComplete: (full) => logToSheet(env.SHEETS_WEBHOOK_URL, {
+          userMessage: lastUserText(trimmed),
+          botReply: full,
+          model,
+          who,
+          persona: persona || "gemma",
+        }, ctx),
+      });
+    }
+
     try {
       const reply = await callGemma({
         apiKey: env.GOOGLE_API_KEY,
@@ -208,6 +232,103 @@ async function callGemma({ apiKey, model, contents, generationConfig, systemProm
 
   const data = await res.json();
   return extractReply(data);
+}
+
+/**
+ * Streams Gemma's answer to the browser as Server-Sent Events. Calls Google's
+ * :streamGenerateContent?alt=sse endpoint, parses its SSE chunks, drops the
+ * `thought:true` reasoning parts, and forwards only answer text as
+ * `data: {"delta":"…"}` events — ending with `data: {"done":true}`. The same
+ * systemInstruction-400 fallback as callGemma is applied before streaming
+ * starts (we still have the status/headers then). onComplete(fullText) fires
+ * once the stream finishes, for fire-and-forget Sheet logging.
+ */
+async function streamReply({ apiKey, model, contents, generationConfig, systemPrompt, corsOrigin, ctx, onComplete }) {
+  const url = `${API_BASE}/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+
+  let upstream = await postJson(url, apiKey, {
+    systemInstruction: { parts: [{ text: systemPrompt }] },
+    contents,
+    generationConfig,
+  });
+
+  if (upstream.status === 400) {
+    const errText = await upstream.clone().text();
+    if (/system\s*instruction|systemInstruction|developer instruction/i.test(errText)) {
+      const folded = foldSystemIntoFirstTurn(contents, systemPrompt);
+      upstream = await postJson(url, apiKey, { contents: folded, generationConfig });
+    }
+  }
+
+  const sseHeaders = {
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    ...cors(corsOrigin),
+  };
+
+  if (!upstream.ok || !upstream.body) {
+    const errText = upstream.body ? (await upstream.text()).slice(0, 300) : "no stream body";
+    const enc = new TextEncoder();
+    const msg = `Google API ${upstream.status}: ${errText}`;
+    return new Response(
+      enc.encode(`data: ${JSON.stringify({ error: msg })}\n\n`),
+      { status: 200, headers: sseHeaders }
+    );
+  }
+
+  const { readable, writable } = new TransformStream();
+  const writer = writable.getWriter();
+  const encoder = new TextEncoder();
+
+  const pump = (async () => {
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    let full = "";
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        let nl;
+        while ((nl = buf.indexOf("\n")) >= 0) {
+          const line = buf.slice(0, nl).replace(/\r$/, "");
+          buf = buf.slice(nl + 1);
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (!payload || payload === "[DONE]") continue;
+          let data;
+          try { data = JSON.parse(payload); } catch { continue; }
+          const delta = extractDelta(data);
+          if (delta) {
+            full += delta;
+            await writer.write(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
+          }
+        }
+      }
+      await writer.write(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+    } catch (err) {
+      await writer.write(encoder.encode(`data: ${JSON.stringify({ error: String((err && err.message) || err) })}\n\n`));
+    } finally {
+      try { await writer.close(); } catch { /* already closed */ }
+      if (onComplete) {
+        try { onComplete(full.trim()); } catch { /* logging is best-effort */ }
+      }
+    }
+  })();
+
+  if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(pump);
+
+  return new Response(readable, { status: 200, headers: sseHeaders });
+}
+
+// Pull the user-facing text delta out of one streamed chunk, skipping the
+// model's `thought:true` reasoning parts (same filter as extractReply).
+function extractDelta(data) {
+  const cand = data && data.candidates && data.candidates[0];
+  const parts = (cand && cand.content && cand.content.parts) || [];
+  return parts.filter((p) => !p.thought).map((p) => p.text || "").join("");
 }
 
 function postJson(url, apiKey, payload) {

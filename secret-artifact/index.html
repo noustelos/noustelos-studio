@@ -785,9 +785,11 @@
         replay.setAttribute('aria-label', 'Read this message aloud');
         replay.innerHTML = PLAY_ICON;
         // Toggle: play if idle, stop if this bubble is currently being read.
+        // Read the span's CURRENT text (not the value at creation), so a bubble
+        // that was filled in by streaming still speaks its full final answer.
         replay.addEventListener('click', () => {
           if (replay.classList.contains('is-speaking')) stopSpeak();
-          else speak(text, replay);
+          else speak(span.textContent, replay);
         });
         el.appendChild(replay);
       } else {
@@ -812,14 +814,18 @@
       }
     }
 
-    async function invoke() {
-      // Send the FULL transcript (+ passphrase) so the engine has context,
-      // plus the live persona-tuner params. The Worker can read `params`
-      // when ready; sending them now is forward-compatible and harmless.
+    // Stream the reply via Server-Sent Events. The engine sends `stream:true`
+    // and emits `data: {"delta":"…"}` lines as tokens arrive, then
+    // `data: {"done":true}`. onDelta runs for each chunk; the full text is
+    // returned at the end. Falls back to reading the whole body at once on
+    // browsers without fetch-stream support — same parser, just non-incremental.
+    async function streamInvoke(onDelta) {
+      // Send the FULL transcript (+ passphrase + persona + dials) so the engine
+      // has context. `stream:true` opts into the SSE response.
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, passphrase, persona, params: currentParams() })
+        body: JSON.stringify({ messages: history, passphrase, persona, stream: true, params: currentParams() })
       });
 
       if (res.status === 401) {
@@ -831,9 +837,54 @@
         throw new Error('Engine responded with status ' + res.status);
       }
 
-      const data = await res.json();
-      // Tolerant of a few common reply shapes from the proxy.
-      return data.reply || data.message || data.response || '(empty response)';
+      // Backward / fallback compatible: if the engine answered with plain JSON
+      // (an older Worker that ignores `stream`, or any non-SSE reply), take the
+      // whole reply at once instead of trying to parse it as an event stream.
+      const ctype = res.headers.get('content-type') || '';
+      if (!ctype.includes('text/event-stream')) {
+        const data = await res.json().catch(() => ({}));
+        const reply = data.reply || data.message || data.response || '(empty response)';
+        onDelta(reply);
+        return reply;
+      }
+
+      let full = '';
+      // Parse one or more "\n\n"-separated SSE events out of a text buffer,
+      // firing onDelta and accumulating. Returns the leftover partial tail.
+      function drain(buf, flush) {
+        let idx;
+        while ((idx = buf.indexOf('\n\n')) >= 0) {
+          const evt = buf.slice(0, idx);
+          buf = buf.slice(idx + 2);
+          const line = evt.split('\n').find((l) => l.startsWith('data:'));
+          if (!line) continue;
+          const payload = line.slice(5).trim();
+          if (!payload) continue;
+          let data;
+          try { data = JSON.parse(payload); } catch { continue; }
+          if (data.error) throw new Error(data.error);
+          if (data.delta) { full += data.delta; onDelta(data.delta); }
+          // data.done → stream finished; loop just ends naturally.
+        }
+        return buf;
+      }
+
+      if (res.body && typeof res.body.getReader === 'function') {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          buf = drain(buf);
+        }
+      } else {
+        // No streaming reader — read it all, then parse in one pass.
+        drain(await res.text() + '\n\n');
+      }
+
+      return full;
     }
 
     async function handleSubmit(event) {
@@ -884,14 +935,27 @@
       input.value = '';
       setBusy(true);
 
+      let botEl = null, botSpan = null;
       try {
-        const reply = await invoke();
+        const full = await streamInvoke((delta) => {
+          if (!botEl) {
+            // First token arrived: hide the typing dots, open the answer bubble.
+            typing.classList.remove('is-active');
+            typing.setAttribute('aria-hidden', 'true');
+            botEl = addBubble('', 'bot');
+            botSpan = botEl.querySelector('.bubble-text');
+          }
+          botSpan.textContent += delta;
+          stream.scrollTop = stream.scrollHeight;
+        });
         setBusy(false);
-        const botEl = addBubble(reply, 'bot');
-        history.push({ role: 'model', text: reply });
+        const finalText = full || '(empty response)';
+        if (!botEl) botEl = addBubble(finalText, 'bot');           // nothing streamed
+        else if (!full) botSpan.textContent = finalText;            // streamed empty
+        history.push({ role: 'model', text: finalText });
         saveHistory();
         // Auto read-aloud the fresh reply (history replay never speaks).
-        speak(reply, botEl.querySelector('.bubble-replay'));
+        speak(finalText, botEl.querySelector('.bubble-replay'));
       } catch (err) {
         setBusy(false);
         if (err && err.locked) {

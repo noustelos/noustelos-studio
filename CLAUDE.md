@@ -39,11 +39,22 @@ Confusingly named, so pin it down:
 { "messages": [{"role":"user|model","text":"..."}],
   "passphrase": "…",
   "persona": "gemma|dion",
+  "stream": true,
   "params": { "temperature": 0-2, "sarcasm": 0-100, "seriousness": 0-100 } }
 ```
 The engine returns `{ "reply": "…" }`, or `401 {"error":"locked"}` if the
 passphrase is missing/wrong. A `{ "verify": true, "passphrase": "…" }` call just
 validates the passphrase without spending a model call.
+
+**Streaming:** with `"stream": true` the engine instead returns a
+`text/event-stream` — `data: {"delta":"…"}` per token, then `data: {"done":true}`
+(or `data: {"error":"…"}`). It proxies Google's `:streamGenerateContent?alt=sse`,
+strips the `thought:true` reasoning parts, and logs the assembled reply to the
+Sheet on completion (`worker.js` `streamReply`/`extractDelta`). The front-end
+(`secret-artifact/index.html` `streamInvoke`) reads the SSE and fills the bot
+bubble token-by-token; the bubble's read-aloud button speaks the span's CURRENT
+text so a streamed answer still plays in full. Thinking still happens BEFORE the
+answer, so the typing dots stay during reasoning, then tokens stream in.
 
 ### Features built on the Artifact (all front-end unless noted)
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
