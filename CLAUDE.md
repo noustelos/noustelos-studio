@@ -139,17 +139,21 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   hidden where unsupported, auto-sends transcript); read-aloud via
   `speechSynthesis` (lang auto-detected Greek/English) with a per-bubble ▶/■
   play/stop toggle and auto-read of fresh replies. TTS unlocked on a send/mic tap
-  for iOS. **Voice quality (naturalness over gender):** `pickVoice` prefers the
-  premium/enhanced system voices — by name `samantha` (English) / `melina`
-  (Greek), then any `premium|enhanced` voice in-language (`isPremiumVoice` checks
-  `voiceURI`/`name`), then exact-locale, then first available. These exist only
-  if the user has DOWNLOADED them (iOS/macOS Settings → Accessibility → Spoken
-  Content → Voices); otherwise it falls back. We deliberately DROPPED the old
-  male-voice preference + pitch-0.7 masculinisation (sounded robotic) — now
-  `rate=0.92`, `pitch=0.9` for a slightly slower, slightly lower, non-screechy
-  read. `cleanForSpeech` strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/
-  keycap) and markdown markers (`* _ \` # > ~ |`) before speaking so the engine
-  doesn't pause on symbols or read emoji names aloud.
+  for iOS. **Voice quality (premium/enhanced, natural):** `pickVoice` walks an
+  ordered `VOICE_NAMES` list per language — Greek `nikos` (MALE enhanced) then
+  `melina`; English `aaron`/`tom`/`daniel`/`arthur` (male enhanced) then
+  `samantha` — trying each name first AS an enhanced/premium voice, then at any
+  quality, then any `premium|enhanced` in-language (`isPremiumVoice` checks
+  `voiceURI`/`name`), then exact-locale, then first. These exist only if the user
+  DOWNLOADED them (iOS Settings → Accessibility → Spoken Content → Voices) AND
+  iOS Safari actually exposes them to `getVoices()` (it often HIDES downloaded
+  enhanced voices — type `/voices` in the chat to see what's really exposed +
+  which one would be picked). We dropped the old male-name+pitch-0.7
+  masculinisation (robotic); now `rate=0.92`, `pitch=0.9` for a slightly slower,
+  non-screechy read (Nikos is already male, so no pitch hack needed).
+  `cleanForSpeech` strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/keycap) and
+  markdown markers (`* _ \` # > ~ |`) before speaking so the engine doesn't pause
+  on symbols or read emoji names aloud.
 - **Boot splash** — 5s neon "ARTIFACT" intro that fades into the chat.
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
   top-only (NOT `inset:0`), so the input stays above the keyboard.

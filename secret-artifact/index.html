@@ -1066,6 +1066,24 @@
         return;
       }
 
+      // Diagnostic: /voices lists the TTS voices Safari actually exposes on this
+      // device (iOS often hides downloaded enhanced/premium voices) and which one
+      // pickVoice would choose. Handled locally, no model call.
+      if (cmd === '/voices') {
+        input.value = '';
+        const list = (synth ? synth.getVoices() : [])
+          .filter((v) => /^(el|en)/i.test(v.lang || ''))
+          .map((v) => `• ${v.name} [${v.lang}]${isPremiumVoice(v) ? ' ✓enhanced' : ''}`)
+          .join('\n') || '(none exposed)';
+        const elPick = pickVoice('el-GR'), enPick = pickVoice('en-US');
+        addBubble(
+          `Voices on this device (el/en):\n${list}\n\nGreek → ${elPick ? elPick.name : '—'}\nEnglish → ${enPick ? enPick.name : '—'}`,
+          'system'
+        );
+        focusInput();
+        return;
+      }
+
       // Long-term memory commands — Gemma only, handled locally (no model call).
       if (persona === 'gemma') {
         const memCmd = parseMemoryCommand(value);
@@ -1191,7 +1209,13 @@
     // more natural than the default compact voices. We can't query gender (the
     // Web Speech API doesn't expose it), so we match the known-natural named
     // voices first: Samantha for English, Melina for Greek.
-    const PREMIUM_NAME = { en: /samantha/i, el: /melina/i };
+    // Ordered name preferences per language — best/desired voice first. Greek:
+    // Nikos (male, enhanced) then Melina; English: male enhanced names then
+    // Samantha. We can't query gender, so we match by these known names.
+    const VOICE_NAMES = {
+      el: [/nikos/i, /melina/i],
+      en: [/aaron/i, /\btom\b/i, /daniel/i, /arthur/i, /samantha/i],
+    };
     const PREMIUM_TAG = /premium|enhanced/i;
     function isPremiumVoice(v) {
       return !!v && (PREMIUM_TAG.test(v.voiceURI || '') || PREMIUM_TAG.test(v.name || ''));
@@ -1202,12 +1226,19 @@
       const norm = (v) => (v.lang || '').replace('_', '-');
       const inLang = voices.filter((v) => norm(v).toLowerCase().startsWith(base));
       const pool = inLang.length ? inLang : voices;
-      const named = PREMIUM_NAME[base];
-      // premium Samantha/Melina → any Samantha/Melina → any premium/enhanced in
-      // this language → exact locale match → first available.
-      return (named && pool.find((v) => named.test(v.name) && isPremiumVoice(v)))
-          || (named && pool.find((v) => named.test(v.name)))
-          || pool.find(isPremiumVoice)
+      const names = VOICE_NAMES[base] || [];
+      // 1) a preferred name that's ALSO enhanced/premium (the ideal hit);
+      for (const re of names) {
+        const hit = pool.find((v) => re.test(v.name) && isPremiumVoice(v));
+        if (hit) return hit;
+      }
+      // 2) a preferred name at any quality;
+      for (const re of names) {
+        const hit = pool.find((v) => re.test(v.name));
+        if (hit) return hit;
+      }
+      // 3) any enhanced/premium in-language → exact locale → first available.
+      return pool.find(isPremiumVoice)
           || pool.find((v) => norm(v) === lang)
           || pool[0]
           || null;
