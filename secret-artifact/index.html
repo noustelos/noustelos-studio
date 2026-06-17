@@ -788,11 +788,13 @@
     // gemma keeps the original key so existing memory survives; dion gets its own.
     function storeKeyFor(p) { return p === 'dion' ? 'artifact.history.dion.v1' : 'artifact.history.v1'; }
 
-    // ===== Long-term memory (Gemma only) =========================
-    // A small, curated set of facts the user explicitly pins ("θυμήσου …").
-    // Unlike the transcript, these are NEVER trimmed and survive a memory wipe /
-    // new session — they ride along as `memory:[…]` on every Gemma request and
-    // the engine folds them into the system instruction. DION has no memory.
+    // ===== Long-term memory (Gemma + OWNER only) =================
+    // A small, curated set of facts the user pins ("θυμήσου …"). These now live
+    // SERVER-SIDE in the Sheet "Memory" tab (durable, cross-device, owner-only) —
+    // every op (add/list/forget) is routed through the engine, which gates on the
+    // owner passphrase and is the only thing holding the Sheet token. The engine
+    // reads the same list back into Gemma's system prompt on every owner turn.
+    // `memory` here is just a local DISPLAY cache, refreshed from each response.
     const MEMORY_KEY = 'artifact.memory.gemma.v1';
     const MEMORY_MAX = 100;        // max pinned facts
     const MEMORY_FACT_MAX = 500;   // max chars per fact
@@ -804,16 +806,33 @@
     function saveMemory() {
       try { localStorage.setItem(MEMORY_KEY, JSON.stringify(memory)); } catch { /* storage full/off */ }
     }
-    function addMemory(fact) {
-      fact = (fact || '').trim().replace(/\s+/g, ' ')
+    // Normalise a pinned fact the same way regardless of phrasing.
+    function cleanFact(fact) {
+      return (fact || '').trim().replace(/\s+/g, ' ')
         .replace(/^(?:ότι|οτι|πως|πώς|that)\s+/i, '')   // "θυμήσου ότι X" → "X"
         .slice(0, MEMORY_FACT_MAX);
-      if (!fact) return 'empty';
-      if (memory.some((m) => m.toLowerCase() === fact.toLowerCase())) return 'dup';
-      memory.push(fact);
-      if (memory.length > MEMORY_MAX) memory = memory.slice(-MEMORY_MAX);
-      saveMemory();
-      return fact;
+    }
+    // Route a memory op to the engine. Returns the parsed response (with the
+    // canonical list) or null if the session got locked. Refreshes the cache.
+    async function memoryOp(op) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passphrase, persona: 'gemma', memoryOp: op })
+      });
+      if (res.status === 401) { lock('🔒 Session locked — enter the passphrase again.'); return null; }
+      const data = await res.json().catch(() => ({}));
+      if (Array.isArray(data.memory)) { memory = data.memory; saveMemory(); }
+      return data;
+    }
+    // One-time lift of any pre-existing per-device facts up to the shared Sheet,
+    // so nothing pinned before this change is lost. Guarded by a localStorage flag.
+    async function migrateMemoryOnce() {
+      const FLAG = 'artifact.memory.migrated.v1';
+      try { if (localStorage.getItem(FLAG)) return; } catch {}
+      if (!unlocked || persona !== 'gemma' || !memory.length) return;
+      const data = await memoryOp({ type: 'import', facts: memory });
+      if (data && Array.isArray(data.memory)) { try { localStorage.setItem(FLAG, '1'); } catch {} }
     }
 
     // Memory commands (Gemma only). Returns a command object or null.
@@ -833,29 +852,37 @@
       }
       return null;
     }
-    function runMemoryCommand(cmd) {
+    // Common error rendering for any memory op (owner gate / unconfigured engine).
+    function memoryError(data) {
+      if (!data) return true; // session locked — lock() already messaged
+      if (data.error === 'forbidden') { addBubble('🧠 Η μνήμη είναι μόνο για τον owner.', 'system'); return true; }
+      if (data.error === 'memory-unconfigured') { addBubble('🧠 Η μνήμη δεν είναι ρυθμισμένη ακόμη (λείπει το Sheet/engine setup).', 'system'); return true; }
+      return false;
+    }
+    async function runMemoryCommand(cmd) {
       if (cmd.type === 'add') {
-        const r = addMemory(cmd.fact);
-        if (r === 'dup') addBubble('🧠 Το έχω ήδη στη μνήμη.', 'system');
-        else if (r === 'empty') addBubble('🧠 Δεν κατάλαβα τι να θυμηθώ — πες «θυμήσου …».', 'system');
-        else addBubble('🧠 Κράτησα στη μνήμη: “' + r + '”. Θα τη θυμάμαι και σε επόμενες κουβέντες.', 'system');
+        const fact = cleanFact(cmd.fact);
+        if (!fact) { addBubble('🧠 Δεν κατάλαβα τι να θυμηθώ — πες «θυμήσου …».', 'system'); return; }
+        const data = await memoryOp({ type: 'add', fact });
+        if (memoryError(data)) return;
+        if (!data.ok) addBubble('🧠 Κάτι πήγε στραβά με τη μνήμη. Δοκίμασε ξανά.', 'system');
+        else if (data.status === 'dup') addBubble('🧠 Το έχω ήδη στη μνήμη.', 'system');
+        else if (data.status === 'empty') addBubble('🧠 Δεν κατάλαβα τι να θυμηθώ — πες «θυμήσου …».', 'system');
+        else addBubble('🧠 Κράτησα στη μνήμη: “' + (data.fact || fact) + '”. Θα τη θυμάμαι και σε επόμενες κουβέντες — από οποιαδήποτε συσκευή.', 'system');
       } else if (cmd.type === 'list') {
-        if (!memory.length) addBubble('🧠 Η μνήμη είναι άδεια. Πες «θυμήσου …» για να προσθέσεις κάτι.', 'system');
-        else addBubble('🧠 Θυμάμαι (' + memory.length + '):\n' + memory.map((m, i) => (i + 1) + '. ' + m).join('\n') + '\n\n(«/forget 2» σβήνει τη #2, «/forget» όλα.)', 'system');
+        const data = await memoryOp({ type: 'list' });
+        if (memoryError(data)) return;
+        const list = Array.isArray(data.memory) ? data.memory : [];
+        if (!list.length) addBubble('🧠 Η μνήμη είναι άδεια. Πες «θυμήσου …» για να προσθέσεις κάτι.', 'system');
+        else addBubble('🧠 Θυμάμαι (' + list.length + '):\n' + list.map((m, i) => (i + 1) + '. ' + m).join('\n') + '\n\n(«/forget 2» σβήνει τη #2, «/forget» όλα.)', 'system');
       } else if (cmd.type === 'forget') {
+        const data = await memoryOp(cmd.index != null ? { type: 'forget', index: cmd.index } : { type: 'clear' });
+        if (memoryError(data)) return;
         if (cmd.index != null) {
-          const i = cmd.index - 1;
-          if (i < 0 || i >= memory.length) {
-            addBubble('🧠 Δεν υπάρχει μνήμη #' + cmd.index + '. («/memory» για τη λίστα.)', 'system');
-          } else {
-            const removed = memory.splice(i, 1)[0];
-            saveMemory();
-            addBubble('🧠 Έσβησα τη #' + cmd.index + ': “' + removed + '”.' + (memory.length ? '' : ' Η μνήμη είναι πλέον άδεια.'), 'system');
-          }
+          if (data.status === 'notfound') addBubble('🧠 Δεν υπάρχει μνήμη #' + cmd.index + '. («/memory» για τη λίστα.)', 'system');
+          else addBubble('🧠 Έσβησα τη #' + cmd.index + ': “' + (data.fact || '') + '”.' + ((data.memory && data.memory.length) ? '' : ' Η μνήμη είναι πλέον άδεια.'), 'system');
         } else {
-          const n = memory.length;
-          memory = []; saveMemory();
-          addBubble(n ? '🧠 Καθάρισα όλη τη μνήμη (' + n + ').' : '🧠 Η μνήμη ήταν ήδη άδεια.', 'system');
+          addBubble('🧠 Καθάρισα όλη τη μνήμη.', 'system');
         }
       }
     }
@@ -942,9 +969,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: history, passphrase, persona, stream: true, params: currentParams(),
-          // Pinned long-term facts — Gemma only; omitted (undefined → dropped) for DION.
-          memory: persona === 'gemma' && memory.length ? memory : undefined
+          messages: history, passphrase, persona, stream: true, params: currentParams()
+          // Long-term memory is no longer sent from here — the engine reads the
+          // owner's facts straight from the Sheet "Memory" tab (cross-device).
         })
       });
 
@@ -1052,6 +1079,7 @@
           unlocked = true;
           applyLockUI();
           addBubble('Access granted. Invoke the Artifact.', 'system');
+          migrateMemoryOnce(); // owner just unlocked — lift any local facts to the Sheet
         } else {
           addBubble('🔒 Wrong passphrase — the chat stays locked.', 'system');
         }
@@ -1488,6 +1516,8 @@
     });
 
     applyLockUI();
+    // If we loaded already unlocked, push any pre-existing local facts to the Sheet.
+    migrateMemoryOnce();
 
     // ===== iOS viewport fit ======================================
     // iOS Safari's dvh/svh units don't track the keyboard or the URL bar

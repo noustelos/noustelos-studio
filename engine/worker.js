@@ -16,6 +16,10 @@
  *   GUEST_PASSPHRASE    (secret, optional)  guest code — also unlocks; logged as
  *                                           "guest". Delete it to revoke guests.
  *   SHEETS_WEBHOOK_URL  (secret, optional)  Apps Script web-app URL for logging
+ *                                           AND owner memory (Memory tab)
+ *   MEM_TOKEN           (secret, optional)  shared secret sent on mem-* calls;
+ *                                           must match the Apps Script MEM_TOKEN
+ *                                           Script Property if that's set
  *   KILL_SWITCH         (secret, optional)  SECRET PHRASE: when the OWNER types
  *                                           it in the chat, the engine goes
  *                                           OFFLINE for everyone. No terminal kill.
@@ -128,6 +132,15 @@ export default {
       return json({ ok: true }, 200, corsOrigin);
     }
 
+    // --- Owner memory commands (θυμήσου/μνήμη/forget) ---
+    // The front-end routes these here (it can't touch the Sheet directly — no
+    // token). Owner-only and exempt from the offline gate, so the owner can curate
+    // memory even while the engine is killed. Mutates the Sheet "Memory" tab.
+    if (body.memoryOp && typeof body.memoryOp === "object") {
+      if (who !== "owner") return json({ error: "forbidden" }, 403, corsOrigin);
+      return handleMemoryOp(env, body.memoryOp, corsOrigin);
+    }
+
     const messages = normalizeMessages(body);
     if (!messages.length) {
       return json({ error: "No message provided" }, 400, corsOrigin);
@@ -159,11 +172,12 @@ export default {
       ? (env.DION_SYSTEM_PROMPT || DEFAULTS.DION_SYSTEM_PROMPT)
       : (env.SYSTEM_PROMPT || DEFAULTS.SYSTEM_PROMPT);
 
-    // Long-term memory (Gemma only): durable facts the user pinned on the
-    // front-end, injected into the system instruction so they survive history
-    // trimming and new sessions. DION has no memory by design.
-    if (persona !== "dion") {
-      basePrompt += renderMemoryBlock(body.memory);
+    // Long-term memory (Gemma + OWNER only): durable facts pinned with "θυμήσου",
+    // now stored server-side in the Sheet "Memory" tab (cross-device, owner-
+    // private) and read here — folded into the system instruction so they survive
+    // history trimming and new sessions. DION has no memory; guests get none.
+    if (persona !== "dion" && who === "owner") {
+      basePrompt += renderMemoryBlock(await getOwnerMemory(env));
     }
 
     // Live persona-tuner params from the front-end (all optional). The sliders
@@ -511,6 +525,85 @@ function renderMemoryBlock(memory) {
   return "\n\n// PERSISTENT MEMORY — durable facts the user asked you to remember across sessions. " +
     "Treat them as true and use them when relevant; do not mention or list them unless asked:\n" +
     facts.join("\n");
+}
+
+// --- Owner long-term memory, backed by the Sheet "Memory" tab (owner-only) ---
+// The Worker is the ONLY thing that talks to the Sheet (the front-end has no
+// token), so the list stays owner-private. Reads are cached in KV for 60s so a
+// chat turn doesn't pay an Apps Script round-trip every time; mutations write
+// through the cache. A manual edit of the Memory tab shows up within the TTL.
+const MEMORY_CACHE_TTL = 60 * 1000;
+
+async function sheetsMemoryCall(env, action, extra) {
+  if (!env.SHEETS_WEBHOOK_URL) return { ok: false, error: "unconfigured" };
+  try {
+    const res = await fetch(env.SHEETS_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, token: env.MEM_TOKEN || "", ...(extra || {}) }),
+    });
+    return await res.json();
+  } catch (err) {
+    return { ok: false, error: String((err && err.message) || err) };
+  }
+}
+
+async function putMemoryCache(env, facts) {
+  if (!env.ARTIFACT_KV) return;
+  try { await env.ARTIFACT_KV.put("mem:cache", JSON.stringify({ at: Date.now(), facts })); } catch { /* best effort */ }
+}
+
+// The list folded into each owner turn. KV-cached (fast path); on a miss/expiry
+// it reads the Sheet live and refreshes the cache. Never throws — on any failure
+// it degrades to the last cache or an empty list (memory simply goes quiet).
+async function getOwnerMemory(env) {
+  if (!env.SHEETS_WEBHOOK_URL) return [];
+  let cached = null;
+  if (env.ARTIFACT_KV) {
+    try {
+      const raw = await env.ARTIFACT_KV.get("mem:cache");
+      if (raw) {
+        cached = JSON.parse(raw);
+        if (cached && Array.isArray(cached.facts) && (Date.now() - cached.at) < MEMORY_CACHE_TTL) {
+          return cached.facts;
+        }
+      }
+    } catch { /* fall through to a live read */ }
+  }
+  const data = await sheetsMemoryCall(env, "mem-list");
+  if (data && data.ok && Array.isArray(data.memory)) {
+    await putMemoryCache(env, data.memory);
+    return data.memory;
+  }
+  return cached && Array.isArray(cached.facts) ? cached.facts : [];
+}
+
+// Handle an owner memory command routed from the front-end: mutate the Sheet,
+// refresh the KV cache, and return the canonical list + a status the UI renders.
+async function handleMemoryOp(env, op, corsOrigin) {
+  if (!env.SHEETS_WEBHOOK_URL) return json({ error: "memory-unconfigured" }, 200, corsOrigin);
+  const type = op && typeof op.type === "string" ? op.type : "";
+  let data;
+  if (type === "list") {
+    data = await sheetsMemoryCall(env, "mem-list");
+  } else if (type === "add") {
+    data = await sheetsMemoryCall(env, "mem-add", { fact: String(op.fact || "").slice(0, MEMORY_MAX_CHARS) });
+  } else if (type === "import") {
+    const facts = Array.isArray(op.facts) ? op.facts.slice(0, MEMORY_MAX_FACTS) : [];
+    data = await sheetsMemoryCall(env, "mem-import", { facts });
+  } else if (type === "forget") {
+    // A numeric index drops just that fact; absent index = clear all.
+    data = op.index ? await sheetsMemoryCall(env, "mem-forget", { index: op.index })
+                    : await sheetsMemoryCall(env, "mem-clear", {});
+  } else if (type === "clear") {
+    data = await sheetsMemoryCall(env, "mem-clear", {});
+  } else {
+    return json({ error: "bad-op" }, 200, corsOrigin);
+  }
+  const ok = !!(data && data.ok);
+  const facts = ok && Array.isArray(data.memory) ? data.memory : [];
+  if (ok) await putMemoryCache(env, facts);
+  return json({ ok, memory: facts, status: data && data.status, fact: data && data.fact, error: data && data.error }, 200, corsOrigin);
 }
 
 // Engine offline iff the chat-set KV "kill" flag is on. State lives ONLY in KV

@@ -89,20 +89,28 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   actually search; we only make the tool available when the trigger is present.
   Grounding metadata (citations) is NOT surfaced — only the answer text streams.
   **Needs `cd engine && npx wrangler deploy`** (engine change, not front-end).
-- **Long-term memory (Gemma only, RAG-lite)** — a small curated set of pinned
-  facts, SEPARATE from the transcript. The user adds one by typing `θυμήσου …` /
-  `να θυμάσαι …` / `remember …` / `/remember …`; `/memory` (`μνήμη`) lists them
-  numbered, `/forget N` drops just #N (`σβήσε 2`, `ξέχασε 2`), `/forget`
-  (`ξέχασέ τα`, `σβήσε τη μνήμη`, `/forget all`) clears all (numbering renumbers
-  after a delete). Commands are parsed + handled
-  **locally** (no model call) in `parseMemoryCommand`/`runMemoryCommand`, gated
-  to `persona==='gemma'`. Stored in `localStorage` (`artifact.memory.gemma.v1`,
-  per-device), capped 100 facts × 500 chars, and ride along as `memory:[…]` on
-  every Gemma request — NOT for DION. **Engine side:** `worker.js`
-  `renderMemoryBlock` folds them into a `// PERSISTENT MEMORY` block appended to
-  the system prompt (so they survive the 40-turn trim AND a "Memory wiped" reset;
-  `/forget` is the only thing that clears them). Greek `\b` caveat: the command
-  regex uses a separator lookahead, not `\b` (Greek isn't ASCII `\w`).
+- **Long-term memory (Gemma + OWNER only, Sheet-backed, RAG-lite)** — a small
+  curated set of pinned facts, SEPARATE from the transcript. The user adds one by
+  typing `θυμήσου …` / `να θυμάσαι …` / `remember …` / `/remember …`; `/memory`
+  (`μνήμη`) lists them numbered, `/forget N` drops just #N (`σβήσε 2`, `ξέχασε 2`),
+  `/forget` (`ξέχασέ τα`, `σβήσε τη μνήμη`, `/forget all`) clears all. The command
+  PARSING is still front-end (`parseMemoryCommand`, gated to `persona==='gemma'`,
+  Greek separator-lookahead not `\b`), but the **store is now SERVER-SIDE in the
+  Sheet "Memory" tab** — durable, **cross-device**, and **owner-only** (was
+  per-device `localStorage`). Flow: front-end `memoryOp()` POSTs
+  `{ passphrase, persona:'gemma', memoryOp:{type,fact?,index?} }` to the engine;
+  the Worker gates `who==='owner'` (else 403) and `handleMemoryOp` mutates the
+  Sheet via Apps Script `mem-add`/`mem-list`/`mem-forget`/`mem-clear`/`mem-import`.
+  **Reads:** every owner Gemma turn folds the list into the `// PERSISTENT MEMORY`
+  block — `worker.js` `getOwnerMemory` reads the Sheet but **caches in KV for 60s**
+  (`mem:cache`, write-through on mutations) so turns don't pay an Apps Script
+  round-trip each time; a MANUAL Sheet edit shows up within that 60s TTL. The
+  front-end keeps `localStorage` only as a display cache + a **one-time migration**
+  (`migrateMemoryOnce`, flag `artifact.memory.migrated.v1`) that bulk-imports any
+  pre-existing local facts. Capped 100×500 chars. NOT for DION; guests get none.
+  **Optional token:** set Apps Script Script-Property `MEM_TOKEN` + Worker secret
+  `MEM_TOKEN` to gate the mem-* endpoints (logging stays token-free). **Changing
+  it needs BOTH `wrangler deploy` AND an Apps Script "New version" redeploy.**
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active
@@ -209,7 +217,11 @@ entry (so the secret phrase isn't persisted) and shows the result.
   The Apps Script logger
   (`engine/apps-script.gs`) has NO auth — a direct `POST {…, who}` to the `/exec`
   URL writes a row (handy for diagnostics, bypassing the chat/passphrase). It
-  auto-backfills the "Who" header on an older 4-col sheet.
+  auto-backfills the "Who" header on an older 4-col sheet. **Memory tab:** the
+  SAME `/exec` also serves owner memory — a `POST {action:"mem-..."}` is routed
+  (by `doPost`) to a `Memory` tab (`Fact | Added`, auto-created) instead of the
+  log. mem-* actions honor an optional `MEM_TOKEN` Script-Property; plain log
+  POSTs stay token-free. See the long-term-memory feature bullet above.
 - **Apps Script web-app deployment trap**: editing + Save does NOT update the live
   `/exec` — it stays pinned to a version. Update via Deploy > Manage deployments >
   ✏️ > Version: "New version" > Deploy (SAME `/exec` URL). DON'T use "New
