@@ -1069,7 +1069,7 @@
       // Diagnostic: /voices lists the TTS voices Safari actually exposes on this
       // device (iOS often hides downloaded enhanced/premium voices) and which one
       // pickVoice would choose. Handled locally, no model call.
-      if (cmd === '/voices') {
+      if (/^\/?\s*voices$/.test(cmd) || cmd === 'φωνές' || cmd === 'φωνες') {
         input.value = '';
         const list = (synth ? synth.getVoices() : [])
           .filter((v) => /^(el|en)/i.test(v.lang || ''))
