@@ -48,38 +48,32 @@ Commit + push to `main` to publish (GitHub Pages, push-to-main = live).
 | `ALLOWED_ORIGIN` | `https://noustelos.gr` | CORS origin (localhost allowed for dev) |
 | `SYSTEM_PROMPT` | persona | the engine's system instruction |
 
-## Kill switch / antidote (instant, no redeploy)
-Take the whole engine offline for **everyone** — overrides the passphrase — by
-setting the `KILL_SWITCH` secret. It's a *secret* (not a `var`), so flips apply
-instantly with no `wrangler deploy`. While killed, every request gets
-`503 {"error":"offline"}` and the brains show a calm offline message.
+## Kill switch (chat only, owner-only)
+Take the whole engine offline for **everyone** by typing a secret phrase in the
+chat — from any device. There is **no terminal kill**. Two secret phrases drive it:
 
-```bash
-cd engine
-npm run kill        # KILL  — engine offline for all (sets KILL_SWITCH = on)
-npm run antidote    # CURE  — back online (sets KILL_SWITCH = off)
-npm run secrets     # list which secrets are set
-```
-Manual equivalent: `echo on | npx wrangler secret put KILL_SWITCH` (and `off` to
-restore). Customise the offline text with the `KILL_MESSAGE` var in `wrangler.toml`.
+| secret | what it does when the OWNER types it in the chat |
+|--------|--------------------------------------------------|
+| `KILL_SWITCH` | engine goes **OFFLINE** for everyone (`503` + offline message) |
+| `ANTIDOTE`    | engine comes back **ONLINE** |
 
-### Kill from the chat (owner-only)
-You can also flip it from the chat on any device — type **`/kill`** to go offline,
-**`/revive`** to come back. Auth is server-side: it needs the **owner** passphrase
-(a guest code is refused) plus, optionally, a secret word.
+Security is server-side: the engine only acts if the request carries the **owner**
+passphrase (a guest code never triggers it) *and* the message exactly matches the
+phrase. Guessing the phrase is useless without the owner passphrase.
 
-This needs a KV namespace to remember the state (the Worker is stateless):
+State must persist (the Worker is stateless), so this needs a **KV namespace**:
 ```bash
 cd engine
 npx wrangler kv namespace create ARTIFACT_KV      # prints an id
 # → paste the id into wrangler.toml's [[kv_namespaces]] block (uncomment it)
-npx wrangler secret put KILL_PHRASE               # optional secret word
+npx wrangler secret put KILL_SWITCH               # type your KILL phrase
+npx wrangler secret put ANTIDOTE                  # type your REVIVE phrase
 npx wrangler deploy
 ```
-Then in the chat: `/kill <word>` (offline for all) and `/revive <word>` (back).
-If `KILL_PHRASE` isn't set, the owner passphrase alone gates it. Without the KV
-binding, `/kill` replies "kv-missing" but the terminal `npm run kill` still works.
-The terminal `KILL_SWITCH` secret always wins — `/revive` can't undo a terminal kill.
+Then, unlocked as owner, just type the `KILL_SWITCH` phrase to go offline and the
+`ANTIDOTE` phrase to come back. The phrase message is **not** stored in the
+transcript. Without the KV binding the engine replies "kv-missing" (still online).
+Customise the offline text with the `KILL_MESSAGE` var in `wrangler.toml`.
 
 ## Notes
 - **Memory**: the brains keep the transcript in `localStorage` and send the full

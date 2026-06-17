@@ -4,8 +4,6 @@
   "description": "Cloudflare Worker engine for The Artifact. Convenience scripts only — no dependencies.",
   "scripts": {
     "deploy": "npx wrangler deploy",
-    "kill": "echo on | npx wrangler secret put KILL_SWITCH",
-    "antidote": "echo off | npx wrangler secret put KILL_SWITCH",
     "secrets": "npx wrangler secret list"
   }
 }

@@ -926,6 +926,9 @@
       const ctype = res.headers.get('content-type') || '';
       if (!ctype.includes('text/event-stream')) {
         const data = await res.json().catch(() => ({}));
+        // A kill/antidote phrase was matched server-side — signal the caller to
+        // scrub it from the transcript instead of treating it as a reply.
+        if (data.control) return { __control: data.control, ok: data.ok, killed: data.killed, error: data.error };
         const reply = data.reply || data.message || data.response || '(empty response)';
         onDelta(reply);
         return reply;
@@ -970,35 +973,18 @@
       return full;
     }
 
-    // Owner-only engine kill/revive, triggered from the chat. The phrase/code is
-    // verified by the engine (owner passphrase + optional KILL_PHRASE); this
-    // request is NOT added to the transcript, so the secret word isn't stored.
-    async function handleEngineControl(kind, code) {
-      sendBtn.disabled = true;
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ control: kind, phrase: code, passphrase })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (res.status === 403 || data.error === 'forbidden') {
-          addBubble('⛔ Μόνο ο owner μπορεί να κλείσει/ανοίξει το engine.', 'system');
-        } else if (data.error === 'bad-phrase') {
-          addBubble('🔴 Λάθος κωδικός — δεν έγινε τίποτα.', 'system');
-        } else if (data.error === 'kv-missing') {
-          addBubble('⚠️ Το chat-kill δεν είναι ρυθμισμένο (λείπει το KV namespace). Δες engine/README.', 'system');
-        } else if (data.ok && kind === 'kill') {
-          addBubble('🔴 Engine OFFLINE για όλους. Γράψε «/revive» για επαναφορά.', 'system');
-        } else if (data.ok) {
-          addBubble('🟢 Engine ONLINE ξανά.', 'system');
-        } else {
-          addBubble('⚠️ Η ενέργεια δεν ολοκληρώθηκε.', 'system');
-        }
-      } catch {
-        addBubble('// Δεν μπόρεσα να φτάσω το engine για την εντολή.', 'system');
+    // The owner typed a secret KILL_SWITCH / ANTIDOTE phrase — the engine matched
+    // it and toggled the kill flag instead of replying. Show the outcome.
+    function showControlResult(r) {
+      if (r.error === 'kv-missing') {
+        addBubble('⚠️ Ο διακόπτης δεν είναι ρυθμισμένος (λείπει το KV namespace). Δες engine/README.', 'system');
+      } else if (r.error) {
+        addBubble('⚠️ Η ενέργεια δεν ολοκληρώθηκε.', 'system');
+      } else if (r.killed) {
+        addBubble('🔴 Engine OFFLINE για όλους. Γράψε τη φράση ANTIDOTE για επαναφορά.', 'system');
+      } else {
+        addBubble('🟢 Engine ONLINE ξανά.', 'system');
       }
-      sendBtn.disabled = false;
     }
 
     async function handleSubmit(event) {
@@ -1039,17 +1025,6 @@
         return;
       }
 
-      // Engine control — owner-only kill switch from the chat. /kill [code]
-      // takes the engine offline for EVERYONE; /revive (or /antidote) restores.
-      // Auth is enforced server-side (owner passphrase + optional KILL_PHRASE).
-      const ctl = value.match(/^\/(kill|revive|antidote)\b\s*(.*)$/i);
-      if (ctl) {
-        input.value = '';
-        handleEngineControl(/^kill$/i.test(ctl[1]) ? 'kill' : 'antidote', ctl[2].trim());
-        focusInput();
-        return;
-      }
-
       // Long-term memory commands — Gemma only, handled locally (no model call).
       if (persona === 'gemma') {
         const memCmd = parseMemoryCommand(value);
@@ -1065,7 +1040,7 @@
       // over the incoming answer.
       closeTuner();
       const message = value;
-      addBubble(message, 'user');
+      const userEl = addBubble(message, 'user');
       history.push({ role: 'user', text: message });
       saveHistory();
       input.value = '';
@@ -1085,6 +1060,20 @@
           stream.scrollTop = stream.scrollHeight;
         });
         setBusy(false);
+
+        // Secret kill/antidote phrase: the engine toggled instead of replying.
+        // Scrub the phrase from the bubble + transcript so it isn't stored.
+        if (full && typeof full === 'object' && full.__control) {
+          if (userEl) userEl.remove();
+          if (history.length && history[history.length - 1].role === 'user') {
+            history.pop();
+            saveHistory();
+          }
+          showControlResult(full);
+          focusInput();
+          return;
+        }
+
         const finalText = full || '(empty response)';
         if (!botEl) botEl = addBubble(finalText, 'bot');           // nothing streamed
         else if (!full) botSpan.textContent = finalText;            // streamed empty

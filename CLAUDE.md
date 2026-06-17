@@ -123,28 +123,23 @@ answer, so the typing dots stay during reasoning, then tokens stream in.
   a saved password haunted the chat input). Locked state shown by magenta border +
   UNLOCK button (passphrase is visible while typing, by design). LOCK re-locks.
 
-## Kill switch / antidote (engine)
-Instant engine-wide OFF for everyone — overrides the passphrase. `KILL_SWITCH` is
-a **secret** (not a `var`), so flips are runtime/instant with NO redeploy (like
-revoking a guest code). `worker.js` `killSwitchActive` checks it BEFORE auth; when
-truthy (`on`/`1`/`true`/`yes`/`kill`/`offline`) every request returns
-`503 {"error":"offline","reply":KILL_MESSAGE}`. The brains catch 503 and show the
-offline text calmly (not "SIGNAL LOST"). Controls (from `engine/`):
-`npm run kill` (= `KILL_SWITCH=on`), `npm run antidote` (= `off`), `npm run secrets`.
-NOTE: the FIRST `wrangler deploy` is needed once to ship the kill-switch code;
-after that, kill/antidote never need a redeploy.
-
-**Chat kill (owner-only):** the brains also expose `/kill [word]` and `/revive`
-(`/antidote`) — POST `{control:"kill"|"antidote", phrase, passphrase}`, handled by
-`worker.js` `handleControl` BEFORE the offline gate (so the owner can always
-revive). Gated by the OWNER passphrase (`who==="owner"`; a guest code is 403) plus
-an optional `KILL_PHRASE` secret. State persists in a **KV** binding `ARTIFACT_KV`
-(key `kill`=on/off) since the Worker is stateless — `isKilled()` = secret OR KV.
-KV needs one-time setup (`wrangler kv namespace create ARTIFACT_KV` → paste id into
-`wrangler.toml`, uncomment, deploy); without it `/kill` returns `kv-missing` but
-the terminal `KILL_SWITCH` still works. The terminal secret overrides KV (a chat
-`/revive` can't undo a terminal kill). The control POST is NOT added to the
-transcript, so the secret word isn't stored on the device.
+## Kill switch (chat only, owner-only)
+Engine-wide OFF for everyone, triggered ONLY from the chat — **no terminal kill**.
+Two secret PHRASES: `KILL_SWITCH` (owner types it → offline) and `ANTIDOTE` (owner
+types it → online). `worker.js` flow: passphrase gate → `verify` short-circuit
+(exempt, so the owner can unlock while killed) → `matchControlPhrase(lastUserText)`
+gated to `who==="owner"` → `setKill()` toggles KV → only THEN the offline gate.
+`isKilled()` reads the KV flag ONLY (`ARTIFACT_KV` key `kill`=on/off); no secret
+boolean. While killed every chat returns `503 {"error":"offline","reply":KILL_MESSAGE}`;
+the brains catch 503 and show the offline text calmly (not "SIGNAL LOST"). A guest
+code never triggers it; guessing the phrase is useless without the owner passphrase.
+**KV is REQUIRED** (Worker is stateless): `wrangler kv namespace create ARTIFACT_KV`
+→ paste id into `wrangler.toml`, uncomment the `[[kv_namespaces]]` block, set the
+`KILL_SWITCH`/`ANTIDOTE` secrets, deploy. Without the binding `setKill` returns
+`kv-missing` (engine stays online). Front-end: the phrase goes through the normal
+send path; on a `{control,...}` JSON response `streamInvoke` returns a
+`{__control}` marker and `handleSubmit` SCRUBS the just-added user bubble + history
+entry (so the secret phrase isn't persisted) and shows the result.
 
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
