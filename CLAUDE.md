@@ -68,12 +68,18 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
 
 ### Features built on the Artifact (all front-end unless noted)
 - **Web search (Gemma only, opt-in grounding — ENGINE-side)** — the user grounds
-  a SINGLE answer in live Google Search by prefixing the message with a trigger:
-  `/search …`, `search …`, `ψάξε …` (also `γκούγκλαρε …`). Off by default and
-  never for DION. Handled entirely in `worker.js` (no front-end change):
-  `stripSearchTrigger` matches a LEADING trigger (anchored with a separator
-  lookahead, not `\b` — Greek isn't ASCII `\w`, same caveat as the memory
-  commands), strips it from the prompt for that turn, and the handler attaches
+  a SINGLE answer in live Google Search two ways. Off by default and never for
+  DION. Handled entirely in `worker.js` (no front-end change) by `detectSearch`,
+  which checks the last user turn (anchored with a separator lookahead, not `\b`
+  — Greek isn't ASCII `\w`, same caveat as the memory commands):
+  **(A) a LEADING verb** — `ψάξε`/`ψάξτε`/`γκουγκλάρισε`/`γκούγκλαρε`/`search`/
+  `/search` at the start → the verb is STRIPPED from the prompt so the query
+  reads clean (if nothing follows the verb, the original is kept);
+  **(B) a web/internet PHRASE anywhere** — `στο ίντερνετ/διαδίκτυο/δίκτυο/google`,
+  `από το ίντερνετ`, `search the web/internet/online`, `on the web/internet`,
+  `google it/that/this`, `look it up` → search WITHOUT stripping (natural
+  language, leave the sentence intact). `για το ίντερνετ` does NOT match (needs
+  `στο/από το`), so it won't fire on normal talk. On a hit the handler attaches
   `tools:[{ googleSearch: {} }]` to the Google request (folded into BOTH
   `streamReply` and `callGemma`, incl. their systemInstruction-400 fallbacks).
   Field is `googleSearch` (the Gemini-2+ name) — NOT the deprecated 1.5

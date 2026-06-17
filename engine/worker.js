@@ -185,19 +185,18 @@ export default {
     };
 
     // Web search opt-in (Gemma only): the user grounds a single answer in live
-    // Google Search results by prefixing the message with a trigger (/search,
-    // "search …", "ψάξε …"). When present we strip the trigger from the prompt
-    // and attach tools:[{googleSearch:{}}] for THIS turn only — off by default,
-    // and never for DION (a creative voice, not a research tool).
+    // Google Search by either a leading verb ("ψάξε …", "search …") or a
+    // web/internet phrase ("στο ίντερνετ …", "google it"). When detected we
+    // attach tools:[{googleSearch:{}}] for THIS turn only — off by default, and
+    // never for DION (a creative voice, not a research tool). See detectSearch.
     let tools;
     if (persona !== "dion") {
       for (let i = contents.length - 1; i >= 0; i--) {
         if (contents[i].role !== "user") continue;
-        const stripped = stripSearchTrigger(contents[i].parts[0].text);
-        if (stripped !== null) {
+        const det = detectSearch(contents[i].parts[0].text);
+        if (det.search) {
           tools = [{ googleSearch: {} }];
-          // Keep the original text if nothing followed the trigger word.
-          if (stripped) contents[i].parts[0].text = stripped;
+          if (det.query) contents[i].parts[0].text = det.query; // leading-verb form: drop the verb
         }
         break;
       }
@@ -533,18 +532,28 @@ function matchControlPhrase(text, env) {
   return null;
 }
 
-// Leading opt-in for web search. Greek isn't ASCII \w, so we anchor with a
-// separator lookahead instead of \b (same caveat as the memory commands).
-const SEARCH_TRIGGER = /^\s*(?:\/search|search|ψάξε|ψαξε|γκούγκλαρε|γκουγκλαρε)(?=[\s,.:!;·]|$)/iu;
+// Web-search opt-in. Two ways in (Greek isn't ASCII \w, so we anchor with a
+// separator lookahead instead of \b — same caveat as the memory commands):
+//   (A) a LEADING verb (ψάξε/ψάξτε/γκουγκλάρισε/search/…) → search + the verb
+//       is stripped from the prompt, so the query reads clean.
+//   (B) a web/internet PHRASE anywhere ("στο ίντερνετ", "search the web",
+//       "google it", …) → search, prompt left intact (it's natural language).
+const SEARCH_TRIGGER = /^\s*(?:\/?search|ψάξε|ψαξε|ψάξτε|ψαξτε|γκούγκλαρε|γκουγκλαρε|γκουγκλάρισε|γκουγκλαρισε)(?=[\s,.:!;·]|$)/iu;
+const SEARCH_PHRASE = /(?:στο|στον|στη|στην|από\s+το)\s+(?:ίντερνετ|ιντερνετ|διαδίκτυο|διαδικτυο|δίκτυο|δικτυο|google|γκουγκλ)|search\s+(?:the\s+)?(?:web|internet|online)|on\s+the\s+(?:web|internet)|google\s+(?:it|that|this)|look\s+(?:it|that|this)\s+up/iu;
 
-// If `text` starts with a search trigger, return the text with the trigger
-// stripped (and trimmed); otherwise null. An empty-string return means the
-// trigger was present but no query followed — the caller keeps the original.
-function stripSearchTrigger(text) {
+// Decide whether this turn wants web search. Returns { search, query }: when a
+// leading verb matched, `query` is the prompt with the verb stripped (null if
+// nothing followed it → caller keeps the original); for a phrase match `query`
+// is null (don't mangle the sentence).
+function detectSearch(text) {
   const s = String(text || "");
   const m = s.match(SEARCH_TRIGGER);
-  if (!m) return null;
-  return s.slice(m[0].length).replace(/^[\s,.:!;·]+/, "").trim();
+  if (m) {
+    const q = s.slice(m[0].length).replace(/^[\s,.:!;·]+/, "").trim();
+    return { search: true, query: q || null };
+  }
+  if (SEARCH_PHRASE.test(s)) return { search: true, query: null };
+  return { search: false, query: null };
 }
 
 // Toggle the persisted kill flag. Needs a bound ARTIFACT_KV namespace; without
