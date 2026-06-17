@@ -19,7 +19,11 @@
  *   KILL_SWITCH         (secret, optional)  "on" = engine OFFLINE for everyone
  *                                           (beats the passphrase); "off"/unset
  *                                           = the antidote. Instant, no redeploy.
+ *   KILL_PHRASE         (secret, optional)  secret word required by the chat
+ *                                           /kill /revive commands (owner-only)
  *   KILL_MESSAGE        (var,   optional)   text shown while killed
+ *   ARTIFACT_KV         (KV binding, opt.)  stores the chat-set "kill" flag so it
+ *                                           persists across requests (see toml)
  *   ALLOWED_ORIGIN      (var,   optional)   default "https://noustelos.gr"
  *   MODEL               (var,   optional)   default "gemma-4-31b-it"
  *   TEMPERATURE         (var,   optional)   default "1.0"  (header shows 2.0 = max)
@@ -89,15 +93,6 @@ export default {
       return json({ error: "Method not allowed" }, 405, corsOrigin);
     }
 
-    // --- Kill switch (instant, no redeploy) ---
-    // Take the whole engine offline by setting the KILL_SWITCH secret to a
-    // truthy value (`wrangler secret put KILL_SWITCH` → "on"); the antidote is
-    // setting it back to "off" (`… → "off"`). Checked BEFORE auth, so it
-    // refuses every chat AND verify even with a valid passphrase.
-    if (killSwitchActive(env)) {
-      return json({ error: "offline", reply: env.KILL_MESSAGE || DEFAULTS.KILL_MESSAGE }, 503, corsOrigin);
-    }
-
     if (!env.GOOGLE_API_KEY) {
       return json({ error: "Engine misconfigured: missing GOOGLE_API_KEY" }, 500, corsOrigin);
     }
@@ -108,6 +103,23 @@ export default {
       body = await request.json();
     } catch {
       return json({ error: "Invalid JSON body" }, 400, corsOrigin);
+    }
+
+    // --- Engine control (owner-only): chat-driven kill switch ---
+    // The brains send { control:"kill"|"antidote", phrase, passphrase } when the
+    // owner types /kill or /revive. Handled BEFORE the offline gate so the owner
+    // can always revive. Gated by the OWNER passphrase (server-side secret) plus
+    // an optional KILL_PHRASE — guessing the word is useless without the code.
+    if (body.control === "kill" || body.control === "antidote") {
+      return handleControl(body, env, corsOrigin);
+    }
+
+    // --- Kill switch ---
+    // Offline if the KILL_SWITCH secret is truthy (terminal: instant, no
+    // redeploy) OR the KV "kill" flag is on (set from the chat). Refuses every
+    // chat AND verify, even with a valid passphrase.
+    if (await isKilled(env)) {
+      return json({ error: "offline", reply: env.KILL_MESSAGE || DEFAULTS.KILL_MESSAGE }, 503, corsOrigin);
     }
 
     // --- Passphrase gate (optional, supports multiple codes) ---
@@ -461,14 +473,51 @@ function renderMemoryBlock(memory) {
     facts.join("\n");
 }
 
-// Master kill switch. Returns true when the KILL_SWITCH secret holds a truthy
-// value — then the engine refuses everything (checked before auth, so it beats
-// a valid passphrase). The "antidote" is setting it to "off"/empty, which makes
-// this return false again. Secret (not var) so flips are instant, no redeploy.
+// Master kill switch (terminal). True when the KILL_SWITCH secret holds a truthy
+// value. Secret (not var) so flips are instant, no redeploy. The "antidote" is
+// setting it to "off"/empty. This is the override that the chat cannot turn off.
 function killSwitchActive(env) {
   const v = (env && env.KILL_SWITCH != null ? String(env.KILL_SWITCH) : "").trim().toLowerCase();
   if (!v) return false;
   return ["on", "1", "true", "yes", "kill", "killed", "offline"].includes(v);
+}
+
+// Engine offline if EITHER the terminal secret OR the chat-set KV flag says so.
+// KV is read only when the (free) secret check is off, and only if KV is bound.
+async function isKilled(env) {
+  if (killSwitchActive(env)) return true;
+  if (env && env.ARTIFACT_KV) {
+    try { return (await env.ARTIFACT_KV.get("kill")) === "on"; } catch { return false; }
+  }
+  return false;
+}
+
+// Owner-only chat control: toggle the KV kill flag. Requires the OWNER
+// passphrase (so a guest code can't do it) and, if KILL_PHRASE is set, the
+// matching secret word. Needs a bound ARTIFACT_KV namespace to persist state.
+async function handleControl(body, env, corsOrigin) {
+  const valid = collectPassphrases(env);
+  const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+  const who = valid.get(provided);
+  if (who !== "owner") {
+    return json({ control: body.control, ok: false, error: "forbidden" }, 403, corsOrigin);
+  }
+  if (env.KILL_PHRASE) {
+    const phrase = typeof body.phrase === "string" ? body.phrase.trim() : "";
+    if (phrase !== String(env.KILL_PHRASE).trim()) {
+      return json({ control: body.control, ok: false, error: "bad-phrase" }, 200, corsOrigin);
+    }
+  }
+  if (!env.ARTIFACT_KV) {
+    return json({ control: body.control, ok: false, error: "kv-missing" }, 200, corsOrigin);
+  }
+  const on = body.control === "kill";
+  try {
+    await env.ARTIFACT_KV.put("kill", on ? "on" : "off");
+  } catch (err) {
+    return json({ control: body.control, ok: false, error: "kv-error" }, 200, corsOrigin);
+  }
+  return json({ control: body.control, ok: true, killed: on }, 200, corsOrigin);
 }
 
 function normalizeMessages(body) {

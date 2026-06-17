@@ -970,6 +970,37 @@
       return full;
     }
 
+    // Owner-only engine kill/revive, triggered from the chat. The phrase/code is
+    // verified by the engine (owner passphrase + optional KILL_PHRASE); this
+    // request is NOT added to the transcript, so the secret word isn't stored.
+    async function handleEngineControl(kind, code) {
+      sendBtn.disabled = true;
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ control: kind, phrase: code, passphrase })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 403 || data.error === 'forbidden') {
+          addBubble('⛔ Μόνο ο owner μπορεί να κλείσει/ανοίξει το engine.', 'system');
+        } else if (data.error === 'bad-phrase') {
+          addBubble('🔴 Λάθος κωδικός — δεν έγινε τίποτα.', 'system');
+        } else if (data.error === 'kv-missing') {
+          addBubble('⚠️ Το chat-kill δεν είναι ρυθμισμένο (λείπει το KV namespace). Δες engine/README.', 'system');
+        } else if (data.ok && kind === 'kill') {
+          addBubble('🔴 Engine OFFLINE για όλους. Γράψε «/revive» για επαναφορά.', 'system');
+        } else if (data.ok) {
+          addBubble('🟢 Engine ONLINE ξανά.', 'system');
+        } else {
+          addBubble('⚠️ Η ενέργεια δεν ολοκληρώθηκε.', 'system');
+        }
+      } catch {
+        addBubble('// Δεν μπόρεσα να φτάσω το engine για την εντολή.', 'system');
+      }
+      sendBtn.disabled = false;
+    }
+
     async function handleSubmit(event) {
       event.preventDefault();
       // This runs inside a user gesture — unlock iOS speech output so the
@@ -1004,6 +1035,17 @@
       if (cmd === 'dion' || cmd === 'gemma') {
         input.value = '';
         switchPersona(cmd);
+        focusInput();
+        return;
+      }
+
+      // Engine control — owner-only kill switch from the chat. /kill [code]
+      // takes the engine offline for EVERYONE; /revive (or /antidote) restores.
+      // Auth is enforced server-side (owner passphrase + optional KILL_PHRASE).
+      const ctl = value.match(/^\/(kill|revive|antidote)\b\s*(.*)$/i);
+      if (ctl) {
+        input.value = '';
+        handleEngineControl(/^kill$/i.test(ctl[1]) ? 'kill' : 'antidote', ctl[2].trim());
         focusInput();
         return;
       }

@@ -15,6 +15,19 @@ name = "artifact-engine"
 main = "worker.js"
 compatibility_date = "2026-06-16"
 
+# --- Chat kill switch state (KV) ---
+# The chat /kill and /revive commands need a KV namespace to remember the on/off
+# state across requests. One-time setup:
+#   cd engine
+#   npx wrangler kv namespace create ARTIFACT_KV   # prints an id
+# Paste the printed id below and UNCOMMENT this block, then `npx wrangler deploy`.
+# (Optional extra secret word:  npx wrangler secret put KILL_PHRASE)
+# Without this binding the terminal kill (`npm run kill`) still works; only the
+# chat /kill is disabled (the engine replies "kv-missing").
+# [[kv_namespaces]]
+# binding = "ARTIFACT_KV"
+# id = "PASTE_THE_ID_HERE"
+
 # Non-secret config. Secrets (GOOGLE_API_KEY, SHEETS_WEBHOOK_URL) are set via
 # `wrangler secret put`, NOT here.
 [vars]

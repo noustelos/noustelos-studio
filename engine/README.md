@@ -63,6 +63,24 @@ npm run secrets     # list which secrets are set
 Manual equivalent: `echo on | npx wrangler secret put KILL_SWITCH` (and `off` to
 restore). Customise the offline text with the `KILL_MESSAGE` var in `wrangler.toml`.
 
+### Kill from the chat (owner-only)
+You can also flip it from the chat on any device — type **`/kill`** to go offline,
+**`/revive`** to come back. Auth is server-side: it needs the **owner** passphrase
+(a guest code is refused) plus, optionally, a secret word.
+
+This needs a KV namespace to remember the state (the Worker is stateless):
+```bash
+cd engine
+npx wrangler kv namespace create ARTIFACT_KV      # prints an id
+# → paste the id into wrangler.toml's [[kv_namespaces]] block (uncomment it)
+npx wrangler secret put KILL_PHRASE               # optional secret word
+npx wrangler deploy
+```
+Then in the chat: `/kill <word>` (offline for all) and `/revive <word>` (back).
+If `KILL_PHRASE` isn't set, the owner passphrase alone gates it. Without the KV
+binding, `/kill` replies "kv-missing" but the terminal `npm run kill` still works.
+The terminal `KILL_SWITCH` secret always wins — `/revive` can't undo a terminal kill.
+
 ## Notes
 - **Memory**: the brains keep the transcript in `localStorage` and send the full
   history each turn (capped to the last 40 turns server-side). Memory is

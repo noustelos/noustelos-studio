@@ -134,6 +134,18 @@ offline text calmly (not "SIGNAL LOST"). Controls (from `engine/`):
 NOTE: the FIRST `wrangler deploy` is needed once to ship the kill-switch code;
 after that, kill/antidote never need a redeploy.
 
+**Chat kill (owner-only):** the brains also expose `/kill [word]` and `/revive`
+(`/antidote`) — POST `{control:"kill"|"antidote", phrase, passphrase}`, handled by
+`worker.js` `handleControl` BEFORE the offline gate (so the owner can always
+revive). Gated by the OWNER passphrase (`who==="owner"`; a guest code is 403) plus
+an optional `KILL_PHRASE` secret. State persists in a **KV** binding `ARTIFACT_KV`
+(key `kill`=on/off) since the Worker is stateless — `isKilled()` = secret OR KV.
+KV needs one-time setup (`wrangler kv namespace create ARTIFACT_KV` → paste id into
+`wrangler.toml`, uncomment, deploy); without it `/kill` returns `kv-missing` but
+the terminal `KILL_SWITCH` still works. The terminal secret overrides KV (a chat
+`/revive` can't undo a terminal kill). The control POST is NOT added to the
+transcript, so the secret word isn't stored on the device.
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
