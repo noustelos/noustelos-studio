@@ -909,6 +909,13 @@
         e.locked = true;
         throw e;
       }
+      if (res.status === 503) {
+        // Kill switch is on — the engine is offline for everyone.
+        const data = await res.json().catch(() => ({}));
+        const e = new Error(data.reply || data.message || 'The Artifact is offline right now.');
+        e.offline = true;
+        throw e;
+      }
       if (!res.ok) {
         throw new Error('Engine responded with status ' + res.status);
       }
@@ -1048,6 +1055,9 @@
         if (err && err.locked) {
           // Engine rejected the passphrase — re-lock and ask again.
           lock('🔒 Session locked — enter the passphrase again.');
+        } else if (err && err.offline) {
+          // Kill switch active — show the engine's offline message calmly.
+          addBubble(err.message, 'system');
         } else {
           // Systemic fallback — the engine stays graceful on any exception.
           addBubble(

@@ -123,6 +123,17 @@ answer, so the typing dots stay during reasoning, then tokens stream in.
   a saved password haunted the chat input). Locked state shown by magenta border +
   UNLOCK button (passphrase is visible while typing, by design). LOCK re-locks.
 
+## Kill switch / antidote (engine)
+Instant engine-wide OFF for everyone — overrides the passphrase. `KILL_SWITCH` is
+a **secret** (not a `var`), so flips are runtime/instant with NO redeploy (like
+revoking a guest code). `worker.js` `killSwitchActive` checks it BEFORE auth; when
+truthy (`on`/`1`/`true`/`yes`/`kill`/`offline`) every request returns
+`503 {"error":"offline","reply":KILL_MESSAGE}`. The brains catch 503 and show the
+offline text calmly (not "SIGNAL LOST"). Controls (from `engine/`):
+`npm run kill` (= `KILL_SWITCH=on`), `npm run antidote` (= `off`), `npm run secrets`.
+NOTE: the FIRST `wrangler deploy` is needed once to ship the kill-switch code;
+after that, kill/antidote never need a redeploy.
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`

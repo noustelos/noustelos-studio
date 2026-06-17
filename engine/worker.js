@@ -16,6 +16,10 @@
  *   GUEST_PASSPHRASE    (secret, optional)  guest code — also unlocks; logged as
  *                                           "guest". Delete it to revoke guests.
  *   SHEETS_WEBHOOK_URL  (secret, optional)  Apps Script web-app URL for logging
+ *   KILL_SWITCH         (secret, optional)  "on" = engine OFFLINE for everyone
+ *                                           (beats the passphrase); "off"/unset
+ *                                           = the antidote. Instant, no redeploy.
+ *   KILL_MESSAGE        (var,   optional)   text shown while killed
  *   ALLOWED_ORIGIN      (var,   optional)   default "https://noustelos.gr"
  *   MODEL               (var,   optional)   default "gemma-4-31b-it"
  *   TEMPERATURE         (var,   optional)   default "1.0"  (header shows 2.0 = max)
@@ -28,6 +32,7 @@ const DEFAULTS = {
   TEMPERATURE: "1.0",
   MAX_OUTPUT_TOKENS: 1024,
   HISTORY_CAP: 40, // keep at most the last N turns sent to the model (cost guard)
+  KILL_MESSAGE: "// The Artifact is offline right now. Please try again later.",
   SYSTEM_PROMPT:
     "You are The Artifact, a sharp, concise AI engine for the Noustelos Studio. " +
     "Answer helpfully and stay on topic.",
@@ -82,6 +87,15 @@ export default {
 
     if (request.method !== "POST") {
       return json({ error: "Method not allowed" }, 405, corsOrigin);
+    }
+
+    // --- Kill switch (instant, no redeploy) ---
+    // Take the whole engine offline by setting the KILL_SWITCH secret to a
+    // truthy value (`wrangler secret put KILL_SWITCH` → "on"); the antidote is
+    // setting it back to "off" (`… → "off"`). Checked BEFORE auth, so it
+    // refuses every chat AND verify even with a valid passphrase.
+    if (killSwitchActive(env)) {
+      return json({ error: "offline", reply: env.KILL_MESSAGE || DEFAULTS.KILL_MESSAGE }, 503, corsOrigin);
     }
 
     if (!env.GOOGLE_API_KEY) {
@@ -445,6 +459,16 @@ function renderMemoryBlock(memory) {
   return "\n\n// PERSISTENT MEMORY — durable facts the user asked you to remember across sessions. " +
     "Treat them as true and use them when relevant; do not mention or list them unless asked:\n" +
     facts.join("\n");
+}
+
+// Master kill switch. Returns true when the KILL_SWITCH secret holds a truthy
+// value — then the engine refuses everything (checked before auth, so it beats
+// a valid passphrase). The "antidote" is setting it to "off"/empty, which makes
+// this return false again. Secret (not var) so flips are instant, no redeploy.
+function killSwitchActive(env) {
+  const v = (env && env.KILL_SWITCH != null ? String(env.KILL_SWITCH) : "").trim().toLowerCase();
+  if (!v) return false;
+  return ["on", "1", "true", "yes", "kill", "killed", "offline"].includes(v);
 }
 
 function normalizeMessages(body) {

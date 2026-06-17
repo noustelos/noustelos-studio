@@ -48,6 +48,21 @@ Commit + push to `main` to publish (GitHub Pages, push-to-main = live).
 | `ALLOWED_ORIGIN` | `https://noustelos.gr` | CORS origin (localhost allowed for dev) |
 | `SYSTEM_PROMPT` | persona | the engine's system instruction |
 
+## Kill switch / antidote (instant, no redeploy)
+Take the whole engine offline for **everyone** — overrides the passphrase — by
+setting the `KILL_SWITCH` secret. It's a *secret* (not a `var`), so flips apply
+instantly with no `wrangler deploy`. While killed, every request gets
+`503 {"error":"offline"}` and the brains show a calm offline message.
+
+```bash
+cd engine
+npm run kill        # KILL  — engine offline for all (sets KILL_SWITCH = on)
+npm run antidote    # CURE  — back online (sets KILL_SWITCH = off)
+npm run secrets     # list which secrets are set
+```
+Manual equivalent: `echo on | npx wrangler secret put KILL_SWITCH` (and `off` to
+restore). Customise the offline text with the `KILL_MESSAGE` var in `wrangler.toml`.
+
 ## Notes
 - **Memory**: the brains keep the transcript in `localStorage` and send the full
   history each turn (capped to the last 40 turns server-side). Memory is
