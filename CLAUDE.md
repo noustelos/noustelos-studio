@@ -256,6 +256,12 @@ entry (so the secret phrase isn't persisted) and shows the result.
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
   filters them out. Google API occasionally returns transient 500s (no retry yet).
+  ⚠️ **Reasoning tokens count against `maxOutputTokens`**, so a low cap clips the
+  VISIBLE answer mid-sentence after a long think. The budget is per-role:
+  `who==="owner"` → `OWNER_MAX_OUTPUT_TOKENS` (8192), else `MAX_OUTPUT_TOKENS`
+  (2048); both env-overridable. Spend is bounded by the Google billing cap, not by
+  clipping the owner — there is NO owner rate limit (guest rate-limiting is parked
+  on `artifact-public-wip`).
 - **Sheets logging** needs `ctx.waitUntil` in the Worker (an unawaited fetch gets
   cancelled by the Workers runtime). The Sheet has 5 columns:
   `Timestamp | User message | Bot reply | Model | Who`. **Per-persona tabs:** the

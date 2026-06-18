@@ -38,7 +38,13 @@ const DEFAULTS = {
   MODEL: "gemma-4-31b-it",
   ALLOWED_ORIGIN: "https://noustelos.gr",
   TEMPERATURE: "1.0",
-  MAX_OUTPUT_TOKENS: 1024,
+  // Gemma 4 is a THINKING model — reasoning tokens count against this budget, so
+  // a low cap truncates the visible answer mid-sentence once it has thought for a
+  // while. Owner gets a generous budget (effectively no cut); other roles a
+  // smaller baseline. Both env-overridable. Spend is bounded by the Google
+  // billing cap, not by clipping the owner's answers.
+  MAX_OUTPUT_TOKENS: 2048,        // baseline (guests, if ever re-enabled)
+  OWNER_MAX_OUTPUT_TOKENS: 8192,  // owner — room for long thinking + full answer
   HISTORY_CAP: 40, // keep at most the last N turns sent to the model (cost guard)
   KILL_MESSAGE: "// The Artifact is offline right now. Please try again later.",
   SYSTEM_PROMPT:
@@ -213,9 +219,14 @@ export default {
       parts: [{ text: String(m.text ?? m.content ?? "") }],
     }));
 
+    // Owner answers never get clipped by a low budget (thinking tokens count too);
+    // any other role uses the smaller baseline. Both env-overridable.
+    const maxOutputTokens = who === "owner"
+      ? Number(env.OWNER_MAX_OUTPUT_TOKENS || DEFAULTS.OWNER_MAX_OUTPUT_TOKENS)
+      : Number(env.MAX_OUTPUT_TOKENS || DEFAULTS.MAX_OUTPUT_TOKENS);
     const generationConfig = {
       temperature,
-      maxOutputTokens: DEFAULTS.MAX_OUTPUT_TOKENS,
+      maxOutputTokens,
     };
 
     // Web search opt-in (Gemma only): the user grounds a single answer in live
