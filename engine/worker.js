@@ -141,7 +141,7 @@ export default {
       return handleMemoryOp(env, body.memoryOp, corsOrigin);
     }
 
-    // --- Owner Drive folder ops (the /docs command lists the "Artifact" folder) ---
+    // --- Owner Drive ops: /my_profile (Profile list), /lib + /read (Library) ---
     if (body.driveOp && typeof body.driveOp === "object") {
       if (who !== "owner") return json({ error: "forbidden" }, 403, corsOrigin);
       return handleDriveOp(env, body.driveOp, corsOrigin);
@@ -186,11 +186,17 @@ export default {
       basePrompt += renderMemoryBlock(await getOwnerMemory(env));
     }
 
-    // Reference documents (owner only, on demand): when the front-end's /docs
-    // mode is on it sends useDocs:true, and we fold the owner's Drive "Artifact"
-    // folder text into the prompt for THIS turn. Off by default (token cost).
-    if (persona !== "dion" && who === "owner" && (body.useDocs === true || body.useDocs === "true")) {
-      basePrompt += renderDriveBlock(await getDriveContent(env));
+    // Reference documents (Gemma + owner only), split into two tiers:
+    //   PROFILE — the owner's Drive Artifact/Profile/ folder, ALWAYS folded in as
+    //     Global Context (keep the profile short — it costs tokens every turn).
+    //   LIBRARY — Artifact/Library/ files the owner explicitly loaded with /read;
+    //     the front-end sends their names in libFiles for THIS conversation only.
+    if (persona !== "dion" && who === "owner") {
+      basePrompt += renderProfileBlock(await getProfileContent(env));
+      const libFiles = Array.isArray(body.libFiles)
+        ? body.libFiles.filter((n) => typeof n === "string" && n)
+        : [];
+      if (libFiles.length) basePrompt += renderLibraryBlock(await getLibraryContent(env, libFiles));
     }
 
     // Live persona-tuner params from the front-end (all optional). The sliders
@@ -620,41 +626,69 @@ async function handleMemoryOp(env, op, corsOrigin) {
 }
 
 // --- Owner Drive folder ("Artifact"), read via the same Apps Script /exec ---
-// Same shape as memory: owner-only, KV-cached (longer TTL — files change less
-// often than chat), folded into the prompt only when the front-end asks (/docs).
+// Two tiers: PROFILE (Artifact/Profile/, always-on) and LIBRARY (Artifact/
+// Library/, loaded by name on /read). Owner-only, KV-cached (longer TTL — files
+// change less often than chat).
 const DRIVE_CACHE_TTL = 5 * 60 * 1000;
 
-async function getDriveContent(env) {
+// Generic cached read: `action` + optional `extra` (e.g. {names}) → text. The KV
+// key namespaces the cache (profile vs a specific library selection).
+async function cachedDriveText(env, key, action, extra) {
   if (!env.SHEETS_WEBHOOK_URL) return "";
   if (env.ARTIFACT_KV) {
     try {
-      const raw = await env.ARTIFACT_KV.get("drive:cache");
+      const raw = await env.ARTIFACT_KV.get(key);
       if (raw) {
         const c = JSON.parse(raw);
         if (c && typeof c.text === "string" && (Date.now() - c.at) < DRIVE_CACHE_TTL) return c.text;
       }
     } catch { /* fall through to a live read */ }
   }
-  const data = await sheetsMemoryCall(env, "drive-read");
+  const data = await sheetsMemoryCall(env, action, extra);
   const text = data && data.ok && typeof data.text === "string" ? data.text : "";
   if (env.ARTIFACT_KV) {
-    try { await env.ARTIFACT_KV.put("drive:cache", JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
+    try { await env.ARTIFACT_KV.put(key, JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
   }
   return text;
 }
 
-function renderDriveBlock(text) {
-  if (!text || !text.trim()) return "";
-  return "\n\n// REFERENCE DOCUMENTS — files the user placed in their Drive 'Artifact' folder. " +
-    "Treat them as authoritative context and use them when relevant:\n" + text;
+// Profile = Artifact/Profile/ — always folded into every owner Gemma turn.
+function getProfileContent(env) {
+  return cachedDriveText(env, "profile:cache", "drive-read");
 }
 
-// /docs list/refresh, routed from the front-end. Owner-gated by the caller.
+// Library = the named Artifact/Library/ files the owner loaded with /read. Cache
+// key includes the (sorted) selection so different /read sets don't collide.
+function getLibraryContent(env, names) {
+  if (!names.length) return Promise.resolve("");
+  const key = "lib:" + names.slice().sort().join("|");
+  return cachedDriveText(env, key, "lib-read", { names });
+}
+
+function renderProfileBlock(text) {
+  if (!text || !text.trim()) return "";
+  return "\n\n// PROFILE (GLOBAL CONTEXT) — the user's own profile, placed in their " +
+    "Drive 'Artifact/Profile' folder. Always treat it as authoritative background " +
+    "about the user:\n" + text;
+}
+
+function renderLibraryBlock(text) {
+  if (!text || !text.trim()) return "";
+  return "\n\n// LIBRARY — reference files the user explicitly loaded for THIS " +
+    "conversation with /read. Treat them as authoritative context and use them " +
+    "when relevant:\n" + text;
+}
+
+// Drive ops routed from the front-end (/my_profile, /lib, /read). Owner-gated by
+// the caller. type: "list" (Profile files), "lib-list" (Library files),
+// "lib-read" {names} (load the named Library files, returns what actually read).
 async function handleDriveOp(env, op, corsOrigin) {
   if (!env.SHEETS_WEBHOOK_URL) return json({ error: "drive-unconfigured" }, 200, corsOrigin);
   const type = op && typeof op.type === "string" ? op.type : "";
-  if (type === "list") {
-    const data = await sheetsMemoryCall(env, "drive-list");
+
+  if (type === "list" || type === "lib-list") {
+    const action = type === "lib-list" ? "lib-list" : "drive-list";
+    const data = await sheetsMemoryCall(env, action);
     return json({
       ok: !!(data && data.ok),
       folderFound: !!(data && data.folderFound),
@@ -662,15 +696,25 @@ async function handleDriveOp(env, op, corsOrigin) {
       error: data && data.error,
     }, 200, corsOrigin);
   }
-  if (type === "refresh") {
-    // Force a live re-read and refresh the cache (e.g. after dropping new files).
-    const data = await sheetsMemoryCall(env, "drive-read");
+
+  if (type === "lib-read") {
+    const names = Array.isArray(op.names) ? op.names.filter((n) => typeof n === "string" && n) : [];
+    const data = await sheetsMemoryCall(env, "lib-read", { names });
     const text = data && data.ok && typeof data.text === "string" ? data.text : "";
-    if (env.ARTIFACT_KV) {
-      try { await env.ARTIFACT_KV.put("drive:cache", JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
+    // Warm the same cache the chat turns will read for this selection.
+    if (env.ARTIFACT_KV && names.length) {
+      const key = "lib:" + names.slice().sort().join("|");
+      try { await env.ARTIFACT_KV.put(key, JSON.stringify({ at: Date.now(), text })); } catch { /* best effort */ }
     }
-    return json({ ok: !!(data && data.ok), chars: text.length }, 200, corsOrigin);
+    return json({
+      ok: !!(data && data.ok),
+      folderFound: !!(data && data.folderFound),
+      read: (data && Array.isArray(data.read)) ? data.read : [],
+      chars: text.length,
+      error: data && data.error,
+    }, 200, corsOrigin);
   }
+
   return json({ error: "bad-op" }, 200, corsOrigin);
 }
 

@@ -111,26 +111,41 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   **Optional token:** set Apps Script Script-Property `MEM_TOKEN` + Worker secret
   `MEM_TOKEN` to gate the mem-* endpoints (logging stays token-free). **Changing
   it needs BOTH `wrangler deploy` AND an Apps Script "New version" redeploy.**
-- **Reference documents (Drive "Artifact" folder, Gemma + OWNER only, on-demand)**
-  — the owner drops files in their Drive folder named **`Artifact`** and loads them
-  into a conversation with **`/docs`** (`/docs on`/`/docs off`, also `διάβασε τα
-  αρχεία`). While on, the front-end is just a flag (`docsOn`, IN-MEMORY → resets on
-  reload, keeps the token cost opt-in) that sends `useDocs:true` on each Gemma
-  turn; the engine folds the folder's text into a `// REFERENCE DOCUMENTS` block
-  (`worker.js` `getDriveContent` → `renderDriveBlock`), KV-cached 5min
-  (`drive:cache`). **No separate OAuth/API project:** the Apps Script runs AS the
-  owner, so `engine/apps-script.gs` `driveList`/`driveRead` use `DriveApp` on the
-  owner's own Drive (gated by the same optional `MEM_TOKEN`). `drive-list` (file
-  names, shown when toggling on) and `drive-read` (concatenated text, capped
-  `DRIVE_MAX_CHARS`=12000, `### filename` headers) — only **Google Docs + text/
-  md/csv/json** are extracted; **PDF/images/Office are skipped** (need OCR/convert).
-  Front-end `driveOp()` lists; `worker.js` `handleDriveOp` (owner-gated) lists/
-  refreshes. ⚠️ Adding `DriveApp`/`DocumentApp` needs Drive+Documents scopes. The
-  Apps Script "New version" deploy did NOT prompt for them — the consent is
-  triggered by **RUNNING a function in the editor**: pick `driveList` → ▶ Run →
-  Review permissions → Allow (once). Until that's done, `drive-*` throws and
-  `/docs` shows the error. Folder must be named exactly `Artifact` in **My Drive**
-  (`getFoldersByName` doesn't search Shared drives). VERIFIED LIVE 2026-06-17.
+- **Reference documents (Drive "Artifact" folder, Gemma + OWNER only)** — the
+  Drive folder named **`Artifact`** (in **My Drive**; `getFoldersByName` doesn't
+  search Shared drives) has **two subfolders**, two tiers of context:
+  - **`Artifact/Profile/` = Global Context, ALWAYS on.** Every owner Gemma turn
+    folds it into a `// PROFILE (GLOBAL CONTEXT)` block — no command, no flag (keep
+    the profile SHORT, it costs tokens every turn). `worker.js` `getProfileContent`
+    → `renderProfileBlock`, KV-cached 5min (`profile:cache`). **`/my_profile`**
+    (`προφίλ`) just LISTS the profile files (front-end `showProfile` → `drive-list`).
+  - **`Artifact/Library/` = selective, loaded on demand.** **`/lib`** (`βιβλιοθήκη`)
+    lists it numbered (like `/memory`; front-end `listLibrary` → `lib-list`, caches
+    the order in `libIndex`). **`/read N`** / **`/read 1+2`** (also `1,2`, `1-3`,
+    `all`, and Greek `διάβασε 1+2`) loads the chosen files — **REPLACE semantics**
+    (a new `/read` swaps the selection, not additive); **`/read off`** unloads.
+    Parsing is front-end (`parseReadCommand`/`parseIndexList`/`runRead`, gated to
+    `persona==='gemma'`); the bare word form only fires when a number/keyword
+    follows (so "read this for me" isn't swallowed). On `/read` the front-end calls
+    `lib-read {names}` and shows **`✅ Διάβασα: …`** from the engine's `read[]`
+    (the files that actually yielded text — so PDFs/images that extract nothing are
+    reported as skipped, not silently loaded). The loaded names live in
+    `libSelection` (IN-MEMORY → resets on reload, keeps the token cost opt-in) and
+    ride along as `libFiles:[…]` on each Gemma turn; the engine folds them into a
+    `// LIBRARY` block (`getLibraryContent` → `renderLibraryBlock`, KV-cached per
+    selection under `lib:<sorted-names>`, warmed by `handleDriveOp` lib-read).
+  - **No separate OAuth/API project:** the Apps Script runs AS the owner, so
+    `engine/apps-script.gs` uses `DriveApp`/`DocumentApp` on the owner's own Drive
+    (gated by the same optional `MEM_TOKEN`). `driveSubfolder` finds Profile/Library
+    under the `Artifact` root; `listFiles`/`readFiles` are shared by `driveList`/
+    `driveRead` (Profile) and `libList`/`libRead` (Library). Both capped
+    `DRIVE_MAX_CHARS`=12000, `### filename` headers; only **Google Docs + text/md/
+    csv/json** are extracted (**PDF/images/Office skipped** — need OCR/convert).
+  - ⚠️ `DriveApp`/`DocumentApp` need Drive+Documents scopes; the "New version"
+    deploy does NOT prompt — consent is triggered by **RUNNING a function in the
+    editor** (pick `driveList` → ▶ Run → Review permissions → Allow, once). The
+    scopes are unchanged from the old `/docs` model, so an already-authorized script
+    needs no re-consent. (Replaces the old all-or-nothing `/docs` toggle — REMOVED.)
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active

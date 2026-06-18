@@ -38,10 +38,15 @@
  * matching token or are rejected. The Worker sends it from its own MEM_TOKEN
  * secret. Logging stays token-free.
  *
- * Owner Drive folder: { action: "drive-list" | "drive-read" } reads the owner's
- * Drive "Artifact" folder (this script runs AS the owner — no separate OAuth).
- *   drive-list -> { ok, folderFound, files:[{name,type}] }
- *   drive-read -> { ok, folderFound, text }  (Docs + text/md/csv/json; capped)
+ * Owner Drive folder: { action: "drive-*" | "lib-*" } reads the owner's Drive
+ * "Artifact" folder (this script runs AS the owner — no separate OAuth). The
+ * folder has TWO subfolders:
+ *   Artifact/Profile/ — always-on Global Context (folded into every owner turn).
+ *   Artifact/Library/ — selective reference, loaded on demand with /read.
+ *   drive-list -> { ok, folderFound, files:[{name,type}] }   (Profile files)
+ *   drive-read -> { ok, folderFound, text }   (Profile text; Docs+text/md/csv/json; capped)
+ *   lib-list   -> { ok, folderFound, files:[{name,type}] }   (Library files)
+ *   lib-read   -> { ok, folderFound, text, read:[name] }     (only the named Library files)
  * Adding DriveApp/DocumentApp needs Drive + Documents scopes → the owner must
  * RE-AUTHORIZE on the next deploy (a one-time consent screen).
  */
@@ -51,8 +56,10 @@ var HEADERS = ["Timestamp", "User message", "Bot reply", "Model", "Who"];
 var PERSONA_TABS = { dion: "DION" };
 var MEMORY_TAB = "Memory";
 var MEMORY_HEADERS = ["Fact", "Added"];
-var DRIVE_FOLDER = "Artifact";   // Drive folder Gemma reads on /docs
-var DRIVE_MAX_CHARS = 12000;     // total text budget folded into the prompt
+var DRIVE_FOLDER = "Artifact";      // root folder in the owner's My Drive
+var PROFILE_SUBFOLDER = "Profile";  // always-on Global Context (folded every turn)
+var LIBRARY_SUBFOLDER = "Library";  // selective reference, loaded on demand (/read)
+var DRIVE_MAX_CHARS = 12000;        // total text budget folded into the prompt
 
 function doPost(e) {
   try {
@@ -62,7 +69,8 @@ function doPost(e) {
       return handleMemory(data);
     }
     // Owner Drive-folder reads (the "Artifact" folder), not the log.
-    if (data.action && String(data.action).indexOf("drive-") === 0) {
+    if (data.action && (String(data.action).indexOf("drive-") === 0 ||
+                        String(data.action).indexOf("lib-") === 0)) {
       return handleDrive(data);
     }
     var sheet = sheetForPersona(data.persona);
@@ -207,8 +215,10 @@ function handleDrive(data) {
   }
   try {
     switch (data.action) {
-      case "drive-list": return jsonOut(driveList());
-      case "drive-read": return jsonOut(driveRead());
+      case "drive-list": return jsonOut(driveList());          // Profile files (listing)
+      case "drive-read": return jsonOut(driveRead());          // Profile text (always-on)
+      case "lib-list":   return jsonOut(libList());            // Library files (listing)
+      case "lib-read":   return jsonOut(libRead(data.names));  // only the named Library files
       default:           return jsonOut({ ok: false, error: "unknown-action" });
     }
   } catch (err) {
@@ -221,33 +231,76 @@ function driveFolder() {
   return it.hasNext() ? it.next() : null;
 }
 
-function driveList() {
-  var folder = driveFolder();
-  if (!folder) return { ok: true, folderFound: false, files: [] };
+// A named subfolder ("Profile"/"Library") inside the "Artifact" root, or null.
+function driveSubfolder(name) {
+  var root = driveFolder();
+  if (!root) return null;
+  var it = root.getFoldersByName(name);
+  return it.hasNext() ? it.next() : null;
+}
+
+// Shared listing: [{name,type}] for every file directly in `folder`.
+function listFiles(folder) {
   var files = [], it = folder.getFiles();
   while (it.hasNext()) {
     var f = it.next();
     files.push({ name: f.getName(), type: f.getMimeType() });
   }
-  return { ok: true, folderFound: true, files: files };
+  return files;
 }
 
-function driveRead() {
-  var folder = driveFolder();
-  if (!folder) return { ok: true, folderFound: false, text: "" };
-  var parts = [], total = 0, it = folder.getFiles();
+// Shared read: concatenated "### name\n<text>" for files in `folder`, capped at
+// DRIVE_MAX_CHARS. When `wantNames` is given (Library /read), only those names
+// are read; null reads them all (Profile). Returns { text, read:[names that
+// actually yielded text] } so the caller can confirm what was loaded.
+function readFiles(folder, wantNames) {
+  var want = null;
+  if (wantNames && wantNames.length) {
+    want = {};
+    wantNames.forEach(function (n) { want[String(n)] = true; });
+  }
+  var parts = [], read = [], total = 0, it = folder.getFiles();
   while (it.hasNext() && total < DRIVE_MAX_CHARS) {
-    var f = it.next();
+    var f = it.next(), nm = f.getName();
+    if (want && !want[nm]) continue;
     var text = extractFileText(f);
-    if (!text) continue;
-    var chunk = "### " + f.getName() + "\n" + text.trim();
+    if (!text) continue;  // PDF/image/Office → skipped (no extractable text)
+    var chunk = "### " + nm + "\n" + text.trim();
     if (total + chunk.length > DRIVE_MAX_CHARS) {
       chunk = chunk.slice(0, Math.max(0, DRIVE_MAX_CHARS - total)) + "\n…(truncated)";
     }
     parts.push(chunk);
+    read.push(nm);
     total += chunk.length;
   }
-  return { ok: true, folderFound: true, text: parts.join("\n\n") };
+  return { text: parts.join("\n\n"), read: read };
+}
+
+// Profile = Artifact/Profile/ — the always-on Global Context.
+function driveList() {
+  var folder = driveSubfolder(PROFILE_SUBFOLDER);
+  if (!folder) return { ok: true, folderFound: false, files: [] };
+  return { ok: true, folderFound: true, files: listFiles(folder) };
+}
+
+function driveRead() {
+  var folder = driveSubfolder(PROFILE_SUBFOLDER);
+  if (!folder) return { ok: true, folderFound: false, text: "" };
+  return { ok: true, folderFound: true, text: readFiles(folder, null).text };
+}
+
+// Library = Artifact/Library/ — selective reference, loaded by name on /read.
+function libList() {
+  var folder = driveSubfolder(LIBRARY_SUBFOLDER);
+  if (!folder) return { ok: true, folderFound: false, files: [] };
+  return { ok: true, folderFound: true, files: listFiles(folder) };
+}
+
+function libRead(names) {
+  var folder = driveSubfolder(LIBRARY_SUBFOLDER);
+  if (!folder) return { ok: true, folderFound: false, text: "", read: [] };
+  var r = readFiles(folder, names);
+  return { ok: true, folderFound: true, text: r.text, read: r.read };
 }
 
 // Extract plain text from a file, or "" if the type isn't supported.
