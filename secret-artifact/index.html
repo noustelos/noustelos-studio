@@ -850,6 +850,36 @@
     // libIndex is the last /lib listing (number → name) so /read can resolve it.
     let libSelection = [];
     let libIndex = [];
+
+    // The command directory shown by /dir — a single source of truth for every
+    // owner command. Kept here (front-end) on purpose: it must NOT live in the
+    // always-on Drive profile (that bloats the prompt and slows every turn).
+    const COMMANDS_HELP = [
+      '⌘ ΕΝΤΟΛΕΣ — The Artifact',
+      '',
+      'ΜΝΗΜΗ (μόνιμα facts, cross-device)',
+      '• θυμήσου … / remember … — αποθηκεύει ένα fact',
+      '• /memory (μνήμη) — λίστα αποθηκευμένων, αριθμημένα',
+      '• /forget N (σβήσε 2) — σβήνει το #N',
+      '• /forget (ξέχασέ τα, /forget all) — καθαρίζει όλη τη μνήμη',
+      '',
+      'PROFILE & ΒΙΒΛΙΟΘΗΚΗ (Drive: Artifact/Profile + Artifact/Library)',
+      '• /my_profile (προφίλ) — δείχνει τα αρχεία του Profile (διαβάζονται πάντα)',
+      '• /lib (βιβλιοθήκη) — αριθμημένη λίστα της βιβλιοθήκης',
+      '• /read 1 · /read 1+2 · /read 1-3 · /read all — φορτώνει αρχεία στην κουβέντα',
+      '• /read off — ξεφορτώνει τη βιβλιοθήκη',
+      '',
+      'ΑΝΑΖΗΤΗΣΗ ΣΤΟ ΙΝΤΕΡΝΕΤ (μία απάντηση, μόνο Gemma)',
+      '• Ξεκίνα με: ψάξε… / γκουγκλάρισε… / search…',
+      '• Ή φράση: «…στο ίντερνετ», «google it», «look it up»',
+      '',
+      'ΦΩΝΕΣ / PERSONA',
+      '• DION — concierge Μυκόνου  ·  GEMMA — επιστροφή στο Artifact',
+      '• /voices (φωνές) — τι φωνές TTS εκθέτει η συσκευή',
+      '',
+      '• /dir (εντολές) — αυτή η λίστα',
+    ].join('\n');
+
     async function driveOp(op) {
       const res = await fetch(API_URL, {
         method: 'POST',
@@ -1252,6 +1282,16 @@
           );
         };
         renderVoices();
+        focusInput();
+        return;
+      }
+
+      // /dir — the command directory. A static, local listing of every owner
+      // command (no model call, no engine round-trip) so the reference can't
+      // bloat the always-on profile or slow a turn. Works in either persona.
+      if (/^\/?\s*dir$/.test(cmd) || cmd === 'εντολές' || cmd === 'εντολες') {
+        input.value = '';
+        addBubble(COMMANDS_HELP, 'system');
         focusInput();
         return;
       }

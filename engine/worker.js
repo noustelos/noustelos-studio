@@ -178,25 +178,26 @@ export default {
       ? (env.DION_SYSTEM_PROMPT || DEFAULTS.DION_SYSTEM_PROMPT)
       : (env.SYSTEM_PROMPT || DEFAULTS.SYSTEM_PROMPT);
 
-    // Long-term memory (Gemma + OWNER only): durable facts pinned with "θυμήσου",
-    // now stored server-side in the Sheet "Memory" tab (cross-device, owner-
-    // private) and read here — folded into the system instruction so they survive
-    // history trimming and new sessions. DION has no memory; guests get none.
+    // Owner context (Gemma only): durable MEMORY (Sheet "Memory" tab, cross-
+    // device), the always-on PROFILE (Drive Artifact/Profile/, Global Context),
+    // and any LIBRARY files the owner loaded with /read (names in body.libFiles,
+    // for THIS conversation only). DION has no memory/docs; guests get none.
+    // These reads run CONCURRENTLY (not sequentially) and each fails open on a
+    // slow cold read — they happen BEFORE streaming starts, so a serial stall
+    // here would leave the browser staring at silence until it cuts the
+    // connection ("SIGNAL LOST" on the first, cache-cold turn).
     if (persona !== "dion" && who === "owner") {
-      basePrompt += renderMemoryBlock(await getOwnerMemory(env));
-    }
-
-    // Reference documents (Gemma + owner only), split into two tiers:
-    //   PROFILE — the owner's Drive Artifact/Profile/ folder, ALWAYS folded in as
-    //     Global Context (keep the profile short — it costs tokens every turn).
-    //   LIBRARY — Artifact/Library/ files the owner explicitly loaded with /read;
-    //     the front-end sends their names in libFiles for THIS conversation only.
-    if (persona !== "dion" && who === "owner") {
-      basePrompt += renderProfileBlock(await getProfileContent(env));
       const libFiles = Array.isArray(body.libFiles)
         ? body.libFiles.filter((n) => typeof n === "string" && n)
         : [];
-      if (libFiles.length) basePrompt += renderLibraryBlock(await getLibraryContent(env, libFiles));
+      const [memory, profile, library] = await Promise.all([
+        getOwnerMemory(env),
+        getProfileContent(env),
+        libFiles.length ? getLibraryContent(env, libFiles) : Promise.resolve(""),
+      ]);
+      basePrompt += renderMemoryBlock(memory);
+      basePrompt += renderProfileBlock(profile);
+      if (libFiles.length) basePrompt += renderLibraryBlock(library);
     }
 
     // Live persona-tuner params from the front-end (all optional). The sliders
@@ -553,6 +554,12 @@ function renderMemoryBlock(memory) {
 // through the cache. A manual edit of the Memory tab shows up within the TTL.
 const MEMORY_CACHE_TTL = 60 * 1000;
 
+// Cap each Apps Script round-trip so a slow cold read can't stall a chat turn.
+// These run BEFORE streaming starts (memory/profile/library), so an unbounded
+// wait here = the browser sees silence and cuts the connection. On timeout we
+// fail open (return {ok:false} → empty block this turn) rather than hang.
+const SHEETS_TIMEOUT_MS = 6000;
+
 async function sheetsMemoryCall(env, action, extra) {
   if (!env.SHEETS_WEBHOOK_URL) return { ok: false, error: "unconfigured" };
   try {
@@ -560,6 +567,7 @@ async function sheetsMemoryCall(env, action, extra) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, token: env.MEM_TOKEN || "", ...(extra || {}) }),
+      signal: AbortSignal.timeout(SHEETS_TIMEOUT_MS),
     });
     return await res.json();
   } catch (err) {

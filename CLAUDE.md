@@ -119,6 +119,13 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
     the profile SHORT, it costs tokens every turn). `worker.js` `getProfileContent`
     → `renderProfileBlock`, KV-cached 5min (`profile:cache`). **`/my_profile`**
     (`προφίλ`) just LISTS the profile files (front-end `showProfile` → `drive-list`).
+    ⚠️ Do NOT put the command reference in the profile — that's what `/dir` is for
+    (a big always-on block both bloats every prompt and lengthens the cold first
+    read → "no answer, just the spiner" on turn 1). The owner reads (memory +
+    profile + library) run **concurrently** (`Promise.all`) and each Apps Script
+    round-trip is bounded by `SHEETS_TIMEOUT_MS` (6s, `AbortSignal.timeout`) so a
+    slow cold read **fails open** (empty block that turn) instead of stalling the
+    pre-stream awaits and tripping SIGNAL LOST.
   - **`Artifact/Library/` = selective, loaded on demand.** **`/lib`** (`βιβλιοθήκη`)
     lists it numbered (like `/memory`; front-end `listLibrary` → `lib-list`, caches
     the order in `libIndex`). **`/read N`** / **`/read 1+2`** (also `1,2`, `1-3`,
@@ -146,6 +153,12 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
     editor** (pick `driveList` → ▶ Run → Review permissions → Allow, once). The
     scopes are unchanged from the old `/docs` model, so an already-authorized script
     needs no re-consent. (Replaces the old all-or-nothing `/docs` toggle — REMOVED.)
+- **Command directory (`/dir`)** — a STATIC, front-end listing of every owner
+  command (`εντολές` also triggers it), rendered from the `COMMANDS_HELP` const in
+  `secret-artifact/index.html`. No model call, no engine round-trip — handled in
+  the dispatch next to `/voices`, so it works in either persona. It's the single
+  source of truth for the command reference; deliberately NOT folded into the
+  always-on profile (see the Profile warning above). Update commands here.
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active
