@@ -215,7 +215,22 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   `cleanForSpeech` strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/keycap) and
   markdown markers (`* _ \` # > ~ |`) before speaking so the engine doesn't pause
   on symbols or read emoji names aloud.
-- **Boot splash** — 5s neon "ARTIFACT" intro that fades into the chat.
+- **Skin switch (visual only, front-end)** — a header **SKIN** button (next to
+  TUNE/LOCK/RESET, half-filled-circle icon) cycles the front-end *skin*: the
+  default **Neon** (deep-space/cyberpunk, cyan/magenta/violet) and **Vault**
+  (obsidian + gold "Foundation" arcane look — gold/copper/violet-glow palette +
+  Cormorant Garamond / JetBrains Mono fonts). Pure presentation: NO engine call,
+  NO effect on persona/transcript/memory/params. The whole visual identity is
+  variable-driven — `:root` holds Neon, `:root[data-skin="vault"]` overrides it.
+  Accents live as bare R,G,B **triples** (`--rgb-1/2/3`, `--rgb-bg0/1/2`) so any
+  `rgba(var(--rgb-1), .35)` glow themes; named colors (`--glow-cyan` etc.) derive
+  from them, so swapping a triple recolors everything. To add a skin: add a
+  `:root[data-skin="<name>"]` block + the name to the JS `SKINS` array. Persisted
+  per-device in `localStorage` (`artifact.skin.v1`); a tiny `<head>` bootstrap
+  applies the saved skin BEFORE first paint (no neon→vault flash); `applySkin`
+  also retints the `theme-color` meta. Default skin carries NO `data-skin` attr.
+- **Boot splash** — 5s "ARTIFACT" intro that fades into the chat (themes with the
+  active skin — gold→copper gradient under Vault).
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
   top-only (NOT `inset:0`), so the input stays above the keyboard. `setAppHeight`
   writes BOTH `--app-height` (= `vv.height`) and `--app-top` (= `vv.offsetTop`);
