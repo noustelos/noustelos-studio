@@ -110,14 +110,6 @@ const translations = {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
       },
-      project3: {
-        alt: 'Vouraikos Gorge project preview',
-          desc: 'A destination website for Vouraikos Gorge, presenting the UNESCO Global Geopark with concise information and a sense of place.'
-      },
-      project4: {
-        alt: 'Odontotos railway project preview',
-        desc: 'A tourism page for the Odontotos railway and Vouraikos Gorge, built around video, clear trip context and mobile-first discovery.'
-      },
       project5: {
         alt: 'Honeymoon Beach Studios project preview',
         desc: 'A clean hotel page for a family-owned stay, designed to present rooms, location and booking context without unnecessary noise.'
@@ -243,14 +235,6 @@ const translations = {
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
         desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.'
-      },
-      project3: {
-        alt: 'Προεπισκόπηση project Φαράγγι Βουραϊκού',
-          desc: 'Destination website για το Φαράγγι Βουραϊκού, που παρουσιάζει το UNESCO Global Geopark με καθαρή πληροφορία και αίσθηση τόπου.'
-      },
-      project4: {
-        alt: 'Προεπισκόπηση project Οδοντωτός σιδηρόδρομος',
-        desc: 'Τουριστική σελίδα για τον Οδοντωτό και το Φαράγγι Βουραϊκού, με video, ξεκάθαρο trip context και mobile-first ανακάλυψη.'
       },
       project5: {
         alt: 'Προεπισκόπηση project Honeymoon Beach Studios',
