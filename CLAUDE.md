@@ -334,3 +334,17 @@ See the Passphrase gate bullet for the full "now public" note.
 - `script.js` / `styles.css` (+ `.min`), `chat-hero-mark.js` — site behavior/style.
 - `lab/`, `universe/`, `assets/` — page assets/experiments.
 - `tests/` — `npm test` runs `node --test tests/*.test.js`.
+- **iOS "endless canvas" drift (recurring) — fix is two-layer.** On iPhone a
+  single wide descendant (an ASCII `<pre>` diagram, a wide table, a long
+  unbreakable token) makes the whole page pannable like an infinite canvas
+  (sideways, and it reads as endless down-scroll). `overflow-x:hidden` on `<body>`
+  alone does NOT reliably clip this on iOS Safari. Two guards, both needed:
+  **(1) global** — `styles.css` `html { overflow-x: clip }` (clip, NOT hidden:
+  hidden on an ancestor breaks the `position:sticky` header; clip doesn't);
+  **(2) per-page** — the content grid item must be allowed to shrink so the wide
+  thing scrolls/wraps INTERNALLY instead of dragging the page: `min-width: 0` on
+  the grid child (`.project-article > article` on the deep-dive pages,
+  `.ai-lab-faq > article` on the FAQ pages). Grid/flex items default to
+  `min-width:auto` and won't shrink below their content — that's the root cause.
+  Any NEW `ai-lab*.html` / `*-details.html` / `*-faq.html` page needs the
+  per-page `min-width:0` on its article grid child. Verified across the set.

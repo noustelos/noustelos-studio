@@ -159,6 +159,11 @@
       gap: 1.4rem;
     }
 
+    /* Let the article grid item shrink so content wraps to the viewport
+       instead of dragging the whole page sideways on iOS (same guard as the
+       deep-dive pages' .project-article > article). */
+    .ai-lab-faq > article { min-width: 0; }
+
     .faq-lead {
       margin: 0 0 clamp(1rem, 3vw, 1.8rem);
       padding-left: 1rem;

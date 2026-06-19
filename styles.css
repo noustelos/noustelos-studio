@@ -32,6 +32,11 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* iOS: a wide descendant must not turn the page into a pannable canvas
+     ("endless" sideways/down drift). overflow-x:hidden on <body> alone
+     doesn't reliably clip on iOS Safari; clip on <html> does — without
+     breaking the sticky header or smooth scroll the way overflow:hidden would. */
+  overflow-x: clip;
 }
 
 button,
