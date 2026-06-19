@@ -173,9 +173,11 @@ const translations = {
       directEmail: 'Studio Email',
       form: {
         nameLabel: 'Your name',
+        emailLabel: 'Your email',
         messageLabel: 'Project brief',
         artifactLabel: "I'm interested in the Artifact access code",
         submit: 'Open email draft',
+        gmailSubmit: 'Open in Gmail',
         note: 'This opens your email app with the message ready.',
         checking: 'Checking request...',
         opening: 'Opening email draft...',
@@ -305,9 +307,11 @@ const translations = {
       directEmail: 'Studio Email',
       form: {
         nameLabel: 'Το όνομά σου',
+        emailLabel: 'Το email σου',
         messageLabel: 'Σύντομο project brief',
         artifactLabel: 'Με ενδιαφέρει ο κωδικός πρόσβασης για το Artifact',
         submit: 'Άνοιγμα email draft',
+        gmailSubmit: 'Άνοιγμα στο Gmail',
         note: 'Ανοίγει την εφαρμογή email με το μήνυμα έτοιμο.',
         checking: 'Γίνεται έλεγχος αιτήματος...',
         opening: 'Άνοιγμα email draft...',
@@ -492,34 +496,53 @@ const setupContactForm = () => {
     });
   });
 
-  contactForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  const gmailButton = contactForm.querySelector('.js-gmail');
+  const contactButtons = [contactSubmitButton, gmailButton].filter(Boolean);
+  const setContactButtonsDisabled = (disabled) => {
+    contactButtons.forEach((btn) => { btn.disabled = disabled; });
+  };
+
+  // mode: 'mailto' opens the user's default mail app; 'gmail' opens Gmail web compose.
+  // preOpened is a window handle opened synchronously on the click (for 'gmail') so the
+  // popup blocker doesn't swallow the new tab after the awaited reCAPTCHA call.
+  const sendContact = async (mode, preOpened) => {
+    const closePreOpened = () => {
+      if (preOpened && !preOpened.closed) {
+        preOpened.close();
+      }
+    };
 
     const formData = new FormData(contactForm);
     const botField = (formData.get('website') || '').toString().trim();
 
     if (botField) {
+      closePreOpened();
       return;
     }
 
     const nameInput = contactForm.querySelector('[name="name"]');
+    const emailInput = contactForm.querySelector('[name="email"]');
     const messageInput = contactForm.querySelector('[name="message"]');
     const name = (formData.get('name') || '').toString().trim();
+    const email = (formData.get('email') || '').toString().trim();
     const message = (formData.get('message') || '').toString().trim();
     const wantsArtifact = formData.get('artifact') === 'yes';
 
     nameInput && nameInput.classList.remove('is-invalid');
+    emailInput && emailInput.classList.remove('is-invalid');
     messageInput && messageInput.classList.remove('is-invalid');
 
-    if (!name || !message) {
+    const emailValid = Boolean(email) && (!emailInput || emailInput.checkValidity());
+
+    if (!name || !emailValid || !message) {
       if (!name && nameInput) nameInput.classList.add('is-invalid');
+      if (!emailValid && emailInput) emailInput.classList.add('is-invalid');
       if (!message && messageInput) messageInput.classList.add('is-invalid');
+      closePreOpened();
       return;
     }
 
-    if (contactSubmitButton) {
-      contactSubmitButton.disabled = true;
-    }
+    setContactButtonsDisabled(true);
 
     try {
       setContactFormNote(isRecaptchaConfigured ? 'contact.form.checking' : 'contact.form.note');
@@ -530,11 +553,8 @@ const setupContactForm = () => {
       }
     } catch (_error) {
       setContactFormNote('contact.form.verificationError');
-
-      if (contactSubmitButton) {
-        contactSubmitButton.disabled = false;
-      }
-
+      setContactButtonsDisabled(false);
+      closePreOpened();
       return;
     }
 
@@ -542,29 +562,48 @@ const setupContactForm = () => {
       wantsArtifact ? `Artifact access request from ${name}` : `Project inquiry from ${name}`
     );
     const body = encodeURIComponent(
-      `Name: ${name}\n\nProject brief:\n${message}` +
+      `Name: ${name}\nEmail: ${email}\n\nProject brief:\n${message}` +
       (wantsArtifact ? '\n\n---\nI would like the Artifact access code.' : '')
     );
-    
+
     if (contactFormNote) {
       contactFormNote.textContent = ''; // Clear it to avoid double announcement
     }
-    
+
     const statusEl = document.querySelector('#contact-status');
     if (statusEl) {
       statusEl.textContent = getNestedValue(getCurrentLanguageContent(), 'contact.form.opening') || 'Opening email draft...';
     }
 
-    window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
+    if (mode === 'gmail') {
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=info@noustelos.gr&su=${subject}&body=${body}`;
+      if (preOpened && !preOpened.closed) {
+        preOpened.location.href = gmailUrl;
+      } else {
+        window.open(gmailUrl, '_blank', 'noopener') || (window.location.href = gmailUrl);
+      }
+    } else {
+      window.location.href = `mailto:info@noustelos.gr?subject=${subject}&body=${body}`;
+    }
 
     window.setTimeout(() => {
-      if (contactSubmitButton) {
-        contactSubmitButton.disabled = false;
-      }
-
+      setContactButtonsDisabled(false);
       setContactFormNote('contact.form.note');
     }, 1200);
+  };
+
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    sendContact('mailto', null);
   });
+
+  if (gmailButton) {
+    gmailButton.addEventListener('click', () => {
+      // Open the tab now, inside the user gesture, then redirect it post-reCAPTCHA.
+      const preOpened = window.open('about:blank', '_blank');
+      sendContact('gmail', preOpened);
+    });
+  }
 };
 
 const setupCookieConsent = () => {

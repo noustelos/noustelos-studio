@@ -312,6 +312,9 @@
             <label for="contact-name" data-i18n="contact.form.nameLabel">Your name</label>
             <input id="contact-name" name="name" type="text" autocomplete="name" required />
 
+            <label for="contact-email" data-i18n="contact.form.emailLabel">Your email</label>
+            <input id="contact-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-required="true" />
+
             <label for="contact-message" data-i18n="contact.form.messageLabel">Project brief</label>
             <textarea id="contact-message" name="message" rows="4" required aria-required="true"></textarea>
 
@@ -328,7 +331,10 @@
             </div>
             <input id="recaptcha-token" name="g-recaptcha-response" type="hidden" />
 
-            <button class="button button-primary" type="submit" data-i18n="contact.form.submit">Open email draft</button>
+            <div class="contact-form-actions">
+              <button class="button button-primary" type="submit" data-i18n="contact.form.submit">Open email draft</button>
+              <button class="button button-secondary js-gmail" type="button" data-i18n="contact.form.gmailSubmit">Open in Gmail</button>
+            </div>
             <p class="contact-form-note" data-i18n="contact.form.note">This opens your email app with the message ready.</p>
           </form>
       </div>
@@ -375,6 +381,6 @@
     </div>
 
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
-  <script src="script.min.js?v=ed9fee5"></script>
+  <script src="script.min.js?v=gmail01"></script>
 </body>
 </html>

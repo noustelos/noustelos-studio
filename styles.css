@@ -831,6 +831,17 @@ h1 {
   flex: none;
 }
 
+.contact-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contact-form-actions .button {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
 .contact-form-note {
   margin: 0.15rem 0 0;
   font-size: 13px;
