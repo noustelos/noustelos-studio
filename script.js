@@ -106,6 +106,11 @@ const translations = {
         desc: 'A free AI guide for Santorini visitors, designed to answer practical questions about beaches, sunsets, tours, food, transport and what to do today.',
         secondary: 'Built as a fast, premium MVP with a clear path toward affiliate tours, local partnerships and hotel concierge tools.'
       },
+      artifact: {
+        alt: 'The Artifact AI chat playground preview',
+        desc: 'An experimental AI chat playground with switchable personalities, a live persona tuner, voice input and read-aloud, and long-term memory — an experiment in making an AI assistant feel personal, fast and a little uncanny. The access code is available on request — just ask by email.',
+        details: 'Project Details'
+      },
       project1: {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
@@ -169,6 +174,7 @@ const translations = {
       form: {
         nameLabel: 'Your name',
         messageLabel: 'Project brief',
+        artifactLabel: "I'm interested in the Artifact access code",
         submit: 'Open email draft',
         note: 'This opens your email app with the message ready.',
         checking: 'Checking request...',
@@ -231,6 +237,11 @@ const translations = {
         label: 'Featured Launch',
         desc: 'Ένας δωρεάν AI οδηγός για επισκέπτες της Σαντορίνης, σχεδιασμένος να απαντά σε πρακτικές ερωτήσεις για παραλίες, ηλιοβασιλέματα, tours, φαγητό, μετακινήσεις και τι να κάνεις σήμερα.',
         secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.'
+      },
+      artifact: {
+        alt: 'Προεπισκόπηση The Artifact AI chat playground',
+        desc: 'Ένα πειραματικό AI chat playground με εναλλασσόμενες προσωπικότητες, live persona tuner, φωνητική εισαγωγή και read-aloud, και μακροπρόθεσμη μνήμη — ένα πείραμα στο πώς ένας AI assistant μπορεί να νιώθει προσωπικός, γρήγορος και λίγο uncanny. Ο κωδικός εισόδου παρέχεται κατόπιν αιτήματος μέσω email.',
+        details: 'Λεπτομέρειες Project'
       },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
@@ -295,6 +306,7 @@ const translations = {
       form: {
         nameLabel: 'Το όνομά σου',
         messageLabel: 'Σύντομο project brief',
+        artifactLabel: 'Με ενδιαφέρει ο κωδικός πρόσβασης για το Artifact',
         submit: 'Άνοιγμα email draft',
         note: 'Ανοίγει την εφαρμογή email με το μήνυμα έτοιμο.',
         checking: 'Γίνεται έλεγχος αιτήματος...',
@@ -494,6 +506,7 @@ const setupContactForm = () => {
     const messageInput = contactForm.querySelector('[name="message"]');
     const name = (formData.get('name') || '').toString().trim();
     const message = (formData.get('message') || '').toString().trim();
+    const wantsArtifact = formData.get('artifact') === 'yes';
 
     nameInput && nameInput.classList.remove('is-invalid');
     messageInput && messageInput.classList.remove('is-invalid');
@@ -525,8 +538,13 @@ const setupContactForm = () => {
       return;
     }
 
-    const subject = encodeURIComponent(`Project inquiry from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\n\nProject brief:\n${message}`);
+    const subject = encodeURIComponent(
+      wantsArtifact ? `Artifact access request from ${name}` : `Project inquiry from ${name}`
+    );
+    const body = encodeURIComponent(
+      `Name: ${name}\n\nProject brief:\n${message}` +
+      (wantsArtifact ? '\n\n---\nI would like the Artifact access code.' : '')
+    );
     
     if (contactFormNote) {
       contactFormNote.textContent = ''; // Clear it to avoid double announcement

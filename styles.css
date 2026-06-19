@@ -814,6 +814,23 @@ h1 {
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
 }
 
+.contact-form .contact-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.contact-form .contact-checkbox input {
+  width: auto;
+  margin: 0;
+  flex: none;
+}
+
 .contact-form-note {
   margin: 0.15rem 0 0;
   font-size: 13px;
@@ -1017,6 +1034,17 @@ h3 {
 .card-content .button-link {
   margin-top: auto;
   align-self: flex-start;
+}
+
+.card-content .card-ctas {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+}
+
+.card-content .card-ctas .button-link {
+  margin-top: 0;
 }
 
 .project-secondary-copy {

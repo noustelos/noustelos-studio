@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>(function(){try{if(localStorage.getItem('siteLanguage')==='gr')document.documentElement.lang='el';}catch(e){}})()</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="The Artifact — architecture deep-dive: a two-voice, edge-native AI chat playground running Google's Gemma model on a stateless Cloudflare Worker, with voice, opt-in web grounding, Sheet-backed memory and Drive-backed context." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/artifact-details.html" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>The Artifact — Project Details | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── The Artifact project article ──────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+
+    /* Grid item must be allowed to shrink, otherwise the wide ASCII
+       diagram forces it past the viewport and the page drifts sideways
+       on mobile instead of the diagram scrolling internally. */
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code:not(.project-diagram code) {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* ASCII architecture diagram — exact monospace alignment preserved */
+    .project-diagram {
+      margin: 0.4rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-diagram code {
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* ── Owner command reference table ─────────────────────────── */
+    .command-table-wrap {
+      margin-top: 0.6rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .command-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(0.85rem, 1.6vw, 0.98rem);
+    }
+
+    .command-table th,
+    .command-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .command-table tr:last-child td { border-bottom: 0; }
+
+    .command-table .command-group th {
+      background: var(--surface-light);
+      color: var(--text-primary);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .command-table td:first-child {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.84em;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .command-note {
+      margin-top: 0.8rem !important;
+      font-size: 0.92rem !important;
+    }
+
+    /* ── Closing CTAs ──────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work" data-ai-i18n="nav.work">Work</a></li>
+        <li><a href="/index.html#services" data-ai-i18n="nav.services">Services</a></li>
+        <li><a href="/index.html#about" data-ai-i18n="nav.about">About</a></li>
+        <li><a href="/ai-lab.html">AI Lab</a></li>
+        <li><a href="/index.html#contact" data-ai-i18n="nav.contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language" data-ai-i18n-attr="aria-label:lang.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="artifact-title">
+      <article>
+        <p class="project-kicker" data-ai-i18n="kicker">AI Lab / Experiment</p>
+        <h2 id="artifact-title">The Artifact</h2>
+
+        <blockquote class="project-lead">
+          An experimental, edge-native AI chat playground — a two-voice conversational assistant with a tunable personality, voice in and out, opt-in live web grounding, durable memory and Drive-backed context, running end-to-end on a stateless Cloudflare Worker in front of Google&rsquo;s Gemma model. No server to patch, no always-on database.
+        </blockquote>
+
+        <h3>TL;DR</h3>
+        <p>The Artifact is a private, single-page <strong>conversational AI sandbox</strong> — a place to design personas, tune model behaviour and test LLM UX patterns in the open. It looks like a chat window; underneath it is a clean split between a dumb-but-pretty front-end and a stateless edge engine that does all the real thinking.</p>
+        <ul>
+          <li><strong>What</strong> — a two-voice AI chat playground with a live persona tuner, voice, web grounding, long-term memory and document context</li>
+          <li><strong>Model</strong> — Google <strong>Gemma</strong> (<code>gemma-4-31b-it</code>), an open-weights, instruction-tuned ~31B &ldquo;thinking&rdquo; model, served via the Google Generative Language (Gemini) API</li>
+          <li><strong>Stack</strong> — static HTML/CSS/JS front-end &middot; Cloudflare Worker engine &middot; Gemini API &middot; Google Apps Script + Sheets + Drive &middot; Cloudflare KV</li>
+          <li><strong>Edge-native</strong> — no server, no VM, no database server; the browser holds no secrets and no AI logic</li>
+          <li><strong>Built by</strong> — solo, AI-assisted</li>
+        </ul>
+
+        <h3>Two halves: the brains and the engine</h3>
+        <p>The system is deliberately split into two pieces that never share a codebase or a deploy path.</p>
+        <ul>
+          <li>The <strong>front-end</strong> (confusingly nicknamed &ldquo;the brains&rdquo;) is a single self-contained HTML file. It is <em>only</em> the UI: the chat window, the Persona Tuner sliders, the rolling transcript kept in <code>localStorage</code>, voice (speech-to-text and read-aloud), and the boot splash. It holds <strong>no secrets and no model logic</strong> — it just POSTs your messages to the engine and renders the answer as it streams back.</li>
+          <li>The <strong>engine</strong> is a Cloudflare Worker. This is where the real intelligence lives: the Google API key (kept secret), the system prompt and personas, the temperature, the actual call to Gemma, logging, and the passphrase gate. It is <strong>stateless</strong> — every request is independent, so there is no session to hijack and nothing to keep warm.</li>
+        </ul>
+
+        <pre class="project-diagram"><code>[ Browser — "the brains" / front-end ]
+   one self-contained HTML file · chat UI · Persona Tuner · voice (STT/TTS) · localStorage transcript
+        │
+        │  POST /api/chat   { messages, persona, params, memory, libFiles, passphrase }
+        ▼
+[ Cloudflare Worker — "the engine" ]   stateless · holds the API key, the personas & the gate
+        │
+        ├─→ Google Generative Language API → Gemma  (gemma-4-31b-it · a "thinking" model)
+        │      streaming SSE · reasoning parts stripped · heartbeats keep the pipe warm
+        ├─→ [opt-in] googleSearch tool → live web grounding for a single answer
+        ├─→ Apps Script + Google Sheets → per-turn logging + long-term memory (RAG-lite)
+        ├─→ Apps Script + Google Drive  → Profile (always-on) + Library (/read on demand)
+        └─→ Cloudflare KV → kill-switch flag + short-lived context caches</code></pre>
+
+        <h3>Which model is &ldquo;Gemma&rdquo;?</h3>
+        <p><strong>Gemma</strong> is Google&rsquo;s family of <strong>open-weights</strong> models — the smaller, openly published siblings of the proprietary Gemini line. The Artifact runs <code>gemma-4-31b-it</code>: the <em>instruction-tuned</em> (&ldquo;-it&rdquo;) variant, roughly <strong>31 billion parameters</strong>, accessed through Google&rsquo;s hosted Generative Language API rather than self-hosted on a GPU.</p>
+        <p>It is a <strong>&ldquo;thinking&rdquo; model</strong>: before it writes an answer it produces internal reasoning tokens. The API returns those reasoning parts flagged as <code>thought</code>, and the engine strips them out so you only ever see the final reply — but the thinking still happens first, which is why the typing dots can sit for a moment before tokens start streaming.</p>
+        <p>One consequence shapes the whole design: <strong>reasoning tokens count against the output budget.</strong> A low cap would let a long think clip the visible answer mid-sentence, so the budget is per-role — the owner gets a generous <code>8192</code>-token ceiling (room for long reasoning <em>and</em> a full answer), guests a leaner <code>2048</code>. Temperature and two persona dials (sarcasm, seriousness) are folded into the system instruction <em>per request</em>, so the same model can be re-flavoured on the fly without any retraining.</p>
+
+        <h3>What it can do</h3>
+        <ul>
+          <li><strong>Two personas, one window</strong> — <em>Gemma</em> (the default voice) and <em>DION</em>, a Mykonos-concierge character. Switching is a control word, not a model call, and each persona keeps its own separate transcript so the conversations never mix.</li>
+          <li><strong>A live Persona Tuner</strong> — sliders for temperature, sarcasm and seriousness, plus one-tap presets (<em>Brainstorming</em>, <em>The Mirror</em>, <em>The Architect</em>) that set all three at once.</li>
+          <li><strong>Streaming answers</strong> — replies arrive token-by-token over Server-Sent Events, so you read along as the model writes.</li>
+          <li><strong>Voice, both ways</strong> — dictation via the browser&rsquo;s speech recognition, and read-aloud via speech synthesis, with premium/enhanced voice selection where the device exposes it.</li>
+          <li><strong>Opt-in live web grounding</strong> — a single answer can be grounded in live Google Search when you explicitly ask for it (&ldquo;<em>search&hellip;</em>&rdquo;, &ldquo;<em>google it</em>&rdquo;, Greek &ldquo;<em>ψάξε&hellip;</em>&rdquo;); the engine attaches the <code>googleSearch</code> tool to <em>that request only</em>, so normal chat stays fast and offline-of-the-web.</li>
+          <li><strong>Long-term memory</strong> — a small curated set of pinned facts, durable and cross-device, stored server-side in a Google Sheet (a RAG-lite store kept separate from the rolling transcript). You add a fact with &ldquo;<em>remember&hellip;</em>&rdquo;, list with <code>/memory</code>, drop one with <code>/forget</code>.</li>
+          <li><strong>Document context from Drive</strong> — an <code>Artifact</code> folder in Drive with two tiers: a <em>Profile</em> that is always folded into context, and a <em>Library</em> loaded on demand with <code>/read</code>.</li>
+          <li><strong>A command directory</strong> (<code>/dir</code>) and an owner-only <strong>kill switch</strong> that can take the whole engine offline — and back — straight from the chat.</li>
+        </ul>
+
+        <h3>Owner command reference</h3>
+        <p>Everything above is driven by a small set of in-chat commands. They are <strong>owner-only</strong> — a guest passphrase can&rsquo;t trigger any of them — and most accept a Greek alias alongside the slash form (shown in parentheses). Typing <code>/dir</code> prints this same list inside the chat.</p>
+        <div class="command-table-wrap">
+          <table class="command-table">
+            <tbody>
+              <tr class="command-group"><th colspan="2">Memory — durable facts, cross-device</th></tr>
+              <tr><td>remember … <span style="opacity:.6">(θυμήσου …)</span></td><td>Save a fact to long-term memory (a Sheet-backed store, separate from the transcript).</td></tr>
+              <tr><td>/memory <span style="opacity:.6">(μνήμη)</span></td><td>List the saved facts, numbered.</td></tr>
+              <tr><td>/forget N <span style="opacity:.6">(σβήσε 2)</span></td><td>Delete fact #N.</td></tr>
+              <tr><td>/forget <span style="opacity:.6">(ξέχασέ τα, /forget all)</span></td><td>Clear the whole memory.</td></tr>
+
+              <tr class="command-group"><th colspan="2">Profile &amp; Library — Drive: Artifact/Profile + Artifact/Library</th></tr>
+              <tr><td>/my_profile <span style="opacity:.6">(προφίλ)</span></td><td>List the Profile files — the global context that is read into every owner turn.</td></tr>
+              <tr><td>/lib <span style="opacity:.6">(βιβλιοθήκη)</span></td><td>Numbered listing of the on-demand Library.</td></tr>
+              <tr><td>/read 1 · /read 1+2 · /read 1-3 · /read all</td><td>Load the chosen Library files into the conversation (replace semantics).</td></tr>
+              <tr><td>/read off</td><td>Unload the Library.</td></tr>
+
+              <tr class="command-group"><th colspan="2">Live web search — a single answer, Gemma only</th></tr>
+              <tr><td>ψάξε… · γκουγκλάρισε… · search…</td><td>Start a message with the verb to ground that one answer in live Google Search.</td></tr>
+              <tr><td>&ldquo;…στο ίντερνετ&rdquo; · &ldquo;google it&rdquo; · &ldquo;look it up&rdquo;</td><td>Or a natural-language phrase anywhere in the message — same effect, sentence left intact.</td></tr>
+
+              <tr class="command-group"><th colspan="2">Voices &amp; persona</th></tr>
+              <tr><td>DION · GEMMA</td><td>Switch persona — DION is the Mykonos concierge; GEMMA returns to the default Artifact voice. No model call.</td></tr>
+              <tr><td>/voices <span style="opacity:.6">(φωνές)</span></td><td>Show which TTS voices the device actually exposes, and which one would be picked.</td></tr>
+
+              <tr class="command-group"><th colspan="2">Misc</th></tr>
+              <tr><td>/dir <span style="opacity:.6">(εντολές)</span></td><td>Print this command list inside the chat (static, no model call).</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="command-note"><em>The command parsing is front-end; the memory, profile and library stores live server-side. There is also an owner-only kill switch driven by two secret phrases — deliberately not listed here.</em></p>
+
+        <h3>The Worker behind it</h3>
+        <p>The engine is a single Cloudflare Worker, deployed with <code>wrangler</code> (not a git-connected build). Stateless by design, it owns every sensitive thing in one place: the Google API key, the system prompt and the DION persona, temperature resolution and dial-folding, the call to Gemma (both a streaming path and a non-streaming fallback), the passphrase gate, the kill switch, and logging.</p>
+        <h4>Streaming with heartbeats</h4>
+        <p>The Worker proxies Google&rsquo;s streaming endpoint, strips the model&rsquo;s thinking parts, and forwards the answer as it forms. The catch: while the model is &ldquo;thinking&rdquo; it can emit many chunks with <em>zero</em> answer tokens, leaving the browser connection idle for seconds — long enough for the network to cut it and surface a &ldquo;SIGNAL LOST&rdquo; error mid-thought. The fix is a stream of SSE heartbeat comments that keep the pipe warm until real tokens arrive.</p>
+        <h4>The passphrase gate</h4>
+        <p>Access is gated server-side. The Worker accepts multiple codes that each map to a role — <em>owner</em> or <em>guest</em> — and the matched role is logged and decides how much context and budget that turn gets. Revoking a guest is a one-line runtime change, no redeploy.</p>
+        <h4>Owner-context fan-out, failing open</h4>
+        <p>On an owner turn the engine reads memory, profile and library <em>concurrently</em>, each bounded by a timeout. If a cold read is slow it <strong>fails open</strong> — that context is simply empty for the turn — rather than stalling the answer and tripping the same &ldquo;SIGNAL LOST&rdquo; failure. Short-lived caches in Cloudflare KV keep repeat turns from paying the round-trip every time.</p>
+
+        <h3>The ops layer — zero hosting</h3>
+        <p>Everything operational runs on <strong>Google Apps Script + Sheets + Drive</strong>, with no server to maintain. The same Apps Script endpoint logs every turn to a Sheet (timestamp, message, reply, model, role — routed to a per-persona tab) and backs the long-term-memory store. Because the script runs <em>as the owner</em>, it can read the owner&rsquo;s own Drive for the Profile and Library context without a separate OAuth project. A Cloudflare KV namespace holds the kill-switch flag and the context caches.</p>
+
+        <h3>Two deploy paths (a deliberate split)</h3>
+        <ul>
+          <li>The <strong>front-end</strong> ships via GitHub Pages — push to <code>main</code> and it is live, no build step.</li>
+          <li>The <strong>engine</strong> ships only via <code>wrangler deploy</code> from the <code>engine/</code> folder. Editing the Worker and pushing does <em>nothing</em> to the live engine until you redeploy it. The two are intentionally decoupled, so a UI change can never accidentally alter the brains.</li>
+        </ul>
+
+        <h3>Access &amp; status</h3>
+        <p>The Artifact is a personal playground rather than a product — live, evolving, and reachable from this site, but gated by a server-side passphrase. The access code is handed out on request by email (there&rsquo;s an opt-in tick on the contact form). It is designed, built and operated solo.</p>
+
+        <!-- ── Closing CTAs ─────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="/secret-artifact/" target="_blank" rel="noopener noreferrer" data-ai-i18n="cta.open">Open The Artifact</a>
+          <a class="button button-link" href="/index.html#contact" data-ai-i18n="cta.access">Request the access code</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var translations = {
+        en: {
+          meta: {
+            title: 'The Artifact — Project Details | Noustelos Studio',
+            description: "The Artifact — architecture deep-dive: a two-voice, edge-native AI chat playground running Google's Gemma model on a stateless Cloudflare Worker, with voice, opt-in web grounding, Sheet-backed memory and Drive-backed context."
+          },
+          nav: { work: 'Work', services: 'Services', about: 'About', contact: 'Contact' },
+          lang: { switchAria: 'Switch language' },
+          kicker: 'AI Lab / Experiment',
+          cta: { open: 'Open The Artifact', access: 'Request the access code' }
+        },
+        gr: {
+          meta: {
+            title: 'The Artifact — Λεπτομέρειες Project | Noustelos Studio',
+            description: 'The Artifact — τεχνική ανάλυση αρχιτεκτονικής: ένα edge-native AI chat playground με δύο φωνές, που τρέχει το μοντέλο Gemma της Google πάνω σε έναν stateless Cloudflare Worker, με φωνή, opt-in web grounding, μνήμη σε Google Sheet και context από το Drive.'
+          },
+          nav: { work: 'Portfolio', services: 'Υπηρεσίες', about: 'Σχετικά', contact: 'Επικοινωνία' },
+          lang: { switchAria: 'Αλλαγή γλώσσας' },
+          kicker: 'AI Lab / Πείραμα',
+          cta: { open: 'Άνοιγμα The Artifact', access: 'Ζήτησε τον κωδικό πρόσβασης' }
+        }
+      };
+
+      var safeStorage = {
+        get: function (key) {
+          try { return localStorage.getItem(key); } catch (_e) { return null; }
+        },
+        set: function (key, value) {
+          try { localStorage.setItem(key, value); } catch (_e) {}
+        }
+      };
+
+      var getNestedValue = function (obj, path) {
+        return path.split('.').reduce(function (acc, key) {
+          return acc && acc[key] !== undefined ? acc[key] : null;
+        }, obj);
+      };
+
+      var currentLanguage = 'en';
+
+      var applyLanguage = function (lang) {
+        currentLanguage = translations[lang] ? lang : 'en';
+        var langContent = translations[currentLanguage];
+
+        document.documentElement.lang = currentLanguage === 'gr' ? 'el' : 'en';
+        document.title = langContent.meta.title;
+
+        var description = document.querySelector('meta[name="description"]');
+        if (description) {
+          description.setAttribute('content', langContent.meta.description);
+        }
+
+        document.querySelectorAll('[data-ai-i18n]').forEach(function (element) {
+          var key = element.getAttribute('data-ai-i18n');
+          var value = getNestedValue(langContent, key);
+          if (typeof value === 'string') {
+            element.textContent = value;
+          }
+        });
+
+        document.querySelectorAll('[data-ai-i18n-attr]').forEach(function (element) {
+          element
+            .getAttribute('data-ai-i18n-attr')
+            .split(';')
+            .map(function (entry) { return entry.trim(); })
+            .filter(Boolean)
+            .forEach(function (mapping) {
+              var parts = mapping.split(':').map(function (part) { return part.trim(); });
+              var value = getNestedValue(langContent, parts[1]);
+              if (parts[0] && typeof value === 'string') {
+                element.setAttribute(parts[0], value);
+              }
+            });
+        });
+
+        if (langToggle) {
+          langToggle.querySelectorAll('[data-lang-option]').forEach(function (option) {
+            option.classList.toggle('is-active', option.getAttribute('data-lang-option') === currentLanguage);
+          });
+        }
+
+        safeStorage.set('siteLanguage', currentLanguage);
+      };
+
+      var preferredLanguage = (function () {
+        var storedLang = safeStorage.get('siteLanguage');
+        return storedLang === 'gr' || storedLang === 'en' ? storedLang : 'en';
+      })();
+
+      applyLanguage(preferredLanguage);
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          applyLanguage(currentLanguage === 'en' ? 'gr' : 'en');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

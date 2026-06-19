@@ -26,7 +26,12 @@ Confusingly named, so pin it down:
   Self-contained HTML/CSS/JS (no build). It's only the UI: chat window, the
   Persona Tuner sliders, localStorage transcript memory, voice (STT/TTS), boot
   splash. It holds **no secrets** and **no AI logic** — it just POSTs to the engine.
-  Live at https://noustelos.gr/secret-artifact/ (noindex/nofollow, kept hidden).
+  Live at https://noustelos.gr/secret-artifact/. **No longer hidden** — it's now a
+  portfolio project: an "The Artifact" card in `index.html` Selected Work links to
+  it (View Project) and to its architecture write-up
+  [`artifact-details.html`](artifact-details.html) (Project Details), it's
+  `index,follow` + in `sitemap.xml`. Still passphrase-gated; access stays opt-in
+  (see Passphrase gate / "now public" note below).
 - **"engine" = the Worker** → [`engine/worker.js`](engine/worker.js)
   Where the *real* AI brains live: Google API key (secret), system prompt /
   persona, temperature, the Gemma call, Sheets logging, passphrase gate.
@@ -229,10 +234,25 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   matched role is logged to the Sheet "Who" column. Revoke a guest with
   `wrangler secret delete GUEST_PASSPHRASE` (instant, runtime — no redeploy).
   Conversations never mix (memory is per-device localStorage; Worker stateless).
-  UI: input is a PLAIN text field — NO `type=password`, NO `-webkit-text-security`
-  (both made iOS treat it as a credential → AutoFill bar raised the keyboard and
-  a saved password haunted the chat input). Locked state shown by magenta border +
-  UNLOCK button (passphrase is visible while typing, by design). LOCK re-locks.
+  UI: input STAYS a PLAIN `type="text"` field — NO `type=password`, NO
+  `-webkit-text-security` (both made iOS treat it as a credential → AutoFill bar
+  raised the keyboard and a saved password haunted the chat input). Locked state
+  shown by magenta border + UNLOCK button. **Masking (now ON):** while locked the
+  passphrase IS dot-masked, but **in JS, not via the field type** — the real chars
+  live in `lockedEntry`, the visible field shows `MASK_CHAR` (`•`) (`maskLockedInput`
+  diffs against the caret so backspace/delete/paste stay in sync). `handleSubmit`
+  reads `lockedEntry` while locked (falls back to `input.value` for the
+  mic/programmatic path, which fires no `input` event); `lock()` clears both. Keep
+  it pure-JS — do NOT reintroduce password type / text-security. LOCK re-locks.
+  **"Now public":** the Artifact is linked from the portfolio (see the brains
+  bullet); the gate is the only thing keeping it owner/guest-scoped. The guest code
+  `2026` is the public access code, **handed out on request by email** — NOT shown
+  on the site; the `index.html` contact form has an opt-in checkbox (`name=artifact`
+  → `work.artifact`/`contact.form.artifactLabel`) that flips the mailto subject to
+  "Artifact access request" so requests are easy to spot. There's still NO guest
+  rate-limiting on the live (owner) engine — that protection stays parked on
+  `artifact-public-wip` (see below), so every guest turn spends against the Google
+  billing cap.
 
 ## Kill switch (chat only, owner-only)
 Engine-wide OFF for everyone, triggered ONLY from the chat — **no terminal kill**.
@@ -286,24 +306,31 @@ entry (so the secret phrase isn't persisted) and shows the result.
   repo-root build scans `node_modules` >25MB and fails).
 - Memory is per-device (localStorage), not synced across devices.
 
-## Parked / NOT live — public Artifact (do not resurrect without asking)
-A "show the Artifact publicly in the AI Lab" feature was started then cancelled.
-It is **reverted off `main`** and parked on branch **`artifact-public-wip`**.
-- That branch has Stage 1 only: Worker guest-guardrails (Cloudflare Turnstile +
-  HMAC session tokens + KV per-IP/global rate limit) in `engine/worker.js` +
-  `wrangler.toml`. It was NEVER deployed. The planned public page
-  (`ai-artifact.html` with visible guest code 2026 + info panel) was NOT built.
-- **Guests currently cannot reach the Artifact**: no public page, no nav link.
-  Only the hidden owner page (`secret-artifact/`, noindex, unlinked) exists.
-- `GUEST_PASSPHRASE` (`2026`) is still set on the live Worker but is harmless
-  while nothing public talks to it. To fully retire guests:
-  `wrangler secret delete GUEST_PASSPHRASE`.
-- To revive: `git cherry-pick`/merge from `artifact-public-wip`, then do the
-  Turnstile/KV/secrets setup documented in that branch's `wrangler.toml`.
+## Artifact is now public-but-gated (history + what's still parked)
+**Update:** the Artifact IS now reachable by the public — linked from `index.html`
+(the "The Artifact" card → `secret-artifact/` + `artifact-details.html`),
+`index,follow`, in `sitemap.xml`. Access is the passphrase gate: guest code `2026`,
+given out **on request by email** (contact-form opt-in), never printed on the site.
+See the Passphrase gate bullet for the full "now public" note.
+- **Still parked (do not resurrect without asking):** the *guardrails* for an open,
+  code-free public page — Worker guest-guardrails (Cloudflare Turnstile + HMAC
+  session tokens + KV per-IP/global rate limit) in `engine/worker.js` +
+  `wrangler.toml`, plus a planned `ai-artifact.html` with a visible guest code +
+  info panel. That work lives on branch **`artifact-public-wip`**, Stage 1 only,
+  **never deployed**. The current public exposure relies ONLY on the passphrase —
+  there is no rate-limiting, so guest turns spend against the Google billing cap.
+- `GUEST_PASSPHRASE` (`2026`) is set on the live Worker and IS now the live access
+  code. Revoke/rotate with `wrangler secret put/delete GUEST_PASSPHRASE` (runtime,
+  no redeploy). To fully close guest access: delete it (owner code still works).
+- To add real guardrails: `git cherry-pick`/merge from `artifact-public-wip`, then
+  do the Turnstile/KV/secrets setup documented in that branch's `wrangler.toml`.
 
 ## Other repo areas (not the Artifact)
 - `index.html`, `ai-lab.html`, `ai-lab-faq.html`, `ai-chat.html`,
-  `privacy-policy*.html` — portfolio/marketing pages.
+  `artifact-details.html`, `privacy-policy*.html` — portfolio/marketing pages.
+  (`artifact-details.html` = the Artifact architecture write-up + owner command
+  table, modeled on `ai-lab.html`'s self-contained `data-ai-i18n` setup; article
+  body is EN-only like the AskSantorini deep-dive, nav/meta/CTAs bilingual.)
 - `script.js` / `styles.css` (+ `.min`), `chat-hero-mark.js` — site behavior/style.
 - `lab/`, `universe/`, `assets/` — page assets/experiments.
 - `tests/` — `npm test` runs `node --test tests/*.test.js`.

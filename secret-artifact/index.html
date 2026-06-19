@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-  <!-- Privacy: keep this page 100% invisible to search engines & crawlers -->
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <!-- Now linked publicly from the portfolio as "The Artifact" (guest code gated) -->
+  <meta name="robots" content="index, follow" />
   <meta name="referrer" content="no-referrer" />
   <meta name="theme-color" content="#0a0a16" />
 
@@ -734,6 +733,13 @@
     const KEY_STORE = 'artifact.key';
     let passphrase = readKey();
     let unlocked = !!passphrase;
+    // While locked, the passphrase is masked as it's typed — but WITHOUT making
+    // this a password field. The input stays type="text" (so iOS never treats it
+    // as a credential / never pops the AutoFill bar — see applyLockUI + the CSS
+    // note); we keep the real characters here in `lockedEntry` and paint bullets
+    // into the visible field. type=password / -webkit-text-security stay banned.
+    let lockedEntry = '';
+    const MASK_CHAR = '•';
 
     function readKey() {
       try { return sessionStorage.getItem(KEY_STORE) || ''; } catch { return ''; }
@@ -743,8 +749,9 @@
       // The input is ALWAYS a plain type="text" field — no password type and no
       // -webkit-text-security masking. Either of those makes iOS treat it as a
       // credential (AutoFill bar raises the keyboard; a saved password then
-      // haunts the chat input). The locked state is signalled by the magenta
-      // border + UNLOCK button instead of dot-masking.
+      // haunts the chat input). While locked the passphrase is still dot-masked,
+      // but in JS (see maskLockedInput / lockedEntry) so the field never becomes
+      // a real credential field; magenta border + UNLOCK button also signal it.
       if (unlocked) {
         input.placeholder = persona === 'dion' ? 'Ask Dion, agápi mou...' : 'Invoke the Artifact...';
         sendBtn.textContent = 'SEND';
@@ -770,6 +777,8 @@
     function lock(message) {
       unlocked = false;
       passphrase = '';
+      lockedEntry = '';
+      input.value = '';
       try { sessionStorage.removeItem(KEY_STORE); } catch {}
       applyLockUI();
       if (message) addBubble(message, 'system');
@@ -1224,7 +1233,10 @@
       // This runs inside a user gesture — unlock iOS speech output so the
       // Artifact's reply can be read aloud automatically when it arrives.
       unlockTTS();
-      const value = input.value.trim();
+      // While locked the visible field shows bullets — the real passphrase lives
+      // in `lockedEntry` (fall back to input.value for the mic/programmatic path,
+      // which sets the value directly and fires no input event).
+      const value = (unlocked ? input.value : (lockedEntry || input.value)).trim();
       if (!value || sendBtn.disabled) return;
 
       // While locked, the entry is a passphrase attempt — not a message.
@@ -1234,6 +1246,7 @@
         try { ok = await verifyPassphrase(value); } catch {}
         sendBtn.disabled = false;
         input.value = '';
+        lockedEntry = '';
         if (ok) {
           passphrase = value;
           try { sessionStorage.setItem(KEY_STORE, passphrase); } catch {}
@@ -1743,6 +1756,28 @@
         setAppHeight();
         stream.scrollTop = stream.scrollHeight;
       }, t));
+    });
+
+    // Passphrase masking (locked state only): keep the real characters in
+    // `lockedEntry`, show bullets in the field. Pure JS — no password type, no
+    // -webkit-text-security — so iOS never treats this as a credential field.
+    // Diffs against the caret so backspace, delete and paste all stay in sync.
+    function maskLockedInput() {
+      const masked = input.value;
+      const sel = input.selectionStart == null ? masked.length : input.selectionStart;
+      const delta = masked.length - lockedEntry.length;
+      if (delta >= 0) {
+        const inserted = masked.slice(sel - delta, sel); // chars just typed/pasted
+        lockedEntry = lockedEntry.slice(0, sel - delta) + inserted + lockedEntry.slice(sel - delta);
+      } else {
+        lockedEntry = lockedEntry.slice(0, sel) + lockedEntry.slice(sel - delta); // removed (-delta) chars
+      }
+      input.value = MASK_CHAR.repeat(lockedEntry.length);
+      try { input.setSelectionRange(sel, sel); } catch {}
+    }
+
+    input.addEventListener('input', () => {
+      if (!unlocked) maskLockedInput();
     });
 
     // ===== Boot splash =====
