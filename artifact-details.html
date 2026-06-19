@@ -211,6 +211,69 @@
       border-top: 0;
     }
 
+    /* ── Roadmap / extensibility callout ───────────────────────── */
+    .project-roadmap {
+      margin: 1.25rem 0 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+
+    .roadmap-col {
+      min-width: 0;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-light);
+    }
+
+    .roadmap-col h4 {
+      margin: 0 0 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .roadmap-col h4::before {
+      content: "";
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+
+    .roadmap-col.is-live h4 { color: #2f8f57; }    /* shipped */
+    .roadmap-col.is-next h4 { color: #b3730c; }    /* in progress */
+    .roadmap-col.is-future h4 { color: #6a6f8c; }  /* designed-for */
+
+    .roadmap-col ul {
+      margin: 0;
+      padding-left: 1.05rem;
+      display: grid;
+      gap: 0.32rem;
+    }
+
+    .roadmap-col li {
+      font-size: 0.93rem;
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .roadmap-note {
+      margin: 0.75rem 0 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 720px) {
+      .project-roadmap { grid-template-columns: 1fr; }
+    }
+
     /* ── The Artifact's own words (self-naming) — neon callout ──── */
     .artifact-quote {
       position: relative;
@@ -496,6 +559,39 @@
           <li>The <strong>front-end</strong> ships via GitHub Pages — push to <code>main</code> and it is live, no build step.</li>
           <li>The <strong>engine</strong> ships only via <code>wrangler deploy</code> from the <code>engine/</code> folder. Editing the Worker and pushing does <em>nothing</em> to the live engine until you redeploy it. The two are intentionally decoupled, so a UI change can never accidentally alter the brains.</li>
         </ul>
+
+        <h3>Roadmap &amp; extensibility</h3>
+        <p>The split between <em>LLM inference</em> and <em>tool execution</em> is what makes the system grow by addition rather than rewrite: new capability is a new <strong>binding</strong> behind the same JSON tool-use contract, not a change to the model call or the front-end. Where things stand:</p>
+        <div class="project-roadmap">
+          <div class="roadmap-col is-live">
+            <h4>Live now</h4>
+            <ul>
+              <li>Streaming Gemma inference with heartbeats</li>
+              <li>Opt-in Google Search grounding (a model-decided tool)</li>
+              <li>Drive <em>Profile</em> + <em>Library</em> context</li>
+              <li>Sheets long-term memory + per-turn logging</li>
+              <li>Cloudflare KV — kill switch + context caches</li>
+              <li>Two personas, persona tuner, two-way voice</li>
+            </ul>
+          </div>
+          <div class="roadmap-col is-next">
+            <h4>In progress</h4>
+            <ul>
+              <li>Model-initiated <em>multi-step</em> tool loops (reason → call → read → continue)</li>
+              <li>Write/action tools — e.g. create a Calendar event, append a Sheet row</li>
+              <li>Guest rate-limiting (Turnstile + KV) for open, code-free public access</li>
+            </ul>
+          </div>
+          <div class="roadmap-col is-future">
+            <h4>Designed for</h4>
+            <ul>
+              <li>More Workspace surfaces — Calendar, Gmail, Docs</li>
+              <li>Cloudflare D1 (relational state), R2 (objects), Queues (async work)</li>
+              <li>Any third-party HTTP API as a new typed binding</li>
+            </ul>
+          </div>
+        </div>
+        <p class="roadmap-note"><em>Honest status: the production tool-use today is read/grounding (Search, Drive, Sheets). The action-taking and multi-step columns describe the architecture the stateless orchestrator is built to support, not features already wired into the live engine.</em></p>
 
         <h3>Access &amp; status</h3>
         <p>The Artifact is a personal playground rather than a product — live, evolving, and reachable from this site, but gated by a server-side passphrase. The access code is handed out on request by email (there&rsquo;s an opt-in tick on the contact form). It is designed, built and operated solo.</p>
