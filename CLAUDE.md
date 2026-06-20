@@ -130,7 +130,13 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
     profile + library) run **concurrently** (`Promise.all`) and each Apps Script
     round-trip is bounded by `SHEETS_TIMEOUT_MS` (6s, `AbortSignal.timeout`) so a
     slow cold read **fails open** (empty block that turn) instead of stalling the
-    pre-stream awaits and tripping SIGNAL LOST.
+    pre-stream awaits and tripping SIGNAL LOST. **But the STANDALONE command path
+    (`handleDriveOp`: `/lib`, `/read`) gets a longer `DRIVE_OP_TIMEOUT_MS` (20s)** —
+    it has no stream to protect, and a COLD Apps Script container alone can blow 6s
+    (so the first `/lib` after idle would time out → "Drive error… timeout", then
+    "wake up" and work on the 2nd try), while `/read` also opens each Doc via the
+    slow `DocumentApp.openById`. `sheetsMemoryCall` takes an optional 4th
+    `timeoutMs`; only `handleDriveOp` passes the 20s — the per-turn folds keep 6s.
   - **`Artifact/Library/` = selective, loaded on demand.** **`/lib`** (`βιβλιοθήκη`)
     lists it numbered (like `/memory`; front-end `listLibrary` → `lib-list`, caches
     the order in `libIndex`). **`/read N`** / **`/read 1+2`** (also `1,2`, `1-3`,
@@ -158,6 +164,22 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
     editor** (pick `driveList` → ▶ Run → Review permissions → Allow, once). The
     scopes are unchanged from the old `/docs` model, so an already-authorized script
     needs no re-consent. (Replaces the old all-or-nothing `/docs` toggle — REMOVED.)
+  - ⚠️⚠️ **The `auth/documents` scope must be EXPLICIT in `appsscript.json`, or
+    `/read` fails SILENTLY** (debugged 2026-06-20). Symptom: `/lib` works but
+    `/read N` always returns "📚 Δεν μπόρεσα να διαβάσω κείμενο… (ίσως PDF/εικόνα)"
+    even for a real Google Doc. Cause: `listFiles` uses only `DriveApp` (Drive
+    scope, already granted), but `extractFileText`'s `DocumentApp.openById` needs
+    `https://www.googleapis.com/auth/documents` — and if the manifest's `oauthScopes`
+    array is explicit but omits it, the editor does NOT prompt; `openById` throws
+    "You do not have permission to call DocumentApp.openById", which
+    `extractFileText`'s `try/catch` SWALLOWS (returns `""`) → reported as
+    "no extractable text" (looks like a PDF/empty-file issue, not an auth one).
+    **Fix:** Project Settings → show `appsscript.json` → add to `oauthScopes`:
+    `auth/documents`, `auth/drive`, `auth/spreadsheets` → Save → ▶ Run any
+    `DocumentApp` function → Allow → redeploy "New version". **Diagnose** by Running
+    a one-off in the editor that calls `DocumentApp.openById(...).getBody().getText()`
+    inside a bare `try/catch` and `Logger.log`s the exception — `THREW: …permission…`
+    pinpoints the missing scope vs. `OK len=N` (genuinely empty/table-only Doc).
 - **Command directory (`/dir`)** — a STATIC, front-end listing of every owner
   command (`εντολές` also triggers it), rendered from the `COMMANDS_HELP` const in
   `secret-artifact/index.html`. No model call, no engine round-trip — handled in

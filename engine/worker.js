@@ -570,15 +570,22 @@ const MEMORY_CACHE_TTL = 60 * 1000;
 // wait here = the browser sees silence and cuts the connection. On timeout we
 // fail open (return {ok:false} → empty block this turn) rather than hang.
 const SHEETS_TIMEOUT_MS = 6000;
+// The /lib and /read commands (handleDriveOp) are STANDALONE requests with no
+// stream to protect — and a COLD Apps Script container adds seconds of spin-up
+// (so even a fast lib-list can miss 6s on the first call), while a lib-read also
+// opens each Doc via DocumentApp.openById (slow). Give that path a longer cap so
+// the first /lib and /read complete; the 6s cap stays for the per-turn pre-stream
+// folds (memory/profile/library) where a slow wait would trip SIGNAL LOST.
+const DRIVE_OP_TIMEOUT_MS = 20000;
 
-async function sheetsMemoryCall(env, action, extra) {
+async function sheetsMemoryCall(env, action, extra, timeoutMs) {
   if (!env.SHEETS_WEBHOOK_URL) return { ok: false, error: "unconfigured" };
   try {
     const res = await fetch(env.SHEETS_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, token: env.MEM_TOKEN || "", ...(extra || {}) }),
-      signal: AbortSignal.timeout(SHEETS_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs || SHEETS_TIMEOUT_MS),
     });
     return await res.json();
   } catch (err) {
@@ -707,7 +714,7 @@ async function handleDriveOp(env, op, corsOrigin) {
 
   if (type === "list" || type === "lib-list") {
     const action = type === "lib-list" ? "lib-list" : "drive-list";
-    const data = await sheetsMemoryCall(env, action);
+    const data = await sheetsMemoryCall(env, action, null, DRIVE_OP_TIMEOUT_MS);
     return json({
       ok: !!(data && data.ok),
       folderFound: !!(data && data.folderFound),
@@ -718,7 +725,7 @@ async function handleDriveOp(env, op, corsOrigin) {
 
   if (type === "lib-read") {
     const names = Array.isArray(op.names) ? op.names.filter((n) => typeof n === "string" && n) : [];
-    const data = await sheetsMemoryCall(env, "lib-read", { names });
+    const data = await sheetsMemoryCall(env, "lib-read", { names }, DRIVE_OP_TIMEOUT_MS);
     const text = data && data.ok && typeof data.text === "string" ? data.text : "";
     // Warm the same cache the chat turns will read for this selection.
     if (env.ARTIFACT_KV && names.length) {
