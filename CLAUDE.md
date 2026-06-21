@@ -240,8 +240,9 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
 - **Skin switch (visual only, front-end)** — a header **SKIN** button (next to
   TUNE/LOCK/RESET, half-filled-circle icon) cycles the front-end *skin*: the
   **default Vault** (obsidian + gold "Foundation" arcane look — gold/copper/
-  violet-glow palette + Cormorant Garamond / JetBrains Mono fonts) and **Neon**
-  (deep-space/cyberpunk, cyan/magenta/violet). Pure presentation: NO engine call,
+  violet-glow palette; both `--font-sans` AND `--font-mono` are **Space Grotesk**,
+  so the whole Vault UI + Gemma's replies read in it) and **Neon**
+  (deep-space/cyberpunk, cyan/magenta/violet; Inter / Fira Code fonts). Pure presentation: NO engine call,
   NO effect on persona/transcript/memory/params. The whole visual identity is
   variable-driven — `:root` holds Neon as the CSS *base*, `:root[data-skin="vault"]`
   overrides it. ⚠️ Note the asymmetry: Vault is the DEFAULT skin (applied via the
@@ -250,9 +251,11 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   choice removes it. Accents live as bare R,G,B **triples** (`--rgb-1/2/3`,
   `--rgb-bg0/1/2`) so any `rgba(var(--rgb-1), .35)` glow themes; named colors
   (`--glow-cyan` etc.) derive from them, so swapping a triple recolors everything.
-  The chat **input field uses Space Grotesk** (added to the Google Fonts import,
-  `.artifact-input` `font-family`) across BOTH skins — not skin-switched. To add a
-  skin: add a `:root[data-skin="<name>"]` block + the name to the JS `SKINS` array.
+  The chat **input field uses Space Grotesk** (in the Google Fonts import,
+  `.artifact-input` `font-family`) across BOTH skins — not skin-switched (Neon's
+  base body font is still Inter; Vault's whole UI is now Space Grotesk too). The
+  old Cormorant Garamond / JetBrains Mono import was REMOVED once Vault stopped
+  using them. To add a skin: add a `:root[data-skin="<name>"]` block + the name to the JS `SKINS` array.
   Persisted per-device in `localStorage` (`artifact.skin.v1`); a tiny `<head>`
   bootstrap sets `data-skin="vault"` BEFORE first paint UNLESS the saved value is
   `neon` (so a fresh visitor / storage-off both get Vault, no flash); `applySkin`
