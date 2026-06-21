@@ -111,6 +111,10 @@ const translations = {
         desc: 'An experimental AI chat playground with switchable personalities, a live persona tuner, voice input and read-aloud, and long-term memory — an experiment in making an AI assistant feel personal, fast and a little uncanny. The access code is available on request — just ask by email.',
         details: 'Project Details'
       },
+      askSingapore: {
+        label: 'Early Preview',
+        desc: 'A sister project to AskSantorini.ai — an AI guide for visitors to Singapore, built on the same engine and architecture. The two Cloudflare Workers serve both destinations from one shared codebase. Live in early preview and open for first feedback.'
+      },
       project1: {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
@@ -244,6 +248,10 @@ const translations = {
         alt: 'Προεπισκόπηση The Artifact AI chat playground',
         desc: 'Ένα πειραματικό AI chat playground με εναλλασσόμενες προσωπικότητες, live persona tuner, φωνητική εισαγωγή και read-aloud, και μακροπρόθεσμη μνήμη — ένα πείραμα στο πώς ένας AI assistant μπορεί να νιώθει προσωπικός, γρήγορος και λίγο uncanny. Ο κωδικός εισόδου παρέχεται κατόπιν αιτήματος μέσω email.',
         details: 'Λεπτομέρειες Project'
+      },
+      askSingapore: {
+        label: 'Early Preview',
+        desc: 'Αδελφό project του AskSantorini.ai — ένας AI οδηγός για επισκέπτες της Σιγκαπούρης, χτισμένος στην ίδια engine και αρχιτεκτονική. Οι δύο Cloudflare Workers εξυπηρετούν και τους δύο προορισμούς από έναν κοινό κώδικα. Live σε early preview, ανοιχτό για ένα πρώτο feedback.'
       },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
