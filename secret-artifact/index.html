@@ -15,7 +15,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Vault skin fonts (arcane / Foundation look). Loaded for all, applied only when data-skin="vault". -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
@@ -310,7 +310,7 @@
       flex: 1 1 auto;
       min-width: 0;
       padding: 0.8rem 1rem;
-      font-family: var(--font-sans);
+      font-family: 'Space Grotesk', var(--font-sans);
       font-size: 0.95rem;
       color: var(--ink);
       background: rgba(var(--rgb-bg1), 0.8);
@@ -654,12 +654,15 @@
       .intro-bar::after { animation: none; transform: scaleX(1); }
     }
   </style>
-  <!-- Apply the saved skin BEFORE first paint so there's no neon→vault flash. -->
+  <!-- Apply the saved skin BEFORE first paint so there's no vault→neon flash.
+       Vault is the DEFAULT skin: applied unless the user explicitly chose neon. -->
   <script>
     try {
       var s = localStorage.getItem('artifact.skin.v1');
-      if (s === 'vault') document.documentElement.setAttribute('data-skin', s);
-    } catch (e) {}
+      if (s !== 'neon') document.documentElement.setAttribute('data-skin', 'vault');
+    } catch (e) {
+      document.documentElement.setAttribute('data-skin', 'vault');
+    }
   </script>
 </head>
 <body>
