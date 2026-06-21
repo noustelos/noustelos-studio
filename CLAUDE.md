@@ -239,18 +239,24 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   on symbols or read emoji names aloud.
 - **Skin switch (visual only, front-end)** — a header **SKIN** button (next to
   TUNE/LOCK/RESET, half-filled-circle icon) cycles the front-end *skin*: the
-  default **Neon** (deep-space/cyberpunk, cyan/magenta/violet) and **Vault**
-  (obsidian + gold "Foundation" arcane look — gold/copper/violet-glow palette +
-  Cormorant Garamond / JetBrains Mono fonts). Pure presentation: NO engine call,
+  **default Vault** (obsidian + gold "Foundation" arcane look — gold/copper/
+  violet-glow palette + Cormorant Garamond / JetBrains Mono fonts) and **Neon**
+  (deep-space/cyberpunk, cyan/magenta/violet). Pure presentation: NO engine call,
   NO effect on persona/transcript/memory/params. The whole visual identity is
-  variable-driven — `:root` holds Neon, `:root[data-skin="vault"]` overrides it.
-  Accents live as bare R,G,B **triples** (`--rgb-1/2/3`, `--rgb-bg0/1/2`) so any
-  `rgba(var(--rgb-1), .35)` glow themes; named colors (`--glow-cyan` etc.) derive
-  from them, so swapping a triple recolors everything. To add a skin: add a
-  `:root[data-skin="<name>"]` block + the name to the JS `SKINS` array. Persisted
-  per-device in `localStorage` (`artifact.skin.v1`); a tiny `<head>` bootstrap
-  applies the saved skin BEFORE first paint (no neon→vault flash); `applySkin`
-  also retints the `theme-color` meta. Default skin carries NO `data-skin` attr.
+  variable-driven — `:root` holds Neon as the CSS *base*, `:root[data-skin="vault"]`
+  overrides it. ⚠️ Note the asymmetry: Vault is the DEFAULT skin (applied via the
+  `data-skin="vault"` attribute) even though the bare `:root` variables are Neon's
+  — i.e. the default skin DOES carry a `data-skin` attr; only an explicit Neon
+  choice removes it. Accents live as bare R,G,B **triples** (`--rgb-1/2/3`,
+  `--rgb-bg0/1/2`) so any `rgba(var(--rgb-1), .35)` glow themes; named colors
+  (`--glow-cyan` etc.) derive from them, so swapping a triple recolors everything.
+  The chat **input field uses Space Grotesk** (added to the Google Fonts import,
+  `.artifact-input` `font-family`) across BOTH skins — not skin-switched. To add a
+  skin: add a `:root[data-skin="<name>"]` block + the name to the JS `SKINS` array.
+  Persisted per-device in `localStorage` (`artifact.skin.v1`); a tiny `<head>`
+  bootstrap sets `data-skin="vault"` BEFORE first paint UNLESS the saved value is
+  `neon` (so a fresh visitor / storage-off both get Vault, no flash); `applySkin`
+  removes the attr for Neon and retints the `theme-color` meta.
 - **Boot splash** — 5s "ARTIFACT" intro that fades into the chat (themes with the
   active skin — gold→copper gradient under Vault).
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
