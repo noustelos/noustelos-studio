@@ -646,6 +646,96 @@
       }
     }
 
+    /* ============ Desktop "zen reading" mode (viewport > 1024px) ============
+       The chat goes full-screen HEIGHT (edge-to-edge top↔bottom), width capped
+       for comfortable line-length. Nothing is RE-skinned — every color, border
+       and shadow is variable-driven, so the desktop view inherits the active
+       skin (Vault/Neon) untouched; we only SCALE. Type grows to a calmer base
+       (bubbles → 1.25rem via the skin's own --msg-size var) and the input row
+       scales with it so the larger fonts never break the toolbar layout. */
+    @media (min-width: 1025px) {
+      body { padding: 0; }
+
+      .artifact {
+        width: 100%;
+        max-width: 1080px;     /* readability cap inside the full-width body */
+        height: 100dvh;
+        /* full-height: drop the top/bottom corners + rails, keep side rails as
+           a subtle frame (still the active skin's border color). */
+        border-radius: 0;
+        border-top: none;
+        border-bottom: none;
+      }
+
+      /* Bigger type drives bubble size through the skin's own variable, so both
+         Vault and Neon scale from their own base proportion. */
+      :root { --msg-size: 1.25rem; }
+
+      /* Roomier padding so the larger type can breathe. */
+      .artifact-header  { padding: 1.15rem 1.7rem; }
+      /* Recessed "console screen": the thread gets its own inset frame + darker
+         inner background (borrowed from the zen-industrial mock), so on the big
+         desktop view it reads as a screen inside the console bezel. Skin-driven
+         — the border/bg are rgba(var(...)) so Vault/Neon both inherit it. */
+      .artifact-stream  {
+        padding: 1.9rem 2.3rem;
+        gap: 1rem;
+        margin: 0.9rem 1.2rem;
+        border: 1px solid rgba(var(--rgb-3), 0.20);
+        border-radius: 14px;
+        background: rgba(var(--rgb-bg0), 0.45);
+        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+      }
+      /* position:relative so the command-prompt glyph can be absolutely placed
+         INSIDE the input (over its left padding), not as a flex item beside it. */
+      .artifact-toolbar { position: relative; padding: 1.05rem 1.4rem; gap: 0.8rem; }
+
+      /* Command-prompt glyph sitting INSIDE the input where the caret begins —
+         a terminal "/>" prompt that says "type your message / passphrase here"
+         (echoes the "THE ARTIFACT />" title). Absolutely positioned over the
+         input's left padding with pointer-events:none so clicks still focus the
+         field; .artifact-input below reserves the left padding so text never
+         overlaps it. var(--glow-cyan) = the skin's PRIMARY accent → gold/amber
+         in Vault, cyan in Neon (skin-driven, no hard-coded color). */
+      .artifact-toolbar::before {
+        content: "/>";
+        position: absolute;
+        left: 2.35rem;          /* toolbar pad 1.4 + ~0.95 inside the input edge */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        pointer-events: none;
+        font-family: var(--font-mono);
+        font-size: 1.4rem;      /* bigger than the row text */
+        font-weight: 700;       /* bold */
+        line-height: 1;
+        letter-spacing: 0.02em;
+        color: var(--glow-cyan);
+        text-shadow: 0 0 12px rgba(var(--rgb-1), 0.5);
+        opacity: 0.95;
+        user-select: none;
+      }
+
+      .artifact-title { font-size: 1.02rem; }
+      .artifact-state { font-size: 0.82rem; }
+      .artifact-reset { font-size: 0.74rem; padding: 0.32rem 0.62rem; }
+
+      .bubble        { line-height: 1.65; padding: 1rem 1.4rem; max-width: 76%; border-radius: 18px; }
+      .bubble.system { font-size: 1.05rem; }
+
+      /* The typing indicator is a sibling OUTSIDE the now-inset stream, so line it
+         up with where the bot bubbles begin (stream margin 1.2 + padding 2.3) so
+         it doesn't poke out to the left of the recessed frame while thinking. */
+      .typing { margin-left: 3.5rem; }
+
+      /* Input + buttons scale with the type so the row stays balanced. The extra
+         LEFT padding clears the absolute "/>" prompt glyph (.artifact-toolbar::before). */
+      .artifact-input   { font-size: 1.15rem; padding: 1rem 1.3rem 1rem 3.1rem; border-radius: 14px; }
+      .artifact-send    { font-size: 0.95rem; padding: 0 1.7rem; border-radius: 14px; }
+      .artifact-mic     { width: 56px; border-radius: 14px; }
+      .artifact-mic svg { width: 24px; height: 24px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .pulse-dot, .typing-spiral, .bubble, .intro-word, .artifact-mic.is-listening { animation: none; }
       /* Keep the bar filled (still acts as a visible boot indicator). */
@@ -949,6 +1039,10 @@
       'ΦΩΝΕΣ / PERSONA',
       '• DION — concierge Μυκόνου  ·  GEMMA — επιστροφή στο Artifact',
       '• /voices (φωνές) — τι φωνές TTS εκθέτει η συσκευή',
+      '',
+      'ΟΘΟΝΗ',
+      '• /clear (καθάρισε) — καθαρίζει μόνο την οθόνη (η κουβέντα/μνήμη συνεχίζει)',
+      '• RESET (κουμπί) — σβήνει την κουβέντα αυτής της persona',
       '',
       '• /dir (εντολές) — αυτή η λίστα',
     ].join('\n');
@@ -1369,6 +1463,21 @@
       if (/^\/?\s*dir$/.test(cmd) || cmd === 'εντολές' || cmd === 'εντολες') {
         input.value = '';
         addBubble(COMMANDS_HELP, 'system');
+        focusInput();
+        return;
+      }
+
+      // /clear — SCREEN-ONLY wipe. Unlike RESET (handleReset, which also clears
+      // the persisted `history`), /clear only blanks the visible bubbles: the
+      // conversation `history` stays intact, so the engine keeps full multi-turn
+      // context and a reload / persona switch repaints the prior messages. It
+      // touches NOTHING else — long-term Sheet memory, profile, library, persona,
+      // params and skin are all untouched. No model call; works in either persona.
+      if (/^\/?\s*clear$/.test(cmd) || cmd === 'καθάρισε' || cmd === 'καθαρισε') {
+        input.value = '';
+        try { stopSpeak(); } catch {}      // silence any in-flight read-aloud
+        stream.innerHTML = '';
+        addBubble('Οθόνη καθαρή — η κουβέντα συνεχίζει (η μνήμη ανέπαφη).', 'system');
         focusInput();
         return;
       }

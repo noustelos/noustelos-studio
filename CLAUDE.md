@@ -186,6 +186,17 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   the dispatch next to `/voices`, so it works in either persona. It's the single
   source of truth for the command reference; deliberately NOT folded into the
   always-on profile (see the Profile warning above). Update commands here.
+- **Screen clear (`/clear`)** — a SCREEN-ONLY wipe (`καθάρισε` also triggers it),
+  handled front-end in the dispatch next to `/dir`, so it works in either persona
+  with no model call. **Deliberately distinct from RESET:** the header RESET
+  button (`handleReset`) clears the visible bubbles AND the persisted `history`
+  (`artifact.history.v1` / `.dion.v1`) and repaints a "Memory wiped" greeting;
+  `/clear` only blanks the DOM (`stream.innerHTML=''` + `stopSpeak()`) and leaves
+  `history` INTACT — the engine keeps full multi-turn context and a reload /
+  persona switch repaints the prior messages. It touches NOTHING else (long-term
+  Sheet memory, profile, library selection, persona, params, skin all untouched).
+  Shows a brief Greek system line. ⚠️ Don't "tidy" it into RESET — the whole point
+  is the screen-vs-transcript distinction.
 - **Persona switch (DION concierge)** — a SECOND voice shares the same chat UI.
   While unlocked, typing the bare word `DION` or `GEMMA` (case-insensitive) flips
   voices with NO model call — it's a control command, not a message. Active
@@ -262,6 +273,36 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   removes the attr for Neon and retints the `theme-color` meta.
 - **Boot splash** — 5s "ARTIFACT" intro that fades into the chat (themes with the
   active skin — gold→copper gradient under Vault).
+- **Desktop "zen reading" mode (viewport > 1024px, front-end CSS only)** — a
+  single `@media (min-width: 1025px)` block in `secret-artifact/index.html` makes
+  the chat full-screen HEIGHT (`.artifact` → `height:100dvh`, edge-to-edge top↔
+  bottom: `border-radius:0`, top/bottom rails dropped, side rails kept as a frame)
+  with width capped at `max-width:1080px` for line-length readability (`body`
+  padding zeroed so it centers in the full-width viewport). Type scales to a
+  calmer base — bubbles to **1.25rem** by overriding the skin's own `--msg-size`
+  var (so BOTH Vault and Neon scale from their own proportion, no re-skin), plus
+  roomier header/stream/toolbar padding and `line-height:1.65`. The input row
+  scales WITH the type (input 1.15rem, send/mic enlarged + radius bumped) so the
+  bigger fonts never break the toolbar. NOTHING is restyled — every color/border/
+  shadow stays variable-driven, so the desktop view inherits the active skin
+  untouched; it ONLY scales. Lives right above the `prefers-reduced-motion` block,
+  after the `max-width:480px` mobile block. **Two "zen-industrial" terminal
+  touches (desktop only, both skin-driven):** (1) a recessed **console-screen
+  frame** on `.artifact-stream` — `margin` + inset `border`/`border-radius` +
+  darker `rgba(var(--rgb-bg0))` bg + inset shadow, so the thread reads as a screen
+  inside the console bezel (the typing indicator is a sibling OUTSIDE the stream,
+  so it gets `margin-left:3.5rem` to line up with the inset thread instead of
+  poking out left); (2) a command-prompt **`/>` glyph** sitting INSIDE the input
+  where the caret begins — a "type here" prompt for both the message and the
+  passphrase. It's `.artifact-toolbar::before`, **absolutely positioned**
+  (`position:absolute; left:2.35rem; top:50%`) over the input's left padding with
+  `pointer-events:none` (clicks still focus the field); `.artifact-input` carries
+  an extra `padding-left:3.1rem` so typed text/placeholder never overlap it.
+  Bigger + bold (`1.4rem`/`700`), `var(--glow-cyan)` = the skin's primary accent →
+  gold/amber in Vault, cyan in Neon, echoing the `THE ARTIFACT />` title. (The
+  toolbar gets `position:relative` desktop-only as the glyph's containing block,
+  and symmetric padding.) We deliberately did NOT import the mock's Courier font
+  or green/amber palette — the amber already maps to Vault's gold via the accent var.
 - **iOS viewport fit** — chat pinned to `visualViewport` height, anchored
   top-only (NOT `inset:0`), so the input stays above the keyboard. `setAppHeight`
   writes BOTH `--app-height` (= `vv.height`) and `--app-top` (= `vv.offsetTop`);
