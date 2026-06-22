@@ -424,6 +424,18 @@ h1 {
   max-width: 12ch;
 }
 
+/* Product-first hero headline: bolder for impact, scoped so other pages' h1 stay untouched */
+#hero-title {
+  font-weight: 700;
+}
+
+@media (min-width: 1100px) {
+  /* Larger, more imposing headline on desktop */
+  #hero-title {
+    font-size: clamp(58px, 6.6vw, 82px);
+  }
+}
+
 .hero-mark-wrap {
   --hero-mark-size: clamp(11.5rem, 30vw, 23rem);
   --hero-mark-shift-x: 20px;
@@ -1324,6 +1336,24 @@ h3 {
 #services .service-card .button-link:hover::after,
 #services .service-card .button-link:focus-visible::after {
   transform: translateX(4px);
+}
+
+/* "Currently live:" status line under the AI Lab card — muted label + accent brand link */
+#services .service-card p.service-live {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--glass-gray-text);
+}
+
+.service-live-link {
+  color: var(--cta);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.service-live-link:hover,
+.service-live-link:focus-visible {
+  text-decoration: underline;
 }
 
 @media (max-width: 720px) {

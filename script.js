@@ -86,8 +86,8 @@ const translations = {
       switchAria: 'Switch language'
     },
     hero: {
-      title: 'Websites with Clarity, Character & Direction',
-      subtitle: 'Custom digital builds for tourism, hospitality and creative ideas, designed in Santorini and refined with AI-assisted workflows.',
+      title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
+      subtitle: 'Custom-built for tourism and hospitality — designed in Santorini, engineered for scale.',
       intro: 'Designed and built by Nick Karadimas',
       ctaWork: 'View My Work',
       ctaContact: 'Contact'
@@ -119,14 +119,6 @@ const translations = {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
       },
-      project5: {
-        alt: 'Honeymoon Beach Studios project preview',
-        desc: 'A clean hotel page for a family-owned stay, designed to present rooms, location and booking context without unnecessary noise.'
-      },
-      project6: {
-        alt: 'Daily Inspiration Widget project preview',
-        desc: 'A daily inspiration widget for Orthodox readers, pairing Bible passages and feast-day reminders with a quiet, app-like interface.'
-      },
       project7: {
         alt: 'Artemis project preview',
         title: 'Ethical dog training and care',
@@ -153,8 +145,8 @@ const translations = {
       },
       card4: {
         title: 'AI Lab',
-        desc: 'AI-assisted tools, bots and content systems designed around real business needs, useful context and a clear personality.',
-        cta: 'View the Live Demo'
+        desc: 'We design and deploy Agentic AI Platforms as SaaS — intelligent systems that perceive, decide, and act autonomously within real business workflows. Built for tourism and hospitality.',
+        live: 'Currently live:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',
@@ -224,8 +216,8 @@ const translations = {
       switchAria: 'Αλλαγή γλώσσας'
     },
     hero: {
-      title: 'Ιστοσελίδες με Σαφήνεια, Χαρακτήρα & Κατεύθυνση',
-      subtitle: 'Custom digital builds για τουρισμό, φιλοξενία και δημιουργικές ιδέες, σχεδιασμένα στη Σαντορίνη και refined με AI-assisted workflows.',
+      title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
+      subtitle: 'Custom-built για τουρισμό και φιλοξενία — designed in Santorini, engineered for scale.',
       intro: 'Σχεδιασμός και ανάπτυξη: Νίκος Καραδήμας',
       ctaWork: 'Δες τη Δουλειά μου',
       ctaContact: 'Επικοινωνία'
@@ -257,14 +249,6 @@ const translations = {
         alt: 'Προεπισκόπηση project 365orthodoxy',
         desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.'
       },
-      project5: {
-        alt: 'Προεπισκόπηση project Honeymoon Beach Studios',
-        desc: 'Καθαρή hotel σελίδα για οικογενειακή διαμονή, σχεδιασμένη να παρουσιάζει δωμάτια, τοποθεσία και booking context χωρίς περιττό θόρυβο.'
-      },
-      project6: {
-        alt: 'Προεπισκόπηση project Daily Inspiration Widget',
-        desc: 'Daily inspiration widget για Ορθόδοξους αναγνώστες, με βιβλικά αποσπάσματα, υπενθυμίσεις εορτολογίου και ήσυχο app-like interface.'
-      },
       project7: {
         alt: 'Προεπισκόπηση project Artemis',
         title: 'Ηθική εκπαίδευση και φροντίδα σκύλων',
@@ -291,8 +275,8 @@ const translations = {
       },
       card4: {
         title: 'AI Lab',
-        desc: 'AI-assisted εργαλεία, bots και content systems σχεδιασμένα γύρω από πραγματικές ανάγκες, χρήσιμο context και ξεκάθαρη προσωπικότητα.',
-        cta: 'Δείτε το Live Demo'
+        desc: 'Σχεδιάζουμε και αναπτύσσουμε Agentic AI Platforms ως SaaS — ευφυή συστήματα που αντιλαμβάνονται, αποφασίζουν και δρουν αυτόνομα μέσα σε πραγματικές επαγγελματικές ροές εργασίας. Φτιαγμένα για τουρισμό και φιλοξενία.',
+        live: 'Ήδη σε παραγωγή:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',

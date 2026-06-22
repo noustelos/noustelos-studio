@@ -419,6 +419,22 @@ See the Passphrase gate bullet for the full "now public" note.
   table, modeled on `ai-lab.html`'s self-contained `data-ai-i18n` setup; article
   body is EN-only like the AskSantorini deep-dive, nav/meta/CTAs bilingual.)
 - `script.js` / `styles.css` (+ `.min`), `chat-hero-mark.js` — site behavior/style.
+- **`index.html` is "product-first" (agentic SaaS positioning).** Hero =
+  *"Precision Agentic Platforms, Powered by AI. Delivered as SaaS."* + a developer-
+  not-agency sub-headline; the AI Lab service card (`services.card4`) pitches
+  *"Agentic AI Platforms as SaaS"* and ends with a **`Currently live: AskSantorini.ai`**
+  status line where ONLY the brand is the link (`.service-live` label +
+  `.service-live-link` accent anchor — replaced the old "View the Live Demo" CTA).
+  Greek copy keeps the English terminology (Agentic AI Platforms / SaaS), only the
+  connective words translate.
+- **Homepage copy lives in THREE places — edit all three or the site half-updates:**
+  the inline default in `index.html` (`data-i18n="…"`), AND both the `en` and `gr`
+  blocks in `script.js`, AND the SAME two strings in the **hand-minified
+  `script.min.js`** (the page loads the `.min`). The i18n setter writes
+  `textContent` (HTML is escaped) — so an inline LINK inside translated copy can't
+  live in the string; split it out as its own element with a `data-i18n` label +
+  a static `<a>` (see the AskSantorini.ai live link). `#hero-title` size/weight is
+  scoped (NOT the global `h1`, shared by ai-lab/artifact-details/faq pages).
 - `lab/`, `universe/`, `assets/` — page assets/experiments.
 - `tests/` — `npm test` runs `node --test tests/*.test.js`.
 - **iOS "endless canvas" drift (recurring) — fix is two-layer.** On iPhone a
