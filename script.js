@@ -123,7 +123,9 @@ const translations = {
       },
       project8: {
         alt: 'Water Cycle System project preview',
-        desc: 'A service landing page for pool care in Santorini, giving homeowners and businesses a clear view of maintenance options.'
+        desc: 'A service landing page for pool care in Santorini, giving homeowners and businesses a clear view of maintenance options.',
+        details: 'Project Details',
+        detailsHref: '/water-cycle-details.html'
       }
     },
     services: {
@@ -250,7 +252,9 @@ const translations = {
       },
       project8: {
         alt: 'Προεπισκόπηση project Water Cycle System',
-        desc: 'Service landing page για φροντίδα πισίνας στη Σαντορίνη, δίνοντας σε ιδιοκτήτες και επιχειρήσεις καθαρή εικόνα των υπηρεσιών.'
+        desc: 'Service landing page για φροντίδα πισίνας στη Σαντορίνη, δίνοντας σε ιδιοκτήτες και επιχειρήσεις καθαρή εικόνα των υπηρεσιών.',
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/water-cycle-details-el.html'
       }
     },
     services: {
