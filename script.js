@@ -80,7 +80,8 @@ const translations = {
       services: 'Services',
       about: 'About',
       contact: 'Contact',
-      chatbot: 'Chat AI'
+      chatbot: 'Chat AI',
+      aiLabHref: '/ai-lab.html'
     },
     lang: {
       switchAria: 'Switch language'
@@ -105,12 +106,14 @@ const translations = {
         label: 'Featured Launch',
         desc: 'A free AI guide for Santorini visitors, designed to answer practical questions about beaches, sunsets, tours, food, transport and what to do today.',
         secondary: 'Built as a fast, premium MVP with a clear path toward affiliate tours, local partnerships and hotel concierge tools.',
-        details: 'Project Details'
+        details: 'Project Details',
+        detailsHref: '/asksantorini-details.html'
       },
       artifact: {
         alt: 'The Artifact AI chat playground preview',
         desc: 'An experimental AI chat playground with switchable personalities, a live persona tuner, voice input and read-aloud, and long-term memory — an experiment in making an AI assistant feel personal, fast and a little uncanny. The access code is available on request — just ask by email.',
-        details: 'Project Details'
+        details: 'Project Details',
+        detailsHref: '/artifact-details.html'
       },
       askSingapore: {
         label: 'Early Preview',
@@ -119,7 +122,8 @@ const translations = {
       project1: {
         alt: '365orthodoxy project preview',
         desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.',
-        details: 'Project Details'
+        details: 'Project Details',
+        detailsHref: '/365orthodoxy-details.html'
       },
       project8: {
         alt: 'Water Cycle System project preview',
@@ -209,7 +213,8 @@ const translations = {
       services: 'Υπηρεσίες',
       about: 'Σχετικά',
       contact: 'Επικοινωνία',
-      chatbot: 'Chat AI'
+      chatbot: 'Chat AI',
+      aiLabHref: '/ai-lab-el.html'
     },
     lang: {
       switchAria: 'Αλλαγή γλώσσας'
@@ -234,12 +239,14 @@ const translations = {
         label: 'Featured Launch',
         desc: 'Ένας δωρεάν AI οδηγός για επισκέπτες της Σαντορίνης, σχεδιασμένος να απαντά σε πρακτικές ερωτήσεις για παραλίες, ηλιοβασιλέματα, tours, φαγητό, μετακινήσεις και τι να κάνεις σήμερα.',
         secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.',
-        details: 'Λεπτομέρειες Project'
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/asksantorini-details-el.html'
       },
       artifact: {
         alt: 'Προεπισκόπηση The Artifact AI chat playground',
         desc: 'Ένα πειραματικό AI chat playground με εναλλασσόμενες προσωπικότητες, live persona tuner, φωνητική εισαγωγή και read-aloud, και μακροπρόθεσμη μνήμη — ένα πείραμα στο πώς ένας AI assistant μπορεί να νιώθει προσωπικός, γρήγορος και λίγο uncanny. Ο κωδικός εισόδου παρέχεται κατόπιν αιτήματος μέσω email.',
-        details: 'Λεπτομέρειες Project'
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/artifact-details-el.html'
       },
       askSingapore: {
         label: 'Early Preview',
@@ -248,7 +255,8 @@ const translations = {
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
         desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.',
-        details: 'Λεπτομέρειες Project'
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/365orthodoxy-details-el.html'
       },
       project8: {
         alt: 'Προεπισκόπηση project Water Cycle System',

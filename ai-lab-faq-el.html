@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Συχνές ερωτήσεις για το AI Lab του Noustelos Studio και το AskSantorini.ai — η edge-native αρχιτεκτονική, οι source-grounded απαντήσεις, το affiliate σύστημα κρατήσεων, η προστασία από κατάχρηση και τα αναστρέψιμα deploys." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/ai-lab-faq-el.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/ai-lab-faq-el.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/ai-lab-faq.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/ai-lab-faq.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AI Lab — Συχνές Ερωτήσεις &amp; Τεχνική Ανάλυση | Noustelos Studio" />
+  <meta property="og:description" content="Συχνές ερωτήσεις για το AskSantorini.ai — η edge-native αρχιτεκτονική, οι source-grounded απαντήσεις, το affiliate σύστημα κρατήσεων, η προστασία από κατάχρηση και τα αναστρέψιμα deploys." />
+  <meta property="og:url" content="https://noustelos.gr/ai-lab-faq-el.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio AI Lab" />
+  <meta property="og:locale" content="el_GR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/ai-lab-faq-el.html" />
+  <meta name="twitter:title" content="AI Lab — Συχνές Ερωτήσεις &amp; Τεχνική Ανάλυση | Noustelos Studio" />
+  <meta name="twitter:description" content="Συχνές ερωτήσεις για το AskSantorini.ai — η edge-native αρχιτεκτονική, οι source-grounded απαντήσεις, το affiliate σύστημα κρατήσεων, η προστασία από κατάχρηση και τα αναστρέψιμα deploys." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio AI Lab" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AI Lab — Συχνές Ερωτήσεις &amp; Τεχνική Ανάλυση | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css" />
+
+  <!-- ── Structured data: FAQPage (Rich Snippets) ──────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "inLanguage": "el",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Τι είναι το AskSantorini.ai;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Το AskSantorini.ai είναι ένας AI-powered ταξιδιωτικός concierge για τη Σαντορίνη. Απαντά σε ερωτήσεις των επισκεπτών για το πού να φάνε, τι να δουν και πώς να μετακινηθούν, χρησιμοποιώντας ζωντανή, source-grounded αναζήτηση, και μετατρέπει αυτή την πρόθεση σε πραγματικές κρατήσεις μέσω ενός affiliate συστήματος κωδικών έκπτωσης. Χωρίς app, χωρίς εγγραφή — απλώς ρωτάς."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Γιατί είναι χτισμένο edge-native, χωρίς παραδοσιακό server;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ολόκληρη η πλατφόρμα τρέχει σε Cloudflare Workers — δεν υπάρχει server για συντήρηση, ούτε container, ούτε always-on βάση δεδομένων. Η επεξεργασία εκτελείται στο global edge κοντά στον κάθε χρήστη, το σύστημα κλιμακώνεται στο μηδέν όταν είναι αδρανές, και ένα push στο main branch αναπτύσσεται ακαριαία παγκοσμίως. Το αποτέλεσμα είναι χαμηλό latency, ελάχιστη λειτουργική επιφάνεια και προβλέψιμο κόστος."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Πώς δίνει ακριβείς, επίκαιρες απαντήσεις αντί να «παραισθάνεται»;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Οι απαντήσεις παράγονται από το Google Gemini 2.5 Flash με Google Search Grounding, ώστε να βασίζονται σε ζωντανές, τεκμηριωμένες με πηγές πληροφορίες αντί για παγωμένη γνώση εκπαίδευσης. Το Gemini Function Calling ενεργοποιεί δομημένες, on-demand ανακτήσεις δεδομένων ανάλογα με την πρόθεση του ερωτήματος, και το Google Places API παρέχει στοιχεία επιχειρήσεων, geocoding και οδηγίες."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Πώς λειτουργεί το σύστημα κρατήσεων και affiliates;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Οι affiliates διαχειρίζονται μέσα σε ένα Google Sheet — μια πηγή αλήθειας που μπορεί να επεξεργαστεί απευθείας ένας μη-τεχνικός συνεργάτης — το οποίο συγχρονίζεται με το Cloudflare KV για γρήγορες αναγνώσεις στο edge. Όταν ένας επισκέπτης εξαργυρώνει μια έκπτωση, το backend δημιουργεί μια κράτηση στο Cloudflare D1, στέλνει ένα mobile-optimized email επιβεβαίωσης μέσω ενός Google Apps Script pipeline και ειδοποιεί τον συνεργάτη. Οι κωδικοί κράτησης είναι crypto-random με collision-retry."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Πώς προστατεύεται το AI endpoint από κατάχρηση και ανεξέλεγκτο κόστος;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Το chat endpoint βρίσκεται μπροστά από πληρωμένες κλήσεις LLM και Places, οπότε προστατεύεται από το native rate-limiting binding του Cloudflare — μια ατομική primitive χωρίς write bottleneck. Μια προηγούμενη προσέγγιση με μετρητή στο KV απορρίφθηκε στο στάδιο της επαλήθευσης, επειδή οι eventually-consistent εγγραφές αποτύγχαναν υπό burst. Ένα secret-gated kill switch μπορεί να απενεργοποιήσει ακαριαία τον assistant σε περίπτωση ανεξέλεγκτου κόστους ή κατάχρησης."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Πώς γίνονται με ασφάλεια τα deploys στην παραγωγή;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Οι αλλαγές στην παραγωγή ακολουθούν μια αυστηρή ροή branch, preview, verify και merge. Ο στόχος του rollback προσδιορίζεται πριν από οποιαδήποτε ζωντανή ενέργεια, και κάθε μη αναστρέψιμο βήμα έχει ρητή πύλη επιβεβαίωσης. Αυτή η πειθαρχία έχει επανειλημμένα εντοπίσει κακές αλλαγές στην επαλήθευση αντί μπροστά στους χρήστες."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Μπορεί η πλατφόρμα να επαναχρησιμοποιηθεί για άλλους προορισμούς;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ναι. Η αρχιτεκτονική γενικεύεται σε έναν κοινό πυρήνα worker συν ένα per-instance config bundle — μεταβλητές περιβάλλοντος, persona, knowledge base, affiliate data και visual theme tokens — ώστε ένας νέος προορισμός να ξεκινά ως αρχείο config-and-theme αντί για fork κώδικα. Το πρώτο αδελφό instance κυκλοφορεί με τη δική του ξεχωριστή AI persona, όχι ένα μετονομασμένο κλώνο."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ai-lab-heading {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .ai-lab-heading h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .ai-lab-heading h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--hero-mark); /* /> motif unified with the hero mark */
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── FAQ article ───────────────────────────────────────────── */
+    .ai-lab-faq {
+      margin-top: clamp(1.5rem, 4vw, 2.5rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+      gap: 1.4rem;
+    }
+
+    /* Let the article grid item shrink so content wraps to the viewport
+       instead of dragging the whole page sideways on iOS (same guard as the
+       deep-dive pages' .project-article > article). */
+    .ai-lab-faq > article { min-width: 0; }
+
+    .faq-lead {
+      margin: 0 0 clamp(1rem, 3vw, 1.8rem);
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .faq-item {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: clamp(1.6rem, 4vw, 2.4rem);
+      padding-top: clamp(1.4rem, 3.5vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+
+    .faq-item:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .faq-item h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(20px, 2.8vw, 27px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .faq-item p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .faq-item strong { color: var(--text-primary); font-weight: 600; }
+
+    /* Back-link to the AI Lab writeup — same /> motif as other links */
+    .faq-back {
+      margin-top: clamp(2.5rem, 6vw, 3.5rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Κύρια πλοήγηση">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Εναλλαγή μενού">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Portfolio</a></li>
+        <li><a href="/index.html#services">Υπηρεσίες</a></li>
+        <li><a href="/index.html#about">Σχετικά</a></li>
+        <li><a href="/ai-lab-el.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Επικοινωνία</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Αλλαγή γλώσσας">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr" class="is-active">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap" aria-labelledby="faq-title">
+      <div class="section-heading ai-lab-heading">
+        <h1 id="faq-title">AI Lab — Συχνές Ερωτήσεις</h1>
+      </div>
+    </section>
+
+    <section class="container ai-lab-wrap ai-lab-faq" aria-labelledby="faq-title">
+      <article>
+        <p class="faq-lead">Μια τεχνική ανάλυση του AskSantorini.ai — η αρχιτεκτονική, οι μηχανικές αποφάσεις και πώς ένα edge-native AI προϊόν χτίζεται και λειτουργεί από έναν άνθρωπο.</p>
+
+        <section class="faq-item">
+          <h2>Τι είναι το AskSantorini.ai;</h2>
+          <p>Το AskSantorini.ai είναι ένας AI-powered ταξιδιωτικός concierge για τη Σαντορίνη. Απαντά σε ερωτήσεις των επισκεπτών για το πού να φάνε, τι να δουν και πώς να μετακινηθούν, χρησιμοποιώντας ζωντανή, source-grounded αναζήτηση, και μετατρέπει αυτή την πρόθεση σε πραγματικές κρατήσεις μέσω ενός affiliate συστήματος κωδικών έκπτωσης. Χωρίς app, χωρίς εγγραφή — απλώς ρωτάς.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Γιατί είναι χτισμένο edge-native, χωρίς παραδοσιακό server;</h2>
+          <p>Ολόκληρη η πλατφόρμα τρέχει σε Cloudflare Workers — δεν υπάρχει server για συντήρηση, ούτε container, ούτε always-on βάση δεδομένων. Η επεξεργασία εκτελείται στο global edge κοντά στον κάθε χρήστη, το σύστημα κλιμακώνεται στο μηδέν όταν είναι αδρανές, και ένα push στο main branch αναπτύσσεται ακαριαία παγκοσμίως. Το αποτέλεσμα είναι χαμηλό latency, ελάχιστη λειτουργική επιφάνεια και προβλέψιμο κόστος.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Πώς δίνει ακριβείς, επίκαιρες απαντήσεις αντί να «παραισθάνεται»;</h2>
+          <p>Οι απαντήσεις παράγονται από το Google Gemini 2.5 Flash με Google Search Grounding, ώστε να βασίζονται σε ζωντανές, τεκμηριωμένες με πηγές πληροφορίες αντί για παγωμένη γνώση εκπαίδευσης. Το Gemini Function Calling ενεργοποιεί δομημένες, on-demand ανακτήσεις δεδομένων ανάλογα με την πρόθεση του ερωτήματος, και το Google Places API παρέχει στοιχεία επιχειρήσεων, geocoding και οδηγίες.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Πώς λειτουργεί το σύστημα κρατήσεων και affiliates;</h2>
+          <p>Οι affiliates διαχειρίζονται μέσα σε ένα Google Sheet — μια πηγή αλήθειας που μπορεί να επεξεργαστεί απευθείας ένας μη-τεχνικός συνεργάτης — το οποίο συγχρονίζεται με το Cloudflare KV για γρήγορες αναγνώσεις στο edge. Όταν ένας επισκέπτης εξαργυρώνει μια έκπτωση, το backend δημιουργεί μια κράτηση στο Cloudflare D1, στέλνει ένα mobile-optimized email επιβεβαίωσης μέσω ενός Google Apps Script pipeline και ειδοποιεί τον συνεργάτη. Οι κωδικοί κράτησης είναι crypto-random με collision-retry.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Πώς προστατεύεται το AI endpoint από κατάχρηση και ανεξέλεγκτο κόστος;</h2>
+          <p>Το chat endpoint βρίσκεται μπροστά από πληρωμένες κλήσεις LLM και Places, οπότε προστατεύεται από το native rate-limiting binding του Cloudflare — μια ατομική primitive χωρίς write bottleneck. Μια προηγούμενη προσέγγιση με μετρητή στο KV απορρίφθηκε στο στάδιο της επαλήθευσης, επειδή οι eventually-consistent εγγραφές αποτύγχαναν υπό burst. Ένα secret-gated kill switch μπορεί να απενεργοποιήσει ακαριαία τον assistant σε περίπτωση ανεξέλεγκτου κόστους ή κατάχρησης.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Πώς γίνονται με ασφάλεια τα deploys στην παραγωγή;</h2>
+          <p>Οι αλλαγές στην παραγωγή ακολουθούν μια αυστηρή ροή branch, preview, verify και merge. Ο στόχος του rollback προσδιορίζεται πριν από οποιαδήποτε ζωντανή ενέργεια, και κάθε μη αναστρέψιμο βήμα έχει ρητή πύλη επιβεβαίωσης. Αυτή η πειθαρχία έχει επανειλημμένα εντοπίσει κακές αλλαγές στην επαλήθευση αντί μπροστά στους χρήστες.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Μπορεί η πλατφόρμα να επαναχρησιμοποιηθεί για άλλους προορισμούς;</h2>
+          <p>Ναι. Η αρχιτεκτονική γενικεύεται σε έναν κοινό πυρήνα worker συν ένα per-instance config bundle — μεταβλητές περιβάλλοντος, persona, knowledge base, affiliate data και visual theme tokens — ώστε ένας νέος προορισμός να ξεκινά ως αρχείο config-and-theme αντί για fork κώδικα. Το πρώτο αδελφό instance κυκλοφορεί με τη δική του ξεχωριστή AI persona, όχι ένα μετονομασμένο κλώνο.</p>
+        </section>
+
+        <div class="faq-back">
+          <a class="button button-link" href="/ai-lab-el.html">Επιστροφή στην ανάλυση του AI Lab</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the English version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'en');
+          window.location.href = '/ai-lab-faq.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

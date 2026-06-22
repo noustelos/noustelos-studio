@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script>(function(){try{if(localStorage.getItem('siteLanguage')==='gr')document.documentElement.lang='el';}catch(e){}})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Frequently asked questions about the Noustelos Studio AI Lab and AskSantorini.ai — the edge-native architecture, source-grounded answers, affiliate booking engine, abuse protection and reversible deploys." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="canonical" href="https://noustelos.gr/ai-lab-faq.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/ai-lab-faq.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/ai-lab-faq-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/ai-lab-faq.html" />
 
   <!-- Social / Open Graph -->
   <meta property="og:type" content="article" />
@@ -234,15 +236,15 @@
       </button>
 
       <ul class="menu" id="site-menu">
-        <li><a href="/index.html#work" data-ai-i18n="nav.work">Work</a></li>
-        <li><a href="/index.html#services" data-ai-i18n="nav.services">Services</a></li>
-        <li><a href="/index.html#about" data-ai-i18n="nav.about">About</a></li>
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
         <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
-        <li><a href="/index.html#contact" data-ai-i18n="nav.contact">Contact</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
       </ul>
 
-      <button class="lang-toggle" type="button" aria-label="Switch language" data-ai-i18n-attr="aria-label:lang.switchAria">
-        <span data-lang-option="en">EN</span>
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
         <span class="lang-divider">/</span>
         <span data-lang-option="gr">GR</span>
       </button>
@@ -252,51 +254,51 @@
   <main class="ai-lab-main">
     <section class="container ai-lab-wrap" aria-labelledby="faq-title">
       <div class="section-heading ai-lab-heading">
-        <h1 id="faq-title" data-ai-i18n="faq.title">AI Lab — Frequently Asked Questions</h1>
+        <h1 id="faq-title">AI Lab — Frequently Asked Questions</h1>
       </div>
     </section>
 
     <section class="container ai-lab-wrap ai-lab-faq" aria-labelledby="faq-title">
       <article>
-        <p class="faq-lead" data-ai-i18n="faq.lead">A technical deep-dive into AskSantorini.ai — the architecture, the engineering decisions and how an edge-native AI product is built and operated solo.</p>
+        <p class="faq-lead">A technical deep-dive into AskSantorini.ai — the architecture, the engineering decisions and how an edge-native AI product is built and operated solo.</p>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q1">What is AskSantorini.ai?</h2>
-          <p data-ai-i18n="faq.a1">AskSantorini.ai is an AI-powered travel concierge for the island of Santorini. It answers visitors' questions about where to eat, what to see and how to get around using live, source-grounded search, and turns that intent into real reservations through an affiliate discount-code booking engine. No app, no sign-up — visitors just ask.</p>
+          <h2>What is AskSantorini.ai?</h2>
+          <p>AskSantorini.ai is an AI-powered travel concierge for the island of Santorini. It answers visitors' questions about where to eat, what to see and how to get around using live, source-grounded search, and turns that intent into real reservations through an affiliate discount-code booking engine. No app, no sign-up — visitors just ask.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q2">Why is it built edge-native with no traditional server?</h2>
-          <p data-ai-i18n="faq.a2">The entire platform runs on Cloudflare Workers — there is no server to patch, no container to maintain and no always-on database. Compute executes at the global edge close to each user, the system scales to zero when idle, and a push to the main branch ships instantly worldwide. The result is low latency, a minimal operational surface and predictable cost.</p>
+          <h2>Why is it built edge-native with no traditional server?</h2>
+          <p>The entire platform runs on Cloudflare Workers — there is no server to patch, no container to maintain and no always-on database. Compute executes at the global edge close to each user, the system scales to zero when idle, and a push to the main branch ships instantly worldwide. The result is low latency, a minimal operational surface and predictable cost.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q3">How does it give accurate, up-to-date answers instead of hallucinating?</h2>
-          <p data-ai-i18n="faq.a3">Answers are generated by Google Gemini 2.5 Flash with Google Search Grounding, so responses are built from live, citation-backed information rather than frozen training data. Gemini Function Calling triggers structured, on-demand data fetches based on query intent, and the Google Places API supplies venue details, geocoding and directions.</p>
+          <h2>How does it give accurate, up-to-date answers instead of hallucinating?</h2>
+          <p>Answers are generated by Google Gemini 2.5 Flash with Google Search Grounding, so responses are built from live, citation-backed information rather than frozen training data. Gemini Function Calling triggers structured, on-demand data fetches based on query intent, and the Google Places API supplies venue details, geocoding and directions.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q4">How does the booking and affiliate system work?</h2>
-          <p data-ai-i18n="faq.a4">Affiliates are managed in a Google Sheet — a source of truth a non-technical partner can edit directly — which syncs to Cloudflare KV for fast edge reads. When a visitor redeems a discount, the backend mints a reservation in Cloudflare D1, sends a mobile-optimized confirmation email through a Google Apps Script pipeline and notifies the partner. Booking codes are crypto-random with collision-retry.</p>
+          <h2>How does the booking and affiliate system work?</h2>
+          <p>Affiliates are managed in a Google Sheet — a source of truth a non-technical partner can edit directly — which syncs to Cloudflare KV for fast edge reads. When a visitor redeems a discount, the backend mints a reservation in Cloudflare D1, sends a mobile-optimized confirmation email through a Google Apps Script pipeline and notifies the partner. Booking codes are crypto-random with collision-retry.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q5">How is the AI endpoint protected from abuse and runaway costs?</h2>
-          <p data-ai-i18n="faq.a5">The chat endpoint fronts paid LLM and Places calls, so it is guarded by Cloudflare's native rate-limiting binding — an atomic primitive with no write bottleneck. An earlier KV-counter approach was rejected at the verification stage because eventually-consistent writes failed under burst. A secret-gated kill switch can instantly disable the assistant during any cost or abuse runaway.</p>
+          <h2>How is the AI endpoint protected from abuse and runaway costs?</h2>
+          <p>The chat endpoint fronts paid LLM and Places calls, so it is guarded by Cloudflare's native rate-limiting binding — an atomic primitive with no write bottleneck. An earlier KV-counter approach was rejected at the verification stage because eventually-consistent writes failed under burst. A secret-gated kill switch can instantly disable the assistant during any cost or abuse runaway.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q6">How are changes deployed to production safely?</h2>
-          <p data-ai-i18n="faq.a6">Production changes follow a strict branch, preview, verify and merge flow. The rollback target is identified before any live action, and each irreversible step has an explicit confirmation gate. This discipline has repeatedly caught bad changes at verification rather than in front of users.</p>
+          <h2>How are changes deployed to production safely?</h2>
+          <p>Production changes follow a strict branch, preview, verify and merge flow. The rollback target is identified before any live action, and each irreversible step has an explicit confirmation gate. This discipline has repeatedly caught bad changes at verification rather than in front of users.</p>
         </section>
 
         <section class="faq-item">
-          <h2 data-ai-i18n="faq.q7">Can the platform be reused for other destinations?</h2>
-          <p data-ai-i18n="faq.a7">Yes. The architecture is being generalized into a shared worker core plus a per-instance config bundle — environment variables, persona, knowledge base, affiliate data and visual theme tokens — so a new destination launches as a config-and-theme file rather than a code fork. The first sibling instance ships with its own distinct AI persona, not a renamed clone.</p>
+          <h2>Can the platform be reused for other destinations?</h2>
+          <p>Yes. The architecture is being generalized into a shared worker core plus a per-instance config bundle — environment variables, persona, knowledge base, affiliate data and visual theme tokens — so a new destination launches as a config-and-theme file rather than a code fork. The first sibling instance ships with its own distinct AI persona, not a renamed clone.</p>
         </section>
 
         <div class="faq-back">
-          <a class="button button-link" href="/ai-lab.html" data-ai-i18n="faq.back">Back to the AI Lab writeup</a>
+          <a class="button button-link" href="/ai-lab.html">Back to the AI Lab writeup</a>
         </div>
       </article>
     </section>
@@ -308,151 +310,15 @@
       var menu = document.querySelector('#site-menu');
       var langToggle = document.querySelector('.lang-toggle');
 
-      var translations = {
-        en: {
-          meta: {
-            title: 'AI Lab — FAQ & Technical Deep-Dive | Noustelos Studio',
-            description: 'Frequently asked questions about the Noustelos Studio AI Lab and AskSantorini.ai — the edge-native architecture, source-grounded answers, affiliate booking engine, abuse protection and reversible deploys.'
-          },
-          nav: {
-            work: 'Work',
-            services: 'Services',
-            about: 'About',
-            contact: 'Contact'
-          },
-          lang: {
-            switchAria: 'Switch language'
-          },
-          faq: {
-            title: 'AI Lab — Frequently Asked Questions',
-            lead: 'A technical deep-dive into AskSantorini.ai — the architecture, the engineering decisions and how an edge-native AI product is built and operated solo.',
-            q1: 'What is AskSantorini.ai?',
-            a1: "AskSantorini.ai is an AI-powered travel concierge for the island of Santorini. It answers visitors' questions about where to eat, what to see and how to get around using live, source-grounded search, and turns that intent into real reservations through an affiliate discount-code booking engine. No app, no sign-up — visitors just ask.",
-            q2: 'Why is it built edge-native with no traditional server?',
-            a2: 'The entire platform runs on Cloudflare Workers — there is no server to patch, no container to maintain and no always-on database. Compute executes at the global edge close to each user, the system scales to zero when idle, and a push to the main branch ships instantly worldwide. The result is low latency, a minimal operational surface and predictable cost.',
-            q3: 'How does it give accurate, up-to-date answers instead of hallucinating?',
-            a3: 'Answers are generated by Google Gemini 2.5 Flash with Google Search Grounding, so responses are built from live, citation-backed information rather than frozen training data. Gemini Function Calling triggers structured, on-demand data fetches based on query intent, and the Google Places API supplies venue details, geocoding and directions.',
-            q4: 'How does the booking and affiliate system work?',
-            a4: 'Affiliates are managed in a Google Sheet — a source of truth a non-technical partner can edit directly — which syncs to Cloudflare KV for fast edge reads. When a visitor redeems a discount, the backend mints a reservation in Cloudflare D1, sends a mobile-optimized confirmation email through a Google Apps Script pipeline and notifies the partner. Booking codes are crypto-random with collision-retry.',
-            q5: 'How is the AI endpoint protected from abuse and runaway costs?',
-            a5: "The chat endpoint fronts paid LLM and Places calls, so it is guarded by Cloudflare's native rate-limiting binding — an atomic primitive with no write bottleneck. An earlier KV-counter approach was rejected at the verification stage because eventually-consistent writes failed under burst. A secret-gated kill switch can instantly disable the assistant during any cost or abuse runaway.",
-            q6: 'How are changes deployed to production safely?',
-            a6: 'Production changes follow a strict branch, preview, verify and merge flow. The rollback target is identified before any live action, and each irreversible step has an explicit confirmation gate. This discipline has repeatedly caught bad changes at verification rather than in front of users.',
-            q7: 'Can the platform be reused for other destinations?',
-            a7: 'Yes. The architecture is being generalized into a shared worker core plus a per-instance config bundle — environment variables, persona, knowledge base, affiliate data and visual theme tokens — so a new destination launches as a config-and-theme file rather than a code fork. The first sibling instance ships with its own distinct AI persona, not a renamed clone.',
-            back: 'Back to the AI Lab writeup'
-          }
-        },
-        gr: {
-          meta: {
-            title: 'AI Lab — Συχνές Ερωτήσεις & Τεχνική Ανάλυση | Noustelos Studio',
-            description: 'Συχνές ερωτήσεις για το AI Lab του Noustelos Studio και το AskSantorini.ai — η edge-native αρχιτεκτονική, οι source-grounded απαντήσεις, το affiliate σύστημα κρατήσεων, η προστασία από κατάχρηση και τα αναστρέψιμα deploys.'
-          },
-          nav: {
-            work: 'Portfolio',
-            services: 'Υπηρεσίες',
-            about: 'Σχετικά',
-            contact: 'Επικοινωνία'
-          },
-          lang: {
-            switchAria: 'Αλλαγή γλώσσας'
-          },
-          faq: {
-            title: 'AI Lab — Συχνές Ερωτήσεις',
-            lead: 'Μια τεχνική ανάλυση του AskSantorini.ai — η αρχιτεκτονική, οι μηχανικές αποφάσεις και πώς ένα edge-native AI προϊόν χτίζεται και λειτουργεί από έναν άνθρωπο.',
-            q1: 'Τι είναι το AskSantorini.ai;',
-            a1: 'Το AskSantorini.ai είναι ένας AI-powered ταξιδιωτικός concierge για τη Σαντορίνη. Απαντά σε ερωτήσεις των επισκεπτών για το πού να φάνε, τι να δουν και πώς να μετακινηθούν, χρησιμοποιώντας ζωντανή, source-grounded αναζήτηση, και μετατρέπει αυτή την πρόθεση σε πραγματικές κρατήσεις μέσω ενός affiliate συστήματος κωδικών έκπτωσης. Χωρίς app, χωρίς εγγραφή — απλώς ρωτάς.',
-            q2: 'Γιατί είναι χτισμένο edge-native, χωρίς παραδοσιακό server;',
-            a2: 'Ολόκληρη η πλατφόρμα τρέχει σε Cloudflare Workers — δεν υπάρχει server για συντήρηση, ούτε container, ούτε always-on βάση δεδομένων. Η επεξεργασία εκτελείται στο global edge κοντά στον κάθε χρήστη, το σύστημα κλιμακώνεται στο μηδέν όταν είναι αδρανές, και ένα push στο main branch αναπτύσσεται ακαριαία παγκοσμίως. Το αποτέλεσμα είναι χαμηλό latency, ελάχιστη λειτουργική επιφάνεια και προβλέψιμο κόστος.',
-            q3: 'Πώς δίνει ακριβείς, επίκαιρες απαντήσεις αντί να «παραισθάνεται»;',
-            a3: 'Οι απαντήσεις παράγονται από το Google Gemini 2.5 Flash με Google Search Grounding, ώστε να βασίζονται σε ζωντανές, τεκμηριωμένες με πηγές πληροφορίες αντί για παγωμένη γνώση εκπαίδευσης. Το Gemini Function Calling ενεργοποιεί δομημένες, on-demand ανακτήσεις δεδομένων ανάλογα με την πρόθεση του ερωτήματος, και το Google Places API παρέχει στοιχεία επιχειρήσεων, geocoding και οδηγίες.',
-            q4: 'Πώς λειτουργεί το σύστημα κρατήσεων και affiliates;',
-            a4: 'Οι affiliates διαχειρίζονται μέσα σε ένα Google Sheet — μια πηγή αλήθειας που μπορεί να επεξεργαστεί απευθείας ένας μη-τεχνικός συνεργάτης — το οποίο συγχρονίζεται με το Cloudflare KV για γρήγορες αναγνώσεις στο edge. Όταν ένας επισκέπτης εξαργυρώνει μια έκπτωση, το backend δημιουργεί μια κράτηση στο Cloudflare D1, στέλνει ένα mobile-optimized email επιβεβαίωσης μέσω ενός Google Apps Script pipeline και ειδοποιεί τον συνεργάτη. Οι κωδικοί κράτησης είναι crypto-random με collision-retry.',
-            q5: 'Πώς προστατεύεται το AI endpoint από κατάχρηση και ανεξέλεγκτο κόστος;',
-            a5: 'Το chat endpoint βρίσκεται μπροστά από πληρωμένες κλήσεις LLM και Places, οπότε προστατεύεται από το native rate-limiting binding του Cloudflare — μια ατομική primitive χωρίς write bottleneck. Μια προηγούμενη προσέγγιση με μετρητή στο KV απορρίφθηκε στο στάδιο της επαλήθευσης, επειδή οι eventually-consistent εγγραφές αποτύγχαναν υπό burst. Ένα secret-gated kill switch μπορεί να απενεργοποιήσει ακαριαία τον assistant σε περίπτωση ανεξέλεγκτου κόστους ή κατάχρησης.',
-            q6: 'Πώς γίνονται με ασφάλεια τα deploys στην παραγωγή;',
-            a6: 'Οι αλλαγές στην παραγωγή ακολουθούν μια αυστηρή ροή branch, preview, verify και merge. Ο στόχος του rollback προσδιορίζεται πριν από οποιαδήποτε ζωντανή ενέργεια, και κάθε μη αναστρέψιμο βήμα έχει ρητή πύλη επιβεβαίωσης. Αυτή η πειθαρχία έχει επανειλημμένα εντοπίσει κακές αλλαγές στην επαλήθευση αντί μπροστά στους χρήστες.',
-            q7: 'Μπορεί η πλατφόρμα να επαναχρησιμοποιηθεί για άλλους προορισμούς;',
-            a7: 'Ναι. Η αρχιτεκτονική γενικεύεται σε έναν κοινό πυρήνα worker συν ένα per-instance config bundle — μεταβλητές περιβάλλοντος, persona, knowledge base, affiliate data και visual theme tokens — ώστε ένας νέος προορισμός να ξεκινά ως αρχείο config-and-theme αντί για fork κώδικα. Το πρώτο αδελφό instance κυκλοφορεί με τη δική του ξεχωριστή AI persona, όχι ένα μετονομασμένο κλώνο.',
-            back: 'Επιστροφή στην ανάλυση του AI Lab'
-          }
-        }
-      };
-
       var safeStorage = {
-        get: function (key) {
-          try { return localStorage.getItem(key); } catch (_e) { return null; }
-        },
-        set: function (key, value) {
-          try { localStorage.setItem(key, value); } catch (_e) {}
-        }
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
       };
-
-      var getNestedValue = function (obj, path) {
-        return path.split('.').reduce(function (acc, key) {
-          return acc && acc[key] !== undefined ? acc[key] : null;
-        }, obj);
-      };
-
-      var currentLanguage = 'en';
-
-      var applyLanguage = function (lang) {
-        currentLanguage = translations[lang] ? lang : 'en';
-        var langContent = translations[currentLanguage];
-
-        document.documentElement.lang = currentLanguage === 'gr' ? 'el' : 'en';
-        document.title = langContent.meta.title;
-
-        var description = document.querySelector('meta[name="description"]');
-        if (description) {
-          description.setAttribute('content', langContent.meta.description);
-        }
-
-        document.querySelectorAll('[data-ai-i18n]').forEach(function (element) {
-          var key = element.getAttribute('data-ai-i18n');
-          var value = getNestedValue(langContent, key);
-          if (typeof value === 'string') {
-            element.textContent = value;
-          }
-        });
-
-        document.querySelectorAll('[data-ai-i18n-attr]').forEach(function (element) {
-          element
-            .getAttribute('data-ai-i18n-attr')
-            .split(';')
-            .map(function (entry) { return entry.trim(); })
-            .filter(Boolean)
-            .forEach(function (mapping) {
-              var parts = mapping.split(':').map(function (part) { return part.trim(); });
-              var value = getNestedValue(langContent, parts[1]);
-              if (parts[0] && typeof value === 'string') {
-                element.setAttribute(parts[0], value);
-              }
-            });
-        });
-
-        if (langToggle) {
-          langToggle.querySelectorAll('[data-lang-option]').forEach(function (option) {
-            option.classList.toggle('is-active', option.getAttribute('data-lang-option') === currentLanguage);
-          });
-        }
-
-        safeStorage.set('siteLanguage', currentLanguage);
-      };
-
-      var preferredLanguage = (function () {
-        var storedLang = safeStorage.get('siteLanguage');
-        return storedLang === 'gr' || storedLang === 'en' ? storedLang : 'en';
-      })();
-
-      applyLanguage(preferredLanguage);
 
       if (navToggle && menu) {
         navToggle.addEventListener('click', function () {
           var isOpen = menu.classList.toggle('open');
           navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
-
         menu.querySelectorAll('a').forEach(function (link) {
           link.addEventListener('click', function () {
             menu.classList.remove('open');
@@ -461,9 +327,11 @@
         });
       }
 
+      // Single-language page: the toggle switches to the Greek version.
       if (langToggle) {
         langToggle.addEventListener('click', function () {
-          applyLanguage(currentLanguage === 'en' ? 'gr' : 'en');
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/ai-lab-faq-el.html';
         });
       }
     })();
