@@ -315,14 +315,14 @@ async function callGemma({ apiKey, model, contents, generationConfig, systemProm
     ...toolsField,
   };
 
-  let res = await postJson(url, apiKey, withSystem);
+  let res = await postJsonWithRetry(url, apiKey, withSystem, "call");
 
   if (res.status === 400) {
     const errText = await res.clone().text();
     if (/system\s*instruction|systemInstruction|developer instruction/i.test(errText)) {
       // Fallback: prepend system prompt to the first user message.
       const folded = foldSystemIntoFirstTurn(contents, systemPrompt);
-      res = await postJson(url, apiKey, { contents: folded, generationConfig, ...toolsField });
+      res = await postJsonWithRetry(url, apiKey, { contents: folded, generationConfig, ...toolsField }, "call-folded");
     }
   }
 
@@ -348,18 +348,18 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
   const url = `${API_BASE}/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
   const toolsField = tools && tools.length ? { tools } : {};
 
-  let upstream = await postJson(url, apiKey, {
+  let upstream = await postJsonWithRetry(url, apiKey, {
     systemInstruction: { parts: [{ text: systemPrompt }] },
     contents,
     generationConfig,
     ...toolsField,
-  });
+  }, "stream");
 
   if (upstream.status === 400) {
     const errText = await upstream.clone().text();
     if (/system\s*instruction|systemInstruction|developer instruction/i.test(errText)) {
       const folded = foldSystemIntoFirstTurn(contents, systemPrompt);
-      upstream = await postJson(url, apiKey, { contents: folded, generationConfig, ...toolsField });
+      upstream = await postJsonWithRetry(url, apiKey, { contents: folded, generationConfig, ...toolsField }, "stream-folded");
     }
   }
 
@@ -458,6 +458,42 @@ function postJson(url, apiKey, payload) {
     },
     body: JSON.stringify(payload),
   });
+}
+
+// Transient upstream statuses worth a retry. Google's Generative Language API
+// occasionally returns a one-off 500 "Internal error encountered." (also 502/
+// 503/504) — a short backoff + retry hides it instead of surfacing SIGNAL LOST.
+// Deliberately NOT 429 (quota — retrying just burns the cap) nor 400/401/403
+// (the caller handles those, e.g. the systemInstruction-400 fallback).
+const TRANSIENT_STATUSES = new Set([500, 502, 503, 504]);
+const MAX_UPSTREAM_RETRIES = 2; // total attempts = 1 + retries
+const RETRY_BASE_DELAY_MS = 400; // linear backoff: 400ms, then 800ms
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// postJson with auto-retry on transient Google errors and network throws. Runs
+// BEFORE streaming starts (while we still own the status/headers), so a single
+// transient 500 is absorbed without the client ever seeing it. Non-transient
+// statuses return on the first response untouched.
+async function postJsonWithRetry(url, apiKey, payload, label) {
+  let res;
+  for (let attempt = 0; attempt <= MAX_UPSTREAM_RETRIES; attempt++) {
+    try {
+      res = await postJson(url, apiKey, payload);
+    } catch (err) {
+      if (attempt < MAX_UPSTREAM_RETRIES) {
+        console.log(`artifact ${label} retry ${attempt + 1} after throw:`, String((err && err.message) || err));
+        await sleep(RETRY_BASE_DELAY_MS * (attempt + 1));
+        continue;
+      }
+      throw err;
+    }
+    if (!TRANSIENT_STATUSES.has(res.status) || attempt === MAX_UPSTREAM_RETRIES) return res;
+    console.log(`artifact ${label} retry ${attempt + 1} after status ${res.status}`);
+    try { await res.body?.cancel(); } catch { /* discard the failed body before retry */ }
+    await sleep(RETRY_BASE_DELAY_MS * (attempt + 1));
+  }
+  return res;
 }
 
 function foldSystemIntoFirstTurn(contents, systemPrompt) {

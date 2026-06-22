@@ -362,7 +362,17 @@ entry (so the secret phrase isn't persisted) and shows the result.
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
-  filters them out. Google API occasionally returns transient 500s (no retry yet).
+  filters them out. Google API occasionally returns transient 500s ("Internal
+  error encountered.") — these are now **auto-retried**: `worker.js`
+  `postJsonWithRetry` (used by both `streamReply` and `callGemma`, incl. their
+  folded-fallback paths) retries `TRANSIENT_STATUSES` (500/502/503/504) and
+  network throws up to `MAX_UPSTREAM_RETRIES` (2 → 3 attempts) with linear backoff
+  (`RETRY_BASE_DELAY_MS` 400ms → 800ms). Deliberately NOT 429 (quota — retry just
+  burns the cap) nor 400/401/403 (caller-handled, e.g. the systemInstruction-400
+  fallback). Retries run BEFORE streaming starts (while we still own status/
+  headers) so a single 500 is absorbed without the client seeing "SIGNAL LOST";
+  watch `artifact stream retry N after status 500` in `wrangler tail`. A
+  PROLONGED outage (all 3 attempts 500) still surfaces SIGNAL LOST.
   ⚠️ **Reasoning tokens count against `maxOutputTokens`**, so a low cap clips the
   VISIBLE answer mid-sentence after a long think. The budget is per-role:
   `who==="owner"` → `OWNER_MAX_OUTPUT_TOKENS` (8192), else `MAX_OUTPUT_TOKENS`
