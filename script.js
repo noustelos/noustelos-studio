@@ -104,7 +104,8 @@ const translations = {
       askSantorini: {
         label: 'Featured Launch',
         desc: 'A free AI guide for Santorini visitors, designed to answer practical questions about beaches, sunsets, tours, food, transport and what to do today.',
-        secondary: 'Built as a fast, premium MVP with a clear path toward affiliate tours, local partnerships and hotel concierge tools.'
+        secondary: 'Built as a fast, premium MVP with a clear path toward affiliate tours, local partnerships and hotel concierge tools.',
+        details: 'Project Details'
       },
       artifact: {
         alt: 'The Artifact AI chat playground preview',
@@ -117,12 +118,8 @@ const translations = {
       },
       project1: {
         alt: '365orthodoxy project preview',
-        desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.'
-      },
-      project7: {
-        alt: 'Artemis project preview',
-        title: 'Ethical dog training and care',
-        desc: "A calm landing page for Artemis Antoniou's dog behavior guide, combining editorial copy, a quiz and trust-led product storytelling."
+        desc: 'A focused landing page for an Orthodox calendar widget, helping visitors understand the product and its daily value quickly.',
+        details: 'Project Details'
       },
       project8: {
         alt: 'Water Cycle System project preview',
@@ -234,7 +231,8 @@ const translations = {
       askSantorini: {
         label: 'Featured Launch',
         desc: 'Ένας δωρεάν AI οδηγός για επισκέπτες της Σαντορίνης, σχεδιασμένος να απαντά σε πρακτικές ερωτήσεις για παραλίες, ηλιοβασιλέματα, tours, φαγητό, μετακινήσεις και τι να κάνεις σήμερα.',
-        secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.'
+        secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.',
+        details: 'Λεπτομέρειες Project'
       },
       artifact: {
         alt: 'Προεπισκόπηση The Artifact AI chat playground',
@@ -247,12 +245,8 @@ const translations = {
       },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
-        desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.'
-      },
-      project7: {
-        alt: 'Προεπισκόπηση project Artemis',
-        title: 'Ηθική εκπαίδευση και φροντίδα σκύλων',
-        desc: 'Ήρεμο landing page για τον οδηγό συμπεριφοράς σκύλων της Artemis Antoniou, με editorial κείμενο, quiz και trust-led product storytelling.'
+        desc: 'Στοχευμένο landing page για Orthodox calendar widget, ώστε οι επισκέπτες να καταλαβαίνουν γρήγορα το προϊόν και την καθημερινή του αξία.',
+        details: 'Λεπτομέρειες Project'
       },
       project8: {
         alt: 'Προεπισκόπηση project Water Cycle System',

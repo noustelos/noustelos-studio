@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>(function(){try{if(localStorage.getItem('siteLanguage')==='gr')document.documentElement.lang='el';}catch(e){}})()</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="365orthodoxy — Premium Spiritual Content Engine: a high-performance, Jamstack web widget delivering Orthodox liturgical data with a minimalist glassmorphic UI, built backend-less on Vanilla HTML/CSS/JS and deployed to the edge." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/365orthodoxy-details.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="365orthodoxy — Project Details | Noustelos Studio" />
+  <meta property="og:description" content="365orthodoxy — Premium Spiritual Content Engine: a high-performance, Jamstack web widget for Orthodox liturgical data, built backend-less on Vanilla HTML/CSS/JS and deployed to the edge." />
+  <meta property="og:url" content="https://noustelos.gr/365orthodoxy-details.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="365orthodoxy — Premium Spiritual Content Engine" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/365orthodoxy-details.html" />
+  <meta name="twitter:title" content="365orthodoxy — Project Details | Noustelos Studio" />
+  <meta name="twitter:description" content="365orthodoxy — Premium Spiritual Content Engine: a high-performance, Jamstack web widget for Orthodox liturgical data, built backend-less on Vanilla HTML/CSS/JS and deployed to the edge." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta name="twitter:image:alt" content="365orthodoxy — Premium Spiritual Content Engine" />
+
+  <!-- Structured data: TechArticle + breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "365orthodoxy — Premium Spiritual Content Engine",
+        "description": "A high-performance, Jamstack-based web widget delivering Orthodox liturgical data with a minimalist, high-end aesthetic — engineered for instant load times and zero-maintenance operation.",
+        "url": "https://noustelos.gr/365orthodoxy-details.html",
+        "image": "https://noustelos.gr/assets/og/wave-grid-share.png",
+        "inLanguage": "en",
+        "author": { "@type": "Person", "name": "Nick Karadimas" },
+        "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://noustelos.gr/" },
+          { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://noustelos.gr/index.html#work" },
+          { "@type": "ListItem", "position": 3, "name": "365orthodoxy", "item": "https://noustelos.gr/365orthodoxy-details.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>365orthodoxy — Project Details | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Project article ───────────────────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* Language blocks — only the active language is shown */
+    [data-lang-block] { display: none; }
+    [data-lang-block].is-active { display: block; }
+
+    /* ── Closing CTAs ──────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work" aria-current="page" data-ai-i18n="nav.work">Work</a></li>
+        <li><a href="/index.html#services" data-ai-i18n="nav.services">Services</a></li>
+        <li><a href="/index.html#about" data-ai-i18n="nav.about">About</a></li>
+        <li><a href="/ai-lab.html">AI Lab</a></li>
+        <li><a href="/index.html#contact" data-ai-i18n="nav.contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language" data-ai-i18n-attr="aria-label:lang.switchAria">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="orthodoxy-title">
+      <article>
+        <p class="project-kicker" data-ai-i18n="kicker">Selected Work / Live Product</p>
+        <h1 id="orthodoxy-title">365orthodoxy</h1>
+
+        <!-- ── English ─────────────────────────────────────────── -->
+        <div data-lang-block="en">
+          <blockquote class="project-lead">
+            Premium Spiritual Content Engine — a high-performance, Jamstack-based web widget that delivers Orthodox liturgical data with a minimalist, high-end aesthetic, engineered for instant load times and zero-maintenance operation.
+          </blockquote>
+
+          <h3>Overview</h3>
+          <p>365orthodoxy is a high-performance, Jamstack-based web widget designed to deliver Orthodox liturgical data with a minimalist, high-end aesthetic. It is engineered for instant load times and zero-maintenance operation.</p>
+
+          <h3>Technical Architecture</h3>
+          <ul>
+            <li><strong>Core</strong> — Backend-less, static-first architecture for maximum speed and security.</li>
+            <li><strong>Tech Stack</strong> — Pure Vanilla <code>HTML5</code>, <code>CSS3</code>, and <code>ES6+</code> JavaScript. No bloated frameworks or heavy dependencies.</li>
+            <li><strong>Data Layer</strong> — Decentralized JSON-based data structure (12 monthly files + extra content repository).</li>
+            <li><strong>Frontend</strong> — Custom-built glassmorphic UI, utilizing CSS Custom Properties and Flexbox/Grid for fluid responsiveness across iOS, Android, and tablets.</li>
+            <li><strong>Deployment</strong> — Optimized for edge deployment (Cloudflare Pages/Workers) with PWA-ready service workers for offline caching.</li>
+          </ul>
+
+          <h3>Key Features for Integration</h3>
+          <ul>
+            <li><strong>Architecture-Ready</strong> — Clean code separation; logic, styling, and data are strictly decoupled.</li>
+            <li><strong>Native Functionality</strong> — Includes real-time search, Gregorian/Julian date filtering, and Wikipedia-linked biographical metadata.</li>
+            <li><strong>White-Label / Customization</strong> — Modular CSS/Config system for easy branding or aesthetic skinning.</li>
+          </ul>
+        </div>
+
+        <!-- ── Greek ───────────────────────────────────────────── -->
+        <div data-lang-block="gr">
+          <blockquote class="project-lead">
+            Premium Spiritual Content Engine — ένα web widget υψηλών επιδόσεων, βασισμένο σε Jamstack αρχιτεκτονική, σχεδιασμένο για την παροχή εκκλησιαστικών δεδομένων με minimal και premium αισθητική, για ταχύτητα, αξιοπιστία και μηδενική ανάγκη συντήρησης.
+          </blockquote>
+
+          <h3>Περιγραφή</h3>
+          <p>Το 365orthodoxy είναι ένα web widget υψηλών επιδόσεων, βασισμένο σε Jamstack αρχιτεκτονική, σχεδιασμένο για την παροχή εκκλησιαστικών δεδομένων με minimal και premium αισθητική. Είναι κατασκευασμένο για ταχύτητα, αξιοπιστία και μηδενική ανάγκη συντήρησης.</p>
+
+          <h3>Τεχνική Αρχιτεκτονική</h3>
+          <ul>
+            <li><strong>Core</strong> — Backend-less αρχιτεκτονική (static-first) για μέγιστη ασφάλεια και ταχύτητα φόρτωσης.</li>
+            <li><strong>Tech Stack</strong> — Καθαρή Vanilla <code>HTML5</code>, <code>CSS3</code> και <code>ES6+</code> JavaScript. Δεν χρησιμοποιούνται frameworks, αποφεύγοντας έτσι το bloatware και τις περιττές εξαρτήσεις.</li>
+            <li><strong>Data Layer</strong> — Αποκεντρωμένη δομή δεδομένων βασισμένη σε 12 αρχεία JSON (ένα για κάθε μήνα) + 1 repository για extra περιεχόμενο.</li>
+            <li><strong>Frontend</strong> — Custom glassmorphic UI, με χρήση CSS Custom Properties και Flexbox/Grid για απόλυτη απόκριση (responsiveness) σε iOS, Android και tablets.</li>
+            <li><strong>Deployment</strong> — Βελτιστοποιημένο για edge deployment (Cloudflare Pages/Workers), με PWA service workers για offline δυνατότητες.</li>
+          </ul>
+
+          <h3>Τεχνικά Χαρακτηριστικά</h3>
+          <ul>
+            <li><strong>Architecture-Ready</strong> — Αυστηρός διαχωρισμός logic, styling και data.</li>
+            <li><strong>Native Λειτουργίες</strong> — Real-time search, φιλτράρισμα ημερομηνιών και ενσωματωμένα Wikipedia metadata.</li>
+            <li><strong>Customization</strong> — Modular CSS και configuration σύστημα για άμεσο white-labeling ή αλλαγή αισθητικής (skinning).</li>
+          </ul>
+        </div>
+
+        <!-- ── Closing CTAs ─────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="https://365orthodoxy.com/" target="_blank" rel="noopener noreferrer" data-ai-i18n="cta.live">Visit 365orthodoxy.com</a>
+          <a class="button button-link" href="/index.html#work" data-ai-i18n="cta.back">Back to Work</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var translations = {
+        en: {
+          meta: {
+            title: '365orthodoxy — Project Details | Noustelos Studio',
+            description: '365orthodoxy — Premium Spiritual Content Engine: a high-performance, Jamstack web widget delivering Orthodox liturgical data with a minimalist glassmorphic UI, built backend-less on Vanilla HTML/CSS/JS and deployed to the edge.'
+          },
+          nav: { work: 'Work', services: 'Services', about: 'About', contact: 'Contact' },
+          lang: { switchAria: 'Switch language' },
+          kicker: 'Selected Work / Live Product',
+          cta: { live: 'Visit 365orthodoxy.com', back: 'Back to Work' }
+        },
+        gr: {
+          meta: {
+            title: '365orthodoxy — Λεπτομέρειες Project | Noustelos Studio',
+            description: '365orthodoxy — Premium Spiritual Content Engine: ένα web widget υψηλών επιδόσεων σε Jamstack αρχιτεκτονική για εκκλησιαστικά δεδομένα, με glassmorphic UI, backend-less σε Vanilla HTML/CSS/JS και edge deployment.'
+          },
+          nav: { work: 'Portfolio', services: 'Υπηρεσίες', about: 'Σχετικά', contact: 'Επικοινωνία' },
+          lang: { switchAria: 'Αλλαγή γλώσσας' },
+          kicker: 'Επιλεγμένα Έργα / Σε Παραγωγή',
+          cta: { live: 'Επισκέψου το 365orthodoxy.com', back: 'Πίσω στα Έργα' }
+        }
+      };
+
+      var safeStorage = {
+        get: function (key) { try { return localStorage.getItem(key); } catch (_e) { return null; } },
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      var getNestedValue = function (obj, path) {
+        return path.split('.').reduce(function (acc, key) {
+          return acc && acc[key] !== undefined ? acc[key] : null;
+        }, obj);
+      };
+
+      var currentLanguage = 'en';
+
+      var applyLanguage = function (lang) {
+        currentLanguage = translations[lang] ? lang : 'en';
+        var langContent = translations[currentLanguage];
+
+        document.documentElement.lang = currentLanguage === 'gr' ? 'el' : 'en';
+        document.title = langContent.meta.title;
+
+        var description = document.querySelector('meta[name="description"]');
+        if (description) { description.setAttribute('content', langContent.meta.description); }
+
+        document.querySelectorAll('[data-ai-i18n]').forEach(function (element) {
+          var key = element.getAttribute('data-ai-i18n');
+          var value = getNestedValue(langContent, key);
+          if (typeof value === 'string') { element.textContent = value; }
+        });
+
+        document.querySelectorAll('[data-ai-i18n-attr]').forEach(function (element) {
+          element.getAttribute('data-ai-i18n-attr').split(';').map(function (entry) { return entry.trim(); }).filter(Boolean).forEach(function (mapping) {
+            var parts = mapping.split(':').map(function (part) { return part.trim(); });
+            var value = getNestedValue(langContent, parts[1]);
+            if (parts[0] && typeof value === 'string') { element.setAttribute(parts[0], value); }
+          });
+        });
+
+        document.querySelectorAll('[data-lang-block]').forEach(function (block) {
+          block.classList.toggle('is-active', block.getAttribute('data-lang-block') === currentLanguage);
+        });
+
+        if (langToggle) {
+          langToggle.querySelectorAll('[data-lang-option]').forEach(function (option) {
+            option.classList.toggle('is-active', option.getAttribute('data-lang-option') === currentLanguage);
+          });
+        }
+
+        safeStorage.set('siteLanguage', currentLanguage);
+      };
+
+      var preferredLanguage = (function () {
+        var storedLang = safeStorage.get('siteLanguage');
+        return storedLang === 'gr' || storedLang === 'en' ? storedLang : 'en';
+      })();
+
+      applyLanguage(preferredLanguage);
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          applyLanguage(currentLanguage === 'en' ? 'gr' : 'en');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
