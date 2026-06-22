@@ -413,11 +413,41 @@ See the Passphrase gate bullet for the full "now public" note.
   do the Turnstile/KV/secrets setup documented in that branch's `wrangler.toml`.
 
 ## Other repo areas (not the Artifact)
-- `index.html`, `ai-lab.html`, `ai-lab-faq.html`, `ai-chat.html`,
-  `artifact-details.html`, `privacy-policy*.html` — portfolio/marketing pages.
-  (`artifact-details.html` = the Artifact architecture write-up + owner command
-  table, modeled on `ai-lab.html`'s self-contained `data-ai-i18n` setup; article
-  body is EN-only like the AskSantorini deep-dive, nav/meta/CTAs bilingual.)
+- `index.html`, `ai-chat.html`, `privacy-policy*.html` — homepage + chat + legal.
+- **Content/marketing pages are now SPLIT-URL bilingual (one file per language),
+  NOT the old JS language-toggle (`v2.0`, 2026-06-22).** Each has an English page
+  at its existing URL and a Greek sibling at `-el.html`:
+  `ai-lab.html`/`ai-lab-el.html`, `ai-lab-faq.html`/`ai-lab-faq-el.html`,
+  `artifact-details.html`/`artifact-details-el.html`,
+  `artifact-faq.html`/`artifact-faq-el.html`,
+  `asksantorini-details.html`/`asksantorini-details-el.html`,
+  `365orthodoxy-details.html`/`365orthodoxy-details-el.html`,
+  `water-cycle-details.html`/`water-cycle-details-el.html`. The old self-contained
+  `data-ai-i18n` + `translations` machinery is GONE from these pages — each is a
+  fully static single-language file. Per page: `<html lang>` fixed (en/el),
+  self-referencing `canonical`, reciprocal `hreflang` (en/el/x-default), localized
+  `<title>`/description/OG/Twitter and JSON-LD (`inLanguage`, and FAQPage Q&A in the
+  page language). The header lang-toggle is now a NAVIGATE: it `safeStorage.set(
+  'siteLanguage', …)` then `window.location.href`s to the other-language URL (a
+  tiny inline script, same on every page — copy it from `water-cycle-details*.html`,
+  the canonical template). Internal links to sibling content pages point to the
+  SAME-language variant (EN→EN, EL→`-el`); `/index.html#…` and external links are
+  language-agnostic. ⚠️ The long article BODY on `artifact-details` /
+  `asksantorini-details` is EN-only by design — it stays English on the EL page too
+  (only nav/meta/kicker/CTAs are translated); do NOT machine-translate it.
+  **Adding a new content page = create BOTH files** (use `water-cycle-details*.html`
+  as the template), add BOTH to `sitemap.xml`, and if it's linked from the homepage
+  give the link a language-aware `data-i18n-attr="href:…"` key (see next bullet).
+  The HOMEPAGE stays single-URL with the shared `script.js` JS toggle (Google best
+  practice for a homepage) — it is the ONE page that is still runtime-bilingual.
+- **Homepage → content-page links are language-aware** via `data-i18n-attr=
+  "href:…"` keys in `script.js`/`script.min.js`: `nav.aiLabHref`
+  (`/ai-lab.html` ⇄ `/ai-lab-el.html`) and `work.<card>.detailsHref`
+  (`askSantorini`/`artifact`/`project1`=365orthodoxy/`project8`=water-cycle, each
+  en→EN-url, gr→`-el`-url). The static `href` is the EN default (works with JS off);
+  the i18n setter rewrites it to the `-el` URL when GR is active. So an EL-preferring
+  visitor lands on the Greek variant. Same generic `data-i18n-attr` mechanism as the
+  footer `privacy-policy` link.
 - `script.js` / `styles.css` (+ `.min`), `chat-hero-mark.js` — site behavior/style.
 - **`index.html` is "product-first" (agentic SaaS positioning).** Hero =
   *"Precision Agentic Platforms, Powered by AI. Delivered as SaaS."* + a developer-
