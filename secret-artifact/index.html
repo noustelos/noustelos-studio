@@ -151,16 +151,19 @@
       background: linear-gradient(90deg, rgba(var(--rgb-1), 0.06), rgba(var(--rgb-2), 0.06));
     }
 
-    /* Live clock (HH:MM:SS), centered in the header in the site's warm
-       copper-orange (the Vault --rgb-2 accent; magenta under the Neon skin). */
+    /* Header readout (active preset / date / clock) — sits right after the title
+       on the left, in the site's warm copper-orange (the Vault --rgb-2 accent;
+       magenta under the Neon skin). Desktop-only. */
+    .artifact-head-left {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;              /* small space between the title and the readout */
+      min-width: 0;
+    }
     .artifact-clock {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
       display: none;            /* desktop-only — enabled in the min-width:1025px block */
       align-items: center;
-      gap: 1.6rem;              /* roomy space between the date and the time */
+      gap: 0.9rem;              /* small space between preset / date / clock */
       font-family: var(--font-mono);
       font-size: 0.78rem;
       font-weight: 600;
@@ -797,8 +800,10 @@
 
   <main class="artifact" aria-label="The Artifact chat engine">
     <header class="artifact-header">
-      <div class="artifact-title">THE ARTIFACT <span class="sep">/&gt;</span></div>
-      <div class="artifact-clock" id="clock" role="timer" aria-label="Clock" aria-hidden="true">--:--:--</div>
+      <div class="artifact-head-left">
+        <div class="artifact-title">THE ARTIFACT <span class="sep">/&gt;</span></div>
+        <div class="artifact-clock" id="clock" role="timer" aria-label="Clock" aria-hidden="true">--:--:--</div>
+      </div>
       <div class="artifact-state">
         <button type="button" class="artifact-reset artifact-tune" id="tune" title="Tuning console" aria-label="Open the tuning console" aria-expanded="false" aria-controls="tuner">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
