@@ -448,6 +448,24 @@ material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
   `{ result: {overall_score, overall_label, executive_summary, score_breakdown{7
   axes}, what_works_well[], what_holds_it_back[], client_dependent_improvements[],
   what_would_raise_the_score{…}, recommended_next_steps[], final_verdict, disclaimer} }`.
+- **Example report (both scanners, front-end only):** since the form is behind the
+  passphrase gate, a locked visitor can't preview the output — so the GATE panel has a
+  **"See an example report"** button that renders a CANNED `SAMPLE_REPORT` through the
+  normal `render()` path, flagged with a **"Sample"** pill in the results head (`#sample-flag`,
+  shown only when `render(r, true)`; real scans call `render(r, false)`). No engine call.
+  Present on `saas-scanner.html` AND both website-scanner pages (EN/EL samples).
+- **Comparison mode (website scanner ONLY, EN+EL):** a **"Compare with a second website"**
+  checkbox reveals a Site B block (URL + optional notes; Business Type/Goal/Stage stay
+  SHARED context). Submitting sends `compare:true` + `urlB`/`notesB`; the engine branches
+  in `handleWebsiteScan` to `callWebsiteCompare` (its own `buildWebsiteComparePrompt(lang)` +
+  `WEBSITE_COMPARE_SCHEMA`, `maxOutputTokens:4096`) and returns `mode:"compare"`. The schema
+  scores BOTH sites on Overall + the 7 axes as a `comparison[]` table (`{criterion,
+  site_a_score, site_b_score, winner:"a"|"b"|"tie", note}`) plus per-site strengths,
+  recommendation, verdict. Front-end: single results section with two bodies — `#single-body`
+  (static) and `#compare-body` (built via innerHTML with an `esc()` HTML-escaper, table wrapped
+  in `.compare-scroll` for mobile). The fetch dispatch picks `renderCompare` vs `render` by
+  `result.mode`; Copy/Download dispatch via `reportToText` (compare vs single). Single scans
+  carry `mode:"single"`. ~2× the cost of a single scan (still ~1 cent).
 - **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new secret —
   reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
   `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).

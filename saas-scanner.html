@@ -244,6 +244,20 @@
     }
     .scanner-results-tools { display: flex; gap: 0.5rem; }
 
+    .scanner-results-titlewrap { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+    .sample-flag {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cta);
+      border: 1px solid var(--cta);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+    }
+    .gate-example-row { margin: 0; }
+
     .score-card { display: grid; gap: 0.9rem; }
     .score-top {
       display: flex;
@@ -449,6 +463,7 @@
         </div>
         <p id="gate-error" class="scanner-error" role="alert" hidden></p>
         <p><a class="scanner-link-btn" id="request-access" href="#" data-mail-user="avatar68" data-mail-domain="gmail.com">Request access by email</a></p>
+        <p class="gate-example-row">No code? <button class="scanner-link-btn" type="button" id="gate-example">See an example report ↓</button></p>
       </section>
 
       <!-- Scanner form -->
@@ -511,7 +526,10 @@
       <!-- Results -->
       <section class="scanner-results" id="results" aria-live="polite" hidden>
         <div class="scanner-results-head">
-          <h2>Readiness Report</h2>
+          <div class="scanner-results-titlewrap">
+            <h2>Readiness Report</h2>
+            <span class="sample-flag" id="sample-flag" hidden>Sample</span>
+          </div>
           <div class="scanner-results-tools">
             <button class="button button-secondary" type="button" id="copy-result">Copy analysis</button>
             <button class="button button-secondary" type="button" id="download-result">Download</button>
@@ -703,6 +721,12 @@
         });
       }
 
+      // ── Example report (locked visitors can preview the output) ──
+      var gateExample = document.getElementById('gate-example');
+      if (gateExample) {
+        gateExample.addEventListener('click', function () { render(SAMPLE_REPORT, true); });
+      }
+
       // ── Example input ──
       document.getElementById('fill-example').addEventListener('click', function () {
         document.getElementById('f-name').value = 'AskSantorini.ai';
@@ -745,10 +769,48 @@
         return SCORE_COLORS[SCORE_COLORS.length - 1].c;
       }
 
+      // Canned sample so a locked visitor can preview the output without a code.
+      var SAMPLE_REPORT = {
+        score: 82,
+        score_label: 'Strong SaaS Candidate',
+        executive_summary: 'AskSantorini.ai shows strong SaaS potential: a focused, repeatable concierge engine with a clear edge-native architecture and a credible white-label path. The main gaps are productizing the configuration layer and adding a self-serve onboarding flow so new destinations can deploy without manual setup.',
+        strengths: [
+          'Clear, repeatable core engine that can be re-deployed per destination',
+          'Edge-native, serverless architecture with low marginal cost',
+          'Concrete revenue today via affiliate commissions',
+          'Believable white-label path for hotels and tourism boards'
+        ],
+        risks: [
+          'Reliance on third-party affiliate programs for revenue',
+          'Content freshness and accuracy at scale',
+          'Destination-by-destination content cost without automation'
+        ],
+        technical_gaps: [
+          'No self-serve onboarding / tenant provisioning yet',
+          'Configuration layer not fully productized',
+          'Usage metering and billing not in place'
+        ],
+        monetization_paths: [
+          'White-label concierge licensing for hotels',
+          'Tiered SaaS subscription per destination',
+          'Affiliate commissions (current)',
+          'Featured-partner placements'
+        ],
+        recommended_next_steps: [
+          'Productize the configuration layer into a self-serve dashboard.',
+          'Add tenant provisioning and per-tenant theming.',
+          'Introduce usage metering and a billing integration.',
+          'Define a clear pricing tier structure.',
+          'Pilot a white-label deployment with one hotel partner.'
+        ],
+        final_verdict: 'A strong SaaS candidate whose next unlock is productizing onboarding and the configuration layer into a self-serve, multi-tenant product.'
+      };
+
       var lastResult = null;
 
-      function render(r) {
+      function render(r, isSample) {
         lastResult = r;
+        document.getElementById('sample-flag').hidden = !isSample;
         var score = Math.max(0, Math.min(100, Math.round(Number(r.score) || 0)));
         document.getElementById('r-score').innerHTML = score + '<span>/100</span>';
         document.getElementById('r-score-label').textContent = r.score_label || '';

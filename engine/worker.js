@@ -1260,9 +1260,10 @@ async function handleWebsiteScan(body, env, ctx, corsOrigin) {
 
   // --- Validate input. URL is the only hard requirement (context only). ---
   const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
-  const url = clean(body.url, 300);
   // Loose URL shape check — must look like a domain/URL, not full validation.
-  if (!url || !/^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(url)) {
+  const urlOk = (u) => /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(u);
+  const url = clean(body.url, 300);
+  if (!url || !urlOk(url)) {
     return json({ error: "url_required" }, 400, corsOrigin);
   }
 
@@ -1270,11 +1271,51 @@ async function handleWebsiteScan(body, env, ctx, corsOrigin) {
   const goal = clean(body.goal, 80);
   const stage = clean(body.stage, 80);
   const notes = clean(body.notes, WEBSITE_SCAN_MAX_NOTES);
+  const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
 
-  const lines = [`Website URL (context only — NOT fetched): ${url}`];
-  if (businessType) lines.push(`Business Type: ${businessType}`);
-  if (goal) lines.push(`Website Goal: ${goal}`);
-  if (stage) lines.push(`Current Stage: ${stage}`);
+  const sharedContext = [];
+  if (businessType) sharedContext.push(`Business Type: ${businessType}`);
+  if (goal) sharedContext.push(`Website Goal: ${goal}`);
+  if (stage) sharedContext.push(`Current Stage: ${stage}`);
+
+  // --- Comparison mode (web scanner only): two sites → a comparison report. ---
+  // Triggered by `compare:true` + a second URL. The Business Type/Goal/Stage are
+  // SHARED context (both sites judged for the same purpose); Site B adds only a URL
+  // + optional notes. Same passphrase/model, its own prompt + schema (mode:"compare").
+  if (body.compare === true) {
+    const urlB = clean(body.urlB, 300);
+    if (!urlB || !urlOk(urlB)) {
+      return json({ error: "url_required" }, 400, corsOrigin);
+    }
+    const notesB = clean(body.notesB, WEBSITE_SCAN_MAX_NOTES);
+
+    const cmpLines = ["Compare these two websites for the SAME purpose."];
+    if (sharedContext.length) cmpLines.push("", "Shared context:", ...sharedContext);
+    cmpLines.push("", `Site A URL (context only — NOT fetched): ${url}`);
+    if (notes) cmpLines.push("Site A Notes:", notes);
+    cmpLines.push("", `Site B URL (context only — NOT fetched): ${urlB}`);
+    if (notesB) cmpLines.push("Site B Notes:", notesB);
+
+    let cmp;
+    try {
+      cmp = await callWebsiteCompare({
+        apiKey: env.GOOGLE_API_KEY,
+        model,
+        userText: cmpLines.join("\n"),
+        lang,
+        labelA: hostFromUrl(url),
+        labelB: hostFromUrl(urlB),
+      });
+    } catch (err) {
+      console.error("website-compare error:", String((err && err.message) || err));
+      return json({ error: "scan_failed" }, 502, corsOrigin);
+    }
+    if (!cmp) return json({ error: "bad_format" }, 502, corsOrigin);
+    return json({ result: cmp }, 200, corsOrigin);
+  }
+
+  // --- Single-site report (default). ---
+  const lines = [`Website URL (context only — NOT fetched): ${url}`, ...sharedContext];
   if (notes) lines.push("", "Owner Notes:", notes);
   const userText = lines.join("\n");
 
@@ -1282,7 +1323,7 @@ async function handleWebsiteScan(body, env, ctx, corsOrigin) {
   try {
     result = await callWebsiteScanner({
       apiKey: env.GOOGLE_API_KEY,
-      model: env.SCANNER_MODEL || SCAN_DEFAULT_MODEL,
+      model,
       userText,
       lang,
     });
@@ -1354,6 +1395,7 @@ function parseWebsiteScanJson(text, lang) {
     ? obj.what_would_raise_the_score : {};
 
   const result = {
+    mode: "single",
     language: lang,
     overall_score: overall,
     overall_label: str(obj.overall_label) || websiteScoreLabel(overall, lang),
@@ -1373,4 +1415,143 @@ function parseWebsiteScanJson(text, lang) {
   };
   if (!result.executive_summary && !result.final_verdict) return null;
   return result;
+}
+
+/* ---- Website comparison (two sites → a comparison table) ---------------- */
+
+function hostFromUrl(u) {
+  const s = String(u || "").trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "");
+  const host = s.split(/[\/?#]/)[0];
+  return host || s;
+}
+
+const WEBSITE_COMPARE_FIELDS = [
+  "site_a_label", "site_b_label", "executive_summary", "site_a_overall",
+  "site_b_overall", "comparison", "site_a_strengths", "site_b_strengths",
+  "recommendation", "final_verdict", "disclaimer",
+];
+const WEBSITE_COMPARE_ROW_SCHEMA = {
+  type: "object",
+  properties: {
+    criterion: { type: "string" },
+    site_a_score: { type: "integer" },
+    site_b_score: { type: "integer" },
+    winner: { type: "string", enum: ["a", "b", "tie"] },
+    note: { type: "string" },
+  },
+  required: ["criterion", "site_a_score", "site_b_score", "winner", "note"],
+  propertyOrdering: ["criterion", "site_a_score", "site_b_score", "winner", "note"],
+};
+const WEBSITE_COMPARE_SCHEMA = {
+  type: "object",
+  properties: {
+    site_a_label: { type: "string" },
+    site_b_label: { type: "string" },
+    executive_summary: { type: "string" },
+    site_a_overall: { type: "integer" },
+    site_b_overall: { type: "integer" },
+    comparison: { type: "array", items: WEBSITE_COMPARE_ROW_SCHEMA },
+    site_a_strengths: { type: "array", items: { type: "string" } },
+    site_b_strengths: { type: "array", items: { type: "string" } },
+    recommendation: { type: "string" },
+    final_verdict: { type: "string" },
+    disclaimer: { type: "string" },
+  },
+  required: WEBSITE_COMPARE_FIELDS,
+  propertyOrdering: WEBSITE_COMPARE_FIELDS,
+};
+
+function buildWebsiteComparePrompt(lang) {
+  const langName = lang === "el" ? "Greek" : "English";
+  return (
+    "You are a senior website strategist, SEO auditor and conversion consultant. " +
+    "You are given TWO websites (Site A and Site B) to compare for the SAME business " +
+    "purpose. The URLs are CONTEXT ONLY — NOT fetched or crawled, so base the " +
+    "comparison on the user-provided details and reasonable category expectations. Be " +
+    "practical, honest and specific; do not exaggerate or claim you crawled the sites.\n\n" +
+    "Score BOTH sites 0-100 on each of these criteria, IN THIS ORDER: Overall " +
+    "Readiness, Design & Visual Trust, Message Clarity, SEO Readiness, Conversion " +
+    "Readiness, Trust Signals, Content Completeness, Technical Basics. Return one " +
+    "`comparison` row per criterion with both scores, a `winner` of \"a\", \"b\" or " +
+    "\"tie\", and a short note. Set site_a_overall / site_b_overall to the Overall " +
+    "Readiness scores. Give 3-5 top strengths per site, a 2-4 sentence " +
+    "executive_summary comparing them, a recommendation (which is stronger and what " +
+    "each should prioritise) and a one-sentence final_verdict. If information is " +
+    "missing, say so rather than inventing detail.\n\n" +
+    `Write EVERY string value (criteria names, notes, summaries, lists, recommendation, ` +
+    `verdict, disclaimer) in ${langName}. Return ONLY structured JSON matching the schema.`
+  );
+}
+
+async function callWebsiteCompare({ apiKey, model, userText, lang, labelA, labelB }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: buildWebsiteComparePrompt(lang) }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 4096, // two sites + a table needs more room than a single scan
+      responseMimeType: "application/json",
+      responseSchema: WEBSITE_COMPARE_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-compare");
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseWebsiteCompareJson(extractReply(data), labelA, labelB);
+}
+
+function parseWebsiteCompareJson(text, labelA, labelB) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  const list = (v) => Array.isArray(v)
+    ? v.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 8)
+    : [];
+  const clampScore = (v) => {
+    let n = Number(v);
+    if (!Number.isFinite(n)) n = 0;
+    return Math.min(100, Math.max(0, Math.round(n)));
+  };
+
+  const rows = Array.isArray(obj.comparison) ? obj.comparison : [];
+  const comparison = rows.map((r) => {
+    if (!r || typeof r !== "object") return null;
+    let w = String(r.winner || "").toLowerCase();
+    if (w !== "a" && w !== "b") w = "tie";
+    return {
+      criterion: str(r.criterion),
+      site_a_score: clampScore(r.site_a_score),
+      site_b_score: clampScore(r.site_b_score),
+      winner: w,
+      note: str(r.note),
+    };
+  }).filter((r) => r && r.criterion).slice(0, 12);
+
+  if (!comparison.length) return null;
+
+  return {
+    mode: "compare",
+    site_a_label: str(obj.site_a_label) || labelA,
+    site_b_label: str(obj.site_b_label) || labelB,
+    executive_summary: str(obj.executive_summary),
+    site_a_overall: clampScore(obj.site_a_overall),
+    site_b_overall: clampScore(obj.site_b_overall),
+    comparison,
+    site_a_strengths: list(obj.site_a_strengths),
+    site_b_strengths: list(obj.site_b_strengths),
+    recommendation: str(obj.recommendation),
+    final_verdict: str(obj.final_verdict),
+    disclaimer: str(obj.disclaimer),
+  };
 }

@@ -401,6 +401,103 @@
       font-style: italic;
     }
 
+    /* ── Sample-report flag ───────────────────────────────── */
+    .scanner-results-titlewrap { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+    .sample-flag {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cta);
+      border: 1px solid var(--cta);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+    }
+    .gate-example-row { margin: 0; }
+
+    /* ── Compare toggle + Site B ──────────────────────────── */
+    .compare-check {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: "Inter", sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    .compare-check input { width: 1.05rem; height: 1.05rem; accent-color: var(--cta); cursor: pointer; }
+    #site-b-block { display: grid; gap: 1.15rem; }
+
+    /* ── Comparison report ────────────────────────────────── */
+    .compare-heads { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .compare-head {
+      flex: 1 1 12rem;
+      background: #fffdf8;
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: clamp(1rem, 3vw, 1.4rem);
+      display: grid;
+      gap: 0.35rem;
+    }
+    .compare-head .lbl {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--glass-gray-text);
+      word-break: break-word;
+    }
+    .compare-head .num {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(2.2rem, 7vw, 3rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .compare-head .num span { font-size: 0.4em; font-weight: 500; color: var(--text-secondary); }
+    .compare-head.is-winner { border-width: 2px; }
+
+    .compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .compare-table { width: 100%; min-width: 30rem; border-collapse: collapse; }
+    .compare-table th,
+    .compare-table td {
+      padding: 0.6rem 0.65rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    .compare-table th {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+    }
+    .compare-table td.num,
+    .compare-table th.num { text-align: center; width: 4rem; }
+    .compare-table td.num {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .compare-table td.num.win { color: var(--cta); }
+    .compare-crit { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+    .compare-note { margin: 0.2rem 0 0; font-size: 0.86rem; line-height: 1.45; color: var(--text-secondary); }
+    .compare-winner-pill {
+      display: inline-block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--cta);
+      white-space: nowrap;
+    }
+    .compare-winner-pill.tie { color: var(--text-secondary); }
+
     /* ── Info sections ────────────────────────────────────── */
     .scanner-info { display: grid; gap: 0.7rem; }
     .scanner-info h2 {
@@ -526,6 +623,7 @@
         </div>
         <p id="gate-error" class="scanner-error" role="alert" hidden></p>
         <p><a class="scanner-link-btn" id="request-access" href="#" data-mail-user="avatar68" data-mail-domain="gmail.com">Ζήτησε πρόσβαση με email</a></p>
+        <p class="gate-example-row">Χωρίς κωδικό; <button class="scanner-link-btn" type="button" id="gate-example">Δείτε ένα δείγμα report ↓</button></p>
       </section>
 
       <!-- Scanner form -->
@@ -587,6 +685,21 @@
           <textarea class="scanner-textarea" id="f-notes" maxlength="2000" placeholder="Παράδειγμα: Είναι ένα νέο landing page για εταιρεία συντήρησης πισινών. Το design έχει ολοκληρωθεί, αλλά ο πελάτης δεν έχει δώσει ακόμα testimonials, πραγματικές φωτογραφίες έργων ή Google reviews."></textarea>
         </div>
 
+        <div class="scanner-field">
+          <label class="compare-check"><input type="checkbox" id="f-compare" /> <span>Σύγκριση με δεύτερο website</span></label>
+        </div>
+
+        <div id="site-b-block" hidden>
+          <div class="scanner-field">
+            <label for="f-url-b">URL Δεύτερου Website <span class="optional">(υποχρεωτικό για σύγκριση — μόνο context)</span></label>
+            <input class="scanner-input" type="url" id="f-url-b" maxlength="300" placeholder="https://competitor.com" />
+          </div>
+          <div class="scanner-field">
+            <label for="f-notes-b">Σημειώσεις Δεύτερου Website <span class="optional">(προαιρετικό)</span></label>
+            <textarea class="scanner-textarea" id="f-notes-b" maxlength="2000" placeholder="Οτιδήποτε αξιοσημείωτο για το δεύτερο site — τι κάνει καλά, τι του λείπει, ποιους εξυπηρετεί."></textarea>
+          </div>
+        </div>
+
         <p id="form-error" class="scanner-error" role="alert" hidden></p>
 
         <div class="scanner-form-actions">
@@ -598,13 +711,17 @@
       <!-- Results -->
       <section class="scanner-results" id="results" aria-live="polite" hidden>
         <div class="scanner-results-head">
-          <h2>Report Ετοιμότητας Website</h2>
+          <div class="scanner-results-titlewrap">
+            <h2 id="results-title">Report Ετοιμότητας Website</h2>
+            <span class="sample-flag" id="sample-flag" hidden>Δείγμα</span>
+          </div>
           <div class="scanner-results-tools">
             <button class="button button-secondary" type="button" id="copy-result">Αντιγραφή</button>
             <button class="button button-secondary" type="button" id="download-result">Λήψη</button>
           </div>
         </div>
 
+        <div id="single-body">
         <div class="scanner-panel score-card">
           <p class="score-heading">Συνολική Ετοιμότητα Website</p>
           <div class="score-top">
@@ -659,6 +776,9 @@
           <p id="r-verdict"></p>
           <p class="result-disclaimer" id="r-disclaimer" hidden></p>
         </div>
+        </div><!-- /#single-body -->
+
+        <div id="compare-body" hidden></div>
       </section>
 
       <!-- How it works -->
@@ -801,6 +921,22 @@
         });
       }
 
+      // ── Δείγμα report (ο κλειδωμένος επισκέπτης βλέπει την έξοδο) ──
+      var gateExample = document.getElementById('gate-example');
+      if (gateExample) {
+        gateExample.addEventListener('click', function () { render(SAMPLE_REPORT, true); });
+      }
+
+      // ── Compare toggle ──
+      var compareChk = document.getElementById('f-compare');
+      var siteBBlock = document.getElementById('site-b-block');
+      function updateCompareUI() {
+        var on = compareChk.checked;
+        siteBBlock.hidden = !on;
+        runBtn.textContent = on ? 'Σύγκριση Website' : 'Ανάλυση Website';
+      }
+      compareChk.addEventListener('change', updateCompareUI);
+
       // ── Example input ──
       document.getElementById('fill-example').addEventListener('click', function () {
         document.getElementById('f-url').value = 'https://watercyclesystem.gr';
@@ -821,7 +957,9 @@
 
       function setLoading(on) {
         runBtn.disabled = on;
-        runBtn.textContent = on ? 'Γίνεται ανάλυση ετοιμότητας website…' : 'Ανάλυση Website';
+        var cmp = compareChk.checked;
+        if (on) runBtn.textContent = cmp ? 'Γίνεται σύγκριση website…' : 'Γίνεται ανάλυση ετοιμότητας website…';
+        else runBtn.textContent = cmp ? 'Σύγκριση Website' : 'Ανάλυση Website';
       }
 
       function li(text) { var el = document.createElement('li'); el.textContent = text; return el; }
@@ -901,10 +1039,76 @@
         });
       }
 
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+
+      // Έτοιμο δείγμα report ώστε ένας κλειδωμένος επισκέπτης να δει την έξοδο
+      // χωρίς κωδικό (μέσω της κανονικής render(), με σήμανση «Δείγμα»).
+      var SAMPLE_REPORT = {
+        mode: 'single',
+        overall_score: 88,
+        overall_label: 'Δυνατό για launch',
+        executive_summary: 'Το website φαίνεται αρκετά δυνατό για launch, με καθαρή δομή, ξεκάθαρη υπηρεσία και στιβαρή οπτική κατεύθυνση για μια τοπική επιχείρηση υπηρεσιών. Η ετοιμότητά του περιορίζεται κυρίως από τα trust signals που λείπουν και το υλικό που εξαρτάται από τον πελάτη — testimonials, πραγματικές φωτογραφίες έργων και reviews — καθώς και από περιθώριο για βαθύτερο local SEO content.',
+        score_breakdown: {
+          design_visual_trust: { score: 90, note: 'Καθαρό, συνεπές layout που διαβάζεται ως επαγγελματικό για την κατηγορία.' },
+          message_clarity: { score: 86, note: 'Η βασική υπηρεσία και η αξία είναι ξεκάθαρες· το δευτερεύον μήνυμα θα μπορούσε να είναι πιο σφιχτό.' },
+          seo_readiness: { score: 78, note: 'Στέρεη τεχνική βάση, αλλά φτωχό local-SEO κείμενο και λίγες ενότητες ανά περιοχή.' },
+          conversion_readiness: { score: 82, note: 'Υπάρχει ορατό σημείο επικοινωνίας· περισσότερα CTA μετά από κάθε ενότητα υπηρεσίας θα βοηθούσαν.' },
+          trust_signals: { score: 72, note: 'Δεν εμφανίζονται ακόμα testimonials, reviews ή πιστοποιήσεις — το μεγαλύτερο κενό.' },
+          content_completeness: { score: 80, note: 'Οι βασικές σελίδες υπάρχουν· λείπουν FAQ και case studies.' },
+          technical_basics: { score: 92, note: 'Responsive, γρήγορο και με καλά δομημένο markup.' }
+        },
+        what_works_well: [
+          'Καθαρό, συνεπές visual design κατάλληλο για τοπική επιχείρηση υπηρεσιών',
+          'Ξεκάθαρη βασική υπηρεσία και πρόταση αξίας',
+          'Καλή κατεύθυνση για mobile και responsive',
+          'Ορατό, εύκολα προσβάσιμο σημείο επικοινωνίας'
+        ],
+        what_holds_it_back: [
+          'Χωρίς testimonials ή reviews πελατών',
+          'Περιορισμένες πραγματικές φωτογραφίες έργων ή before/after',
+          'Φτωχό περιεχόμενο FAQ και local-SEO',
+          'Λίγα calls to action μετά τις ενότητες υπηρεσιών'
+        ],
+        client_dependent_improvements: [
+          'Testimonials ή αποσπάσματα Google reviews',
+          'Πραγματικές φωτογραφίες έργων και before/after',
+          'Πιστοποιήσεις ή επαγγελματικά διαπιστευτήρια',
+          'Σύντομη λίστα ολοκληρωμένων έργων / case studies'
+        ],
+        what_would_raise_the_score: {
+          current_estimate: '88/100',
+          realistic_improved_range: '94–96',
+          required_improvements: [
+            'Πρόσθεσε 3–5 testimonials ή αποσπάσματα Google reviews',
+            'Πρόσθεσε πραγματικές φωτογραφίες έργων ή before/after',
+            'Πρόσθεσε ενότητα FAQ με βάση συνηθισμένες ερωτήσεις πελατών',
+            'Ενίσχυσε το local-SEO κείμενο για την περιοχή εξυπηρέτησης'
+          ]
+        },
+        recommended_next_steps: [
+          'Πρόσθεσε testimonials ή αποσπάσματα Google reviews.',
+          'Πρόσθεσε πραγματικές φωτογραφίες έργων ή before/after.',
+          'Πρόσθεσε περιεχόμενο FAQ με βάση συνηθισμένες ερωτήσεις πελατών.',
+          'Ενίσχυσε το local SEO κείμενο για την περιοχή εξυπηρέτησης.',
+          'Πρόσθεσε σαφέστερα CTA μετά από κάθε βασική ενότητα υπηρεσίας.',
+          'Πρόσθεσε structured metadata και Open Graph tags.'
+        ],
+        final_verdict: 'Το site είναι έτοιμο για launch, αλλά χρειάζεται ισχυρότερες αποδείξεις, testimonials και βάθος local-SEO για να φτάσει σε premium conversion readiness.',
+        disclaimer: 'Αυτό είναι ένα δείγμα report για επίδειξη. Ξεκλείδωσε το scanner με κωδικό πρόσβασης για να αναλύσεις ένα πραγματικό website.'
+      };
+
       var lastResult = null;
 
-      function render(r) {
+      function render(r, isSample) {
         lastResult = r;
+        document.getElementById('single-body').hidden = false;
+        document.getElementById('compare-body').hidden = true;
+        document.getElementById('results-title').textContent = 'Report Ετοιμότητας Website';
+        document.getElementById('sample-flag').hidden = !isSample;
         var score = clampScore(r.overall_score);
         document.getElementById('r-score').innerHTML = score + '<span>/100</span>';
         document.getElementById('r-score-label').textContent = r.overall_label || '';
@@ -935,6 +1139,60 @@
         results.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
+      function compareWinnerLabel(r, w) {
+        if (w === 'a') return r.site_a_label || 'Site A';
+        if (w === 'b') return r.site_b_label || 'Site B';
+        return '—';
+      }
+
+      function renderCompare(r) {
+        lastResult = r;
+        document.getElementById('single-body').hidden = true;
+        document.getElementById('compare-body').hidden = false;
+        document.getElementById('results-title').textContent = 'Report Σύγκρισης Website';
+        document.getElementById('sample-flag').hidden = true;
+
+        var a = clampScore(r.site_a_overall), b = clampScore(r.site_b_overall);
+        var labelA = esc(r.site_a_label || 'Site A'), labelB = esc(r.site_b_label || 'Site B');
+
+        var rows = (r.comparison || []).map(function (row) {
+          var wa = row.winner === 'a' ? ' win' : '';
+          var wb = row.winner === 'b' ? ' win' : '';
+          var tie = row.winner === 'tie';
+          var winLabel = tie ? '—' : esc(compareWinnerLabel(r, row.winner));
+          return '<tr>' +
+            '<td><span class="compare-crit">' + esc(row.criterion) + '</span>' +
+              (row.note ? '<p class="compare-note">' + esc(row.note) + '</p>' : '') + '</td>' +
+            '<td class="num' + wa + '">' + clampScore(row.site_a_score) + '</td>' +
+            '<td class="num' + wb + '">' + clampScore(row.site_b_score) + '</td>' +
+            '<td><span class="compare-winner-pill' + (tie ? ' tie' : '') + '">' + winLabel + '</span></td>' +
+          '</tr>';
+        }).join('');
+
+        var liA = (r.site_a_strengths || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li>—</li>';
+        var liB = (r.site_b_strengths || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li>—</li>';
+
+        document.getElementById('compare-body').innerHTML =
+          '<div class="compare-heads">' +
+            '<div class="compare-head"><span class="lbl">' + labelA + '</span><span class="num">' + a + '<span>/100</span></span></div>' +
+            '<div class="compare-head"><span class="lbl">' + labelB + '</span><span class="num">' + b + '<span>/100</span></span></div>' +
+          '</div>' +
+          '<div class="scanner-panel result-block"><h3>Σύντομη Εκτίμηση</h3><p>' + esc(r.executive_summary) + '</p></div>' +
+          '<div class="scanner-panel result-block"><h3>Σύγκριση</h3><div class="compare-scroll">' +
+            '<table class="compare-table"><thead><tr><th>Κριτήριο</th><th class="num">Site A</th><th class="num">Site B</th><th>Νικητής</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table></div></div>' +
+          '<div class="scanner-grid">' +
+            '<div class="scanner-panel result-block is-strengths"><h3>' + labelA + ' — δυνατά σημεία</h3><ul>' + liA + '</ul></div>' +
+            '<div class="scanner-panel result-block is-strengths"><h3>' + labelB + ' — δυνατά σημεία</h3><ul>' + liB + '</ul></div>' +
+          '</div>' +
+          '<div class="scanner-panel result-block is-raise"><h3>Σύσταση</h3><p>' + esc(r.recommendation) + '</p></div>' +
+          '<div class="scanner-panel result-block verdict-card"><h3>Τελική Εκτίμηση</h3><p>' + esc(r.final_verdict) + '</p>' +
+            (r.disclaimer ? '<p class="result-disclaimer">' + esc(r.disclaimer) + '</p>' : '') + '</div>';
+
+        results.hidden = false;
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       runBtn.addEventListener('click', function () {
         clearError(formError);
         var url = (document.getElementById('f-url').value || '').trim();
@@ -950,6 +1208,14 @@
           notes: (document.getElementById('f-notes').value || '').trim()
         };
 
+        if (compareChk.checked) {
+          var urlB = (document.getElementById('f-url-b').value || '').trim();
+          if (!urlB) { showError(formError, 'Πρόσθεσε το URL του δεύτερου website για τη σύγκριση.'); return; }
+          payload.compare = true;
+          payload.urlB = urlB;
+          payload.notesB = (document.getElementById('f-notes-b').value || '').trim();
+        }
+
         setLoading(true);
         fetch(ENDPOINT, {
           method: 'POST',
@@ -960,7 +1226,8 @@
         }).then(function (out) {
           setLoading(false);
           if (out.ok && out.data && out.data.result) {
-            render(out.data.result);
+            var rr = out.data.result;
+            if (rr.mode === 'compare') renderCompare(rr); else render(rr, false);
             return;
           }
           if (out.status === 401) {
@@ -1018,8 +1285,35 @@
         return L.join('\n');
       }
 
+      function compareToText(r) {
+        var L = [];
+        L.push('Report Σύγκρισης Website — Noustelos AI Lab');
+        L.push('');
+        L.push((r.site_a_label || 'Site A') + ': ' + clampScore(r.site_a_overall) + '/100');
+        L.push((r.site_b_label || 'Site B') + ': ' + clampScore(r.site_b_overall) + '/100');
+        L.push(''); L.push('Σύντομη Εκτίμηση'); L.push(r.executive_summary || '');
+        L.push(''); L.push('Σύγκριση');
+        (r.comparison || []).forEach(function (row) {
+          var win = row.winner === 'a' ? (r.site_a_label || 'Site A') : row.winner === 'b' ? (r.site_b_label || 'Site B') : 'Ισοπαλία';
+          L.push('- ' + row.criterion + ': A ' + clampScore(row.site_a_score) + ' / B ' + clampScore(row.site_b_score) + ' — νικητής: ' + win + (row.note ? ' — ' + row.note : ''));
+        });
+        L.push(''); L.push((r.site_a_label || 'Site A') + ' — δυνατά σημεία');
+        (r.site_a_strengths || []).forEach(function (x) { L.push('- ' + x); });
+        L.push(''); L.push((r.site_b_label || 'Site B') + ' — δυνατά σημεία');
+        (r.site_b_strengths || []).forEach(function (x) { L.push('- ' + x); });
+        L.push(''); L.push('Σύσταση'); L.push(r.recommendation || '');
+        L.push(''); L.push('Τελική Εκτίμηση'); L.push(r.final_verdict || '');
+        if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
+        return L.join('\n');
+      }
+
+      function reportToText(r) {
+        if (!r) return '';
+        return r.mode === 'compare' ? compareToText(r) : resultToText(r);
+      }
+
       document.getElementById('copy-result').addEventListener('click', function () {
-        var btn = this, txt = resultToText(lastResult);
+        var btn = this, txt = reportToText(lastResult);
         if (!txt) return;
         var done = function () { btn.textContent = 'Αντιγράφηκε'; setTimeout(function () { btn.textContent = 'Αντιγραφή'; }, 1600); };
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1028,12 +1322,13 @@
       });
 
       document.getElementById('download-result').addEventListener('click', function () {
-        var txt = resultToText(lastResult);
+        var txt = reportToText(lastResult);
         if (!txt) return;
+        var name = (lastResult && lastResult.mode === 'compare') ? 'website-comparison-report.txt' : 'website-readiness-report.txt';
         var blob = new Blob([txt], { type: 'text/plain' });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'website-readiness-report.txt';
+        a.download = name;
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
       });
