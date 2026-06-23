@@ -115,6 +115,17 @@ export default {
       return json({ error: "Invalid JSON body" }, 400, corsOrigin);
     }
 
+    // --- SaaS Readiness Scanner (separate, passphrase-gated AI Lab tool) ---
+    // A standalone utility that SHARES this Worker (and the GOOGLE_API_KEY) but
+    // NONE of the Artifact's logic: its own passphrase, its own system prompt
+    // (a SaaS strategist — no Artifact persona), structured-JSON output, no
+    // persona/memory/Drive/kill-switch, no user-input logging. Routed by PATH so
+    // the Artifact chat (which ignores the path) is completely untouched. See the
+    // handleSaasScan block below.
+    if (new URL(request.url).pathname === "/api/saas-scan") {
+      return handleSaasScan(body, env, ctx, corsOrigin);
+    }
+
     // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly. Any code in
@@ -899,4 +910,193 @@ function json(obj, status, corsOrigin) {
     status,
     headers: { "Content-Type": "application/json", ...cors(corsOrigin) },
   });
+}
+
+/* ============================================================================
+ * SaaS Readiness Scanner  —  POST /api/saas-scan
+ * ----------------------------------------------------------------------------
+ * A standalone Noustelos AI Lab utility, NOT part of The Artifact. It shares
+ * this Worker (and the GOOGLE_API_KEY secret) but has its OWN passphrase, its
+ * OWN system prompt (a senior SaaS product strategist — no Artifact persona),
+ * and emits STRUCTURED JSON (Gemini responseSchema) that the front-end renders
+ * as cards. No persona/memory/Drive/kill-switch, and it does NOT log user input.
+ *
+ * Access: gated by the SAME passphrases as the Artifact chat (owner PASSPHRASE +
+ * guest GUEST_PASSPHRASE/PASSPHRASES) — no separate secret. So whoever has an
+ * Artifact code can run the scanner with it; revoking the guest code revokes both.
+ *
+ * Vars (engine/wrangler.toml):
+ *   SCANNER_MODEL  (var, optional) default "gemini-2.5-flash" — a fast, cheap
+ *                  Gemini tier with reliable structured output (the Artifact's
+ *                  thinking Gemma is NOT used here).
+ * ==========================================================================*/
+
+const SCAN_MIN_CHARS = 40;     // reject thin input (front-end mirrors this)
+const SCAN_MAX_CHARS = 4000;   // cap the description to bound token cost
+const SCAN_DEFAULT_MODEL = "gemini-2.5-flash";
+
+const SCAN_SYSTEM_PROMPT =
+  "You are a senior SaaS product strategist and technical analyst. Your job is " +
+  "to evaluate whether a digital project can become a scalable SaaS product. " +
+  "Analyze productization potential, repeatability, technical architecture, " +
+  "deployment model, market clarity, monetization paths, operational risks and " +
+  "buyer appeal. Be practical, direct and specific. Do not exaggerate. Avoid " +
+  "vague filler like \"great potential\" unless you give a concrete, grounded " +
+  "reason. Write in clear, professional English.\n\n" +
+  "Scoring bands — set score_label to match the numeric score:\n" +
+  "- 0-30: Weak SaaS Fit\n" +
+  "- 31-55: Early Potential\n" +
+  "- 56-75: Promising SaaS Candidate\n" +
+  "- 76-90: Strong SaaS Candidate\n" +
+  "- 91-100: Highly Scalable SaaS Opportunity\n\n" +
+  "Return ONLY structured JSON matching the required schema. Each list holds " +
+  "3-7 concise, specific items. executive_summary is 2-4 sentences; " +
+  "final_verdict is a single clear sentence.";
+
+// Gemini structured-output schema (OpenAPI subset). propertyOrdering keeps a
+// stable, render-friendly field order.
+const SCAN_FIELDS = [
+  "score", "score_label", "executive_summary", "strengths", "risks",
+  "technical_gaps", "monetization_paths", "recommended_next_steps", "final_verdict",
+];
+const SCAN_SCHEMA = {
+  type: "object",
+  properties: {
+    score: { type: "integer" },
+    score_label: { type: "string" },
+    executive_summary: { type: "string" },
+    strengths: { type: "array", items: { type: "string" } },
+    risks: { type: "array", items: { type: "string" } },
+    technical_gaps: { type: "array", items: { type: "string" } },
+    monetization_paths: { type: "array", items: { type: "string" } },
+    recommended_next_steps: { type: "array", items: { type: "string" } },
+    final_verdict: { type: "string" },
+  },
+  required: SCAN_FIELDS,
+  propertyOrdering: SCAN_FIELDS,
+};
+
+async function handleSaasScan(body, env, ctx, corsOrigin) {
+  if (!env.GOOGLE_API_KEY) {
+    return json({ error: "scan_failed" }, 500, corsOrigin);
+  }
+
+  // --- Passphrase gate — SAME codes as the Artifact chat ---
+  // Reuses collectPassphrases (owner PASSPHRASE + guest GUEST_PASSPHRASE/
+  // PASSPHRASES), so anyone who can open the Artifact can run the scanner with
+  // the same code — no separate secret to set. The role isn't used here (the
+  // scanner has no per-role behavior); we only need "is this a valid code".
+  const valid = collectPassphrases(env);
+  if (valid.size) {
+    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
+  }
+  // Lightweight unlock check for the UI (validates the code, spends no model call).
+  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+
+  // --- Validate input ---
+  const description = (typeof body.description === "string" ? body.description : "").trim();
+  if (description.length < SCAN_MIN_CHARS) {
+    return json({ error: "too_short" }, 400, corsOrigin);
+  }
+
+  const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const projectName = clean(body.projectName, 120);
+  const targetMarket = clean(body.targetMarket, 60);
+  const stage = clean(body.stage, 60);
+  const url = clean(body.url, 300);
+
+  const lines = [];
+  if (projectName) lines.push(`Project Name: ${projectName}`);
+  if (targetMarket) lines.push(`Target Market: ${targetMarket}`);
+  if (stage) lines.push(`Current Stage: ${stage}`);
+  if (url) lines.push(`Existing URL (context only — NOT fetched): ${url}`);
+  lines.push("", "Project Description:", description.slice(0, SCAN_MAX_CHARS));
+  const userText = lines.join("\n");
+
+  // --- Call the model for structured JSON ---
+  let result;
+  try {
+    result = await callScanner({
+      apiKey: env.GOOGLE_API_KEY,
+      model: env.SCANNER_MODEL || SCAN_DEFAULT_MODEL,
+      userText,
+    });
+  } catch (err) {
+    console.error("saas-scan error:", String((err && err.message) || err));
+    return json({ error: "scan_failed" }, 502, corsOrigin);
+  }
+  if (!result) return json({ error: "bad_format" }, 502, corsOrigin);
+
+  return json({ result }, 200, corsOrigin);
+}
+
+async function callScanner({ apiKey, model, userText }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: SCAN_SYSTEM_PROMPT }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 2048,
+      responseMimeType: "application/json",
+      responseSchema: SCAN_SCHEMA,
+      // Gemini 2.5 Flash is a thinking model; disable thinking so the whole
+      // budget goes to the JSON answer (faster, cheaper, never clips the JSON).
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  // Reuse the transient-500 retry the Artifact uses, so a one-off Google blip
+  // doesn't surface as a scan failure.
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "saas-scan");
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseScanJson(extractReply(data));
+}
+
+// Parse the model's JSON answer defensively (strip stray code fences) and
+// normalize into the exact shape the front-end renders. Returns null if the
+// payload can't be salvaged into a usable result.
+function parseScanJson(text) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+
+  const list = (v) => Array.isArray(v)
+    ? v.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 10)
+    : [];
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  let score = Number(obj.score);
+  if (!Number.isFinite(score)) score = 0;
+  score = Math.min(100, Math.max(0, Math.round(score)));
+
+  const result = {
+    score,
+    score_label: str(obj.score_label) || scoreLabelFor(score),
+    executive_summary: str(obj.executive_summary),
+    strengths: list(obj.strengths),
+    risks: list(obj.risks),
+    technical_gaps: list(obj.technical_gaps),
+    monetization_paths: list(obj.monetization_paths),
+    recommended_next_steps: list(obj.recommended_next_steps),
+    final_verdict: str(obj.final_verdict),
+  };
+  // Require at least the core fields, else treat as unusable (→ bad_format).
+  if (!result.executive_summary && !result.final_verdict) return null;
+  return result;
+}
+
+function scoreLabelFor(score) {
+  if (score <= 30) return "Weak SaaS Fit";
+  if (score <= 55) return "Early Potential";
+  if (score <= 75) return "Promising SaaS Candidate";
+  if (score <= 90) return "Strong SaaS Candidate";
+  return "Highly Scalable SaaS Opportunity";
 }

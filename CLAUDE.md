@@ -359,6 +359,47 @@ send path; on a `{control,...}` JSON response `streamInvoke` returns a
 `{__control}` marker and `handleSubmit` SCRUBS the just-added user bubble + history
 entry (so the secret phrase isn't persisted) and shows the result.
 
+## SaaS Readiness Scanner (separate AI Lab tool — NOT the Artifact)
+A standalone **Noustelos AI Lab utility** that evaluates whether a digital
+project can become a scalable SaaS product. **Deliberately decoupled from The
+Artifact** — no persona, no memory/Drive, no kill switch, no Artifact branding.
+- **Front-end** → [`saas-scanner.html`](saas-scanner.html): single EN-only page
+  (NOT bilingual — owner choice for the MVP; the header lang-toggle falls back to
+  `/ai-lab-el.html`), matches the site's light/warm editorial design system
+  (reuses `styles.min.css` + `.button`/`.project-card`/`.work-status-label` etc.,
+  page-specific `<style>` block for the form + result cards). Self-contained
+  vanilla JS (no build). Flow: passphrase gate → form (Project Name, Description
+  [required, ≥40 chars], Target Market, URL, Current Stage) → POSTs to the engine
+  → renders the structured JSON as cards (score bar + label, executive summary,
+  strengths/risks/technical_gaps/monetization_paths, numbered next-steps, final
+  verdict) with Copy/Download. Linked from a 3rd "Experiment" card in
+  [`ai-lab.html`](ai-lab.html) ("Try Scanner"), `index,follow`, in `sitemap.xml`.
+- **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
+  `POST /api/saas-scan` (the dispatch is the FIRST thing after body-parse, before
+  the Artifact passphrase gate; the Artifact chat ignores the path so it's
+  untouched). `handleSaasScan`: passphrase gate reuses **`collectPassphrases`** —
+  the **SAME codes as the Artifact chat** (owner `PASSPHRASE` + guest
+  `GUEST_PASSPHRASE`/`PASSPHRASES`), so no separate secret; revoking the guest
+  code revokes both → `verify` short-circuit (UI unlock, no model call) → input
+  validation → `callScanner`.
+  Uses **Gemini** (`SCANNER_MODEL`, default `gemini-2.5-flash` — NOT the
+  Artifact's thinking Gemma) with `responseMimeType:"application/json"` +
+  `responseSchema` (`SCAN_SCHEMA`, 9 fields) + `thinkingConfig.thinkingBudget:0`
+  so the budget goes to the JSON. Reuses `postJsonWithRetry` (transient-500
+  retry), `extractReply`, `json`/`cors`. `parseScanJson` parses defensively
+  (strips stray code fences, clamps score 0–100, fills `score_label` from the
+  band if missing) → `{result}` or `502 {error}`. **Does NOT log user input.**
+  Error contract → `401 locked` / `400 too_short` / `502 scan_failed|bad_format`,
+  which the front-end maps to friendly copy.
+- **Request:** `{ passphrase, description, projectName?, targetMarket?, url?,
+  stage? }` → `{ result: {score, score_label, executive_summary, strengths[],
+  risks[], technical_gaps[], monetization_paths[], recommended_next_steps[],
+  final_verdict} }`. The `url` is **context-only — never server-fetched.**
+- **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new
+  secret — it reuses the Artifact passphrases; `GOOGLE_API_KEY` already set). The
+  page/card go live on push to `main` (no build). No rate-limiting (gated by the
+  shared passphrase, handed out on email request — same posture as the Artifact).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`

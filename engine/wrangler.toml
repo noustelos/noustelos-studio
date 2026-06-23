@@ -28,6 +28,14 @@ compatibility_date = "2026-06-16"
 binding = "ARTIFACT_KV"
 id = "cf3dc5c8bed24967a86eab9937261ff8"
 
+# --- SaaS Readiness Scanner (POST /api/saas-scan) ---
+# A separate AI Lab tool sharing this Worker (and GOOGLE_API_KEY) but none of the
+# Artifact's logic. Gated by the SAME passphrases as the Artifact chat (PASSPHRASE
+# / GUEST_PASSPHRASE / PASSPHRASES) — NO separate secret to set; just deploy.
+# SCANNER_MODEL (var, optional) defaults to "gemini-2.5-flash" in worker.js;
+# uncomment below to override.
+# SCANNER_MODEL = "gemini-2.5-flash"
+
 # Non-secret config. Secrets (GOOGLE_API_KEY, SHEETS_WEBHOOK_URL) are set via
 # `wrangler secret put`, NOT here.
 [vars]
