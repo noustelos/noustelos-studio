@@ -154,6 +154,8 @@
 
     /* ── Form ─────────────────────────────────────────────── */
     .scanner-form { display: grid; gap: 1.15rem; }
+    /* Form panel outlined in the homepage CTA anthracite (matches inputs). */
+    #form-panel { border-color: var(--cta); }
     .scanner-field { display: grid; gap: 0.4rem; }
     .scanner-field label {
       font-family: "Space Grotesk", sans-serif;
@@ -173,7 +175,7 @@
       font-size: 1rem;
       color: var(--text-primary);
       background: var(--bg);
-      border: 1px solid var(--line);
+      border: 1px solid var(--cta);
       border-radius: var(--radius);
       padding: 0.7rem 0.85rem;
       transition: border-color 150ms ease, box-shadow 150ms ease;
@@ -512,7 +514,7 @@
         <div class="scanner-results-head">
           <h2>Readiness Report</h2>
           <div class="scanner-results-tools">
-            <button class="button button-secondary" type="button" id="copy-result">Copy</button>
+            <button class="button button-secondary" type="button" id="copy-result">Copy analysis</button>
             <button class="button button-secondary" type="button" id="download-result">Download</button>
           </div>
         </div>
@@ -841,7 +843,7 @@
       document.getElementById('copy-result').addEventListener('click', function () {
         var btn = this, txt = resultToText(lastResult);
         if (!txt) return;
-        var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); };
+        var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy analysis'; }, 1600); };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(txt).then(done).catch(function () {});
         }
