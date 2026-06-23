@@ -408,6 +408,50 @@ verified working).
   page/card go live on push to `main` (no build). No rate-limiting (gated by the
   shared passphrase, handed out on email request — same posture as the Artifact).
 
+## Website Quality Scanner (separate AI Lab tool — NOT the Artifact)
+A second standalone **Noustelos AI Lab utility**, sibling to the SaaS Scanner and
+likewise decoupled from The Artifact (no persona, no memory/Drive, no kill switch).
+Evaluates an existing website's **launch readiness** — clarity, SEO, trust signals,
+conversion, content completeness, technical basics, and **client-dependent**
+material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
+`website-scanner.html`, EL at `website-scanner-el.html`; the front-end sends
+`lang:"en"|"el"` and the **AI report comes back in that language**.
+- **Front-end** → [`website-scanner.html`](website-scanner.html) +
+  [`website-scanner-el.html`](website-scanner-el.html): two self-contained EN/EL
+  pages, same `styles.min.css` + anthracite `var(--cta)` framing / form aesthetic /
+  Copy analysis + Download buttons as the SaaS scanner (the page-specific `<style>`
+  is copied verbatim, plus a **score-breakdown** block — 7 mini bars — and a
+  **raise-score** figures block). Header lang-toggle is a NAVIGATE to the sibling
+  page (canonical split-page pattern). Form: **Website URL (required, context-only)**,
+  Business Type, Website Goal, Current Stage, Optional Notes → POST `/api/website-scan`.
+  Score bands differ from SaaS (Not Ready → Premium Ready). `index,follow`, both in
+  `sitemap.xml`, 4th Experiment card in `ai-lab.html`/`ai-lab-el.html`. **Shares the
+  SAME passphrase localStorage key** (`saas.scanner.pass.v1`) as the SaaS scanner, so
+  unlocking one unlocks both.
+- **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
+  `POST /api/website-scan` (dispatch sits right after `/api/saas-scan`, before the
+  Artifact gate — so one Worker now serves artifact + saas-scan + website-scan,
+  each isolated). `handleWebsiteScan`: passphrase gate reuses **`collectPassphrases`**
+  (SAME codes as the Artifact + SaaS scanner — no new secret) → `verify`
+  short-circuit → URL-shape validation (`url_required`) → `callWebsiteScanner`.
+  Uses **Gemini** (`SCANNER_MODEL`, default `gemini-2.5-flash`) with
+  `responseSchema`=`WEBSITE_SCAN_SCHEMA` (11 fields incl. a **nested 7-axis
+  `score_breakdown`** of `{score,note}` and a nested `what_would_raise_the_score`
+  `{current_estimate, realistic_improved_range, required_improvements[]}`),
+  `thinkingBudget:0`, `maxOutputTokens:3072`. `buildWebsitePrompt(lang)` swaps the
+  output language + score-band labels (EN/EL in `WEBSITE_BANDS`).
+  `parseWebsiteScanJson` normalizes defensively (clamps every score 0–100, drops
+  omitted axes, fills `overall_label` from the band). **URL is context-only — never
+  fetched** (no crawler/SSRF). **Does NOT log user input.** Errors →
+  `401 locked` / `400 url_required` / `502 scan_failed|bad_format`.
+- **Request:** `{ passphrase, lang, url, businessType?, goal?, stage?, notes? }` →
+  `{ result: {overall_score, overall_label, executive_summary, score_breakdown{7
+  axes}, what_works_well[], what_holds_it_back[], client_dependent_improvements[],
+  what_would_raise_the_score{…}, recommended_next_steps[], final_verdict, disclaimer} }`.
+- **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new secret —
+  reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
+  `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`

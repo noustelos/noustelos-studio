@@ -126,6 +126,16 @@ export default {
       return handleSaasScan(body, env, ctx, corsOrigin);
     }
 
+    // --- Website Quality Scanner (separate, passphrase-gated AI Lab tool) ---
+    // A second standalone utility on the SAME Worker, decoupled from BOTH the
+    // Artifact and the SaaS scanner: its own route, its own system prompt (a
+    // website strategist / SEO + conversion auditor) and its own richer JSON
+    // schema. Bilingual — the front-end (split EN/EL pages) sends lang:"en"|"el"
+    // and the report comes back in that language. Same passphrases, no logging.
+    if (new URL(request.url).pathname === "/api/website-scan") {
+      return handleWebsiteScan(body, env, ctx, corsOrigin);
+    }
+
     // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly. Any code in
@@ -1099,4 +1109,268 @@ function scoreLabelFor(score) {
   if (score <= 75) return "Promising SaaS Candidate";
   if (score <= 90) return "Strong SaaS Candidate";
   return "Highly Scalable SaaS Opportunity";
+}
+
+/* ============================================================================
+ * Website Quality Scanner  —  POST /api/website-scan
+ * ----------------------------------------------------------------------------
+ * A standalone Noustelos AI Lab utility, sibling to the SaaS scanner above and
+ * fully decoupled from The Artifact. Shares this Worker + GOOGLE_API_KEY but has
+ * its OWN system prompt (a senior website strategist / SEO + conversion auditor)
+ * and its OWN richer JSON schema (overall score, a 7-axis score breakdown, what
+ * works / holds back, client-dependent improvements, a realistic "what would
+ * raise the score" projection, next steps, verdict). Emits structured JSON the
+ * front-end renders as cards. No persona/memory/Drive/kill-switch; user input is
+ * NOT logged. The URL is context-only — the Worker does NOT fetch it (no crawler,
+ * no SSRF surface); the report is based on user-provided signals.
+ *
+ * Bilingual: the split EN/EL front-end sends lang:"en"|"el" and the model writes
+ * every string value (labels, notes, summaries, lists, verdict) in that language.
+ *
+ * Access: SAME passphrases as the Artifact chat + SaaS scanner (collectPassphrases).
+ * Model: SCANNER_MODEL (default gemini-2.5-flash), thinkingBudget:0.
+ * ==========================================================================*/
+
+const WEBSITE_SCAN_MAX_NOTES = 2000;
+const WEBSITE_SCORE_AXES = [
+  "design_visual_trust", "message_clarity", "seo_readiness", "conversion_readiness",
+  "trust_signals", "content_completeness", "technical_basics",
+];
+
+// EN/EL score-band labels for the overall readiness score, keyed by language.
+const WEBSITE_BANDS = {
+  en: [
+    [30, "Not Ready"],
+    [55, "Needs Major Work"],
+    [75, "Usable but Needs Improvement"],
+    [89, "Strong Launch Candidate"],
+    [100, "Premium Ready"],
+  ],
+  el: [
+    [30, "Δεν είναι έτοιμο"],
+    [55, "Θέλει σημαντική δουλειά"],
+    [75, "Χρησιμοποιήσιμο αλλά θέλει βελτίωση"],
+    [89, "Δυνατό για launch"],
+    [100, "Premium επίπεδο ετοιμότητας"],
+  ],
+};
+
+function websiteScoreLabel(score, lang) {
+  const bands = WEBSITE_BANDS[lang] || WEBSITE_BANDS.en;
+  for (const [max, label] of bands) { if (score <= max) return label; }
+  return bands[bands.length - 1][1];
+}
+
+function buildWebsitePrompt(lang) {
+  const isEl = lang === "el";
+  const langName = isEl ? "Greek" : "English";
+  const bandLines = (WEBSITE_BANDS[lang] || WEBSITE_BANDS.en)
+    .map(([max, label], i, arr) => {
+      const min = i === 0 ? 0 : arr[i - 1][0] + 1;
+      return `- ${min}-${max}: ${label}`;
+    }).join("\n");
+  return (
+    "You are a senior website strategist, SEO auditor and conversion consultant. " +
+    "Your job is to evaluate a website's launch readiness, clarity, SEO foundation, " +
+    "trust signals, conversion flow, content completeness and technical basics. Be " +
+    "practical, honest and specific. Do not exaggerate. The website URL is provided " +
+    "as CONTEXT ONLY — it is NOT fetched or crawled, so base your audit on the " +
+    "user-provided details (business type, goal, stage, notes) and reasonable " +
+    "category expectations. If information is missing, say what cannot be evaluated " +
+    "and explain what client-provided material would improve the score.\n\n" +
+    "Rules: Do not pretend to have crawled or load-tested the site. Do not claim " +
+    "exact Lighthouse performance scores or Google ranking predictions. Do not give " +
+    "legal or financial advice. Clearly SEPARATE builder-controlled improvements " +
+    "from client-dependent improvements (testimonials, real project photos, reviews, " +
+    "certifications, case studies, pricing, FAQs, local-business proof). Always give " +
+    "realistic score-improvement logic: a good site may be 85-90% ready but capped " +
+    "below 95-100% without client-provided proof.\n\n" +
+    `Scoring bands — set overall_label to match overall_score:\n${bandLines}\n\n` +
+    "Each score_breakdown axis is 0-100 with one short note. Lists hold 3-7 concise, " +
+    "specific items. executive_summary is 2-4 sentences; final_verdict is a single " +
+    "clear sentence.\n\n" +
+    `IMPORTANT: Write EVERY string value in the report (labels, notes, summaries, ` +
+    `list items, ranges, verdict, disclaimer) in ${langName}. Return ONLY structured ` +
+    "JSON matching the required schema."
+  );
+}
+
+// Nested Gemini schema. Each breakdown axis is {score, note}; the raise-score
+// projection is a small object. propertyOrdering keeps render order stable.
+const WEBSITE_AXIS_SCHEMA = {
+  type: "object",
+  properties: { score: { type: "integer" }, note: { type: "string" } },
+  required: ["score", "note"],
+  propertyOrdering: ["score", "note"],
+};
+const WEBSITE_BREAKDOWN_SCHEMA = {
+  type: "object",
+  properties: WEBSITE_SCORE_AXES.reduce((acc, k) => { acc[k] = WEBSITE_AXIS_SCHEMA; return acc; }, {}),
+  required: WEBSITE_SCORE_AXES,
+  propertyOrdering: WEBSITE_SCORE_AXES,
+};
+const WEBSITE_RAISE_SCHEMA = {
+  type: "object",
+  properties: {
+    current_estimate: { type: "string" },
+    realistic_improved_range: { type: "string" },
+    required_improvements: { type: "array", items: { type: "string" } },
+  },
+  required: ["current_estimate", "realistic_improved_range", "required_improvements"],
+  propertyOrdering: ["current_estimate", "realistic_improved_range", "required_improvements"],
+};
+const WEBSITE_SCAN_FIELDS = [
+  "overall_score", "overall_label", "executive_summary", "score_breakdown",
+  "what_works_well", "what_holds_it_back", "client_dependent_improvements",
+  "what_would_raise_the_score", "recommended_next_steps", "final_verdict", "disclaimer",
+];
+const WEBSITE_SCAN_SCHEMA = {
+  type: "object",
+  properties: {
+    overall_score: { type: "integer" },
+    overall_label: { type: "string" },
+    executive_summary: { type: "string" },
+    score_breakdown: WEBSITE_BREAKDOWN_SCHEMA,
+    what_works_well: { type: "array", items: { type: "string" } },
+    what_holds_it_back: { type: "array", items: { type: "string" } },
+    client_dependent_improvements: { type: "array", items: { type: "string" } },
+    what_would_raise_the_score: WEBSITE_RAISE_SCHEMA,
+    recommended_next_steps: { type: "array", items: { type: "string" } },
+    final_verdict: { type: "string" },
+    disclaimer: { type: "string" },
+  },
+  required: WEBSITE_SCAN_FIELDS,
+  propertyOrdering: WEBSITE_SCAN_FIELDS,
+};
+
+async function handleWebsiteScan(body, env, ctx, corsOrigin) {
+  if (!env.GOOGLE_API_KEY) {
+    return json({ error: "scan_failed" }, 500, corsOrigin);
+  }
+
+  // --- Passphrase gate — SAME codes as the Artifact chat / SaaS scanner ---
+  const valid = collectPassphrases(env);
+  if (valid.size) {
+    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
+  }
+  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+
+  const lang = body.lang === "el" ? "el" : "en";
+
+  // --- Validate input. URL is the only hard requirement (context only). ---
+  const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const url = clean(body.url, 300);
+  // Loose URL shape check — must look like a domain/URL, not full validation.
+  if (!url || !/^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(url)) {
+    return json({ error: "url_required" }, 400, corsOrigin);
+  }
+
+  const businessType = clean(body.businessType, 80);
+  const goal = clean(body.goal, 80);
+  const stage = clean(body.stage, 80);
+  const notes = clean(body.notes, WEBSITE_SCAN_MAX_NOTES);
+
+  const lines = [`Website URL (context only — NOT fetched): ${url}`];
+  if (businessType) lines.push(`Business Type: ${businessType}`);
+  if (goal) lines.push(`Website Goal: ${goal}`);
+  if (stage) lines.push(`Current Stage: ${stage}`);
+  if (notes) lines.push("", "Owner Notes:", notes);
+  const userText = lines.join("\n");
+
+  let result;
+  try {
+    result = await callWebsiteScanner({
+      apiKey: env.GOOGLE_API_KEY,
+      model: env.SCANNER_MODEL || SCAN_DEFAULT_MODEL,
+      userText,
+      lang,
+    });
+  } catch (err) {
+    console.error("website-scan error:", String((err && err.message) || err));
+    return json({ error: "scan_failed" }, 502, corsOrigin);
+  }
+  if (!result) return json({ error: "bad_format" }, 502, corsOrigin);
+
+  return json({ result }, 200, corsOrigin);
+}
+
+async function callWebsiteScanner({ apiKey, model, userText, lang }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: buildWebsitePrompt(lang) }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 3072,
+      responseMimeType: "application/json",
+      responseSchema: WEBSITE_SCAN_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-scan");
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseWebsiteScanJson(extractReply(data), lang);
+}
+
+// Parse + normalize the website report defensively into the exact shape the
+// front-end renders. Returns null if it can't be salvaged (→ bad_format).
+function parseWebsiteScanJson(text, lang) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+
+  const list = (v) => Array.isArray(v)
+    ? v.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 12)
+    : [];
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  const clampScore = (v) => {
+    let n = Number(v);
+    if (!Number.isFinite(n)) n = 0;
+    return Math.min(100, Math.max(0, Math.round(n)));
+  };
+
+  const overall = clampScore(obj.overall_score);
+
+  // Normalize the 7-axis breakdown; drop axes the model omitted.
+  const srcBreak = (obj.score_breakdown && typeof obj.score_breakdown === "object") ? obj.score_breakdown : {};
+  const breakdown = {};
+  for (const axis of WEBSITE_SCORE_AXES) {
+    const a = srcBreak[axis];
+    if (a && typeof a === "object") {
+      breakdown[axis] = { score: clampScore(a.score), note: str(a.note) };
+    }
+  }
+
+  const srcRaise = (obj.what_would_raise_the_score && typeof obj.what_would_raise_the_score === "object")
+    ? obj.what_would_raise_the_score : {};
+
+  const result = {
+    language: lang,
+    overall_score: overall,
+    overall_label: str(obj.overall_label) || websiteScoreLabel(overall, lang),
+    executive_summary: str(obj.executive_summary),
+    score_breakdown: breakdown,
+    what_works_well: list(obj.what_works_well),
+    what_holds_it_back: list(obj.what_holds_it_back),
+    client_dependent_improvements: list(obj.client_dependent_improvements),
+    what_would_raise_the_score: {
+      current_estimate: str(srcRaise.current_estimate),
+      realistic_improved_range: str(srcRaise.realistic_improved_range),
+      required_improvements: list(srcRaise.required_improvements),
+    },
+    recommended_next_steps: list(obj.recommended_next_steps),
+    final_verdict: str(obj.final_verdict),
+    disclaimer: str(obj.disclaimer),
+  };
+  if (!result.executive_summary && !result.final_verdict) return null;
+  return result;
 }

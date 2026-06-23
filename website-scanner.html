@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="An AI-powered website readiness audit by Noustelos Studio for clarity, SEO, trust signals, content quality and conversion potential." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#f7f4ee" />
+  <link rel="canonical" href="https://noustelos.gr/website-scanner.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/website-scanner.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/website-scanner-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/website-scanner.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="Website Quality Scanner" />
+  <meta property="og:description" content="Analyze a website's launch readiness, SEO foundation, trust signals and conversion potential with a lightweight AI audit tool." />
+  <meta property="og:url" content="https://noustelos.gr/website-scanner.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio — Website Quality Scanner" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/website-scanner.html" />
+  <meta name="twitter:title" content="Website Quality Scanner" />
+  <meta name="twitter:description" content="Analyze a website's launch readiness, SEO foundation, trust signals and conversion potential with a lightweight AI audit tool." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio — Website Quality Scanner" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>Website Quality Scanner | Noustelos AI Lab</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Website Quality Scanner",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "en",
+    "url": "https://noustelos.gr/website-scanner.html",
+    "description": "An AI-powered website readiness audit by Noustelos Studio for clarity, SEO readiness, trust signals, content quality and conversion potential.",
+    "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+  }
+  </script>
+
+  <style>
+    .scanner-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .scanner-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(1.6rem, 4vw, 2.6rem);
+    }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .scanner-hero { display: grid; gap: 0.85rem; }
+
+    .scanner-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .scanner-hero h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      margin: 0;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .scanner-hero h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--hero-mark);
+    }
+
+    .scanner-subtitle {
+      margin: 0;
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+      font-weight: 500;
+      max-width: 60ch;
+    }
+
+    .scanner-intro {
+      margin: 0;
+      font-size: var(--content-text-size);
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 62ch;
+    }
+
+    /* Card shell shared by the form, the gate and every result panel.
+       Outlined in the homepage CTA anthracite for one consistent frame. */
+    .scanner-panel {
+      background: #fffdf8;
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: clamp(1.3rem, 3.5vw, 2rem);
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Gate (passphrase) ────────────────────────────────── */
+    .scanner-gate { display: grid; gap: 0.9rem; }
+    .scanner-gate h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .scanner-gate p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.97rem;
+      line-height: 1.55;
+    }
+    .scanner-gate-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: stretch;
+    }
+    .scanner-gate-row input { flex: 1 1 12rem; min-width: 0; }
+    .scanner-gate-row .button { flex: 0 0 auto; }
+
+    /* ── Form ─────────────────────────────────────────────── */
+    .scanner-form { display: grid; gap: 1.15rem; }
+    .scanner-field { display: grid; gap: 0.4rem; }
+    .scanner-field label {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+    }
+    .scanner-field .optional { font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.75; }
+
+    .scanner-input,
+    .scanner-textarea,
+    .scanner-select {
+      width: 100%;
+      font-family: "Inter", sans-serif;
+      font-size: 1rem;
+      color: var(--text-primary);
+      background: var(--bg);
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      padding: 0.7rem 0.85rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .scanner-textarea { min-height: 9.5rem; resize: vertical; line-height: 1.55; }
+    .scanner-input:focus,
+    .scanner-textarea:focus,
+    .scanner-select:focus {
+      outline: none;
+      border-color: var(--cta);
+      box-shadow: 0 0 0 3px rgba(41, 50, 63, 0.12);
+    }
+    .scanner-select { appearance: none; cursor: pointer; }
+
+    .scanner-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 0.9rem;
+      align-items: center;
+      margin-top: 0.25rem;
+    }
+    .scanner-form-actions .button-primary[disabled] {
+      opacity: 0.6;
+      cursor: progress;
+      transform: none;
+    }
+    .scanner-link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--glass-gray-text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .scanner-link-btn:hover { color: var(--cta); }
+
+    .scanner-error {
+      margin: 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #d8b4ad;
+      border-radius: var(--radius);
+      background: rgba(180, 69, 58, 0.06);
+      color: #8f372d;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    [hidden] { display: none !important; }
+
+    /* ── Results ──────────────────────────────────────────── */
+    .scanner-results { display: grid; gap: 1.1rem; scroll-margin-top: calc(var(--nav-height) + 1rem); }
+
+    .scanner-results-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.9rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .scanner-results-head h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+    .scanner-results-tools { display: flex; gap: 0.5rem; }
+
+    .score-card { display: grid; gap: 0.9rem; }
+    .score-top {
+      display: flex;
+      align-items: baseline;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+    .score-number {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(2.6rem, 8vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .score-number span { font-size: 0.42em; font-weight: 500; color: var(--text-secondary); }
+    .score-label {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .score-heading {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+      margin: 0;
+    }
+    .score-track {
+      width: 100%;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: var(--surface-light);
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .scanner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+    .result-block h3 {
+      margin: 0 0 0.7rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .result-block h3::before {
+      content: "";
+      width: 0.55rem; height: 0.55rem;
+      border-radius: 2px;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+    .result-block.is-strengths h3::before { background: #4d8a4a; }
+    .result-block.is-risks h3::before { background: #b4453a; }
+    .result-block.is-client h3::before { background: #c2792b; }
+    .result-block.is-raise h3::before { background: #2f6f4f; }
+
+    .result-block ul,
+    .result-block ol { margin: 0; padding-left: 1.15rem; display: grid; gap: 0.45rem; }
+    .result-block li {
+      font-size: 0.96rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .result-block p {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* ── Score breakdown (7 axes) ─────────────────────────── */
+    .breakdown-list { display: grid; gap: 0.95rem; }
+    .breakdown-row { display: grid; gap: 0.3rem; }
+    .breakdown-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+    .breakdown-name {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+    .breakdown-score {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      flex: 0 0 auto;
+    }
+    .breakdown-track {
+      width: 100%;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: var(--surface-light);
+      overflow: hidden;
+    }
+    .breakdown-fill { height: 100%; width: 0; border-radius: 999px; transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+    .breakdown-note { margin: 0.1rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary); }
+
+    /* ── Raise-score projection ───────────────────────────── */
+    .raise-figures {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.4rem;
+      margin: 0 0 0.85rem;
+    }
+    .raise-fig { display: grid; gap: 0.1rem; }
+    .raise-fig span {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+    }
+    .raise-fig strong {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .verdict-card {
+      border-left: 3px solid var(--cta);
+    }
+    .verdict-card h3 { margin-bottom: 0.45rem; }
+    .verdict-card p { color: var(--text-primary); font-size: 1.05rem; line-height: 1.55; }
+
+    .result-disclaimer {
+      margin: 0;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ── Info sections ────────────────────────────────────── */
+    .scanner-info { display: grid; gap: 0.7rem; }
+    .scanner-info h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+      font-weight: 600;
+    }
+    .scanner-info p { margin: 0; color: var(--text-secondary); line-height: 1.6; font-size: var(--content-text-size); }
+
+    .evaluates-list {
+      list-style: none;
+      margin: 0.3rem 0 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem 1.1rem;
+    }
+    .evaluates-list li {
+      position: relative;
+      padding-left: 1.25rem;
+      font-size: 0.97rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .evaluates-list li::before {
+      content: "/>";
+      position: absolute;
+      left: 0;
+      color: var(--hero-mark);
+      font-weight: 600;
+      font-size: 0.8em;
+    }
+
+    .scanner-disclaimer {
+      border: 1px dashed var(--line);
+      background: rgba(0, 0, 0, 0.015);
+      border-radius: var(--radius);
+      padding: clamp(1rem, 3vw, 1.4rem);
+      display: grid;
+      gap: 0.5rem;
+    }
+    .scanner-disclaimer p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-secondary); }
+    .scanner-disclaimer strong { color: var(--text-primary); }
+
+    .scanner-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--glass-gray-text);
+    }
+    .scanner-back:hover { color: var(--cta); }
+
+    @media (max-width: 640px) {
+      .scanner-grid,
+      .evaluates-list { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .score-fill,
+      .breakdown-fill { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="scanner-main">
+    <div class="container scanner-wrap">
+
+      <!-- Hero -->
+      <section class="scanner-hero" aria-labelledby="scanner-title">
+        <div class="scanner-badges">
+          <span class="launch-kicker">Noustelos AI Lab Utility</span>
+          <span class="work-status-label">Experiment</span>
+        </div>
+        <h1 id="scanner-title">Website Quality Scanner</h1>
+        <p class="scanner-subtitle">An AI-powered website readiness audit for clarity, SEO, trust and conversion.</p>
+        <p class="scanner-intro">Paste a website URL and a few project details. The scanner generates a structured report showing what works, what holds the site back and what could raise its readiness score.</p>
+      </section>
+
+      <!-- Passphrase gate -->
+      <section class="scanner-panel scanner-gate" id="gate" aria-labelledby="gate-title">
+        <h2 id="gate-title">Access required</h2>
+        <p>The scanner is an experiment running on a metered AI engine, so access is by invitation. Enter your access code, or request one and we'll send it over by email.</p>
+        <div class="scanner-gate-row">
+          <input class="scanner-input" type="text" id="gate-input" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Access code" aria-label="Access code" />
+          <button class="button button-primary" type="button" id="gate-submit">Unlock</button>
+        </div>
+        <p id="gate-error" class="scanner-error" role="alert" hidden></p>
+        <p><a class="scanner-link-btn" id="request-access" href="#" data-mail-user="avatar68" data-mail-domain="gmail.com">Request access by email</a></p>
+      </section>
+
+      <!-- Scanner form -->
+      <section class="scanner-panel scanner-form" id="form-panel" aria-labelledby="form-title" hidden>
+        <h2 id="form-title" class="launch-kicker" style="color:var(--glass-gray-text);">Analyze a Website</h2>
+
+        <div class="scanner-field">
+          <label for="f-url">Website URL <span class="optional">(required — used as context only, not visited)</span></label>
+          <input class="scanner-input" type="url" id="f-url" maxlength="300" placeholder="https://example.com" />
+        </div>
+
+        <div class="scanner-field">
+          <label for="f-type">Business Type <span class="optional">(optional)</span></label>
+          <select class="scanner-select" id="f-type">
+            <option value="">Select a type…</option>
+            <option>Hotel / Accommodation</option>
+            <option>Tourism / Travel</option>
+            <option>Local Service Business</option>
+            <option>Restaurant / Cafe</option>
+            <option>Construction / Technical Services</option>
+            <option>Health / Wellness</option>
+            <option>E-commerce</option>
+            <option>Portfolio / Personal Brand</option>
+            <option>SaaS / Tech Product</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="scanner-field">
+          <label for="f-goal">Website Goal <span class="optional">(optional)</span></label>
+          <select class="scanner-select" id="f-goal">
+            <option value="">Select a goal…</option>
+            <option>Get leads</option>
+            <option>Get bookings</option>
+            <option>Sell products</option>
+            <option>Build credibility</option>
+            <option>Prepare for launch</option>
+            <option>Improve SEO</option>
+            <option>Support a sale / acquisition</option>
+            <option>Present work to a client</option>
+          </select>
+        </div>
+
+        <div class="scanner-field">
+          <label for="f-stage">Current Stage <span class="optional">(optional)</span></label>
+          <select class="scanner-select" id="f-stage">
+            <option value="">Select a stage…</option>
+            <option>Draft</option>
+            <option>Pre-launch</option>
+            <option>Live</option>
+            <option>Recently redesigned</option>
+            <option>Needs client approval</option>
+            <option>Needs SEO improvement</option>
+          </select>
+        </div>
+
+        <div class="scanner-field">
+          <label for="f-notes">Optional Notes <span class="optional">(optional)</span></label>
+          <textarea class="scanner-textarea" id="f-notes" maxlength="2000" placeholder="Example: This is a new landing page for a pool maintenance company. The design is finished, but the client has not provided testimonials, real project photos or Google reviews yet."></textarea>
+        </div>
+
+        <p id="form-error" class="scanner-error" role="alert" hidden></p>
+
+        <div class="scanner-form-actions">
+          <button class="button button-primary" type="button" id="run-scan">Analyze Website</button>
+          <button class="scanner-link-btn" type="button" id="fill-example">Use an example</button>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="scanner-results" id="results" aria-live="polite" hidden>
+        <div class="scanner-results-head">
+          <h2>Website Readiness Report</h2>
+          <div class="scanner-results-tools">
+            <button class="button button-secondary" type="button" id="copy-result">Copy analysis</button>
+            <button class="button button-secondary" type="button" id="download-result">Download</button>
+          </div>
+        </div>
+
+        <div class="scanner-panel score-card">
+          <p class="score-heading">Overall Website Readiness</p>
+          <div class="score-top">
+            <div class="score-number" id="r-score">0<span>/100</span></div>
+            <div class="score-label" id="r-score-label"></div>
+          </div>
+          <div class="score-track"><div class="score-fill" id="r-score-fill"></div></div>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Executive Summary</h3>
+          <p id="r-summary"></p>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Score Breakdown</h3>
+          <div class="breakdown-list" id="r-breakdown"></div>
+        </div>
+
+        <div class="scanner-grid">
+          <div class="scanner-panel result-block is-strengths">
+            <h3>What Works Well</h3>
+            <ul id="r-works"></ul>
+          </div>
+          <div class="scanner-panel result-block is-risks">
+            <h3>What Holds It Back</h3>
+            <ul id="r-holds"></ul>
+          </div>
+        </div>
+
+        <div class="scanner-panel result-block is-client">
+          <h3>Client-Dependent Improvements</h3>
+          <ul id="r-client"></ul>
+        </div>
+
+        <div class="scanner-panel result-block is-raise">
+          <h3>What Would Raise the Score</h3>
+          <div class="raise-figures">
+            <div class="raise-fig"><span>Current estimate</span><strong id="r-raise-current">—</strong></div>
+            <div class="raise-fig"><span>Realistic range</span><strong id="r-raise-range">—</strong></div>
+          </div>
+          <ul id="r-raise-list"></ul>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Recommended Next Steps</h3>
+          <ol id="r-steps"></ol>
+        </div>
+
+        <div class="scanner-panel result-block verdict-card">
+          <h3>Final Verdict</h3>
+          <p id="r-verdict"></p>
+          <p class="result-disclaimer" id="r-disclaimer" hidden></p>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="scanner-info" aria-labelledby="how-title">
+        <h2 id="how-title">How it works</h2>
+        <p>The scanner reviews the website through a practical launch and conversion lens. It looks at clarity, trust, SEO basics, content completeness and the missing material that may prevent a good site from becoming a stronger business asset.</p>
+      </section>
+
+      <!-- What it evaluates -->
+      <section class="scanner-info" aria-labelledby="eval-title">
+        <h2 id="eval-title">What it evaluates</h2>
+        <ul class="evaluates-list">
+          <li>Visual trust</li>
+          <li>Message clarity</li>
+          <li>SEO readiness</li>
+          <li>Conversion flow</li>
+          <li>Trust signals</li>
+          <li>Content completeness</li>
+          <li>Technical basics</li>
+          <li>Client-dependent improvements</li>
+        </ul>
+      </section>
+
+      <!-- Disclaimer -->
+      <section class="scanner-disclaimer" aria-label="Disclaimer">
+        <p><strong>This experimental AI assessment is for website strategy only.</strong> It is not a full technical audit, SEO guarantee, legal advice, financial advice or ranking prediction.</p>
+        <p>The report is based on the available page signals and the information provided by the user. The URL is used as context only and is not crawled.</p>
+      </section>
+
+      <p><a class="scanner-back" href="/ai-lab.html">&larr; Back to AI Lab</a></p>
+
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var ENDPOINT = "https://artifact-engine.avatar68.workers.dev/api/website-scan";
+      var LANG = "en";
+      var PASS_KEY = "saas.scanner.pass.v1"; // shared access code across both Lab scanners
+
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        get: function (k) { try { return localStorage.getItem(k); } catch (_e) { return null; } },
+        set: function (k, v) { try { localStorage.setItem(k, v); } catch (_e) {} },
+        del: function (k) { try { localStorage.removeItem(k); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Assemble the "Request access" mailto at runtime so the address never
+      // sits raw in the HTML (matches the homepage's anti-scraping obfuscation).
+      var reqLink = document.getElementById('request-access');
+      if (reqLink) {
+        reqLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          var addr = (reqLink.getAttribute('data-mail-user') || '') + '@' + (reqLink.getAttribute('data-mail-domain') || '');
+          var subject = encodeURIComponent('Website Scanner access request');
+          var bodyText = encodeURIComponent("Hi Noustelos, I'd like an access code for the Website Quality Scanner.");
+          window.location.href = 'mailto:' + addr + '?subject=' + subject + '&body=' + bodyText;
+        });
+      }
+
+      // Split EN/EL page — the toggle navigates to the Greek sibling.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/website-scanner-el.html';
+        });
+      }
+
+      var gate = document.getElementById('gate');
+      var gateInput = document.getElementById('gate-input');
+      var gateSubmit = document.getElementById('gate-submit');
+      var gateError = document.getElementById('gate-error');
+      var formPanel = document.getElementById('form-panel');
+      var formError = document.getElementById('form-error');
+      var runBtn = document.getElementById('run-scan');
+      var results = document.getElementById('results');
+
+      var pass = safeStorage.get(PASS_KEY) || '';
+
+      function showError(el, msg) { el.textContent = msg; el.hidden = false; }
+      function clearError(el) { el.hidden = true; el.textContent = ''; }
+
+      function unlock() {
+        gate.hidden = true;
+        formPanel.hidden = false;
+      }
+
+      // If a code is already stored, reveal the form immediately (the worker
+      // re-checks the code on every scan, so a stale code just fails there).
+      if (pass) unlock();
+
+      function verifyCode(code) {
+        gateSubmit.disabled = true;
+        gateSubmit.textContent = 'Checking…';
+        clearError(gateError);
+        return fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ verify: true, passphrase: code })
+        }).then(function (res) {
+          return res.ok;
+        }).catch(function () { return null; })
+          .then(function (ok) {
+            gateSubmit.disabled = false;
+            gateSubmit.textContent = 'Unlock';
+            if (ok === true) {
+              pass = code;
+              safeStorage.set(PASS_KEY, code);
+              unlock();
+            } else if (ok === false) {
+              showError(gateError, "That access code wasn't recognised. Check the code from your email, or request access below.");
+            } else {
+              showError(gateError, "Couldn't reach the scanner right now. Please try again in a moment.");
+            }
+          });
+      }
+
+      if (gateSubmit) {
+        gateSubmit.addEventListener('click', function () {
+          var code = (gateInput.value || '').trim();
+          if (!code) { showError(gateError, 'Enter your access code to continue.'); return; }
+          verifyCode(code);
+        });
+        gateInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); gateSubmit.click(); }
+        });
+      }
+
+      // ── Example input ──
+      document.getElementById('fill-example').addEventListener('click', function () {
+        document.getElementById('f-url').value = 'https://watercyclesystem.gr';
+        document.getElementById('f-type').value = 'Local Service Business';
+        document.getElementById('f-goal').value = 'Get leads';
+        document.getElementById('f-stage').value = 'Recently redesigned';
+        document.getElementById('f-notes').value = "This is a new landing page for a pool maintenance and water systems company. The design and technical setup are finished, but the client has not provided testimonials, detailed case studies, many real project photos or Google reviews yet.";
+      });
+
+      // ── Run scan ──
+      var ERRORS = {
+        url_required: 'Please add a website URL before running the scan.',
+        too_short: 'Add a few more details so the scanner can generate a useful report.',
+        locked: 'Your access code is no longer valid. Please request a new one.',
+        scan_failed: 'The scanner could not complete the analysis right now. Please try again later.',
+        bad_format: 'The analysis returned an unexpected format. Please try again.'
+      };
+
+      function setLoading(on) {
+        runBtn.disabled = on;
+        runBtn.textContent = on ? 'Analyzing website readiness…' : 'Analyze Website';
+      }
+
+      function li(text) { var el = document.createElement('li'); el.textContent = text; return el; }
+      function fillList(id, items) {
+        var ul = document.getElementById(id);
+        ul.innerHTML = '';
+        (items || []).forEach(function (t) { ul.appendChild(li(t)); });
+        if (!ul.children.length) ul.appendChild(li('—'));
+      }
+
+      var SCORE_COLORS = [
+        { max: 30, c: '#b4453a' },
+        { max: 55, c: '#c2792b' },
+        { max: 75, c: '#b59a2b' },
+        { max: 89, c: '#4d8a4a' },
+        { max: 100, c: '#2f6f4f' }
+      ];
+      function scoreColor(s) {
+        for (var i = 0; i < SCORE_COLORS.length; i++) { if (s <= SCORE_COLORS[i].max) return SCORE_COLORS[i].c; }
+        return SCORE_COLORS[SCORE_COLORS.length - 1].c;
+      }
+
+      // Score-breakdown axis labels (EN). Keys match the worker schema.
+      var AXIS_LABELS = {
+        design_visual_trust: 'Design & Visual Trust',
+        message_clarity: 'Message Clarity',
+        seo_readiness: 'SEO Readiness',
+        conversion_readiness: 'Conversion Readiness',
+        trust_signals: 'Trust Signals',
+        content_completeness: 'Content Completeness',
+        technical_basics: 'Technical Basics'
+      };
+      var AXIS_ORDER = ['design_visual_trust', 'message_clarity', 'seo_readiness', 'conversion_readiness', 'trust_signals', 'content_completeness', 'technical_basics'];
+
+      function clampScore(v) { var n = Math.round(Number(v) || 0); return Math.max(0, Math.min(100, n)); }
+
+      function renderBreakdown(breakdown) {
+        var wrap = document.getElementById('r-breakdown');
+        wrap.innerHTML = '';
+        var fills = [];
+        AXIS_ORDER.forEach(function (key) {
+          var a = breakdown && breakdown[key];
+          if (!a) return;
+          var s = clampScore(a.score);
+          var row = document.createElement('div');
+          row.className = 'breakdown-row';
+
+          var top = document.createElement('div');
+          top.className = 'breakdown-top';
+          var name = document.createElement('span');
+          name.className = 'breakdown-name';
+          name.textContent = AXIS_LABELS[key] || key;
+          var sc = document.createElement('span');
+          sc.className = 'breakdown-score';
+          sc.textContent = s + '/100';
+          top.appendChild(name); top.appendChild(sc);
+
+          var track = document.createElement('div');
+          track.className = 'breakdown-track';
+          var fill = document.createElement('div');
+          fill.className = 'breakdown-fill';
+          fill.style.background = scoreColor(s);
+          track.appendChild(fill);
+
+          row.appendChild(top); row.appendChild(track);
+          if (a.note) {
+            var note = document.createElement('p');
+            note.className = 'breakdown-note';
+            note.textContent = a.note;
+            row.appendChild(note);
+          }
+          wrap.appendChild(row);
+          fills.push({ el: fill, pct: s });
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { fills.forEach(function (f) { f.el.style.width = f.pct + '%'; }); });
+        });
+      }
+
+      var lastResult = null;
+
+      function render(r) {
+        lastResult = r;
+        var score = clampScore(r.overall_score);
+        document.getElementById('r-score').innerHTML = score + '<span>/100</span>';
+        document.getElementById('r-score-label').textContent = r.overall_label || '';
+        var fill = document.getElementById('r-score-fill');
+        fill.style.background = scoreColor(score);
+        document.getElementById('r-summary').textContent = r.executive_summary || '';
+
+        renderBreakdown(r.score_breakdown);
+
+        fillList('r-works', r.what_works_well);
+        fillList('r-holds', r.what_holds_it_back);
+        fillList('r-client', r.client_dependent_improvements);
+
+        var raise = r.what_would_raise_the_score || {};
+        document.getElementById('r-raise-current').textContent = raise.current_estimate || '—';
+        document.getElementById('r-raise-range').textContent = raise.realistic_improved_range || '—';
+        fillList('r-raise-list', raise.required_improvements);
+
+        fillList('r-steps', r.recommended_next_steps);
+        document.getElementById('r-verdict').textContent = r.final_verdict || '';
+        var disc = document.getElementById('r-disclaimer');
+        if (r.disclaimer) { disc.textContent = r.disclaimer; disc.hidden = false; } else { disc.hidden = true; }
+
+        results.hidden = false;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { fill.style.width = score + '%'; });
+        });
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      runBtn.addEventListener('click', function () {
+        clearError(formError);
+        var url = (document.getElementById('f-url').value || '').trim();
+        if (!url) { showError(formError, ERRORS.url_required); return; }
+
+        var payload = {
+          passphrase: pass,
+          lang: LANG,
+          url: url,
+          businessType: document.getElementById('f-type').value || '',
+          goal: document.getElementById('f-goal').value || '',
+          stage: document.getElementById('f-stage').value || '',
+          notes: (document.getElementById('f-notes').value || '').trim()
+        };
+
+        setLoading(true);
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function (res) {
+          return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; });
+        }).then(function (out) {
+          setLoading(false);
+          if (out.ok && out.data && out.data.result) {
+            render(out.data.result);
+            return;
+          }
+          if (out.status === 401) {
+            safeStorage.del(PASS_KEY);
+            pass = '';
+            results.hidden = true;
+            formPanel.hidden = true;
+            gate.hidden = false;
+            showError(gateError, 'Your access code is no longer valid. Please request a new one.');
+            return;
+          }
+          var key = out.data && out.data.error;
+          showError(formError, ERRORS[key] || ERRORS.scan_failed);
+        }).catch(function () {
+          setLoading(false);
+          showError(formError, ERRORS.scan_failed);
+        });
+      });
+
+      // ── Copy / Download ──
+      function resultToText(r) {
+        if (!r) return '';
+        var L = [];
+        L.push('Website Quality Scanner — Noustelos AI Lab');
+        L.push('');
+        L.push('Overall Website Readiness: ' + clampScore(r.overall_score) + '/100 — ' + (r.overall_label || ''));
+        L.push('');
+        L.push('Executive Summary');
+        L.push(r.executive_summary || '');
+        L.push('');
+        L.push('Score Breakdown');
+        AXIS_ORDER.forEach(function (key) {
+          var a = r.score_breakdown && r.score_breakdown[key];
+          if (!a) return;
+          L.push('- ' + (AXIS_LABELS[key] || key) + ': ' + clampScore(a.score) + '/100' + (a.note ? ' — ' + a.note : ''));
+        });
+        var sect = [
+          ['What Works Well', r.what_works_well],
+          ['What Holds It Back', r.what_holds_it_back],
+          ['Client-Dependent Improvements', r.client_dependent_improvements]
+        ];
+        sect.forEach(function (s) {
+          L.push(''); L.push(s[0]);
+          (s[1] || []).forEach(function (x) { L.push('- ' + x); });
+        });
+        var raise = r.what_would_raise_the_score || {};
+        L.push(''); L.push('What Would Raise the Score');
+        L.push('Current estimate: ' + (raise.current_estimate || '—'));
+        L.push('Realistic range: ' + (raise.realistic_improved_range || '—'));
+        (raise.required_improvements || []).forEach(function (x) { L.push('- ' + x); });
+        L.push(''); L.push('Recommended Next Steps');
+        (r.recommended_next_steps || []).forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        L.push(''); L.push('Final Verdict'); L.push(r.final_verdict || '');
+        if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
+        return L.join('\n');
+      }
+
+      document.getElementById('copy-result').addEventListener('click', function () {
+        var btn = this, txt = resultToText(lastResult);
+        if (!txt) return;
+        var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy analysis'; }, 1600); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt).then(done).catch(function () {});
+        }
+      });
+
+      document.getElementById('download-result').addEventListener('click', function () {
+        var txt = resultToText(lastResult);
+        if (!txt) return;
+        var blob = new Blob([txt], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'website-readiness-report.txt';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+      });
+    })();
+  </script>
+</body>
+</html>

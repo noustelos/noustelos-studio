@@ -159,6 +159,22 @@ const translations = {
         cta: 'Explore AskSantorini.ai'
       }
     },
+    labtools: {
+      title: 'AI Lab Tools',
+      subtitle: 'Free, AI-powered diagnostics from the Noustelos AI Lab — practical readiness reports you can run in seconds.',
+      badge: 'Experiment',
+      saas: {
+        title: 'SaaS Readiness Scanner',
+        desc: 'Evaluate whether a digital project can become a scalable SaaS product — scoring productization, technical gaps, monetization paths and next steps as a structured report.',
+        cta: 'Try Scanner'
+      },
+      web: {
+        title: 'Website Quality Scanner',
+        desc: 'An AI-powered website readiness audit for clarity, SEO, trust signals and conversion — scoring a site across seven axes and separating builder fixes from client-dependent material.',
+        cta: 'Try Scanner',
+        href: '/website-scanner.html'
+      }
+    },
     about: {
       title: 'About',
       p1: "I'm Nick Karadimas, a creative web designer and developer based in Santorini.",
@@ -291,6 +307,22 @@ const translations = {
         title: 'AskSantorini.ai',
         desc: 'Ένα live πείραμα σε πρακτικό tourism AI: ένας ελαφρύς visitor assistant για τη Σαντορίνη, χτισμένος γύρω από πραγματικές ερωτήσεις, τοπικό context και εμπορικά use cases όπως tours, hotel concierge pages και partner recommendations.',
         cta: 'Explore AskSantorini.ai'
+      }
+    },
+    labtools: {
+      title: 'Εργαλεία AI Lab',
+      subtitle: 'Δωρεάν AI-powered διαγνωστικά από το Noustelos AI Lab — πρακτικά reports ετοιμότητας που τρέχεις σε δευτερόλεπτα.',
+      badge: 'Πείραμα',
+      saas: {
+        title: 'SaaS Readiness Scanner',
+        desc: 'Αξιολόγησε αν ένα ψηφιακό project μπορεί να γίνει scalable SaaS προϊόν — βαθμολογεί productization, τεχνικά κενά, μονόδρομους εσόδων και επόμενα βήματα σε δομημένο report.',
+        cta: 'Δοκίμασέ το'
+      },
+      web: {
+        title: 'Έλεγχος Ποιότητας Website',
+        desc: 'Ένα AI-powered audit ετοιμότητας website για σαφήνεια, SEO, trust signals και conversion — βαθμολογεί ένα site σε επτά άξονες και ξεχωρίζει τις διορθώσεις του developer από το υλικό που εξαρτάται από τον πελάτη.',
+        cta: 'Δοκίμασέ το',
+        href: '/website-scanner-el.html'
       }
     },
     about: {
