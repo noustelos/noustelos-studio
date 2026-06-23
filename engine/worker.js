@@ -136,6 +136,17 @@ export default {
       return handleWebsiteScan(body, env, ctx, corsOrigin);
     }
 
+    // --- GDPR Auto-Scanner (third standalone, passphrase-gated AI Lab tool) ---
+    // A static GDPR-compliance pre-audit on the SAME Worker, decoupled from the
+    // Artifact, SaaS scanner AND website scanner: its own route, its own GDPR
+    // extraction (trackers / CMP / policy links / cookie-setting embeds), its own
+    // prompt + schema. Like the website scanner it FETCHES the URL (Option B
+    // refusal if it can't), reuses fetchPageSignals + SSRF guards, and is bilingual
+    // (lang:"en"|"el"). Same passphrases, no user-input logging. See handleGdprScan.
+    if (new URL(request.url).pathname === "/api/gdpr-scan") {
+      return handleGdprScan(body, env, ctx, corsOrigin);
+    }
+
     // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly. Any code in
@@ -1404,7 +1415,8 @@ async function readCapped(res, maxBytes) {
   return new TextDecoder("utf-8", { fatal: false }).decode(buf);
 }
 
-async function fetchPageSignals(rawUrl) {
+async function fetchPageSignals(rawUrl, extractor) {
+  const extract = extractor || extractSignals;
   const start = normalizeFetchUrl(rawUrl);
   if (!start) return { ok: false, reason: "blocked" };
 
@@ -1442,7 +1454,7 @@ async function fetchPageSignals(rawUrl) {
     return { ok: false, reason: "network" };
   }
 
-  const signals = extractSignals(html, hop.url);
+  const signals = extract(html, hop.url);
   // Thin / JS-rendered shell → almost no readable HTML → refuse (no assumptions).
   if (signals.word_count < WEBSITE_MIN_CONTENT_WORDS) {
     return { ok: false, reason: "thin" };
@@ -1966,4 +1978,427 @@ function parseWebsiteCompareJson(text, labelA, labelB) {
     final_verdict: str(obj.final_verdict),
     disclaimer: str(obj.disclaimer),
   };
+}
+
+/* ============================================================================
+ * GDPR Auto-Scanner  —  POST /api/gdpr-scan
+ * ----------------------------------------------------------------------------
+ * A third standalone Noustelos AI Lab utility, sibling to the SaaS + Website
+ * scanners and fully decoupled from The Artifact. Shares this Worker +
+ * GOOGLE_API_KEY but has its OWN GDPR-specific HTML extraction
+ * (extractGdprSignals: privacy/cookie/terms links, known consent platforms,
+ * a generic cookie-banner heuristic, third-party tracking scripts grouped by
+ * category, cookie-setting embeds, hotlinked Google Fonts, form data-collection)
+ * and its OWN prompt + schema (a compliance score, a 5-axis breakdown, the
+ * detected trackers annotated with a GDPR concern, what's in place, key risks,
+ * next steps, verdict). Like the website scanner it FETCHES the URL (reusing
+ * fetchPageSignals + the full SSRF guards) and REFUSES to score if it can't read
+ * the page (Option B; websiteFetchRefusal). Bilingual (lang:"en"|"el"). User
+ * input is NOT logged. This is a STATIC pre-audit of public HTML — it cannot
+ * verify runtime consent behaviour (whether trackers fire BEFORE consent), real
+ * cookie storage, or the legal completeness of a policy. NOT legal advice.
+ *
+ * Access: SAME passphrases as the Artifact chat / other scanners (collectPassphrases).
+ * Model: SCANNER_MODEL (live override gemini-2.5-flash-lite), thinkingBudget:0.
+ * ==========================================================================*/
+
+const GDPR_SCORE_AXES = [
+  "privacy_transparency", "cookie_consent", "tracking_footprint",
+  "data_collection", "third_party_exposure",
+];
+
+// EN/EL score-band labels — a SIGNAL posture, not a legal verdict.
+const GDPR_BANDS = {
+  en: [
+    [40, "High Risk"],
+    [60, "Significant Gaps"],
+    [80, "Partially Aligned"],
+    [92, "Mostly Aligned"],
+    [100, "Strong Posture"],
+  ],
+  el: [
+    [40, "Υψηλός κίνδυνος"],
+    [60, "Σημαντικά κενά"],
+    [80, "Μερική συμμόρφωση"],
+    [92, "Σε μεγάλο βαθμό συμμορφωμένο"],
+    [100, "Ισχυρή στάση συμμόρφωσης"],
+  ],
+};
+
+function gdprScoreLabel(score, lang) {
+  const bands = GDPR_BANDS[lang] || GDPR_BANDS.en;
+  for (const [max, label] of bands) { if (score <= max) return label; }
+  return bands[bands.length - 1][1];
+}
+
+// Known third-party tracking / marketing scripts, grouped by GDPR-relevant
+// category. First matching signature wins per vendor; matched on lowercased HTML.
+const GDPR_TRACKERS = [
+  { name: "Google Analytics", category: "analytics", sig: ["google-analytics.com", "googletagmanager.com/gtag", "gtag(", "ga('create", "/gtag/js"] },
+  { name: "Google Tag Manager", category: "tag manager", sig: ["googletagmanager.com/gtm.js", "gtm.start", "'gtm-"] },
+  { name: "Google Ads / Remarketing", category: "advertising", sig: ["googleadservices.com", "googlesyndication.com", "doubleclick.net", "google_conversion"] },
+  { name: "Meta (Facebook) Pixel", category: "advertising", sig: ["connect.facebook.net", "fbq(", "facebook.com/tr"] },
+  { name: "Hotjar", category: "behaviour / heatmaps", sig: ["static.hotjar.com", "hotjar.com", "hj("] },
+  { name: "Microsoft Clarity", category: "behaviour / heatmaps", sig: ["clarity.ms", "(c,l,a,r,i,t,y)"] },
+  { name: "LinkedIn Insight Tag", category: "advertising", sig: ["snap.licdn.com", "_linkedin_partner_id"] },
+  { name: "TikTok Pixel", category: "advertising", sig: ["analytics.tiktok.com", "ttq.load", "ttq.page"] },
+  { name: "X (Twitter) Pixel", category: "advertising", sig: ["static.ads-twitter.com", "twq("] },
+  { name: "Pinterest Tag", category: "advertising", sig: ["ct.pinterest.com", "pintrk("] },
+  { name: "Snapchat Pixel", category: "advertising", sig: ["sc-static.net", "snaptr("] },
+  { name: "Yandex Metrica", category: "analytics", sig: ["mc.yandex.ru", "ym("] },
+  { name: "Matomo / Piwik", category: "analytics", sig: ["matomo.js", "piwik.js", "_paq"] },
+  { name: "HubSpot", category: "marketing", sig: ["js.hs-scripts.com", "js.hs-analytics.net", "hs-scripts"] },
+  { name: "Segment", category: "analytics", sig: ["cdn.segment.com"] },
+  { name: "Mixpanel", category: "analytics", sig: ["cdn.mxpanel", "mixpanel"] },
+  { name: "Intercom", category: "marketing / chat", sig: ["widget.intercom.io", "intercomsettings"] },
+  { name: "Live chat (Tawk/Crisp/Drift)", category: "marketing / chat", sig: ["tawk.to", "crisp.chat", "driftt.com", "drift.com/"] },
+];
+
+// Known Consent Management Platforms (CMPs). Presence = a real cookie banner.
+const GDPR_CMPS = [
+  { name: "Cookiebot", sig: ["consent.cookiebot", "cookiebot"] },
+  { name: "OneTrust", sig: ["onetrust", "optanon", "cookielaw.org"] },
+  { name: "CookieYes", sig: ["cookieyes", "cookie-law-info", "cky-consent"] },
+  { name: "Iubenda", sig: ["iubenda"] },
+  { name: "Complianz", sig: ["complianz", "cmplz"] },
+  { name: "Quantcast Choice", sig: ["quantcast"] },
+  { name: "Usercentrics", sig: ["usercentrics"] },
+  { name: "Termly", sig: ["termly"] },
+  { name: "Borlabs Cookie", sig: ["borlabs-cookie"] },
+  { name: "Osano", sig: ["osano"] },
+  { name: "TrustArc", sig: ["trustarc", "consent.truste"] },
+  { name: "Didomi", sig: ["didomi"] },
+  { name: "Cookie Notice (WP)", sig: ["cookie-notice"] },
+];
+
+// Third-party embeds that typically set cookies / transfer data to non-EU hosts.
+function detectGdprEmbeds(html, lc) {
+  const out = [];
+  // YouTube standard embed sets cookies; the -nocookie variant does not.
+  if (/youtube\.com\/embed/i.test(html) && !/youtube-nocookie\.com/i.test(html)) {
+    out.push("YouTube (standard embed — sets cookies)");
+  }
+  if (/(maps\.google\.|google\.[a-z.]+\/maps|maps\.googleapis\.com)/i.test(html)) out.push("Google Maps");
+  if (/player\.vimeo\.com/i.test(html)) out.push("Vimeo");
+  if (/(instagram\.com\/embed|facebook\.com\/plugins)/i.test(html)) out.push("Instagram / Facebook embed");
+  if (/gravatar\.com/i.test(lc)) out.push("Gravatar");
+  if (/disqus\.com/i.test(lc)) out.push("Disqus comments");
+  return out;
+}
+
+// GDPR-specific signal extraction. Reuses extractSignals() for the base page
+// signals (title, word_count for the thin-page check, links) and layers the
+// privacy/consent/tracking signals on top. Matched on the raw + lowercased HTML.
+function extractGdprSignals(html, baseUrl) {
+  const base = extractSignals(html, baseUrl);
+  const lc = String(html).toLowerCase();
+
+  const isHttps = /^https:\/\//i.test(base.final_url || baseUrl);
+
+  // --- Policy links: scan every anchor's href + visible text. ---
+  let privacyHref = "", privacyFound = false, cookieLinkFound = false, termsFound = false;
+  const anchorRe = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  let am;
+  while ((am = anchorRe.exec(html))) {
+    const href = am[1];
+    const text = decodeEntities(am[2].replace(/<[^>]+>/g, " ")).toLowerCase();
+    const hay = (href + " " + text).toLowerCase();
+    if (/privacy|απόρρητο|προσωπικ.{0,4}δεδομέν|πολιτικ.{0,8}απορρ/.test(hay)) {
+      privacyFound = true;
+      if (!privacyHref) { try { privacyHref = new URL(href, baseUrl).href; } catch { privacyHref = href; } }
+    }
+    if (/cookie/.test(hay) && /(policy|polic|πολιτικ|notice|settings|consent|cookies)/.test(hay)) cookieLinkFound = true;
+    if (/terms|όρο.{0,8}χρήσ|terms of (use|service)|terms & conditions/.test(hay)) termsFound = true;
+  }
+
+  // --- CMPs + generic cookie-banner heuristic. ---
+  const cmps = [];
+  for (const c of GDPR_CMPS) {
+    if (c.sig.some((s) => lc.includes(s))) cmps.push(c.name);
+  }
+  const bannerById = /(id|class)\s*=\s*["'][^"']*(cookie-consent|cookie-banner|cookie-notice|cookie-bar|cc-window|cc-banner|gdpr|consent-banner|cmplz|cky-)/i.test(html);
+  const bannerByText = /(cookie|cookies|απόρρητο|cookies)[\s\S]{0,400}(accept|agree|consent|allow|αποδοχ|συναίν|αποδέχ|απορρίψ|reject|decline)/i.test(lc);
+  const consentBannerHeuristic = cmps.length > 0 || bannerById || bannerByText;
+
+  // --- Tracking / marketing scripts. ---
+  const trackers = [];
+  for (const t of GDPR_TRACKERS) {
+    if (t.sig.some((s) => lc.includes(s))) trackers.push({ name: t.name, category: t.category });
+  }
+
+  const embeds = detectGdprEmbeds(html, lc);
+  const googleFontsHotlinked = /fonts\.(googleapis|gstatic)\.com/i.test(lc);
+
+  // --- Forms / data collection. ---
+  const formCount = (html.match(/<form\b/gi) || []).length;
+  const collectsEmail = /<input\b[^>]*type\s*=\s*["']email["']/i.test(html) || /name\s*=\s*["'][^"']*e?mail/i.test(html);
+  const collectsPhone = /<input\b[^>]*type\s*=\s*["']tel["']/i.test(html);
+  // A consent checkbox NEAR a form: checkbox whose name/id/label hints at consent.
+  const formConsentCheckbox =
+    /<input\b[^>]*type\s*=\s*["']checkbox["'][^>]*(name|id)\s*=\s*["'][^"']*(consent|gdpr|privacy|agree|terms|accept|optin|opt-in)/i.test(html) ||
+    /(consent|gdpr|privacy|αποδέχομαι|συναιν|απόρρητο)[\s\S]{0,120}<input\b[^>]*type\s*=\s*["']checkbox/i.test(lc);
+
+  return {
+    // base signals reused for context + the thin-page guard
+    final_url: base.final_url,
+    title: base.title,
+    word_count: base.word_count,
+    external_link_count: base.external_link_count,
+    // GDPR signals
+    is_https: isHttps,
+    privacy_policy_found: privacyFound,
+    privacy_policy_url: privacyHref,
+    cookie_policy_link_found: cookieLinkFound,
+    terms_link_found: termsFound,
+    cmps_detected: cmps,
+    consent_banner_detected: consentBannerHeuristic,
+    trackers,
+    third_party_embeds: embeds,
+    google_fonts_hotlinked: googleFontsHotlinked,
+    form_count: formCount,
+    collects_email: collectsEmail,
+    collects_phone: collectsPhone,
+    form_consent_checkbox: formConsentCheckbox,
+  };
+}
+
+// Render the GDPR signals as a plain-text block fed to the model.
+function renderGdprSignalsBlock(s) {
+  const yn = (b) => (b ? "yes" : "no");
+  const lines = [];
+  lines.push(`Fetched URL: ${s.final_url}`);
+  lines.push(`Page title: ${s.title || "(none)"}`);
+  lines.push(`Served over HTTPS: ${yn(s.is_https)}`);
+  lines.push(`Privacy Policy link found: ${yn(s.privacy_policy_found)}${s.privacy_policy_url ? " (" + s.privacy_policy_url + ")" : ""}`);
+  lines.push(`Cookie Policy link found: ${yn(s.cookie_policy_link_found)}`);
+  lines.push(`Terms link found: ${yn(s.terms_link_found)}`);
+  lines.push(`Consent Management Platform (CMP) detected: ${s.cmps_detected.length ? s.cmps_detected.join(", ") : "none"}`);
+  lines.push(`Cookie-consent banner detected (heuristic): ${yn(s.consent_banner_detected)}`);
+  lines.push(`Tracking / marketing scripts detected (${s.trackers.length}): ${s.trackers.length ? s.trackers.map((t) => `${t.name} [${t.category}]`).join("; ") : "none"}`);
+  lines.push(`Cookie-setting third-party embeds: ${s.third_party_embeds.length ? s.third_party_embeds.join(", ") : "none"}`);
+  lines.push(`Google Fonts hotlinked from Google: ${yn(s.google_fonts_hotlinked)}`);
+  lines.push(`Forms on page: ${s.form_count} (collects email: ${yn(s.collects_email)}, phone: ${yn(s.collects_phone)}, has a consent checkbox: ${yn(s.form_consent_checkbox)})`);
+  return lines.join("\n");
+}
+
+function buildGdprPrompt(lang) {
+  const isEl = lang === "el";
+  const langName = isEl ? "Greek" : "English";
+  const bandLines = (GDPR_BANDS[lang] || GDPR_BANDS.en)
+    .map(([max, label], i, arr) => {
+      const min = i === 0 ? 0 : arr[i - 1][0] + 1;
+      return `- ${min}-${max}: ${label}`;
+    }).join("\n");
+  return (
+    "You are a senior privacy and GDPR readiness consultant performing a STATIC, " +
+    "signals-based pre-audit of a website's basic GDPR / ePrivacy posture. Be " +
+    "practical, specific and honest. Do not exaggerate and do not reassure.\n\n" +
+    "DATA SOURCE: You are given REAL public signals extracted from the page's " +
+    "server-rendered HTML — whether a privacy/cookie/terms link was found, whether a " +
+    "known Consent Management Platform (CMP) or generic cookie banner was detected, " +
+    "the third-party tracking/marketing scripts found (grouped by category), " +
+    "cookie-setting embeds, whether Google Fonts are hotlinked from Google, HTTPS, " +
+    "and form data-collection. BASE YOUR ANALYSIS ONLY ON THESE EXTRACTED SIGNALS — " +
+    "do not invent trackers, banners or policies that are not listed. For " +
+    "detected_trackers, use ONLY the scripts in the signals; for each, give its " +
+    "category and a short, concrete GDPR concern (e.g. sets cookies / transfers data " +
+    "to a non-EU processor / needs prior consent). Treat a missing signal as a finding " +
+    "(e.g. no privacy policy link, trackers present but no consent banner).\n\n" +
+    "GDPR REASONING: The biggest red flag is tracking/advertising scripts present " +
+    "WITHOUT a consent banner/CMP — under the ePrivacy Directive non-essential " +
+    "cookies need PRIOR consent. A missing privacy policy link, hotlinked Google " +
+    "Fonts (a known EU data-transfer issue), and forms collecting personal data " +
+    "without a consent checkbox or privacy link are also risks. HTTPS is expected.\n\n" +
+    "HONESTY RULES — CRITICAL: You analysed STATIC HTML only. You CANNOT verify " +
+    "whether trackers actually fire BEFORE consent, whether cookies are truly set, the " +
+    "lawful basis, the contents or legal completeness of any policy, data-retention or " +
+    "DPA/processor agreements. Do NOT claim a full legal audit or certified compliance. " +
+    "This is NOT legal advice. The disclaimer field MUST state that this is an " +
+    "indicative, signals-based pre-audit of public HTML — not a full audit, not " +
+    "verification of runtime consent behaviour, and not legal advice.\n\n" +
+    `Scoring bands — set compliance_label to match compliance_score:\n${bandLines}\n\n` +
+    "Each score_breakdown axis is 0-100 with one short note grounded in the signals. " +
+    "Lists hold 3-7 concise, specific items. executive_summary is 2-4 sentences and " +
+    "should begin by framing the report as based on public page signals (e.g. \"Based " +
+    "on public page signals extracted from the provided URL...\"). final_verdict is a " +
+    "single clear sentence.\n\n" +
+    `IMPORTANT: Write EVERY string value (labels, notes, concerns, summaries, list ` +
+    `items, verdict, disclaimer) in ${langName}. Return ONLY structured JSON matching ` +
+    "the required schema."
+  );
+}
+
+const GDPR_AXIS_SCHEMA = {
+  type: "object",
+  properties: { score: { type: "integer" }, note: { type: "string" } },
+  required: ["score", "note"],
+  propertyOrdering: ["score", "note"],
+};
+const GDPR_BREAKDOWN_SCHEMA = {
+  type: "object",
+  properties: GDPR_SCORE_AXES.reduce((acc, k) => { acc[k] = GDPR_AXIS_SCHEMA; return acc; }, {}),
+  required: GDPR_SCORE_AXES,
+  propertyOrdering: GDPR_SCORE_AXES,
+};
+const GDPR_TRACKER_SCHEMA = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    category: { type: "string" },
+    concern: { type: "string" },
+  },
+  required: ["name", "category", "concern"],
+  propertyOrdering: ["name", "category", "concern"],
+};
+const GDPR_SCAN_FIELDS = [
+  "compliance_score", "compliance_label", "executive_summary", "score_breakdown",
+  "detected_trackers", "what_is_in_place", "key_risks", "recommended_next_steps",
+  "final_verdict", "disclaimer",
+];
+const GDPR_SCAN_SCHEMA = {
+  type: "object",
+  properties: {
+    compliance_score: { type: "integer" },
+    compliance_label: { type: "string" },
+    executive_summary: { type: "string" },
+    score_breakdown: GDPR_BREAKDOWN_SCHEMA,
+    detected_trackers: { type: "array", items: GDPR_TRACKER_SCHEMA },
+    what_is_in_place: { type: "array", items: { type: "string" } },
+    key_risks: { type: "array", items: { type: "string" } },
+    recommended_next_steps: { type: "array", items: { type: "string" } },
+    final_verdict: { type: "string" },
+    disclaimer: { type: "string" },
+  },
+  required: GDPR_SCAN_FIELDS,
+  propertyOrdering: GDPR_SCAN_FIELDS,
+};
+
+const GDPR_SCAN_MAX_NOTES = 2000;
+
+async function handleGdprScan(body, env, ctx, corsOrigin) {
+  if (!env.GOOGLE_API_KEY) {
+    return json({ error: "scan_failed" }, 500, corsOrigin);
+  }
+
+  // --- Passphrase gate — SAME codes as the Artifact chat / other scanners ---
+  const valid = collectPassphrases(env);
+  if (valid.size) {
+    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
+  }
+  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+
+  const lang = body.lang === "el" ? "el" : "en";
+
+  const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const urlOk = (u) => /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(u);
+  const url = clean(body.url, 300);
+  if (!url || !urlOk(url)) {
+    return json({ error: "url_required" }, 400, corsOrigin);
+  }
+
+  const businessType = clean(body.businessType, 80);
+  const notes = clean(body.notes, GDPR_SCAN_MAX_NOTES);
+  const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
+
+  // --- Fetch + extract real GDPR signals. Option B: refuse if unreadable. ---
+  const fetched = await fetchPageSignals(url, extractGdprSignals);
+  if (!fetched.ok) {
+    return json({ error: "unreachable", message: websiteFetchRefusal(fetched.reason, lang, { status: fetched.status }) }, 200, corsOrigin);
+  }
+
+  const lines = [renderGdprSignalsBlock(fetched.signals)];
+  if (businessType) lines.push("", `Business Type: ${businessType}`);
+  if (notes) lines.push("", "Owner Notes:", notes);
+  const userText = lines.join("\n");
+
+  let result;
+  try {
+    result = await callGdprScanner({ apiKey: env.GOOGLE_API_KEY, model, userText, lang });
+  } catch (err) {
+    console.error("gdpr-scan error:", String((err && err.message) || err));
+    return json({ error: "scan_failed" }, 502, corsOrigin);
+  }
+  if (!result) return json({ error: "bad_format" }, 502, corsOrigin);
+
+  result.scanned_url = fetched.signals.final_url || url;
+  return json({ result }, 200, corsOrigin);
+}
+
+async function callGdprScanner({ apiKey, model, userText, lang }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: buildGdprPrompt(lang) }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.3,
+      maxOutputTokens: 3072,
+      responseMimeType: "application/json",
+      responseSchema: GDPR_SCAN_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "gdpr-scan", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseGdprScanJson(extractReply(data), lang);
+}
+
+function parseGdprScanJson(text, lang) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  const list = (v) => Array.isArray(v)
+    ? v.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 12)
+    : [];
+  const clampScore = (v) => {
+    let n = Number(v);
+    if (!Number.isFinite(n)) n = 0;
+    return Math.min(100, Math.max(0, Math.round(n)));
+  };
+
+  const score = clampScore(obj.compliance_score);
+
+  const srcBreak = (obj.score_breakdown && typeof obj.score_breakdown === "object") ? obj.score_breakdown : {};
+  const breakdown = {};
+  for (const axis of GDPR_SCORE_AXES) {
+    const a = srcBreak[axis];
+    if (a && typeof a === "object") {
+      breakdown[axis] = { score: clampScore(a.score), note: str(a.note) };
+    }
+  }
+
+  const trackers = Array.isArray(obj.detected_trackers)
+    ? obj.detected_trackers
+        .filter((t) => t && typeof t === "object")
+        .map((t) => ({ name: str(t.name), category: str(t.category), concern: str(t.concern) }))
+        .filter((t) => t.name)
+        .slice(0, 20)
+    : [];
+
+  const result = {
+    mode: "single",
+    language: lang,
+    compliance_score: score,
+    compliance_label: str(obj.compliance_label) || gdprScoreLabel(score, lang),
+    executive_summary: str(obj.executive_summary),
+    score_breakdown: breakdown,
+    detected_trackers: trackers,
+    what_is_in_place: list(obj.what_is_in_place),
+    key_risks: list(obj.key_risks),
+    recommended_next_steps: list(obj.recommended_next_steps),
+    final_verdict: str(obj.final_verdict),
+    disclaimer: str(obj.disclaimer),
+  };
+  if (!result.executive_summary && !result.final_verdict) return null;
+  return result;
 }

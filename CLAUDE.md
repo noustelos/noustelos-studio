@@ -516,6 +516,68 @@ material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
   reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
   `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
 
+## GDPR Auto-Scanner (third AI Lab tool — NOT the Artifact)
+A third standalone **Noustelos AI Lab utility**, sibling to the SaaS + Website
+scanners and likewise decoupled from The Artifact (no persona, memory/Drive, kill
+switch). Performs a **STATIC, signals-based GDPR / ePrivacy pre-audit**: fetches a
+page and flags privacy-policy presence, cookie-consent banner / CMP, third-party
+tracking scripts, cookie-setting embeds, hotlinked Google Fonts and form
+data-collection. **Bilingual via SPLIT-URL** like the website scanner: EN at
+`gdpr-scanner.html`, EL at `gdpr-scanner-el.html`; sends `lang:"en"|"el"` and the AI
+report comes back in that language. **Framing is deliberately honest: indicative,
+NOT legal advice** (cannot verify runtime consent firing order / real cookie storage
+/ legal completeness of a policy — static HTML only). Single-site only (no compare).
+- **Front-end** → [`gdpr-scanner.html`](gdpr-scanner.html) +
+  [`gdpr-scanner-el.html`](gdpr-scanner-el.html): two self-contained EN/EL pages,
+  SAME `styles.min.css` + anthracite `var(--cta)` framing / form aesthetic / Copy +
+  Download buttons / **"See an example report"** (`SAMPLE_REPORT`, "Sample" pill) /
+  60s client `AbortController` backstop as the website scanner. **Shares the SAME
+  passphrase localStorage key** (`saas.scanner.pass.v1`) — unlocking any Lab scanner
+  unlocks all. Form: **Website URL (required, fetched)**, Business Type, optional
+  Notes → POST `/api/gdpr-scan`. Renders a score bar + **5-axis breakdown**, a
+  **Detected Trackers** list (name + category pill + GDPR concern), what's-in-place /
+  key-risks grid, next steps, verdict, disclaimer. 5th Experiment card in
+  `ai-lab.html`/`ai-lab-el.html`, both in `sitemap.xml`, `index,follow`.
+- **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
+  `POST /api/gdpr-scan` (dispatch sits right after `/api/website-scan`, before the
+  Artifact gate — one Worker now serves artifact + saas-scan + website-scan +
+  gdpr-scan, each isolated). `handleGdprScan`: passphrase gate reuses
+  **`collectPassphrases`** (SAME codes — no new secret) → `verify` short-circuit →
+  URL-shape validation (`url_required`) → `fetchPageSignals(url, extractGdprSignals)`
+  → **Option B refusal** (reuses `websiteFetchRefusal`; returns
+  `200 {error:"unreachable", message}`) if the fetch fails / page is thin. `fetchPageSignals`
+  gained an optional 2nd `extractor` param (defaults to `extractSignals`, so the
+  website scanner is unchanged); `extractGdprSignals` calls `extractSignals` for the
+  base signals (incl. `word_count` for the thin-page guard) then layers the GDPR
+  signals. **Detection tables:** `GDPR_TRACKERS` (~18 vendors grouped by category —
+  GA, GTM, Google Ads, Meta Pixel, Hotjar, Clarity, LinkedIn, TikTok, X, Pinterest,
+  Snapchat, Yandex, Matomo, HubSpot, Segment, Mixpanel, Intercom, chat), `GDPR_CMPS`
+  (~13 consent platforms — Cookiebot, OneTrust, CookieYes, Iubenda, Complianz,
+  Quantcast, Usercentrics, Termly, Borlabs, Osano, TrustArc, Didomi, Cookie Notice),
+  `detectGdprEmbeds` (YouTube non-nocookie / Maps / Vimeo / IG-FB / Gravatar /
+  Disqus), plus policy-link scan, generic cookie-banner heuristic, Google-Fonts
+  hotlink, form/consent-checkbox detection. Uses **Gemini** (`SCANNER_MODEL`; live
+  `[vars]` = `gemini-2.5-flash-lite`) with `responseSchema`=`GDPR_SCAN_SCHEMA`,
+  `thinkingBudget:0`, `maxOutputTokens:3072`, and the scanner timeout/retry params
+  (`SCANNER_AI_TIMEOUT_MS`/`SCANNER_MAX_RETRIES`). `buildGdprPrompt(lang)` grounds the
+  model in the extracted signals (forbids inventing trackers, forbids legal-audit
+  claims, requires the not-legal-advice disclaimer). `parseGdprScanJson` normalizes
+  defensively (clamps scores, drops omitted axes, fills label from `GDPR_BANDS`).
+  **Does NOT log user input.** Response sets `result.scanned_url` (the final fetched
+  URL). Errors → `401 locked` / `400 url_required` / `502 scan_failed|bad_format` /
+  `200 {error:"unreachable", message}`.
+- **Request:** `{ passphrase, lang, url, businessType?, notes? }` → `{ result:
+  {compliance_score, compliance_label, executive_summary, score_breakdown{5 axes:
+  privacy_transparency, cookie_consent, tracking_footprint, data_collection,
+  third_party_exposure}, detected_trackers[{name,category,concern}], what_is_in_place[],
+  key_risks[], recommended_next_steps[], final_verdict, disclaimer, scanned_url} }`.
+- **SSRF / fetch** are inherited from the website scanner (same `fetchPageSignals`
+  guards: http/https only, private/metadata IPs blocked, redirect cap, per-hop
+  timeout, size cap). The URL **is fetched**; the URL is **never logged**.
+- **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new secret —
+  reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
+  `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
