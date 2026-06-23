@@ -538,6 +538,16 @@ NOT legal advice** (cannot verify runtime consent firing order / real cookie sto
   **Detected Trackers** list (name + category pill + GDPR concern), what's-in-place /
   key-risks grid, next steps, verdict, disclaimer. 5th Experiment card in
   `ai-lab.html`/`ai-lab-el.html`, both in `sitemap.xml`, `index,follow`.
+- **FAQ pages** → bilingual legal-obligations FAQ (`gdpr-scanner-faq.html` +
+  `gdpr-scanner-faq-el.html`), built on the `ai-lab-faq` template (needs the
+  `.ai-lab-faq > article { min-width:0 }` iOS guard), with **FAQPage JSON-LD**
+  mirroring the visible Q&A. 10 questions: GDPR scope / personal data / privacy
+  policy / cookies+consent (ePrivacy) / CMP / GA-Pixel-Google-Fonts / forms+lawful-
+  basis / **EU AI Act** (Reg. 2024/1689, phased application; Art. 50 transparency) /
+  penalties+DPAs / "a good score ≠ compliant". Framed **informational, NOT legal
+  advice** (see [[live-site-copy-integrity]]) with an explicit disclaimer block;
+  linked from each scanner page's disclaimer + back-linked to the scanner, both in
+  `sitemap.xml`. ⚠️ Legal content — keep facts current and never overclaim.
 - **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
   `POST /api/gdpr-scan` (dispatch sits right after `/api/website-scan`, before the
   Artifact gate — one Worker now serves artifact + saas-scan + website-scan +

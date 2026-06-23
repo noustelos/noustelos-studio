@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Plain-English answers on GDPR, cookie-consent and EU AI Act obligations for website owners — privacy policies, consent banners, trackers, lawful basis, penalties and who enforces them. General information, not legal advice." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/gdpr-scanner-faq.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/gdpr-scanner-faq.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/gdpr-scanner-faq-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/gdpr-scanner-faq.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="GDPR &amp; AI Act — FAQ for Website Owners | Noustelos AI Lab" />
+  <meta property="og:description" content="What the GDPR, the ePrivacy cookie rules and the EU AI Act actually require of a website — and how the GDPR Auto-Scanner fits in. General information, not legal advice." />
+  <meta property="og:url" content="https://noustelos.gr/gdpr-scanner-faq.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio — GDPR &amp; AI Act FAQ" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/gdpr-scanner-faq.html" />
+  <meta name="twitter:title" content="GDPR &amp; AI Act — FAQ for Website Owners | Noustelos AI Lab" />
+  <meta name="twitter:description" content="What the GDPR, the ePrivacy cookie rules and the EU AI Act actually require of a website. General information, not legal advice." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio — GDPR &amp; AI Act FAQ" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>GDPR &amp; AI Act — FAQ for Website Owners | Noustelos AI Lab</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260623" />
+
+  <!-- ── Structured data: FAQPage (Rich Snippets) ──────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does GDPR apply to my website?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The GDPR (Regulation (EU) 2016/679) applies whenever you process the personal data of people who are in the EU — regardless of where your business is based. If your site has EU visitors and collects names, emails, IP addresses, or uses analytics or advertising tools, you are almost certainly in scope. The closely related ePrivacy rules govern cookies on top of it. This is general information, not legal advice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What counts as 'personal data' on a website?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Any information relating to an identifiable person. That includes the obvious — name, email, phone — but also IP addresses, cookie IDs, device identifiers and location. Contact forms, newsletter signups, analytics and advertising pixels all process personal data, even if you never see a name."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need a privacy policy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Articles 13 and 14 of the GDPR require you to tell people, at the point of collection, who you are, what data you collect, why, the lawful basis, how long you keep it, who you share it with, and what rights they have. A reachable, accurate and specific privacy policy is the baseline expectation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the law actually require for cookies?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cookies and similar trackers are governed by the ePrivacy Directive on top of the GDPR. Strictly necessary cookies are exempt, but anything non-essential — analytics, advertising, embedded social media — needs prior, informed, freely given consent BEFORE it loads. Pre-ticked boxes, 'by continuing you accept', and cookie walls are generally not valid consent, and refusing must be as easy as accepting."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need a cookie banner or a CMP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you load any non-essential tracker, in practice yes. You need a consent mechanism that blocks those scripts until the user agrees, lets them refuse as easily as accept, and records the choice. A Consent Management Platform (Cookiebot, OneTrust, CookieYes and similar) is the usual way to do this. A banner that only informs, without actually blocking the scripts, does not meet the requirement — which is exactly the gap this scanner flags."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are Google Analytics, the Meta Pixel and Google Fonts a problem?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "They can be. They set cookies or send data (often outside the EU), so they need consent before they run. Transfers to the US are now covered by the EU–US Data Privacy Framework (a 2023 adequacy decision), but that does not remove the need to obtain consent for the trackers themselves. Hotlinking Google Fonts directly from Google was ruled a GDPR violation by a German court in 2022 because it transmits visitors' IP addresses to Google — self-hosting the fonts avoids it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What about contact forms and newsletters?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Collecting an email is processing personal data, so you need a lawful basis under Article 6 — usually consent for marketing, or legitimate interest or contract for a direct enquiry. Newsletter signups should be genuine opt-in (no pre-ticked boxes), every data-collection form should link to your privacy policy, and you should only ask for what you actually need."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the EU AI Act and does it affect my site?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The EU AI Act (Regulation (EU) 2024/1689) regulates AI by risk level and applies in phases: bans on 'unacceptable-risk' practices since February 2025, general-purpose AI model obligations since August 2025, and most high-risk obligations from August 2026 (a 2026 'Digital Omnibus' proposal may defer some high-risk deadlines into 2027). Most marketing websites are NOT 'high-risk AI'. The part that touches ordinary sites is transparency (Article 50): if you run an AI chatbot, tell users they are interacting with a machine, and clearly label AI-generated or manipulated images, audio and video."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the penalties, and who enforces this?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GDPR is enforced by national Data Protection Authorities — in Greece, the Hellenic Data Protection Authority — with fines up to 20 million euros or 4% of global annual turnover, whichever is higher. The AI Act adds penalties up to 35 million euros or 7% of turnover for prohibited practices. Enforcement increasingly targets cookie-consent and tracker issues, which is exactly what this scanner inspects."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a good score here mean I'm compliant?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The GDPR Auto-Scanner is an indicative, signals-based pre-audit: it reads the public HTML and flags likely gaps — a missing privacy link, trackers loading with no consent banner, hotlinked fonts, forms without a consent step. It cannot verify whether trackers actually fire before consent, what cookies are really stored, your lawful basis, or whether your policy is legally complete. Treat the report as a prioritised to-do list, not a certificate, and confirm anything that matters with a qualified data-protection professional or DPO."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ai-lab-heading {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .ai-lab-heading h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .ai-lab-heading h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--hero-mark);
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── FAQ article ───────────────────────────────────────────── */
+    .ai-lab-faq {
+      margin-top: clamp(1.5rem, 4vw, 2.5rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+      gap: 1.4rem;
+    }
+
+    /* Let the article grid item shrink so content wraps to the viewport
+       instead of dragging the whole page sideways on iOS. */
+    .ai-lab-faq > article { min-width: 0; }
+
+    .faq-lead {
+      margin: 0 0 clamp(1rem, 3vw, 1.8rem);
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .faq-item {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: clamp(1.6rem, 4vw, 2.4rem);
+      padding-top: clamp(1.4rem, 3.5vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+
+    .faq-item:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .faq-item h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(20px, 2.8vw, 27px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .faq-item p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .faq-item strong { color: var(--text-primary); font-weight: 600; }
+
+    .faq-note {
+      margin-top: clamp(1.6rem, 4vw, 2.4rem);
+      padding: clamp(1rem, 3vw, 1.4rem);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.015);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .faq-note strong { color: var(--text-primary); }
+
+    .faq-back {
+      margin-top: clamp(2.5rem, 6vw, 3.5rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap" aria-labelledby="faq-title">
+      <div class="section-heading ai-lab-heading">
+        <h1 id="faq-title">GDPR &amp; AI Act — Website FAQ</h1>
+      </div>
+    </section>
+
+    <section class="container ai-lab-wrap ai-lab-faq" aria-labelledby="faq-title">
+      <article>
+        <p class="faq-lead">A plain-English primer on the GDPR, the ePrivacy cookie rules and the EU AI Act obligations that apply to most websites — and how the GDPR Auto-Scanner fits in. This is general information, not legal advice.</p>
+
+        <section class="faq-item">
+          <h2>Does GDPR apply to my website?</h2>
+          <p>The <strong>GDPR (Regulation (EU) 2016/679)</strong> applies whenever you process the personal data of people who are in the EU — regardless of where your business is based. If your site has EU visitors and collects names, emails, IP addresses, or uses analytics or advertising tools, you are almost certainly in scope. The closely related <strong>ePrivacy</strong> rules govern cookies on top of it.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What counts as "personal data" on a website?</h2>
+          <p>Any information relating to an identifiable person. That includes the obvious — name, email, phone — but also <strong>IP addresses, cookie IDs, device identifiers and location</strong>. Contact forms, newsletter signups, analytics and advertising pixels all process personal data, even if you never see a name.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Do I need a privacy policy?</h2>
+          <p>Yes. <strong>Articles 13 and 14</strong> require you to tell people, at the point of collection, who you are, what data you collect, why, the lawful basis, how long you keep it, who you share it with, and what rights they have. A reachable, accurate and specific privacy policy is the baseline expectation.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What does the law actually require for cookies?</h2>
+          <p>Cookies and similar trackers are governed by the <strong>ePrivacy Directive</strong> on top of the GDPR. Strictly necessary cookies are exempt, but anything non-essential — analytics, advertising, embedded social media — needs <strong>prior, informed, freely given consent before it loads</strong>. Pre-ticked boxes, "by continuing you accept", and cookie walls are generally not valid consent, and refusing must be as easy as accepting.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Do I need a cookie banner or a CMP?</h2>
+          <p>If you load any non-essential tracker, in practice yes. You need a consent mechanism that <strong>blocks those scripts until the user agrees</strong>, lets them refuse as easily as accept, and records the choice. A <strong>Consent Management Platform</strong> (Cookiebot, OneTrust, CookieYes and similar) is the usual way to do this. A banner that only informs, without actually blocking the scripts, does not meet the requirement — which is exactly the gap this scanner flags.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Are Google Analytics, the Meta Pixel and Google Fonts a problem?</h2>
+          <p>They can be. They set cookies or send data (often outside the EU), so they need consent before they run. Transfers to the US are now covered by the <strong>EU–US Data Privacy Framework</strong> (a 2023 adequacy decision), but that does not remove the need to obtain consent for the trackers themselves. Hotlinking <strong>Google Fonts</strong> directly from Google was ruled a GDPR violation by a German court in 2022 because it transmits visitors' IP addresses to Google — self-hosting the fonts avoids it.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What about contact forms and newsletters?</h2>
+          <p>Collecting an email is processing personal data, so you need a <strong>lawful basis under Article 6</strong> — usually consent for marketing, or legitimate interest or contract for a direct enquiry. Newsletter signups should be genuine opt-in (no pre-ticked boxes), every data-collection form should link to your privacy policy, and you should only ask for what you actually need.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What is the EU AI Act and does it affect my site?</h2>
+          <p>The <strong>EU AI Act (Regulation (EU) 2024/1689)</strong> regulates AI by risk level and applies in phases: bans on "unacceptable-risk" practices since February 2025, general-purpose AI model obligations since August 2025, and most high-risk obligations from August 2026 (a 2026 "Digital Omnibus" proposal may defer some high-risk deadlines into 2027). Most marketing websites are <strong>not</strong> "high-risk AI". The part that touches ordinary sites is <strong>transparency (Article 50)</strong>: if you run an AI chatbot, tell users they are interacting with a machine, and clearly label AI-generated or manipulated images, audio and video.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What are the penalties, and who enforces this?</h2>
+          <p>GDPR is enforced by national <strong>Data Protection Authorities</strong> — in Greece, the Hellenic Data Protection Authority — with fines up to <strong>€20 million or 4% of global annual turnover</strong>, whichever is higher. The AI Act adds penalties up to <strong>€35 million or 7% of turnover</strong> for prohibited practices. Enforcement increasingly targets cookie-consent and tracker issues, which is exactly what this scanner inspects.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Does a good score here mean I'm compliant?</h2>
+          <p><strong>No.</strong> The GDPR Auto-Scanner is an indicative, signals-based pre-audit: it reads the public HTML and flags likely gaps — a missing privacy link, trackers loading with no consent banner, hotlinked fonts, forms without a consent step. It cannot verify whether trackers actually fire before consent, what cookies are really stored, your lawful basis, or whether your policy is legally complete. Treat the report as a prioritised to-do list, not a certificate, and confirm anything that matters with a qualified data-protection professional or DPO.</p>
+        </section>
+
+        <p class="faq-note"><strong>Disclaimer.</strong> This page is general information about EU data-protection and AI rules, not legal advice, and it may not reflect the latest amendments or your national implementation. The scanner analyses public HTML signals only and does not establish compliance. For binding guidance on your specific situation, consult a qualified data-protection lawyer or Data Protection Officer.</p>
+
+        <div class="faq-back">
+          <a class="button button-link" href="/gdpr-scanner.html">Back to the GDPR Auto-Scanner</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the Greek version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/gdpr-scanner-faq-el.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
