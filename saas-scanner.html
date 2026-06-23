@@ -114,10 +114,11 @@
       max-width: 62ch;
     }
 
-    /* Card shell shared by the form, the gate and every result panel. */
+    /* Card shell shared by the form, the gate and every result panel.
+       Outlined in the homepage CTA anthracite for one consistent frame. */
     .scanner-panel {
       background: #fffdf8;
-      border: 1px solid var(--line);
+      border: 1px solid var(--cta);
       border-radius: var(--radius);
       box-shadow: var(--shadow-soft);
       padding: clamp(1.3rem, 3.5vw, 2rem);
@@ -154,8 +155,6 @@
 
     /* ── Form ─────────────────────────────────────────────── */
     .scanner-form { display: grid; gap: 1.15rem; }
-    /* Form panel outlined in the homepage CTA anthracite (matches inputs). */
-    #form-panel { border-color: var(--cta); }
     .scanner-field { display: grid; gap: 0.4rem; }
     .scanner-field label {
       font-family: "Space Grotesk", sans-serif;
