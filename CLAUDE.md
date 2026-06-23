@@ -441,9 +441,39 @@ material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
   `thinkingBudget:0`, `maxOutputTokens:3072`. `buildWebsitePrompt(lang)` swaps the
   output language + score-band labels (EN/EL in `WEBSITE_BANDS`).
   `parseWebsiteScanJson` normalizes defensively (clamps every score 0–100, drops
-  omitted axes, fills `overall_label` from the band). **URL is context-only — never
-  fetched** (no crawler/SSRF). **Does NOT log user input.** Errors →
-  `401 locked` / `400 url_required` / `502 scan_failed|bad_format`.
+  omitted axes, fills `overall_label` from the band). **Does NOT log user input.**
+  Errors → `401 locked` / `400 url_required` / `502 scan_failed|bad_format` /
+  `200 {error:"unreachable", message}` (fetch failed → see below).
+- **REAL page fetch + signal extraction (2026-06-23) — the URL is now FETCHED.**
+  Reverses the old "context-only, never fetched" stance: `handleWebsiteScan` calls
+  `fetchPageSignals(url)` (BOTH sites in compare mode, via `Promise.all`) BEFORE the
+  AI, so the report is grounded in real page data, not assumptions (owner choice:
+  honesty / no assumption-based reports). `fetchPageSignals` → `fetchFollow` (manual
+  redirect loop, each hop re-validated) → `readCapped` → `extractSignals`. Extracted
+  signals (`renderSignalsBlock`): title, meta description, H1, H2/H3 (counts+samples),
+  canonical, OG title/desc, viewport, robots, visible **word count**, image count +
+  alt-text count, internal/external link counts, phone/email presence, CTA-word
+  presence, schema.org presence + `@type`s, visible-text excerpt. The prompts
+  (`buildWebsitePrompt`/`buildWebsiteComparePrompt`) now say "base the audit on these
+  EXTRACTED signals" and frame the summary as *"Based on public page signals extracted
+  from the provided URL…"*; they FORBID claiming a full crawl / Lighthouse / Core Web
+  Vitals / ranking prediction (we have STATIC HTML only).
+  **SSRF guards (full):** http/https only, private/loopback/metadata IP ranges blocked
+  (`isPrivateHost`/`parseSafeUrl`/`normalizeFetchUrl`), explicit non-http(s) schemes
+  rejected, redirect cap (`WEBSITE_MAX_REDIRECTS`=5), per-hop timeout
+  (`WEBSITE_FETCH_TIMEOUT_MS`=9s), response-size cap (`WEBSITE_FETCH_MAX_BYTES`=1.5MB).
+  Presents a normal browser `BROWSER_UA` (owner controls the URLs). ⚠️ No DNS
+  resolution in the Worker, so a hostname resolving to a private IP is NOT caught —
+  best-effort, acceptable for this owner-facing tool.
+  **Option B refusal — NO assumption-based report.** If the fetch fails (timeout,
+  non-2xx HTTP, blocked URL, non-HTML, too-many-redirects, network) OR the page is a
+  **thin/JS-rendered shell** (visible `word_count < WEBSITE_MIN_CONTENT_WORDS`=25),
+  the engine returns `200 {error:"unreachable", message}` and produces **NO scored
+  report**. `websiteFetchRefusal(reason, lang, {status, siteLabel})` builds a localized
+  (EN/EL) sentence naming the reason (e.g. "likely JS-rendered…"); the front-end shows
+  `out.data.message` (falls back to `ERRORS.unreachable`). In compare mode, if EITHER
+  site fails there is no comparison (the message names which site). The URL is still
+  **never logged** — but it IS now fetched.
 - **Request:** `{ passphrase, lang, url, businessType?, goal?, stage?, notes? }` →
   `{ result: {overall_score, overall_label, executive_summary, score_breakdown{7
   axes}, what_works_well[], what_holds_it_back[], client_dependent_improvements[],

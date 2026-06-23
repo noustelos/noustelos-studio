@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="An AI-powered website readiness audit by Noustelos Studio for clarity, SEO, trust signals, content quality and conversion potential." />
+  <meta name="description" content="An AI website readiness audit by Noustelos Studio, based on real public signals fetched from your page — not guesses: clarity, SEO, trust signals, content and conversion." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#f7f4ee" />
   <link rel="canonical" href="https://noustelos.gr/website-scanner.html" />
@@ -15,7 +15,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Noustelos Studio" />
   <meta property="og:title" content="Website Quality Scanner" />
-  <meta property="og:description" content="Analyze a website's launch readiness, SEO foundation, trust signals and conversion potential with a lightweight AI audit tool." />
+  <meta property="og:description" content="Analyze a website's launch readiness, SEO, trust signals and conversion — based on real public page signals fetched from the URL, not assumptions." />
   <meta property="og:url" content="https://noustelos.gr/website-scanner.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
   <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
@@ -28,7 +28,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://noustelos.gr/website-scanner.html" />
   <meta name="twitter:title" content="Website Quality Scanner" />
-  <meta name="twitter:description" content="Analyze a website's launch readiness, SEO foundation, trust signals and conversion potential with a lightweight AI audit tool." />
+  <meta name="twitter:description" content="Analyze a website's launch readiness, SEO, trust signals and conversion — based on real public page signals fetched from the URL, not assumptions." />
   <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
   <meta name="twitter:image:alt" content="Noustelos Studio — Website Quality Scanner" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
@@ -49,7 +49,7 @@
     "operatingSystem": "Web",
     "inLanguage": "en",
     "url": "https://noustelos.gr/website-scanner.html",
-    "description": "An AI-powered website readiness audit by Noustelos Studio for clarity, SEO readiness, trust signals, content quality and conversion potential.",
+    "description": "An AI website readiness audit by Noustelos Studio, based on real public signals fetched from your page (not guesses): clarity, SEO readiness, trust signals, content quality and conversion potential.",
     "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
   }
@@ -610,7 +610,7 @@
         </div>
         <h1 id="scanner-title">Website Quality Scanner</h1>
         <p class="scanner-subtitle">An AI-powered website readiness audit for clarity, SEO, trust and conversion.</p>
-        <p class="scanner-intro">Paste a website URL and a few project details. The scanner generates a structured report showing what works, what holds the site back and what could raise its readiness score.</p>
+        <p class="scanner-intro">Paste a website URL and a few project details. The scanner reads the page's real public signals and bases its report on what it actually finds — what works, what holds the site back and what could raise its readiness score. If a page can't be read, it says so instead of guessing.</p>
       </section>
 
       <!-- Passphrase gate -->
@@ -631,7 +631,7 @@
         <h2 id="form-title" class="launch-kicker" style="color:var(--glass-gray-text);">Analyze a Website</h2>
 
         <div class="scanner-field">
-          <label for="f-url">Website URL <span class="optional">(required — used as context only, not visited)</span></label>
+          <label for="f-url">Website URL <span class="optional">(required — the page is fetched and analyzed)</span></label>
           <input class="scanner-input" type="url" id="f-url" maxlength="300" placeholder="https://example.com" />
         </div>
 
@@ -691,7 +691,7 @@
 
         <div id="site-b-block" hidden>
           <div class="scanner-field">
-            <label for="f-url-b">Second Website URL <span class="optional">(required for comparison — context only)</span></label>
+            <label for="f-url-b">Second Website URL <span class="optional">(required for comparison — both pages are fetched)</span></label>
             <input class="scanner-input" type="url" id="f-url-b" maxlength="300" placeholder="https://competitor.com" />
           </div>
           <div class="scanner-field">
@@ -784,7 +784,7 @@
       <!-- How it works -->
       <section class="scanner-info" aria-labelledby="how-title">
         <h2 id="how-title">How it works</h2>
-        <p>The scanner reviews the website through a practical launch and conversion lens. It looks at clarity, trust, SEO basics, content completeness and the missing material that may prevent a good site from becoming a stronger business asset.</p>
+        <p>The scanner fetches your URL and extracts real public page signals — title, meta tags, headings, links, images, content and structured data — then reviews them through a practical launch and conversion lens: clarity, trust, SEO basics, content completeness and the missing material that may prevent a good site from becoming a stronger business asset. It reports only on what it can actually see in the page; it does not guess. If the page can't be fetched, it tells you instead of inventing a score.</p>
       </section>
 
       <!-- What it evaluates -->
@@ -805,7 +805,7 @@
       <!-- Disclaimer -->
       <section class="scanner-disclaimer" aria-label="Disclaimer">
         <p><strong>This experimental AI assessment is for website strategy only.</strong> It is not a full technical audit, SEO guarantee, legal advice, financial advice or ranking prediction.</p>
-        <p>The report is based on the available page signals and the information provided by the user. The URL is used as context only and is not crawled.</p>
+        <p>The report is based on public page signals fetched from the URL you provide (server-rendered HTML only) plus the information you add. It is not a full crawl, a Lighthouse / Core Web Vitals measurement or a ranking prediction. If the page cannot be fetched, no scored report is produced.</p>
       </section>
 
       <p><a class="scanner-back" href="/ai-lab.html">&larr; Back to AI Lab</a></p>
@@ -954,7 +954,8 @@
         too_short: 'Add a few more details so the scanner can generate a useful report.',
         locked: 'Your access code is no longer valid. Please request a new one.',
         scan_failed: 'The scanner could not complete the analysis right now. Please try again later.',
-        bad_format: 'The analysis returned an unexpected format. Please try again.'
+        bad_format: 'The analysis returned an unexpected format. Please try again.',
+        unreachable: 'The website could not be fetched, so no report was produced. Check the URL and try again.'
       };
 
       function setLoading(on) {
@@ -1242,7 +1243,8 @@
             return;
           }
           var key = out.data && out.data.error;
-          showError(formError, ERRORS[key] || ERRORS.scan_failed);
+          var msg = out.data && out.data.message;
+          showError(formError, msg || ERRORS[key] || ERRORS.scan_failed);
         }).catch(function () {
           setLoading(false);
           showError(formError, ERRORS.scan_failed);

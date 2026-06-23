@@ -1121,8 +1121,12 @@ function scoreLabelFor(score) {
  * works / holds back, client-dependent improvements, a realistic "what would
  * raise the score" projection, next steps, verdict). Emits structured JSON the
  * front-end renders as cards. No persona/memory/Drive/kill-switch; user input is
- * NOT logged. The URL is context-only — the Worker does NOT fetch it (no crawler,
- * no SSRF surface); the report is based on user-provided signals.
+ * NOT logged. The Worker FETCHES the provided URL (server-rendered HTML only) and
+ * extracts coarse public signals (fetchPageSignals/extractSignals) BEFORE the AI
+ * call, so the audit is grounded in real page data — not assumptions. If the fetch
+ * fails it REFUSES to produce a scored report (Option B); see websiteFetchRefusal.
+ * Full SSRF guards (http/https only, private/metadata IPs blocked, redirect cap,
+ * timeout, size cap). NOT a full crawl/Lighthouse/CWV/ranking audit.
  *
  * Bilingual: the split EN/EL front-end sends lang:"en"|"el" and the model writes
  * every string value (labels, notes, summaries, lists, verdict) in that language.
@@ -1173,22 +1177,32 @@ function buildWebsitePrompt(lang) {
     "You are a senior website strategist, SEO auditor and conversion consultant. " +
     "Your job is to evaluate a website's launch readiness, clarity, SEO foundation, " +
     "trust signals, conversion flow, content completeness and technical basics. Be " +
-    "practical, honest and specific. Do not exaggerate. The website URL is provided " +
-    "as CONTEXT ONLY — it is NOT fetched or crawled, so base your audit on the " +
-    "user-provided details (business type, goal, stage, notes) and reasonable " +
-    "category expectations. If information is missing, say what cannot be evaluated " +
-    "and explain what client-provided material would improve the score.\n\n" +
-    "Rules: Do not pretend to have crawled or load-tested the site. Do not claim " +
-    "exact Lighthouse performance scores or Google ranking predictions. Do not give " +
-    "legal or financial advice. Clearly SEPARATE builder-controlled improvements " +
-    "from client-dependent improvements (testimonials, real project photos, reviews, " +
-    "certifications, case studies, pricing, FAQs, local-business proof). Always give " +
-    "realistic score-improvement logic: a good site may be 85-90% ready but capped " +
-    "below 95-100% without client-provided proof.\n\n" +
+    "practical, honest and specific. Do not exaggerate.\n\n" +
+    "DATA SOURCE: You are given REAL public page signals that were fetched and " +
+    "extracted from the provided URL's server-rendered HTML (page title, meta " +
+    "description, headings, canonical, Open Graph, viewport, robots, visible word " +
+    "count, image/alt counts, internal/external link counts, phone/email/CTA/" +
+    "structured-data presence, and a visible-text excerpt). BASE YOUR AUDIT ON THESE " +
+    "EXTRACTED SIGNALS — not on assumptions. Frame the report as based on public page " +
+    "signals extracted from the provided URL: begin executive_summary with that " +
+    "framing (e.g. \"Based on public page signals extracted from the provided URL...\"). " +
+    "Treat a missing/empty signal as a FINDING (e.g. no meta description, no H1, no " +
+    "structured data) rather than inventing detail.\n\n" +
+    "HONESTY RULES: You have STATIC HTML signals only — not rendered output, not " +
+    "performance metrics, not analytics. Do NOT claim you ran a full crawl, a full " +
+    "technical audit, a Lighthouse or Core Web Vitals measurement, or any Google " +
+    "ranking prediction. Do not give legal or financial advice. Clearly SEPARATE " +
+    "builder-controlled improvements from client-dependent improvements (testimonials, " +
+    "real project photos, reviews, certifications, case studies, pricing, FAQs, " +
+    "local-business proof). Always give realistic score-improvement logic: a good " +
+    "site may be 85-90% ready but capped below 95-100% without client-provided proof. " +
+    "The disclaimer field MUST state the report is based only on public HTML page " +
+    "signals — not a full technical audit, Lighthouse, Core Web Vitals, full SEO " +
+    "crawl or ranking prediction.\n\n" +
     `Scoring bands — set overall_label to match overall_score:\n${bandLines}\n\n` +
-    "Each score_breakdown axis is 0-100 with one short note. Lists hold 3-7 concise, " +
-    "specific items. executive_summary is 2-4 sentences; final_verdict is a single " +
-    "clear sentence.\n\n" +
+    "Each score_breakdown axis is 0-100 with one short note grounded in the signals. " +
+    "Lists hold 3-7 concise, specific items. executive_summary is 2-4 sentences; " +
+    "final_verdict is a single clear sentence.\n\n" +
     `IMPORTANT: Write EVERY string value in the report (labels, notes, summaries, ` +
     `list items, ranges, verdict, disclaimer) in ${langName}. Return ONLY structured ` +
     "JSON matching the required schema."
@@ -1243,6 +1257,368 @@ const WEBSITE_SCAN_SCHEMA = {
   propertyOrdering: WEBSITE_SCAN_FIELDS,
 };
 
+/* ---- Real page fetch + public-signal extraction ------------------------- *
+ * The website scanner now ACTUALLY fetches the provided URL (server-rendered
+ * HTML only) and extracts coarse public signals BEFORE calling the AI, so the
+ * report is grounded in real page data, not assumptions. If the fetch fails we
+ * REFUSE to produce a scored report (Option B) — see fetchPageSignals callers.
+ * Full SSRF guards: http/https only, private/loopback/metadata IPs blocked,
+ * manual redirect cap (each hop re-validated), per-hop timeout, response-size
+ * cap. We present as a normal browser UA (owner controls the URLs). NOTE: we
+ * cannot DNS-resolve in the Worker, so a hostname that resolves to a private IP
+ * is not caught — best-effort, acceptable for this owner-facing tool. */
+const WEBSITE_FETCH_TIMEOUT_MS = 9000;
+const WEBSITE_FETCH_MAX_BYTES = 1_500_000;
+const WEBSITE_MAX_REDIRECTS = 5;
+const WEBSITE_MIN_CONTENT_WORDS = 25;
+const BROWSER_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+const CTA_WORDS = [
+  "contact", "get started", "sign up", "subscribe", "book now", "book a",
+  "buy now", "order now", "get a quote", "request a", "call now", "learn more",
+  "get in touch", "schedule", "free trial", "download", "shop now", "join",
+  "start now", "επικοινων", "κλείσε", "κράτηση", "αγορά", "ξεκίνα", "εγγραφ",
+  "μάθε περισσότερα", "ζήτησε", "καλέστε", "παραγγελ", "δωρεάν",
+];
+
+// Best-effort SSRF guard for a literal host (no DNS resolution available).
+function isPrivateHost(hostname) {
+  const h = String(hostname || "").toLowerCase().replace(/\.$/, "");
+  if (!h) return true;
+  if (h === "localhost" || h.endsWith(".localhost") || h.endsWith(".local") ||
+      h.endsWith(".internal") || h === "metadata.google.internal") return true;
+  if (h.includes(":")) { // IPv6 literal
+    if (h === "::1" || h === "::") return true;
+    if (/^fe80:/.test(h) || /^f[cd][0-9a-f]{2}:/.test(h)) return true; // fe80::/10, fc00::/7
+    return false;
+  }
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const o = m.slice(1).map(Number);
+    if (o.some((n) => n > 255)) return true;
+    if (o[0] === 10 || o[0] === 127 || o[0] === 0) return true;
+    if (o[0] === 169 && o[1] === 254) return true;          // link-local / cloud metadata
+    if (o[0] === 172 && o[1] >= 16 && o[1] <= 31) return true;
+    if (o[0] === 192 && o[1] === 168) return true;
+    if (o[0] === 100 && o[1] >= 64 && o[1] <= 127) return true; // CGNAT
+    return false;
+  }
+  return false; // a normal public hostname
+}
+
+function parseSafeUrl(raw) {
+  let u;
+  try { u = new URL(raw); } catch { return null; }
+  if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+  if (isPrivateHost(u.hostname)) return null;
+  return u;
+}
+
+function normalizeFetchUrl(raw) {
+  let s = String(raw || "").trim();
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) {
+    // ok as-is
+  } else if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) {
+    return null; // explicit non-http(s) scheme (ftp://, file://, …)
+  } else {
+    s = "https://" + s; // bare domain or host:port
+  }
+  return parseSafeUrl(s);
+}
+
+// Manual redirect follow so every hop is re-validated against the SSRF guard.
+async function fetchFollow(startUrl) {
+  let next = startUrl; // URL object or string
+  for (let i = 0; i <= WEBSITE_MAX_REDIRECTS; i++) {
+    const u = (typeof next === "string") ? parseSafeUrl(next) : next;
+    if (!u) return { ok: false, reason: "blocked" };
+    const res = await fetch(u.href, {
+      method: "GET",
+      redirect: "manual",
+      signal: AbortSignal.timeout(WEBSITE_FETCH_TIMEOUT_MS),
+      headers: {
+        "User-Agent": BROWSER_UA,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,el;q=0.8",
+      },
+    });
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get("location");
+      if (!loc) return { ok: true, res, url: u.href };
+      let target;
+      try { target = new URL(loc, u.href); } catch { return { ok: false, reason: "network" }; }
+      const safe = parseSafeUrl(target.href);
+      if (!safe) return { ok: false, reason: "blocked" };
+      next = safe;
+      continue;
+    }
+    return { ok: true, res, url: u.href };
+  }
+  return { ok: false, reason: "too_many_redirects" };
+}
+
+// Read a response body up to maxBytes, then stop (cap memory/CPU).
+async function readCapped(res, maxBytes) {
+  if (!res.body || !res.body.getReader) {
+    const t = await res.text();
+    return t.length > maxBytes ? t.slice(0, maxBytes) : t;
+  }
+  const reader = res.body.getReader();
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value && value.length) {
+      chunks.push(value);
+      total += value.length;
+      if (total >= maxBytes) { try { await reader.cancel(); } catch (_e) {} break; }
+    }
+  }
+  const cap = Math.min(total, maxBytes);
+  const buf = new Uint8Array(cap);
+  let off = 0;
+  for (const c of chunks) {
+    if (off >= cap) break;
+    const slice = (off + c.length > cap) ? c.subarray(0, cap - off) : c;
+    buf.set(slice, off);
+    off += slice.length;
+  }
+  return new TextDecoder("utf-8", { fatal: false }).decode(buf);
+}
+
+async function fetchPageSignals(rawUrl) {
+  const start = normalizeFetchUrl(rawUrl);
+  if (!start) return { ok: false, reason: "blocked" };
+
+  let hop;
+  try {
+    hop = await fetchFollow(start);
+  } catch (err) {
+    const msg = String((err && err.message) || err);
+    if (/timed out|timeout|aborted|signal/i.test(msg)) return { ok: false, reason: "timeout" };
+    return { ok: false, reason: "network" };
+  }
+  if (!hop.ok) return hop;
+
+  const res = hop.res;
+  if (res.status < 200 || res.status >= 300) {
+    // Cloudflare origin errors (520-527, 530) mean the Worker couldn't reach the
+    // site at all (DNS fail, connection refused, origin down) — report as such,
+    // not as an opaque "HTTP 530".
+    if (res.status === 530 || (res.status >= 520 && res.status <= 527)) {
+      return { ok: false, reason: "network" };
+    }
+    return { ok: false, reason: "http", status: res.status };
+  }
+  const ct = (res.headers.get("content-type") || "").toLowerCase();
+  if (ct && !/(text\/html|application\/xhtml\+xml|text\/plain)/.test(ct)) {
+    return { ok: false, reason: "not_html" };
+  }
+
+  let html;
+  try {
+    html = await readCapped(res, WEBSITE_FETCH_MAX_BYTES);
+  } catch (err) {
+    const msg = String((err && err.message) || err);
+    if (/timed out|timeout|aborted/i.test(msg)) return { ok: false, reason: "timeout" };
+    return { ok: false, reason: "network" };
+  }
+
+  const signals = extractSignals(html, hop.url);
+  // Thin / JS-rendered shell → almost no readable HTML → refuse (no assumptions).
+  if (signals.word_count < WEBSITE_MIN_CONTENT_WORDS) {
+    return { ok: false, reason: "thin" };
+  }
+  return { ok: true, signals };
+}
+
+function decodeEntities(s) {
+  if (!s) return "";
+  return String(s)
+    .replace(/&#(\d+);/g, (_, n) => { try { return String.fromCodePoint(parseInt(n, 10)); } catch { return _; } })
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => { try { return String.fromCodePoint(parseInt(n, 16)); } catch { return _; } })
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'");
+}
+
+// Find the content of a <meta> whose name OR property equals key (any order).
+function metaContentOf(html, key) {
+  const re = new RegExp("<meta\\b[^>]*\\b(?:name|property)\\s*=\\s*[\"']" + key + "[\"'][^>]*>", "i");
+  const tag = html.match(re);
+  if (!tag) return "";
+  const c = tag[0].match(/\bcontent\s*=\s*["']([^"']*)["']/i);
+  return c ? decodeEntities(c[1]).replace(/\s+/g, " ").trim() : "";
+}
+
+function extractSignals(html, baseUrl) {
+  const stripTags = (s) =>
+    decodeEntities(String(s).replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+
+  const titleM = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const title = titleM ? stripTags(titleM[1]) : "";
+
+  const canM = html.match(/<link\b[^>]*\brel\s*=\s*["']canonical["'][^>]*>/i);
+  let canonical = "";
+  if (canM) {
+    const h = canM[0].match(/\bhref\s*=\s*["']([^"']+)["']/i);
+    canonical = h ? decodeEntities(h[1]).trim() : "";
+  }
+
+  const h1M = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
+  const h1 = h1M ? stripTags(h1M[1]) : "";
+
+  const collectHeads = (tag) => {
+    const re = new RegExp("<" + tag + "\\b[^>]*>([\\s\\S]*?)<\\/" + tag + ">", "gi");
+    const out = [];
+    let m;
+    while ((m = re.exec(html)) && out.length < 40) {
+      const t = stripTags(m[1]);
+      if (t) out.push(t);
+    }
+    return out;
+  };
+  const h2s = collectHeads("h2");
+  const h3s = collectHeads("h3");
+
+  const imgTags = html.match(/<img\b[^>]*>/gi) || [];
+  const imgCount = imgTags.length;
+  const imgAlt = imgTags.filter((t) => /\balt\s*=\s*["'][^"']*\S[^"']*["']/i.test(t)).length;
+
+  let baseHost = "";
+  try { baseHost = new URL(baseUrl).host.replace(/^www\./i, "").toLowerCase(); } catch (_e) {}
+  let internal = 0, external = 0, hasEmail = false, hasPhone = false;
+  const linkRe = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi;
+  let lm;
+  while ((lm = linkRe.exec(html))) {
+    const href = lm[1].trim();
+    if (/^mailto:/i.test(href)) { hasEmail = true; continue; }
+    if (/^tel:/i.test(href)) { hasPhone = true; continue; }
+    if (/^(#|javascript:|data:)/i.test(href)) continue;
+    let host = "";
+    try { host = new URL(href, baseUrl).host.replace(/^www\./i, "").toLowerCase(); } catch { continue; }
+    if (!host || host === baseHost) internal++; else external++;
+  }
+
+  let text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ");
+  text = decodeEntities(text).replace(/\s+/g, " ").trim();
+  const words = text ? text.split(" ").filter(Boolean).length : 0;
+  const excerpt = text.slice(0, 320);
+
+  if (!hasEmail && /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(text)) hasEmail = true;
+  if (!hasPhone && /\+?\d[\d\s().-]{7,}\d/.test(text)) hasPhone = true;
+
+  const lc = text.toLowerCase();
+  const ctaSamples = CTA_WORDS.filter((w) => lc.includes(w)).slice(0, 6);
+
+  const hasSchema =
+    /<script\b[^>]*type\s*=\s*["']application\/ld\+json["']/i.test(html) ||
+    /\bitemscope\b/i.test(html) ||
+    /itemtype\s*=\s*["'][^"']*schema\.org/i.test(html);
+  const schemaTypes = [];
+  {
+    const re = /"@type"\s*:\s*"([^"]+)"/gi;
+    let sm;
+    while ((sm = re.exec(html)) && schemaTypes.length < 8) {
+      if (!schemaTypes.includes(sm[1])) schemaTypes.push(sm[1]);
+    }
+  }
+
+  return {
+    final_url: baseUrl,
+    title,
+    meta_description: metaContentOf(html, "description"),
+    h1,
+    h2_count: h2s.length,
+    h2_samples: h2s.slice(0, 8),
+    h3_count: h3s.length,
+    h3_samples: h3s.slice(0, 8),
+    canonical,
+    og_title: metaContentOf(html, "og:title"),
+    og_description: metaContentOf(html, "og:description"),
+    viewport: metaContentOf(html, "viewport"),
+    robots: metaContentOf(html, "robots"),
+    word_count: words,
+    image_count: imgCount,
+    image_with_alt_count: imgAlt,
+    internal_link_count: internal,
+    external_link_count: external,
+    has_phone: hasPhone,
+    has_email: hasEmail,
+    has_cta: ctaSamples.length > 0,
+    cta_samples: ctaSamples,
+    has_schema_org: hasSchema,
+    schema_types: schemaTypes,
+    excerpt,
+  };
+}
+
+// Render extracted signals as a plain-text block fed to the model.
+function renderSignalsBlock(s, heading) {
+  const yn = (b) => (b ? "yes" : "no");
+  const lines = [];
+  if (heading) lines.push(heading);
+  lines.push(`Fetched URL: ${s.final_url}`);
+  lines.push(`Page title: ${s.title || "(none)"}`);
+  lines.push(`Meta description: ${s.meta_description || "(none)"}`);
+  lines.push(`H1: ${s.h1 || "(none)"}`);
+  lines.push(`H2 headings (${s.h2_count}): ${s.h2_samples.join(" | ") || "(none)"}`);
+  lines.push(`H3 headings (${s.h3_count}): ${s.h3_samples.join(" | ") || "(none)"}`);
+  lines.push(`Canonical URL: ${s.canonical || "(none)"}`);
+  lines.push(`Open Graph title: ${s.og_title || "(none)"}`);
+  lines.push(`Open Graph description: ${s.og_description || "(none)"}`);
+  lines.push(`Viewport meta: ${s.viewport || "(none)"}`);
+  lines.push(`Robots meta: ${s.robots || "(none)"}`);
+  lines.push(`Visible word count: ${s.word_count}`);
+  lines.push(`Images: ${s.image_count} (with alt text: ${s.image_with_alt_count})`);
+  lines.push(`Internal links: ${s.internal_link_count}; External links: ${s.external_link_count}`);
+  lines.push(`Phone present: ${yn(s.has_phone)}; Email present: ${yn(s.has_email)}`);
+  lines.push(`CTA-like words present: ${yn(s.has_cta)}${s.cta_samples.length ? " (" + s.cta_samples.join(", ") + ")" : ""}`);
+  lines.push(`Structured data (schema.org) detected: ${yn(s.has_schema_org)}${s.schema_types.length ? " [" + s.schema_types.join(", ") + "]" : ""}`);
+  lines.push(`Visible text excerpt: ${s.excerpt || "(none)"}`);
+  return lines.join("\n");
+}
+
+// Localized Option-B refusal message (no scored report when the fetch fails).
+function websiteFetchRefusal(reason, lang, opts) {
+  const o = opts || {};
+  const el = lang === "el";
+  const reasons = el ? {
+    timeout: "η σελίδα άργησε πολύ να απαντήσει (timeout)",
+    http: `ο διακομιστής επέστρεψε HTTP ${o.status || "error"}`,
+    blocked: "το URL δεν μπορούσε να ανακτηθεί με ασφάλεια",
+    not_html: "το URL δεν επέστρεψε σελίδα HTML",
+    thin: "η σελίδα επέστρεψε σχεδόν καθόλου αναγνώσιμο HTML — πιθανότατα φορτώνεται με JavaScript, οπότε το πραγματικό της περιεχόμενο δεν είναι ορατό σε server-side ανάλυση",
+    too_many_redirects: "το URL έκανε υπερβολικά πολλές ανακατευθύνσεις",
+    network: "δεν ήταν δυνατή η σύνδεση με τη σελίδα",
+  } : {
+    timeout: "the page took too long to respond (timeout)",
+    http: `the server returned HTTP ${o.status || "error"}`,
+    blocked: "the URL could not be fetched safely",
+    not_html: "the URL did not return an HTML page",
+    thin: "the page returned almost no readable HTML — it is likely rendered with JavaScript, so its real content is not visible to a server-side scan",
+    too_many_redirects: "the URL redirected too many times",
+    network: "the page could not be reached",
+  };
+  const why = reasons[reason] || reasons.network;
+  const who = o.siteLabel ? `${o.siteLabel}: ` : "";
+  if (el) {
+    return `Περιορισμένη ανάλυση: ${who}${why}. Δεν δημιουργήθηκε βαθμολογημένη αναφορά, γιατί δεν στηρίζουμε αξιολόγηση σε υποθέσεις. Έλεγξε το URL και δοκίμασε ξανά.`;
+  }
+  return `Limited analysis: ${who}${why}. No scored report was produced, because we will not base an assessment on assumptions. Check the URL and try again.`;
+}
+
 async function handleWebsiteScan(body, env, ctx, corsOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
@@ -1289,12 +1665,21 @@ async function handleWebsiteScan(body, env, ctx, corsOrigin) {
     }
     const notesB = clean(body.notesB, WEBSITE_SCAN_MAX_NOTES);
 
-    const cmpLines = ["Compare these two websites for the SAME purpose."];
+    // Fetch BOTH sites' real signals. Option B: if EITHER fails, no comparison.
+    const [fa, fb] = await Promise.all([fetchPageSignals(url), fetchPageSignals(urlB)]);
+    if (!fa.ok) {
+      return json({ error: "unreachable", message: websiteFetchRefusal(fa.reason, lang, { status: fa.status, siteLabel: hostFromUrl(url) }) }, 200, corsOrigin);
+    }
+    if (!fb.ok) {
+      return json({ error: "unreachable", message: websiteFetchRefusal(fb.reason, lang, { status: fb.status, siteLabel: hostFromUrl(urlB) }) }, 200, corsOrigin);
+    }
+
+    const cmpLines = ["Compare these two websites for the SAME purpose, using the REAL extracted page signals below."];
     if (sharedContext.length) cmpLines.push("", "Shared context:", ...sharedContext);
-    cmpLines.push("", `Site A URL (context only — NOT fetched): ${url}`);
-    if (notes) cmpLines.push("Site A Notes:", notes);
-    cmpLines.push("", `Site B URL (context only — NOT fetched): ${urlB}`);
-    if (notesB) cmpLines.push("Site B Notes:", notesB);
+    cmpLines.push("", renderSignalsBlock(fa.signals, "=== SITE A ==="));
+    if (notes) cmpLines.push("Site A owner notes:", notes);
+    cmpLines.push("", renderSignalsBlock(fb.signals, "=== SITE B ==="));
+    if (notesB) cmpLines.push("Site B owner notes:", notesB);
 
     let cmp;
     try {
@@ -1315,7 +1700,13 @@ async function handleWebsiteScan(body, env, ctx, corsOrigin) {
   }
 
   // --- Single-site report (default). ---
-  const lines = [`Website URL (context only — NOT fetched): ${url}`, ...sharedContext];
+  // Fetch + extract real signals first. Option B: refuse if we can't read it.
+  const fetched = await fetchPageSignals(url);
+  if (!fetched.ok) {
+    return json({ error: "unreachable", message: websiteFetchRefusal(fetched.reason, lang, { status: fetched.status }) }, 200, corsOrigin);
+  }
+  const lines = [renderSignalsBlock(fetched.signals)];
+  if (sharedContext.length) lines.push("", "User-provided context:", ...sharedContext);
   if (notes) lines.push("", "Owner Notes:", notes);
   const userText = lines.join("\n");
 
@@ -1466,9 +1857,15 @@ function buildWebsiteComparePrompt(lang) {
   return (
     "You are a senior website strategist, SEO auditor and conversion consultant. " +
     "You are given TWO websites (Site A and Site B) to compare for the SAME business " +
-    "purpose. The URLs are CONTEXT ONLY — NOT fetched or crawled, so base the " +
-    "comparison on the user-provided details and reasonable category expectations. Be " +
-    "practical, honest and specific; do not exaggerate or claim you crawled the sites.\n\n" +
+    "purpose. For BOTH sites you are given REAL public page signals fetched and " +
+    "extracted from each URL's server-rendered HTML (title, meta description, " +
+    "headings, canonical, Open Graph, viewport, robots, visible word count, image/alt " +
+    "counts, link counts, phone/email/CTA/structured-data presence, text excerpt). " +
+    "BASE THE COMPARISON ON THESE EXTRACTED SIGNALS, not assumptions. You have static " +
+    "HTML only: do NOT claim you ran a full crawl, full technical audit, Lighthouse or " +
+    "Core Web Vitals measurement, or ranking predictions. Be practical, honest and " +
+    "specific; treat a missing signal as a finding rather than inventing detail. The " +
+    "disclaimer MUST note the comparison is based only on public HTML page signals.\n\n" +
     "Score BOTH sites 0-100 on each of these criteria, IN THIS ORDER: Overall " +
     "Readiness, Design & Visual Trust, Message Clarity, SEO Readiness, Conversion " +
     "Readiness, Trust Signals, Content Completeness, Technical Basics. Return one " +
