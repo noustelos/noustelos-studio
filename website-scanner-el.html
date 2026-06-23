@@ -1218,11 +1218,15 @@
         }
 
         setLoading(true);
+        var scanCtrl = new AbortController();
+        var scanTimer = setTimeout(function () { scanCtrl.abort(); }, 60000);
         fetch(ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: scanCtrl.signal
         }).then(function (res) {
+          clearTimeout(scanTimer);
           return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; });
         }).then(function (out) {
           setLoading(false);
@@ -1244,6 +1248,7 @@
           var msg = out.data && out.data.message;
           showError(formError, msg || ERRORS[key] || ERRORS.scan_failed);
         }).catch(function () {
+          clearTimeout(scanTimer);
           setLoading(false);
           showError(formError, ERRORS.scan_failed);
         });

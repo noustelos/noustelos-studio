@@ -470,15 +470,20 @@ function extractDelta(data) {
   return parts.filter((p) => !p.thought).map((p) => p.text || "").join("");
 }
 
-function postJson(url, apiKey, payload) {
-  return fetch(url, {
+function postJson(url, apiKey, payload, timeoutMs) {
+  const opts = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "x-goog-api-key": apiKey,
     },
     body: JSON.stringify(payload),
-  });
+  };
+  // Optional per-request timeout. The scanners pass one so a hung/overloaded
+  // Google response aborts (→ retry → clean failure) instead of stalling the
+  // request for 30s+. The Artifact chat omits it (streaming sends heartbeats).
+  if (timeoutMs) opts.signal = AbortSignal.timeout(timeoutMs);
+  return fetch(url, opts);
 }
 
 // Transient upstream statuses worth a retry. Google's Generative Language API
@@ -496,20 +501,21 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // BEFORE streaming starts (while we still own the status/headers), so a single
 // transient 500 is absorbed without the client ever seeing it. Non-transient
 // statuses return on the first response untouched.
-async function postJsonWithRetry(url, apiKey, payload, label) {
+async function postJsonWithRetry(url, apiKey, payload, label, timeoutMs, maxRetries) {
+  const retries = (typeof maxRetries === "number") ? maxRetries : MAX_UPSTREAM_RETRIES;
   let res;
-  for (let attempt = 0; attempt <= MAX_UPSTREAM_RETRIES; attempt++) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      res = await postJson(url, apiKey, payload);
+      res = await postJson(url, apiKey, payload, timeoutMs);
     } catch (err) {
-      if (attempt < MAX_UPSTREAM_RETRIES) {
+      if (attempt < retries) {
         console.log(`artifact ${label} retry ${attempt + 1} after throw:`, String((err && err.message) || err));
         await sleep(RETRY_BASE_DELAY_MS * (attempt + 1));
         continue;
       }
       throw err;
     }
-    if (!TRANSIENT_STATUSES.has(res.status) || attempt === MAX_UPSTREAM_RETRIES) return res;
+    if (!TRANSIENT_STATUSES.has(res.status) || attempt === retries) return res;
     console.log(`artifact ${label} retry ${attempt + 1} after status ${res.status}`);
     try { await res.body?.cancel(); } catch { /* discard the failed body before retry */ }
     await sleep(RETRY_BASE_DELAY_MS * (attempt + 1));
@@ -944,6 +950,15 @@ function json(obj, status, corsOrigin) {
 const SCAN_MIN_CHARS = 40;     // reject thin input (front-end mirrors this)
 const SCAN_MAX_CHARS = 4000;   // cap the description to bound token cost
 const SCAN_DEFAULT_MODEL = "gemini-2.5-flash";
+// Per-attempt timeout on the scanners' Google call. Bounds a hung/overloaded
+// response so the request fails cleanly (→ retry, then scan_failed) instead of
+// stalling for 30s+. Generous so it does NOT cut a valid-but-slow report (a full
+// 11-field JSON with a 7-axis breakdown can legitimately take ~10-15s).
+const SCANNER_AI_TIMEOUT_MS = 18000;
+// Gemini intermittently 503s "overloaded" or stalls. A couple of retries absorb a
+// transient blip without making the user wait through many timeouts during a real
+// outage (worst case ≈ (retries+1) × timeout).
+const SCANNER_MAX_RETRIES = 2; // 3 attempts
 
 const SCAN_SYSTEM_PROMPT =
   "You are a senior SaaS product strategist and technical analyst. Your job is " +
@@ -1058,7 +1073,7 @@ async function callScanner({ apiKey, model, userText }) {
   };
   // Reuse the transient-500 retry the Artifact uses, so a one-off Google blip
   // doesn't surface as a scan failure.
-  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "saas-scan");
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "saas-scan", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
   if (!res.ok) {
     const errText = await res.text();
     throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
@@ -1599,7 +1614,7 @@ function websiteFetchRefusal(reason, lang, opts) {
     http: `ο διακομιστής επέστρεψε HTTP ${o.status || "error"}`,
     blocked: "το URL δεν μπορούσε να ανακτηθεί με ασφάλεια",
     not_html: "το URL δεν επέστρεψε σελίδα HTML",
-    thin: "η σελίδα επέστρεψε σχεδόν καθόλου αναγνώσιμο HTML — πιθανότατα φορτώνεται με JavaScript, οπότε το πραγματικό της περιεχόμενο δεν είναι ορατό σε server-side ανάλυση",
+    thin: "η σελίδα επέστρεψε σχεδόν καθόλου αναγνώσιμο HTML (είτε φορτώνεται με JavaScript, είτε είναι σχεδόν κενή), οπότε δεν υπάρχει αρκετό περιεχόμενο για ουσιαστική server-side ανάλυση",
     too_many_redirects: "το URL έκανε υπερβολικά πολλές ανακατευθύνσεις",
     network: "δεν ήταν δυνατή η σύνδεση με τη σελίδα",
   } : {
@@ -1607,7 +1622,7 @@ function websiteFetchRefusal(reason, lang, opts) {
     http: `the server returned HTTP ${o.status || "error"}`,
     blocked: "the URL could not be fetched safely",
     not_html: "the URL did not return an HTML page",
-    thin: "the page returned almost no readable HTML — it is likely rendered with JavaScript, so its real content is not visible to a server-side scan",
+    thin: "the page returned almost no readable HTML (it is either JavaScript-rendered or nearly empty), so there is not enough content for a meaningful server-side scan",
     too_many_redirects: "the URL redirected too many times",
     network: "the page could not be reached",
   };
@@ -1740,7 +1755,7 @@ async function callWebsiteScanner({ apiKey, model, userText, lang }) {
       thinkingConfig: { thinkingBudget: 0 },
     },
   };
-  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-scan");
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-scan", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
   if (!res.ok) {
     const errText = await res.text();
     throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
@@ -1893,7 +1908,7 @@ async function callWebsiteCompare({ apiKey, model, userText, lang, labelA, label
       thinkingConfig: { thinkingBudget: 0 },
     },
   };
-  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-compare");
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "website-compare", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
   if (!res.ok) {
     const errText = await res.text();
     throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);

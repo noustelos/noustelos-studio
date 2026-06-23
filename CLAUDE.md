@@ -390,8 +390,10 @@ verified working).
   `GUEST_PASSPHRASE`/`PASSPHRASES`), so no separate secret; revoking the guest
   code revokes both → `verify` short-circuit (UI unlock, no model call) → input
   validation → `callScanner`.
-  Uses **Gemini** (`SCANNER_MODEL`, default `gemini-2.5-flash` — NOT the
-  Artifact's thinking Gemma) with `responseMimeType:"application/json"` +
+  Uses **Gemini** (`SCANNER_MODEL` — NOT the Artifact's thinking Gemma; code
+  default `gemini-2.5-flash` but the **live `[vars]` override is
+  `gemini-2.5-flash-lite`**, see the model-reliability note in Gotchas) with
+  `responseMimeType:"application/json"` +
   `responseSchema` (`SCAN_SCHEMA`, 9 fields) + `thinkingConfig.thinkingBudget:0`
   so the budget goes to the JSON. Reuses `postJsonWithRetry` (transient-500
   retry), `extractReply`, `json`/`cors`. `parseScanJson` parses defensively
@@ -434,7 +436,7 @@ material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
   each isolated). `handleWebsiteScan`: passphrase gate reuses **`collectPassphrases`**
   (SAME codes as the Artifact + SaaS scanner — no new secret) → `verify`
   short-circuit → URL-shape validation (`url_required`) → `callWebsiteScanner`.
-  Uses **Gemini** (`SCANNER_MODEL`, default `gemini-2.5-flash`) with
+  Uses **Gemini** (`SCANNER_MODEL`; live `[vars]` = `gemini-2.5-flash-lite`) with
   `responseSchema`=`WEBSITE_SCAN_SCHEMA` (11 fields incl. a **nested 7-axis
   `score_breakdown`** of `{score,note}` and a nested `what_would_raise_the_score`
   `{current_estimate, realistic_improved_range, required_improvements[]}`),
@@ -478,6 +480,20 @@ material. **Bilingual via SPLIT-URL** (unlike the EN-only SaaS scanner): EN at
   `{ result: {overall_score, overall_label, executive_summary, score_breakdown{7
   axes}, what_works_well[], what_holds_it_back[], client_dependent_improvements[],
   what_would_raise_the_score{…}, recommended_next_steps[], final_verdict, disclaimer} }`.
+- **Scanner model reliability (both scanners) — 2026-06-23.** The scanners' Google
+  call (`callScanner`/`callWebsiteScanner`/`callWebsiteCompare`) now passes a
+  per-attempt timeout (`SCANNER_AI_TIMEOUT_MS`=18s) + retry count
+  (`SCANNER_MAX_RETRIES`=2 → 3 attempts) to `postJsonWithRetry` (which gained
+  `timeoutMs`+`maxRetries` params; the **Artifact chat passes neither**, so its
+  streaming/heartbeat behavior is unchanged). Reason: a hung/overloaded Gemini
+  response otherwise stalled the request 30s+ (the front-end spinner hung with no
+  report). The timeout converts a hang into a clean `scan_failed`. **Model:**
+  `gemini-2.5-flash` went through a bad **503 "overloaded" / stall** window and was
+  unreliable; **`gemini-2.0-flash` is RETIRED (404 "no longer available")**;
+  `gemini-2.5-flash-lite` was reliable + fast (~8-14s) and is now the live
+  `SCANNER_MODEL` `[vars]` override (quality holds because the audit is grounded in
+  the real extracted page signals, not model guesswork). Front-end also has a 60s
+  client-side `AbortController` backstop so the spinner can never hang forever.
 - **Example report (both scanners, front-end only):** since the form is behind the
   passphrase gate, a locked visitor can't preview the output — so the GATE panel has a
   **"See an example report"** button that renders a CANNED `SAMPLE_REPORT` through the
