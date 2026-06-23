@@ -363,6 +363,8 @@ entry (so the secret phrase isn't persisted) and shows the result.
 A standalone **Noustelos AI Lab utility** that evaluates whether a digital
 project can become a scalable SaaS product. **Deliberately decoupled from The
 Artifact** — no persona, no memory/Drive, no kill switch, no Artifact branding.
+**LIVE** at https://noustelos.gr/saas-scanner.html (engine route deployed +
+verified working).
 - **Front-end** → [`saas-scanner.html`](saas-scanner.html): single EN-only page
   (NOT bilingual — owner choice for the MVP; the header lang-toggle falls back to
   `/ai-lab-el.html`), matches the site's light/warm editorial design system
@@ -372,8 +374,14 @@ Artifact** — no persona, no memory/Drive, no kill switch, no Artifact branding
   [required, ≥40 chars], Target Market, URL, Current Stage) → POSTs to the engine
   → renders the structured JSON as cards (score bar + label, executive summary,
   strengths/risks/technical_gaps/monetization_paths, numbered next-steps, final
-  verdict) with Copy/Download. Linked from a 3rd "Experiment" card in
-  [`ai-lab.html`](ai-lab.html) ("Try Scanner"), `index,follow`, in `sitemap.xml`.
+  verdict) with **Copy analysis** (clipboard, HTTPS-only) + **Download** (.txt).
+  ⚠️ **Styling note:** EVERY framed surface (`.scanner-panel` — gate, form, all
+  result cards) AND the input/textarea/select borders use the homepage CTA
+  anthracite `var(--cta)` (#29323f), NOT `--line` — one consistent dark frame
+  (owner asked for "absolute consistency"). Linked from a 3rd "Experiment" card in
+  [`ai-lab.html`](ai-lab.html) ("Try Scanner") AND a discreet "New tool" link in
+  the homepage AI Lab service card (i18n `services.card4.tool`, EN+GR in BOTH
+  `script.js` and `script.min.js`). `index,follow`, in `sitemap.xml`.
 - **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
   `POST /api/saas-scan` (the dispatch is the FIRST thing after body-parse, before
   the Artifact passphrase gate; the Artifact chat ignores the path so it's
