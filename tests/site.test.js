@@ -276,7 +276,7 @@ test('home page SEO and share metadata stay aligned', () => {
   assert.match(getMetaContent(html, 'description'), /Santorini/);
   assert.match(html, /<meta\b[^>]*property=["']og:url["'][^>]*content=["']https:\/\/noustelos\.gr\/["'][^>]*>/i);
   assert.match(html, /<meta\b[^>]*name=["']twitter:url["'][^>]*content=["']https:\/\/noustelos\.gr\/["'][^>]*>/i);
-  assert.match(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']styles\.min\.css["'][^>]*>/i);
+  assert.match(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']styles\.min\.css(\?[^"']*)?["'][^>]*>/i);
   assert.match(html, /<script\b[^>]*src=["']script\.min\.js(\?[^"']*)?["'][^>]*><\/script>/i);
 });
 
