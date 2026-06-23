@@ -173,6 +173,12 @@ const translations = {
         desc: 'An AI-powered website readiness audit for clarity, SEO, trust signals and conversion — scoring a site across seven axes and separating builder fixes from client-dependent material.',
         cta: 'Try Scanner',
         href: '/website-scanner.html'
+      },
+      gdpr: {
+        title: 'GDPR Auto-Scanner',
+        desc: 'An indicative GDPR & cookie-consent pre-audit — flags privacy policy, consent banner or CMP, third-party trackers and form data-collection from real page signals. Not legal advice.',
+        cta: 'Try Scanner',
+        href: '/gdpr-scanner.html'
       }
     },
     about: {
@@ -323,6 +329,12 @@ const translations = {
         desc: 'Ένα AI-powered audit ετοιμότητας website για σαφήνεια, SEO, trust signals και conversion — βαθμολογεί ένα site σε επτά άξονες και ξεχωρίζει τις διορθώσεις του developer από το υλικό που εξαρτάται από τον πελάτη.',
         cta: 'Δοκίμασέ το',
         href: '/website-scanner-el.html'
+      },
+      gdpr: {
+        title: 'GDPR Auto-Scanner',
+        desc: 'Ένας ενδεικτικός προέλεγχος GDPR & συναίνεσης cookies — επισημαίνει πολιτική απορρήτου, banner ή CMP συναίνεσης, trackers τρίτων και συλλογή δεδομένων μέσω φορμών από τα πραγματικά σήματα μιας σελίδας. Δεν αποτελεί νομική συμβουλή.',
+        cta: 'Δοκίμασέ το',
+        href: '/gdpr-scanner-el.html'
       }
     },
     about: {
