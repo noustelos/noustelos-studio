@@ -163,6 +163,12 @@ const translations = {
       title: 'AI Lab Tools',
       subtitle: 'Free, AI-powered diagnostics from the Noustelos AI Lab — practical readiness reports you can run in seconds.',
       badge: 'Experiment',
+      aivis: {
+        title: 'AI Visibility Scanner',
+        desc: 'See how easily AI assistants like ChatGPT, Gemini, Claude and Perplexity can discover, parse and cite your site — a deterministic, signals-based score across 15 checks, from llms.txt and structured data to content depth. Indicative, not a guarantee of citation.',
+        cta: 'Try Scanner',
+        href: '/ai-visibility-scanner.html'
+      },
       saas: {
         title: 'SaaS Readiness Scanner',
         desc: 'Evaluate whether a digital project can become a scalable SaaS product — scoring productization, technical gaps, monetization paths and next steps as a structured report.',
@@ -319,6 +325,12 @@ const translations = {
       title: 'Εργαλεία AI Lab',
       subtitle: 'Δωρεάν AI-powered διαγνωστικά από το Noustelos AI Lab — πρακτικά reports ετοιμότητας που τρέχεις σε δευτερόλεπτα.',
       badge: 'Πείραμα',
+      aivis: {
+        title: 'AI Visibility Scanner',
+        desc: 'Δες πόσο εύκολα μπορούν βοηθοί AI όπως ChatGPT, Gemini, Claude και Perplexity να εντοπίσουν, να διαβάσουν και να παραθέσουν τον ιστότοπό σου — ντετερμινιστική βαθμολογία από σήματα, σε 15 ελέγχους, από llms.txt και δομημένα δεδομένα μέχρι βάθος περιεχομένου. Ενδεικτικό, όχι εγγύηση παράθεσης.',
+        cta: 'Δοκίμασέ το',
+        href: '/ai-visibility-scanner-el.html'
+      },
       saas: {
         title: 'SaaS Readiness Scanner',
         desc: 'Αξιολόγησε αν ένα ψηφιακό project μπορεί να γίνει scalable SaaS προϊόν — βαθμολογεί productization, τεχνικά κενά, μονόδρομους εσόδων και επόμενα βήματα σε δομημένο report.',

@@ -147,6 +147,18 @@ export default {
       return handleGdprScan(body, env, ctx, corsOrigin);
     }
 
+    // --- AI Visibility Scanner (fourth standalone, passphrase-gated AI Lab tool) ---
+    // Evaluates how easily AI assistants (ChatGPT, Gemini, Claude, Perplexity) can
+    // discover, parse and cite a site. Like the website + GDPR scanners it FETCHES
+    // the URL (reuses fetchPageSignals + SSRF guards) PLUS three root files
+    // (/robots.txt, /sitemap.xml, /llms.txt). The score is DETERMINISTIC (15
+    // weighted checks summing to 100) — the model only writes the summary + 3
+    // recommendations, so every point traces to a real, checkable signal. Bilingual
+    // (lang:"en"|"el"). Same passphrases, no user-input logging. See handleAiVisibilityScan.
+    if (new URL(request.url).pathname === "/api/ai-visibility-scan") {
+      return handleAiVisibilityScan(body, env, ctx, corsOrigin);
+    }
+
     // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly. Any code in
@@ -2401,4 +2413,472 @@ function parseGdprScanJson(text, lang) {
   };
   if (!result.executive_summary && !result.final_verdict) return null;
   return result;
+}
+
+/* ===========================================================================
+ * AI Visibility Scanner  —  POST /api/ai-visibility-scan
+ * ----------------------------------------------------------------------------
+ * A fourth standalone Noustelos AI Lab utility, sibling to the SaaS + Website +
+ * GDPR scanners and fully decoupled from The Artifact. Evaluates how easily AI
+ * assistants (ChatGPT, Gemini, Claude, Perplexity) can DISCOVER, PARSE and CITE
+ * a website. Shares this Worker + GOOGLE_API_KEY.
+ *
+ * Honest by design: the score is DETERMINISTIC. We fetch the homepage (reusing
+ * fetchPageSignals + the full SSRF guards) PLUS three root files (/robots.txt,
+ * /sitemap.xml, /llms.txt, in parallel, each re-validated through fetchFollow),
+ * then run 15 weighted checks that sum to 100. Every point traces to a real,
+ * checkable signal — the model NEVER guesses the number. Gemini only writes a
+ * short summary + 3 recommendations from the failed checks (it cannot invent
+ * passing/failing checks). Like the other scanners it REFUSES (Option B) if the
+ * homepage can't be read. Bilingual (lang:"en"|"el"). User input is NOT logged.
+ *
+ * HONESTY: this is a STATIC analysis of public, server-rendered HTML. We cannot
+ * simulate a real LLM crawl, guarantee citation, or read JS-rendered content.
+ * llms.txt is an EMERGING convention (llmstxt.org), not an official standard.
+ * The "AI Citation Probability" is an explicit heuristic, NOT a prediction.
+ *
+ * Access: SAME passphrases as the Artifact chat / other scanners (collectPassphrases).
+ * Model: SCANNER_MODEL (live override gemini-2.5-flash-lite), thinkingBudget:0.
+ * ==========================================================================*/
+
+// Grade bands: [maxScore, letter, label]. Mirrors the spec's 4 tiers.
+const AIVIS_BANDS = {
+  en: [
+    [49, "D", "Poor AI visibility"],
+    [69, "C", "Needs improvement"],
+    [89, "B", "Good AI visibility"],
+    [100, "A", "Excellent AI visibility"],
+  ],
+  el: [
+    [49, "D", "Χαμηλή ορατότητα σε AI"],
+    [69, "C", "Χρειάζεται βελτίωση"],
+    [89, "B", "Καλή ορατότητα σε AI"],
+    [100, "A", "Εξαιρετική ορατότητα σε AI"],
+  ],
+};
+function aivisGrade(score, lang) {
+  const bands = AIVIS_BANDS[lang] || AIVIS_BANDS.en;
+  for (const [max, letter, label] of bands) {
+    if (score <= max) return { letter, label };
+  }
+  const last = bands[bands.length - 1];
+  return { letter: last[1], label: last[2] };
+}
+
+// Localized human names for each check (for the rendered breakdown).
+const AIVIS_CHECK_NAMES = {
+  en: {
+    homepage_reachable: "Homepage reachable",
+    robots_txt: "robots.txt present",
+    sitemap_xml: "XML sitemap",
+    llms_txt: "llms.txt (AI guidance file)",
+    org_schema: "Organization schema",
+    faq_schema: "FAQ schema",
+    localbusiness_schema: "LocalBusiness schema",
+    contact_info: "Contact information",
+    meta_title: "Title tag",
+    meta_description: "Meta description",
+    open_graph: "Open Graph tags",
+    canonical: "Canonical URL",
+    heading_structure: "Heading structure (single H1)",
+    content_richness: "Content richness",
+    ai_friendly_wording: "AI-friendly content sections",
+  },
+  el: {
+    homepage_reachable: "Προσβάσιμη αρχική",
+    robots_txt: "Παρουσία robots.txt",
+    sitemap_xml: "XML sitemap",
+    llms_txt: "llms.txt (αρχείο οδηγιών για AI)",
+    org_schema: "Schema Organization",
+    faq_schema: "Schema FAQ",
+    localbusiness_schema: "Schema LocalBusiness",
+    contact_info: "Στοιχεία επικοινωνίας",
+    meta_title: "Ετικέτα τίτλου (title)",
+    meta_description: "Meta description",
+    open_graph: "Ετικέτες Open Graph",
+    canonical: "Canonical URL",
+    heading_structure: "Δομή επικεφαλίδων (ένα H1)",
+    content_richness: "Πλούτος περιεχομένου",
+    ai_friendly_wording: "Ενότητες φιλικές προς AI",
+  },
+};
+
+// AI-discoverability content sections we look for (link text / headings / body).
+const AIVIS_SECTION_WORDS = {
+  services: ["services", "what we do", "solutions", "υπηρεσίες", "λύσεις"],
+  pricing: ["pricing", "plans", "τιμές", "τιμολόγηση", "πακέτα"],
+  faq: ["faq", "frequently asked", "συχνές ερωτήσεις", "ερωτήσεις"],
+  about: ["about", "about us", "who we are", "σχετικά", "ποιοι είμαστε"],
+  contact: ["contact", "get in touch", "επικοινωνία", "επικοινωνήστε"],
+};
+
+const AIVIS_FILE_MAX_BYTES = 300_000;
+
+// Fetch a root text file (robots/sitemap/llms) via fetchFollow so every hop is
+// re-validated against the SSRF guard. Returns { found, status?, text?, ... }.
+async function fetchRootFile(originUrl, path) {
+  let target;
+  try { target = new URL(path, originUrl).href; } catch { return { found: false }; }
+  const start = parseSafeUrl(target);
+  if (!start) return { found: false };
+  let hop;
+  try { hop = await fetchFollow(start); } catch { return { found: false }; }
+  if (!hop || !hop.ok) return { found: false };
+  const res = hop.res;
+  if (res.status < 200 || res.status >= 300) return { found: false, status: res.status };
+  let text;
+  try { text = await readCapped(res, AIVIS_FILE_MAX_BYTES); } catch { return { found: false }; }
+  return { found: true, status: res.status, text: text || "", url: hop.url };
+}
+
+// A 200 that is really an HTML "soft 404" page should NOT count as the file.
+function looksLikeHtmlPage(text) {
+  return /^\s*<(?:!doctype\s+html|html[\s>]|head[\s>])/i.test(String(text || ""));
+}
+
+// Classify the three root files into the booleans the scorer needs.
+function classifyRootFiles(robots, sitemap, llms) {
+  const r = { found: false, has_user_agent: false, references_sitemap: false };
+  if (robots.found && !looksLikeHtmlPage(robots.text) &&
+      /user-agent\s*:|disallow\s*:|allow\s*:|sitemap\s*:/i.test(robots.text)) {
+    r.found = true;
+    r.has_user_agent = /user-agent\s*:/i.test(robots.text);
+    r.references_sitemap = /sitemap\s*:/i.test(robots.text);
+  }
+  const s = { found: false, referenced_in_robots: r.references_sitemap };
+  if (sitemap.found && /<urlset|<sitemapindex|<\?xml/i.test(sitemap.text)) s.found = true;
+  const l = { found: false, mentions_content: false };
+  if (llms.found && !looksLikeHtmlPage(llms.text) && llms.text.trim().length > 0) {
+    l.found = true;
+    l.mentions_content = /docs|document|product|service|about|api|guide|pricing/i.test(llms.text);
+  }
+  return { robots: r, sitemap: s, llms: l };
+}
+
+// AI-visibility signal extraction. Layers on extractSignals() for the base page
+// signals (title, meta description, canonical, OG, schema, word_count, contact).
+function extractAiVisibilitySignals(html, baseUrl) {
+  const base = extractSignals(html, baseUrl);
+  const lc = String(html).toLowerCase();
+
+  const h1Count = (html.match(/<h1\b[^>]*>/gi) || []).length;
+  const ogImage = metaContentOf(html, "og:image");
+
+  // Schema types: extractSignals gives @type values; also scan raw HTML so a
+  // nested @type (e.g. inside @graph) is not missed.
+  const typesLc = (base.schema_types || []).map((t) => String(t).toLowerCase());
+  const typeIn = (...names) =>
+    names.some((n) => typesLc.some((t) => t.includes(n)) ||
+      new RegExp('"@type"\\s*:\\s*"[^"]*' + n + '[^"]*"', "i").test(html));
+  const hasOrg = typeIn("organization", "localbusiness", "corporation"); // LocalBusiness extends Organization
+  const hasFaq = typeIn("faqpage", "qapage");
+  const hasLocalBusiness = typeIn("localbusiness", "restaurant", "store", "lodgingbusiness", "professionalservice");
+  const hasPostalAddress = typeIn("postaladdress") || /"streetaddress"\s*:/i.test(html);
+
+  // AI-friendly content sections found anywhere (links/headings/body).
+  const sections = [];
+  for (const [key, words] of Object.entries(AIVIS_SECTION_WORDS)) {
+    if (words.some((w) => lc.includes(w))) sections.push(key);
+  }
+
+  const title = base.title || "";
+  const metaDesc = base.meta_description || "";
+  const ogCount = [base.og_title, base.og_description, ogImage].filter(Boolean).length;
+
+  return {
+    final_url: base.final_url,
+    title,
+    title_length: title.length,
+    meta_description: metaDesc,
+    meta_description_length: metaDesc.length,
+    canonical: base.canonical || "",
+    og_title: base.og_title || "",
+    og_description: base.og_description || "",
+    og_image: ogImage,
+    og_count: ogCount,
+    h1_count: h1Count,
+    word_count: base.word_count,
+    has_phone: base.has_phone,
+    has_email: base.has_email,
+    schema_types: base.schema_types || [],
+    has_org_schema: hasOrg,
+    has_faq_schema: hasFaq,
+    has_localbusiness_schema: hasLocalBusiness,
+    has_postal_address: hasPostalAddress,
+    ai_sections: sections,
+  };
+}
+
+// DETERMINISTIC scoring — 15 checks, weights sum to 100. Each check earns
+// 0..weight; status is pass / partial / missing. The model never touches this.
+function scoreAiVisibility(s, files, lang) {
+  const name = (AIVIS_CHECK_NAMES[lang] || AIVIS_CHECK_NAMES.en);
+  const checks = [];
+  const add = (key, weight, earned, detail) => {
+    earned = Math.max(0, Math.min(weight, earned));
+    const status = earned >= weight ? "pass" : (earned > 0 ? "partial" : "missing");
+    checks.push({ key, name: name[key], weight, points: earned, status, detail });
+  };
+
+  // 1. Homepage reachable (5) — we only get here if the fetch succeeded.
+  add("homepage_reachable", 5, 5, "HTTP 200 — the homepage was fetched successfully.");
+  // 2. robots.txt (5) — full only with a User-agent directive.
+  add("robots_txt", 5, files.robots.found ? (files.robots.has_user_agent ? 5 : 3) : 0,
+    files.robots.found ? (files.robots.has_user_agent ? "Found, with User-agent directives." : "Found, but no User-agent directive.") : "No robots.txt found at the site root.");
+  // 3. XML sitemap (5) — file present OR referenced in robots.txt.
+  add("sitemap_xml", 5, (files.sitemap.found || files.sitemap.referenced_in_robots) ? 5 : 0,
+    files.sitemap.found ? "XML sitemap found at /sitemap.xml." : (files.sitemap.referenced_in_robots ? "Sitemap referenced in robots.txt." : "No XML sitemap found."));
+  // 4. llms.txt (15) — the headline AI-specific signal.
+  add("llms_txt", 15, files.llms.found ? (files.llms.mentions_content ? 15 : 10) : 0,
+    files.llms.found ? (files.llms.mentions_content ? "Found and references content (docs/products/services)." : "Found, but sparse.") : "No llms.txt — the emerging convention for guiding AI assistants is absent.");
+  // 5. Organization schema (10).
+  add("org_schema", 10, s.has_org_schema ? 10 : 0,
+    s.has_org_schema ? "Organization (or LocalBusiness) structured data present." : "No Organization schema.org markup found.");
+  // 6. FAQ schema (10).
+  add("faq_schema", 10, s.has_faq_schema ? 10 : 0,
+    s.has_faq_schema ? "FAQPage structured data present — directly citable by AI." : "No FAQ structured data found.");
+  // 7. LocalBusiness schema (5).
+  add("localbusiness_schema", 5, s.has_localbusiness_schema ? 5 : 0,
+    s.has_localbusiness_schema ? "LocalBusiness structured data present." : "No LocalBusiness schema (fine if not a local business).");
+  // 8. Contact info (5) — partial for one channel, full for two / a postal address.
+  {
+    const channels = (s.has_phone ? 1 : 0) + (s.has_email ? 1 : 0);
+    const earned = channels >= 2 || s.has_postal_address ? 5 : (channels === 1 ? 3 : 0);
+    add("contact_info", 5, earned,
+      earned === 5 ? "Phone, email and/or a postal address are present." : (earned ? "Only one contact channel found." : "No phone, email or address detected."));
+  }
+  // 9. Title tag (5) — ideal 30–60 chars.
+  {
+    const L = s.title_length;
+    const earned = !L ? 0 : (L >= 30 && L <= 60 ? 5 : 3);
+    add("meta_title", 5, earned,
+      !L ? "No <title> tag found." : `Title is ${L} chars (ideal 30–60).`);
+  }
+  // 10. Meta description (5) — ideal 120–160 chars.
+  {
+    const L = s.meta_description_length;
+    const earned = !L ? 0 : (L >= 120 && L <= 160 ? 5 : 3);
+    add("meta_description", 5, earned,
+      !L ? "No meta description found." : `Description is ${L} chars (ideal 120–160).`);
+  }
+  // 11. Open Graph (5) — need og:title, og:description, og:image.
+  add("open_graph", 5, s.og_count >= 3 ? 5 : (s.og_count > 0 ? 3 : 0),
+    s.og_count >= 3 ? "og:title, og:description and og:image all present." : (s.og_count ? `Only ${s.og_count} of 3 core Open Graph tags present.` : "No Open Graph tags found."));
+  // 12. Canonical (5).
+  add("canonical", 5, s.canonical ? 5 : 0,
+    s.canonical ? "Canonical URL declared." : "No canonical URL declared.");
+  // 13. Heading structure (5) — exactly one H1.
+  add("heading_structure", 5, s.h1_count === 1 ? 5 : (s.h1_count > 1 ? 3 : 0),
+    s.h1_count === 1 ? "Exactly one H1, as expected." : (s.h1_count > 1 ? `${s.h1_count} H1 tags — should be exactly one.` : "No H1 heading found."));
+  // 14. Content richness (5) — visible word count.
+  {
+    const w = s.word_count;
+    const earned = w >= 500 ? 5 : (w >= 150 ? 3 : 0);
+    add("content_richness", 5, earned, `~${w} visible words (richer content is easier for AI to parse and cite).`);
+  }
+  // 15. AI-friendly content sections (10) — services/pricing/faq/about/contact.
+  {
+    const n = s.ai_sections.length;
+    const earned = n >= 3 ? 10 : (n >= 1 ? 5 : 0);
+    add("ai_friendly_wording", 10, earned,
+      n ? `Found content sections: ${s.ai_sections.join(", ")}.` : "No clear services/pricing/FAQ/about/contact sections detected.");
+  }
+
+  const score = checks.reduce((sum, c) => sum + c.points, 0);
+  const grade = aivisGrade(score, lang);
+
+  // AI Citation Probability — an explicit, NON-scientific heuristic (clearly
+  // labelled as such on the front-end). score×0.8 + bonuses for the signals AI
+  // assistants weigh most (FAQ, llms.txt, Organization).
+  const bonus = (s.has_faq_schema ? 5 : 0) + (files.llms.found ? 8 : 0) + (s.has_org_schema ? 5 : 0);
+  const citationValue = Math.max(0, Math.min(100, Math.round(score * 0.8 + bonus)));
+  const citeBands = lang === "el"
+    ? [[39, "Χαμηλή"], [69, "Μέτρια"], [100, "Υψηλή"]]
+    : [[39, "Low"], [69, "Medium"], [100, "High"]];
+  let citationLabel = citeBands[citeBands.length - 1][1];
+  for (const [max, label] of citeBands) { if (citationValue <= max) { citationLabel = label; break; } }
+
+  return {
+    score,
+    grade: grade.letter,
+    grade_label: grade.label,
+    citation_probability: { value: citationValue, label: citationLabel },
+    checks,
+  };
+}
+
+// Plain-text block fed to the model so its summary is grounded in the real
+// pass/fail results (it must ONLY mention failed checks — never invent any).
+function renderAiVisibilityBlock(scored, s) {
+  const lines = [];
+  lines.push(`Fetched URL: ${s.final_url}`);
+  lines.push(`Deterministic AI-visibility score: ${scored.score}/100 (grade ${scored.grade})`);
+  lines.push(`Detected structured-data types: ${s.schema_types.length ? s.schema_types.join(", ") : "none"}`);
+  lines.push("");
+  lines.push("CHECK RESULTS (deterministic — do not re-score):");
+  for (const c of scored.checks) {
+    lines.push(`- [${c.status.toUpperCase()}] ${c.name} (${c.points}/${c.weight}): ${c.detail}`);
+  }
+  return lines.join("\n");
+}
+
+function buildAiVisibilityPrompt(lang) {
+  const isEl = lang === "el";
+  const langName = isEl ? "Greek" : "English";
+  return (
+    "You are an AI-discoverability consultant. A website was analysed with 15 " +
+    "DETERMINISTIC checks for how easily AI assistants (ChatGPT, Gemini, Claude, " +
+    "Perplexity) can discover, parse and cite it. You are given the final score and " +
+    "the exact PASS/PARTIAL/MISSING result of every check.\n\n" +
+    "YOUR JOB: write a concise, professional summary and exactly THREE concrete " +
+    "improvements. RULES:\n" +
+    "- Do NOT speculate and do NOT re-score. Use ONLY the provided check results.\n" +
+    "- In the summary, focus on the FAILED or PARTIAL checks (what is missing/weak). " +
+    "If almost everything passes, say so plainly.\n" +
+    "- The three recommendations must target the failed/partial checks with the " +
+    "highest weight first (llms.txt=15, Organization/FAQ schema=10, AI-friendly " +
+    "sections=10 are the heaviest). Be specific and actionable.\n" +
+    "- executive_summary: max 60 words. final_verdict: one short sentence.\n" +
+    "- HONESTY: this is a STATIC analysis of public HTML. Do not claim to simulate a " +
+    "real AI crawl, guarantee citation, or read JavaScript-rendered content. Treat " +
+    "llms.txt as an emerging convention, not an official standard.\n\n" +
+    `IMPORTANT: Write EVERY string value in ${langName}. Return ONLY structured JSON ` +
+    "matching the required schema."
+  );
+}
+
+const AIVIS_AI_FIELDS = ["executive_summary", "final_verdict", "recommendations"];
+const AIVIS_AI_SCHEMA = {
+  type: "object",
+  properties: {
+    executive_summary: { type: "string" },
+    final_verdict: { type: "string" },
+    recommendations: { type: "array", items: { type: "string" } },
+  },
+  required: AIVIS_AI_FIELDS,
+  propertyOrdering: AIVIS_AI_FIELDS,
+};
+
+const AIVIS_DISCLAIMERS = {
+  en: "Indicative analysis based on static, public HTML signals — not a live AI crawl, a guarantee of citation, or a substitute for full SEO/GEO work. llms.txt is an emerging convention. The AI Citation Probability is a heuristic, not a prediction.",
+  el: "Ενδεικτική ανάλυση βασισμένη σε στατικά, δημόσια σήματα HTML — όχι πραγματικό crawl από AI, ούτε εγγύηση παράθεσης, ούτε υποκατάστατο πλήρους εργασίας SEO/GEO. Το llms.txt είναι αναδυόμενη σύμβαση. Η «Πιθανότητα Παράθεσης από AI» είναι ευρετική, όχι πρόβλεψη.",
+};
+
+async function handleAiVisibilityScan(body, env, ctx, corsOrigin) {
+  if (!env.GOOGLE_API_KEY) {
+    return json({ error: "scan_failed" }, 500, corsOrigin);
+  }
+
+  // --- Passphrase gate — SAME codes as the Artifact chat / other scanners ---
+  const valid = collectPassphrases(env);
+  if (valid.size) {
+    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
+  }
+  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+
+  const lang = body.lang === "el" ? "el" : "en";
+  const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const urlOk = (u) => /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(u);
+  const url = clean(body.url, 300);
+  if (!url || !urlOk(url)) {
+    return json({ error: "url_required" }, 400, corsOrigin);
+  }
+  const businessType = clean(body.businessType, 80);
+  const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
+
+  // --- Fetch homepage + extract signals. Option B: refuse if unreadable. ---
+  const fetched = await fetchPageSignals(url, extractAiVisibilitySignals);
+  if (!fetched.ok) {
+    return json({ error: "unreachable", message: websiteFetchRefusal(fetched.reason, lang, { status: fetched.status }) }, 200, corsOrigin);
+  }
+  const signals = fetched.signals;
+  const origin = signals.final_url || url;
+
+  // --- Three root files in parallel (each re-validated through fetchFollow). ---
+  const [robots, sitemap, llms] = await Promise.all([
+    fetchRootFile(origin, "/robots.txt"),
+    fetchRootFile(origin, "/sitemap.xml"),
+    fetchRootFile(origin, "/llms.txt"),
+  ]);
+  const files = classifyRootFiles(robots, sitemap, llms);
+
+  // --- Deterministic score (the model never touches this). ---
+  const scored = scoreAiVisibility(signals, files, lang);
+
+  // --- Gemini writes the summary + 3 recommendations from the check results. ---
+  let userText = renderAiVisibilityBlock(scored, signals);
+  if (businessType) userText += `\n\nBusiness Type (context for tailoring recommendations): ${businessType}`;
+  let ai;
+  try {
+    ai = await callAiVisibilityScanner({
+      apiKey: env.GOOGLE_API_KEY, model, lang, userText,
+    });
+  } catch (err) {
+    console.error("ai-visibility-scan error:", String((err && err.message) || err));
+    ai = null; // fail soft — the deterministic report still stands.
+  }
+
+  const result = {
+    mode: "single",
+    language: lang,
+    scanned_url: signals.final_url || url,
+    score: scored.score,
+    grade: scored.grade,
+    grade_label: scored.grade_label,
+    citation_probability: scored.citation_probability,
+    executive_summary: (ai && ai.executive_summary) || "",
+    final_verdict: (ai && ai.final_verdict) || "",
+    recommendations: (ai && ai.recommendations) || [],
+    checks: scored.checks,
+    detected_schema: signals.schema_types,
+    files: {
+      robots_txt: files.robots.found,
+      sitemap_xml: files.sitemap.found || files.sitemap.referenced_in_robots,
+      llms_txt: files.llms.found,
+    },
+    disclaimer: AIVIS_DISCLAIMERS[lang] || AIVIS_DISCLAIMERS.en,
+  };
+  return json({ result }, 200, corsOrigin);
+}
+
+async function callAiVisibilityScanner({ apiKey, model, userText, lang }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: buildAiVisibilityPrompt(lang) }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.3,
+      maxOutputTokens: 1024,
+      responseMimeType: "application/json",
+      responseSchema: AIVIS_AI_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "ai-visibility-scan", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseAiVisibilityJson(extractReply(data));
+}
+
+function parseAiVisibilityJson(text) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  const recs = Array.isArray(obj.recommendations)
+    ? obj.recommendations.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 3)
+    : [];
+  return {
+    executive_summary: str(obj.executive_summary),
+    final_verdict: str(obj.final_verdict),
+    recommendations: recs,
+  };
 }

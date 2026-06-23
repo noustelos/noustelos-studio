@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="AI Visibility Scanner από το Noustelos Studio — μετρά πόσο εύκολα μπορούν βοηθοί AI όπως ChatGPT, Gemini, Claude και Perplexity να εντοπίσουν, να διαβάσουν και να παραθέσουν τον ιστότοπό σας. Ντετερμινιστική βαθμολογία από πραγματικά δημόσια σήματα της σελίδας." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#f7f4ee" />
+  <link rel="canonical" href="https://noustelos.gr/ai-visibility-scanner-el.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/ai-visibility-scanner.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/ai-visibility-scanner-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/ai-visibility-scanner.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AI Visibility Scanner" />
+  <meta property="og:description" content="Δες πόσο εύκολα μπορούν οι βοηθοί AI να διαβάσουν, να κατανοήσουν και να παραθέσουν τον ιστότοπό σου — ντετερμινιστική βαθμολογία από πραγματικά δημόσια σήματα. Ενδεικτικό, όχι εγγύηση παράθεσης." />
+  <meta property="og:url" content="https://noustelos.gr/ai-visibility-scanner-el.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio — AI Visibility Scanner" />
+  <meta property="og:locale" content="el_GR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/ai-visibility-scanner-el.html" />
+  <meta name="twitter:title" content="AI Visibility Scanner" />
+  <meta name="twitter:description" content="Δες πόσο εύκολα μπορούν οι βοηθοί AI να διαβάσουν, να κατανοήσουν και να παραθέσουν τον ιστότοπό σου — ντετερμινιστική βαθμολογία από πραγματικά δημόσια σήματα." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio — AI Visibility Scanner" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AI Visibility Scanner | Noustelos AI Lab</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260623" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Visibility Scanner",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "el",
+    "url": "https://noustelos.gr/ai-visibility-scanner-el.html",
+    "description": "AI Visibility Scanner από το Noustelos Studio: μετρά πόσο εύκολα μπορούν βοηθοί AI (ChatGPT, Gemini, Claude, Perplexity) να εντοπίσουν, να διαβάσουν και να παραθέσουν έναν ιστότοπο, με ντετερμινιστική βαθμολογία από πραγματικά δημόσια σήματα της σελίδας.",
+    "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+  }
+  </script>
+
+  <style>
+    .scanner-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .scanner-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(1.6rem, 4vw, 2.6rem);
+    }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .scanner-hero { display: grid; gap: 0.85rem; }
+
+    .scanner-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .scanner-hero h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      margin: 0;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .scanner-hero h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--hero-mark);
+    }
+
+    .scanner-subtitle {
+      margin: 0;
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+      font-weight: 500;
+      max-width: 60ch;
+    }
+
+    .scanner-intro {
+      margin: 0;
+      font-size: var(--content-text-size);
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 62ch;
+    }
+
+    /* Card shell shared by the form, the gate and every result panel.
+       Outlined in the homepage CTA anthracite for one consistent frame. */
+    .scanner-panel {
+      background: #fffdf8;
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: clamp(1.3rem, 3.5vw, 2rem);
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Gate (passphrase) ────────────────────────────────── */
+    .scanner-gate { display: grid; gap: 0.9rem; }
+    .scanner-gate h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .scanner-gate p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.97rem;
+      line-height: 1.55;
+    }
+    .scanner-gate-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: stretch;
+    }
+    .scanner-gate-row input { flex: 1 1 12rem; min-width: 0; }
+    .scanner-gate-row .button { flex: 0 0 auto; }
+
+    /* ── Form ─────────────────────────────────────────────── */
+    .scanner-form { display: grid; gap: 1.15rem; }
+    .scanner-field { display: grid; gap: 0.4rem; }
+    .scanner-field label {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+    }
+    .scanner-field .optional { font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.75; }
+
+    .scanner-input,
+    .scanner-textarea,
+    .scanner-select {
+      width: 100%;
+      font-family: "Inter", sans-serif;
+      font-size: 1rem;
+      color: var(--text-primary);
+      background: var(--bg);
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      padding: 0.7rem 0.85rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .scanner-textarea { min-height: 9.5rem; resize: vertical; line-height: 1.55; }
+    .scanner-input:focus,
+    .scanner-textarea:focus,
+    .scanner-select:focus {
+      outline: none;
+      border-color: var(--cta);
+      box-shadow: 0 0 0 3px rgba(41, 50, 63, 0.12);
+    }
+    .scanner-select { appearance: none; cursor: pointer; }
+
+    .scanner-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 0.9rem;
+      align-items: center;
+      margin-top: 0.25rem;
+    }
+    .scanner-form-actions .button-primary[disabled] {
+      opacity: 0.6;
+      cursor: progress;
+      transform: none;
+    }
+    .scanner-link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--glass-gray-text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .scanner-link-btn:hover { color: var(--cta); }
+
+    .scanner-error {
+      margin: 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #d8b4ad;
+      border-radius: var(--radius);
+      background: rgba(180, 69, 58, 0.06);
+      color: #8f372d;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    [hidden] { display: none !important; }
+
+    /* ── Results ──────────────────────────────────────────── */
+    .scanner-results { display: grid; gap: 1.1rem; scroll-margin-top: calc(var(--nav-height) + 1rem); }
+
+    .scanner-results-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.9rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .scanner-results-head h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+    .scanner-results-tools { display: flex; gap: 0.5rem; }
+
+    .score-card { display: grid; gap: 0.9rem; }
+    .score-top {
+      display: flex;
+      align-items: baseline;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+    .score-number {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(2.6rem, 8vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .score-number span { font-size: 0.42em; font-weight: 500; color: var(--text-secondary); }
+    .score-grade {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+      border: 1px solid var(--cta);
+      border-radius: 0.55rem;
+      padding: 0.25rem 0.55rem;
+      color: var(--text-primary);
+    }
+    .score-label {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .score-heading {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--glass-gray-text);
+      margin: 0;
+    }
+    .score-meta { margin: 0; font-size: 0.86rem; color: var(--text-secondary); word-break: break-word; }
+    .score-track {
+      width: 100%;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: var(--surface-light);
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ── AI Citation Probability (explicit heuristic) ─────── */
+    .citation-card { display: grid; gap: 0.55rem; border-left: 3px solid var(--hero-mark); }
+    .citation-top { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+    .citation-value {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .citation-band {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .citation-note { margin: 0; font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); font-style: italic; }
+
+    .result-block h3 {
+      margin: 0 0 0.7rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .result-block h3::before {
+      content: "";
+      width: 0.55rem; height: 0.55rem;
+      border-radius: 2px;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+    .result-block ul,
+    .result-block ol { margin: 0; padding-left: 1.15rem; display: grid; gap: 0.45rem; }
+    .result-block li {
+      font-size: 0.96rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .result-block p {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* ── Check breakdown ──────────────────────────────────── */
+    .check-list { display: grid; gap: 0.65rem; }
+    .check-row {
+      display: grid;
+      grid-template-columns: 1.5rem 1fr auto;
+      align-items: start;
+      gap: 0.55rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .check-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .check-icon {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1.3;
+      text-align: center;
+    }
+    .check-icon.is-pass { color: #2f6f4f; }
+    .check-icon.is-partial { color: #c2792b; }
+    .check-icon.is-missing { color: #b4453a; }
+    .check-body { display: grid; gap: 0.15rem; min-width: 0; }
+    .check-name {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.96rem;
+      color: var(--text-primary);
+    }
+    .check-detail { margin: 0; font-size: 0.88rem; line-height: 1.45; color: var(--text-secondary); }
+    .check-points {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .schema-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .schema-chip {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cta);
+      border: 1px solid var(--cta);
+      border-radius: 999px;
+      padding: 0.12rem 0.55rem;
+    }
+    .schema-empty { margin: 0; font-size: 0.94rem; color: var(--text-secondary); }
+
+    .verdict-card { border-left: 3px solid var(--cta); }
+    .verdict-card h3 { margin-bottom: 0.45rem; }
+    .verdict-card p { color: var(--text-primary); font-size: 1.05rem; line-height: 1.55; }
+
+    .result-disclaimer {
+      margin: 0;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ── Sample-report flag ───────────────────────────────── */
+    .scanner-results-titlewrap { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+    .sample-flag {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cta);
+      border: 1px solid var(--cta);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+    }
+    .gate-example-row { margin: 0; }
+
+    /* ── Info sections ────────────────────────────────────── */
+    .scanner-info { display: grid; gap: 0.7rem; }
+    .scanner-info h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+      font-weight: 600;
+    }
+    .scanner-info p { margin: 0; color: var(--text-secondary); line-height: 1.6; font-size: var(--content-text-size); }
+
+    .evaluates-list {
+      list-style: none;
+      margin: 0.3rem 0 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem 1.1rem;
+    }
+    .evaluates-list li {
+      position: relative;
+      padding-left: 1.25rem;
+      font-size: 0.97rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .evaluates-list li::before {
+      content: "/>";
+      position: absolute;
+      left: 0;
+      color: var(--hero-mark);
+      font-weight: 600;
+      font-size: 0.8em;
+    }
+
+    .scanner-disclaimer {
+      border: 1px dashed var(--line);
+      background: rgba(0, 0, 0, 0.015);
+      border-radius: var(--radius);
+      padding: clamp(1rem, 3vw, 1.4rem);
+      display: grid;
+      gap: 0.5rem;
+    }
+    .scanner-disclaimer p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-secondary); }
+    .scanner-disclaimer strong { color: var(--text-primary); }
+
+    .scanner-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--glass-gray-text);
+    }
+    .scanner-back:hover { color: var(--cta); }
+
+    @media (max-width: 640px) {
+      .evaluates-list { grid-template-columns: 1fr; }
+      .check-row { grid-template-columns: 1.4rem 1fr; }
+      .check-points { grid-column: 2; justify-self: start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .score-fill { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Κύρια πλοήγηση">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Εναλλαγή μενού">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Έργα</a></li>
+        <li><a href="/index.html#services">Υπηρεσίες</a></li>
+        <li><a href="/index.html#about">Σχετικά</a></li>
+        <li><a href="/ai-lab-el.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Επικοινωνία</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Αλλαγή γλώσσας">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr" class="is-active">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="scanner-main">
+    <div class="container scanner-wrap">
+
+      <!-- Hero -->
+      <section class="scanner-hero" aria-labelledby="scanner-title">
+        <div class="scanner-badges">
+          <span class="launch-kicker">Εργαλείο Noustelos AI Lab</span>
+          <span class="work-status-label">Πείραμα</span>
+        </div>
+        <h1 id="scanner-title">AI Visibility Scanner</h1>
+        <p class="scanner-subtitle">Πόσο εύκολα μπορούν οι βοηθοί AI να διαβάσουν, να κατανοήσουν και να παραθέσουν τον ιστότοπό σας;</p>
+        <p class="scanner-intro">Επικόλλησε ένα URL. Ο scanner ανακτά την αρχική σου σελίδα — μαζί με τα robots.txt, sitemap και llms.txt — και τρέχει 15 ντετερμινιστικούς ελέγχους για το πόσο εντοπίσιμος και «παραθέσιμος» είναι ο ιστότοπός σου από βοηθούς όπως ChatGPT, Gemini, Claude και Perplexity. Η βαθμολογία υπολογίζεται από πραγματικά σήματα, δεν μαντεύεται: κάθε πόντος αντιστοιχεί σε κάτι που ο scanner όντως βρήκε (ή όχι). Αν μια σελίδα δεν διαβάζεται, στο λέει αντί να εφεύρει νούμερο.</p>
+      </section>
+
+      <!-- Passphrase gate -->
+      <section class="scanner-panel scanner-gate" id="gate" aria-labelledby="gate-title">
+        <h2 id="gate-title">Απαιτείται πρόσβαση</h2>
+        <p>Ο scanner είναι ένα πείραμα που τρέχει σε μετρημένη μηχανή AI, οπότε η πρόσβαση είναι με πρόσκληση. Βάλε τον κωδικό πρόσβασής σου ή ζήτησέ τον και θα στον στείλουμε με email.</p>
+        <div class="scanner-gate-row">
+          <input class="scanner-input" type="text" id="gate-input" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Κωδικός πρόσβασης" aria-label="Κωδικός πρόσβασης" />
+          <button class="button button-primary" type="button" id="gate-submit">Ξεκλείδωμα</button>
+        </div>
+        <p id="gate-error" class="scanner-error" role="alert" hidden></p>
+        <p><a class="scanner-link-btn" id="request-access" href="#" data-mail-user="avatar68" data-mail-domain="gmail.com">Ζήτησε πρόσβαση με email</a></p>
+        <p class="gate-example-row">Δεν έχεις κωδικό; <button class="scanner-link-btn" type="button" id="gate-example">Δες ένα δείγμα αναφοράς ↓</button></p>
+      </section>
+
+      <!-- Scanner form -->
+      <section class="scanner-panel scanner-form" id="form-panel" aria-labelledby="form-title" hidden>
+        <h2 id="form-title" class="launch-kicker" style="color:var(--glass-gray-text);">Σάρωση ιστότοπου</h2>
+
+        <div class="scanner-field">
+          <label for="f-url">URL ιστότοπου <span class="optional">(υποχρεωτικό — η σελίδα ανακτάται και αναλύεται)</span></label>
+          <input class="scanner-input" type="url" id="f-url" maxlength="300" placeholder="https://example.com" />
+        </div>
+
+        <div class="scanner-field">
+          <label for="f-type">Τύπος επιχείρησης <span class="optional">(προαιρετικό — βοηθά στην εξατομίκευση των συστάσεων)</span></label>
+          <select class="scanner-select" id="f-type">
+            <option value="">Διάλεξε τύπο…</option>
+            <option>Ξενοδοχείο / Κατάλυμα</option>
+            <option>Τουρισμός / Ταξίδια</option>
+            <option>Τοπική επιχείρηση υπηρεσιών</option>
+            <option>Εστιατόριο / Καφέ</option>
+            <option>Κατασκευές / Τεχνικές υπηρεσίες</option>
+            <option>Υγεία / Ευεξία</option>
+            <option>E-commerce</option>
+            <option>Portfolio / Προσωπικό brand</option>
+            <option>SaaS / Tech προϊόν</option>
+            <option>Άλλο</option>
+          </select>
+        </div>
+
+        <p id="form-error" class="scanner-error" role="alert" hidden></p>
+
+        <div class="scanner-form-actions">
+          <button class="button button-primary" type="button" id="run-scan">Σάρωση του ιστότοπού μου</button>
+          <button class="scanner-link-btn" type="button" id="fill-example">Χρησιμοποίησε ένα παράδειγμα</button>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="scanner-results" id="results" aria-live="polite" hidden>
+        <div class="scanner-results-head">
+          <div class="scanner-results-titlewrap">
+            <h2 id="results-title">Αναφορά Ορατότητας σε AI</h2>
+            <span class="sample-flag" id="sample-flag" hidden>Δείγμα</span>
+          </div>
+          <div class="scanner-results-tools">
+            <button class="button button-secondary" type="button" id="copy-result">Αντιγραφή</button>
+            <button class="button button-secondary" type="button" id="download-result">Λήψη</button>
+          </div>
+        </div>
+
+        <div class="scanner-panel score-card">
+          <p class="score-heading">Βαθμολογία Ορατότητας σε AI</p>
+          <div class="score-top">
+            <div class="score-number" id="r-score">0<span>/100</span></div>
+            <div class="score-grade" id="r-grade"></div>
+            <div class="score-label" id="r-score-label"></div>
+          </div>
+          <div class="score-track"><div class="score-fill" id="r-score-fill"></div></div>
+          <p class="score-meta" id="r-scanned" hidden></p>
+        </div>
+
+        <div class="scanner-panel citation-card">
+          <p class="score-heading">Εκτιμώμενη Πιθανότητα Παράθεσης από AI</p>
+          <div class="citation-top">
+            <div class="citation-value" id="r-citation">0%</div>
+            <div class="citation-band" id="r-citation-band"></div>
+          </div>
+          <p class="citation-note">Σταθμισμένη ευρετική, όχι πρόβλεψη ή εγγύηση — αντικατοπτρίζει πόσο πλήρη είναι τα σήματα ορατότητας σε AI, τίποτα παραπάνω.</p>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Σύνοψη</h3>
+          <p id="r-summary"></p>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Ανάλυση Ελέγχων</h3>
+          <div class="check-list" id="r-checks"></div>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Δομημένα Δεδομένα που Εντοπίστηκαν</h3>
+          <div id="r-schema"></div>
+        </div>
+
+        <div class="scanner-panel result-block">
+          <h3>Κορυφαίες Συστάσεις</h3>
+          <ol id="r-steps"></ol>
+        </div>
+
+        <div class="scanner-panel result-block verdict-card">
+          <h3>Τελικό Συμπέρασμα</h3>
+          <p id="r-verdict"></p>
+          <p class="result-disclaimer" id="r-disclaimer" hidden></p>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="scanner-info" aria-labelledby="how-title">
+        <h2 id="how-title">Πώς λειτουργεί</h2>
+        <p>Ο scanner ανακτά την αρχική σου σελίδα και τρία αρχεία ρίζας — robots.txt, sitemap.xml και llms.txt — και έπειτα εξάγει πραγματικά δημόσια σήματα από το server-rendered HTML: δομημένα δεδομένα (Organization, FAQ, LocalBusiness), title και meta description, ετικέτες Open Graph, canonical URL, δομή επικεφαλίδων, στοιχεία επικοινωνίας, βάθος περιεχομένου και αν ο ιστότοπος έχει τις ενότητες που ψάχνουν οι βοηθοί AI. Τρέχει 15 σταθμισμένους ελέγχους που αθροίζουν σε βαθμολογία 0–100. Το νούμερο είναι πλήρως ντετερμινιστικό — ένα AI γράφει τη σύνοψη και τις συστάσεις σε απλά λόγια, αλλά ποτέ δεν αποφασίζει τη βαθμολογία. Αν η αρχική σου δεν μπορεί να ανακτηθεί, ο scanner στο λέει αντί να μαντέψει.</p>
+      </section>
+
+      <!-- What it checks -->
+      <section class="scanner-info" aria-labelledby="eval-title">
+        <h2 id="eval-title">Τι ελέγχει</h2>
+        <ul class="evaluates-list">
+          <li>robots.txt &amp; sitemap</li>
+          <li>llms.txt (αρχείο οδηγιών για AI)</li>
+          <li>Schema Organization</li>
+          <li>Schema FAQ</li>
+          <li>Schema LocalBusiness</li>
+          <li>Title &amp; meta description</li>
+          <li>Open Graph &amp; canonical</li>
+          <li>Δομή επικεφαλίδων</li>
+          <li>Βάθος περιεχομένου</li>
+          <li>Ενότητες φιλικές προς AI</li>
+        </ul>
+      </section>
+
+      <!-- Disclaimer -->
+      <section class="scanner-disclaimer" aria-label="Αποποίηση">
+        <p><strong>Πρόκειται για ενδεικτικό έλεγχο βασισμένο σε σήματα — όχι εγγύηση ότι κάποιος βοηθός AI θα σε παραθέσει.</strong> Κανένα εργαλείο δεν μπορεί να υποσχεθεί σύσταση από AI· αυτό μετρά τα τεχνικά σήματα που κάνουν έναν ιστότοπο πιο εύκολο να εντοπιστεί, να διαβαστεί και να παρατεθεί από AI.</p>
+        <p>Η βαθμολογία βασίζεται σε δημόσια σήματα της σελίδας που ανακτώνται από το URL που δίνεις (μόνο server-rendered HTML). Δεν μπορεί να διαβάσει περιεχόμενο που φορτώνει με JavaScript, να προσομοιώσει πραγματικό crawl από AI, ούτε να μετρήσει πραγματική συχνότητα παράθεσης. Το <em>llms.txt</em> είναι αναδυόμενη σύμβαση, όχι επίσημο standard. Η «Πιθανότητα Παράθεσης από AI» είναι σταθμισμένη ευρετική, όχι πρόβλεψη. Αν η σελίδα δεν μπορεί να ανακτηθεί, δεν παράγεται βαθμολογημένη αναφορά.</p>
+        <p>Θες το υπόβαθρο; Διάβασε το <a href="/ai-visibility-scanner-faq-el.html">FAQ για ορατότητα σε AI &amp; GEO για ιδιοκτήτες ιστότοπων</a>.</p>
+      </section>
+
+      <p><a class="scanner-back" href="/ai-lab-el.html">&larr; Πίσω στο AI Lab</a></p>
+
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var ENDPOINT = "https://artifact-engine.avatar68.workers.dev/api/ai-visibility-scan";
+      var LANG = "el";
+      var PASS_KEY = "saas.scanner.pass.v1"; // shared access code across all Lab scanners
+
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        get: function (k) { try { return localStorage.getItem(k); } catch (_e) { return null; } },
+        set: function (k, v) { try { localStorage.setItem(k, v); } catch (_e) {} },
+        del: function (k) { try { localStorage.removeItem(k); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Assemble the "Request access" mailto at runtime so the address never
+      // sits raw in the HTML (matches the homepage's anti-scraping obfuscation).
+      var reqLink = document.getElementById('request-access');
+      if (reqLink) {
+        reqLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          var addr = (reqLink.getAttribute('data-mail-user') || '') + '@' + (reqLink.getAttribute('data-mail-domain') || '');
+          var subject = encodeURIComponent('AI Visibility Scanner access request');
+          var bodyText = encodeURIComponent('Γεια σας Noustelos, θα ήθελα έναν κωδικό πρόσβασης για το AI Visibility Scanner.');
+          window.location.href = 'mailto:' + addr + '?subject=' + subject + '&body=' + bodyText;
+        });
+      }
+
+      // Split EN/EL page — the toggle navigates to the English sibling.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'en');
+          window.location.href = '/ai-visibility-scanner.html';
+        });
+      }
+
+      var gate = document.getElementById('gate');
+      var gateInput = document.getElementById('gate-input');
+      var gateSubmit = document.getElementById('gate-submit');
+      var gateError = document.getElementById('gate-error');
+      var formPanel = document.getElementById('form-panel');
+      var formError = document.getElementById('form-error');
+      var runBtn = document.getElementById('run-scan');
+      var results = document.getElementById('results');
+
+      var pass = safeStorage.get(PASS_KEY) || '';
+
+      function showError(el, msg) { el.textContent = msg; el.hidden = false; }
+      function clearError(el) { el.hidden = true; el.textContent = ''; }
+
+      function unlock() {
+        gate.hidden = true;
+        formPanel.hidden = false;
+      }
+
+      if (pass) unlock();
+
+      function verifyCode(code) {
+        gateSubmit.disabled = true;
+        gateSubmit.textContent = 'Έλεγχος…';
+        clearError(gateError);
+        return fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ verify: true, passphrase: code })
+        }).then(function (res) {
+          return res.ok;
+        }).catch(function () { return null; })
+          .then(function (ok) {
+            gateSubmit.disabled = false;
+            gateSubmit.textContent = 'Ξεκλείδωμα';
+            if (ok === true) {
+              pass = code;
+              safeStorage.set(PASS_KEY, code);
+              unlock();
+            } else if (ok === false) {
+              showError(gateError, 'Ο κωδικός πρόσβασης δεν αναγνωρίστηκε. Έλεγξε τον κωδικό από το email σου ή ζήτησε πρόσβαση παρακάτω.');
+            } else {
+              showError(gateError, 'Δεν ήταν δυνατή η σύνδεση με τον scanner αυτή τη στιγμή. Δοκίμασε ξανά σε λίγο.');
+            }
+          });
+      }
+
+      if (gateSubmit) {
+        gateSubmit.addEventListener('click', function () {
+          var code = (gateInput.value || '').trim();
+          if (!code) { showError(gateError, 'Βάλε τον κωδικό πρόσβασής σου για να συνεχίσεις.'); return; }
+          verifyCode(code);
+        });
+        gateInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); gateSubmit.click(); }
+        });
+      }
+
+      // ── Example report (locked visitors can preview the output) ──
+      var gateExample = document.getElementById('gate-example');
+      if (gateExample) {
+        gateExample.addEventListener('click', function () { render(SAMPLE_REPORT, true); });
+      }
+
+      // ── Example input ──
+      document.getElementById('fill-example').addEventListener('click', function () {
+        document.getElementById('f-url').value = 'https://example.com';
+        document.getElementById('f-type').value = 'Τοπική επιχείρηση υπηρεσιών';
+      });
+
+      // ── Run scan ──
+      var ERRORS = {
+        url_required: 'Πρόσθεσε ένα URL ιστότοπου πριν τρέξεις τη σάρωση.',
+        locked: 'Ο κωδικός πρόσβασής σου δεν ισχύει πλέον. Ζήτησε νέο.',
+        scan_failed: 'Ο scanner δεν μπόρεσε να ολοκληρώσει την ανάλυση αυτή τη στιγμή. Δοκίμασε ξανά αργότερα.',
+        bad_format: 'Η ανάλυση επέστρεψε μη αναμενόμενη μορφή. Δοκίμασε ξανά.',
+        unreachable: 'Ο ιστότοπος δεν μπόρεσε να ανακτηθεί, οπότε δεν παρήχθη αναφορά. Έλεγξε το URL και δοκίμασε ξανά.'
+      };
+
+      function setLoading(on) {
+        runBtn.disabled = on;
+        runBtn.textContent = on ? 'Σάρωση του ιστότοπού σου…' : 'Σάρωση του ιστότοπού μου';
+      }
+
+      function clampScore(v) { var n = Math.round(Number(v) || 0); return Math.max(0, Math.min(100, n)); }
+
+      var SCORE_COLORS = [
+        { max: 49, c: '#b4453a' },
+        { max: 69, c: '#c2792b' },
+        { max: 89, c: '#4d8a4a' },
+        { max: 100, c: '#2f6f4f' }
+      ];
+      function scoreColor(s) {
+        for (var i = 0; i < SCORE_COLORS.length; i++) { if (s <= SCORE_COLORS[i].max) return SCORE_COLORS[i].c; }
+        return SCORE_COLORS[SCORE_COLORS.length - 1].c;
+      }
+
+      var STATUS_ICON = { pass: '✓', partial: '◐', missing: '✕' };
+
+      function renderChecks(checks) {
+        var wrap = document.getElementById('r-checks');
+        wrap.innerHTML = '';
+        (checks || []).forEach(function (c) {
+          var row = document.createElement('div');
+          row.className = 'check-row';
+
+          var icon = document.createElement('div');
+          icon.className = 'check-icon is-' + (c.status || 'missing');
+          icon.textContent = STATUS_ICON[c.status] || '–';
+          row.appendChild(icon);
+
+          var body = document.createElement('div');
+          body.className = 'check-body';
+          var name = document.createElement('span');
+          name.className = 'check-name';
+          name.textContent = c.name || '';
+          body.appendChild(name);
+          if (c.detail) {
+            var det = document.createElement('p');
+            det.className = 'check-detail';
+            det.textContent = c.detail;
+            body.appendChild(det);
+          }
+          row.appendChild(body);
+
+          var pts = document.createElement('div');
+          pts.className = 'check-points';
+          pts.textContent = (c.points != null ? c.points : 0) + '/' + (c.weight != null ? c.weight : 0);
+          row.appendChild(pts);
+
+          wrap.appendChild(row);
+        });
+      }
+
+      function renderSchema(types) {
+        var wrap = document.getElementById('r-schema');
+        wrap.innerHTML = '';
+        if (!types || !types.length) {
+          var p = document.createElement('p');
+          p.className = 'schema-empty';
+          p.textContent = 'Δεν εντοπίστηκαν δομημένα δεδομένα schema.org στο HTML της σελίδας.';
+          wrap.appendChild(p);
+          return;
+        }
+        var box = document.createElement('div');
+        box.className = 'schema-chips';
+        types.forEach(function (t) {
+          var chip = document.createElement('span');
+          chip.className = 'schema-chip';
+          chip.textContent = t;
+          box.appendChild(chip);
+        });
+        wrap.appendChild(box);
+      }
+
+      function li(text) { var el = document.createElement('li'); el.textContent = text; return el; }
+      function fillList(id, items) {
+        var ul = document.getElementById(id);
+        ul.innerHTML = '';
+        (items || []).forEach(function (t) { ul.appendChild(li(t)); });
+        if (!ul.children.length) ul.appendChild(li('—'));
+      }
+
+      // Canned sample report so a locked visitor can preview the output without a
+      // code (rendered through the normal render() path, flagged as a sample).
+      var SAMPLE_REPORT = {
+        mode: 'single',
+        scanned_url: 'https://example.com',
+        score: 64,
+        grade: 'C',
+        grade_label: 'Χρειάζεται βελτίωση',
+        citation_probability: { value: 59, label: 'Μέτρια' },
+        executive_summary: 'Ο ιστότοπος έχει γερές βάσεις — καθαρό title, canonical URL και δομημένα δεδομένα Organization — αλλά του λείπουν τα σήματα που βαραίνουν περισσότερο για τους βοηθούς AI. Δεν υπάρχει llms.txt ούτε δομημένα δεδομένα FAQ, και το περιεχόμενο είναι λιγοστό, κάτι που δυσκολεύει τους βοηθούς να το διαβάσουν και να το παραθέσουν με σιγουριά.',
+        checks: [
+          { key: 'homepage_reachable', name: 'Προσβάσιμη αρχική', weight: 5, points: 5, status: 'pass', detail: 'HTTP 200 — η αρχική ανακτήθηκε με επιτυχία.' },
+          { key: 'robots_txt', name: 'Παρουσία robots.txt', weight: 5, points: 5, status: 'pass', detail: 'Βρέθηκε, με οδηγίες User-agent.' },
+          { key: 'sitemap_xml', name: 'XML sitemap', weight: 5, points: 5, status: 'pass', detail: 'Βρέθηκε XML sitemap στο /sitemap.xml.' },
+          { key: 'llms_txt', name: 'llms.txt (αρχείο οδηγιών για AI)', weight: 15, points: 0, status: 'missing', detail: 'Δεν υπάρχει llms.txt — η αναδυόμενη σύμβαση για την καθοδήγηση βοηθών AI απουσιάζει.' },
+          { key: 'org_schema', name: 'Schema Organization', weight: 10, points: 10, status: 'pass', detail: 'Υπάρχουν δομημένα δεδομένα Organization.' },
+          { key: 'faq_schema', name: 'Schema FAQ', weight: 10, points: 0, status: 'missing', detail: 'Δεν βρέθηκαν δομημένα δεδομένα FAQ.' },
+          { key: 'localbusiness_schema', name: 'Schema LocalBusiness', weight: 5, points: 0, status: 'missing', detail: 'Δεν υπάρχει schema LocalBusiness (εντάξει αν δεν είναι τοπική επιχείρηση).' },
+          { key: 'contact_info', name: 'Στοιχεία επικοινωνίας', weight: 5, points: 5, status: 'pass', detail: 'Υπάρχουν τηλέφωνο, email ή/και ταχυδρομική διεύθυνση.' },
+          { key: 'meta_title', name: 'Ετικέτα τίτλου (title)', weight: 5, points: 5, status: 'pass', detail: 'Ο τίτλος έχει 48 χαρακτήρες (ιδανικά 30–60).' },
+          { key: 'meta_description', name: 'Meta description', weight: 5, points: 3, status: 'partial', detail: 'Η περιγραφή έχει 92 χαρακτήρες (ιδανικά 120–160).' },
+          { key: 'open_graph', name: 'Ετικέτες Open Graph', weight: 5, points: 3, status: 'partial', detail: 'Μόνο 2 από τις 3 βασικές ετικέτες Open Graph υπάρχουν.' },
+          { key: 'canonical', name: 'Canonical URL', weight: 5, points: 5, status: 'pass', detail: 'Δηλωμένο canonical URL.' },
+          { key: 'heading_structure', name: 'Δομή επικεφαλίδων (ένα H1)', weight: 5, points: 5, status: 'pass', detail: 'Ακριβώς ένα H1, όπως αναμένεται.' },
+          { key: 'content_richness', name: 'Πλούτος περιεχομένου', weight: 5, points: 3, status: 'partial', detail: '~320 ορατές λέξεις (πιο πλούσιο περιεχόμενο διαβάζεται και παρατίθεται πιο εύκολα από AI).' },
+          { key: 'ai_friendly_wording', name: 'Ενότητες φιλικές προς AI', weight: 10, points: 5, status: 'partial', detail: 'Βρέθηκαν ενότητες: σχετικά, επικοινωνία.' }
+        ],
+        detected_schema: ['Organization', 'WebSite'],
+        recommendations: [
+          'Δημοσίευσε ένα llms.txt στη ρίζα του ιστότοπου που να παραπέμπει τους βοηθούς AI στις βασικές σου σελίδες (υπηρεσίες, τιμές, σχετικά, επικοινωνία) — είναι το βαρύτερο μεμονωμένο σήμα εδώ.',
+          'Πρόσθεσε δομημένα δεδομένα FAQPage σε μια ενότητα συχνών ερωτήσεων ώστε οι βοηθοί να μπορούν να αντλούν και να παραθέτουν απευθείας τις απαντήσεις σου.',
+          'Επέκτεινε το κείμενο της αρχικής και πρόσθεσε καθαρές ενότητες Υπηρεσιών και Τιμών ώστε να υπάρχει περισσότερο παραθέσιμο, ευανάγνωστο από AI περιεχόμενο.'
+        ],
+        final_verdict: 'Ένας τεχνικά σωστός ιστότοπος που χρειάζεται σήματα ειδικά για AI — ένα llms.txt, schema FAQ και πλουσιότερο περιεχόμενο — για να γίνει εύκολο να τον παραθέτουν οι βοηθοί.',
+        disclaimer: 'Αυτό είναι δείγμα αναφοράς για επίδειξη. Ξεκλείδωσε τον scanner με κωδικό πρόσβασης για να σαρώσεις πραγματικό ιστότοπο. Είναι ενδεικτική ανάλυση δημόσιου HTML — όχι εγγύηση παράθεσης από AI.'
+      };
+
+      var lastResult = null;
+
+      function render(r, isSample) {
+        lastResult = r;
+        document.getElementById('results-title').textContent = 'Αναφορά Ορατότητας σε AI';
+        document.getElementById('sample-flag').hidden = !isSample;
+
+        var score = clampScore(r.score);
+        document.getElementById('r-score').innerHTML = score + '<span>/100</span>';
+        document.getElementById('r-grade').textContent = r.grade || '';
+        document.getElementById('r-score-label').textContent = r.grade_label || '';
+        var fill = document.getElementById('r-score-fill');
+        fill.style.background = scoreColor(score);
+
+        var cp = r.citation_probability || {};
+        document.getElementById('r-citation').textContent = clampScore(cp.value) + '%';
+        document.getElementById('r-citation-band').textContent = cp.label || '';
+
+        var scanned = document.getElementById('r-scanned');
+        if (r.scanned_url) { scanned.textContent = 'Σαρώθηκε: ' + r.scanned_url; scanned.hidden = false; } else { scanned.hidden = true; }
+        document.getElementById('r-summary').textContent = r.executive_summary || '';
+
+        renderChecks(r.checks);
+        renderSchema(r.detected_schema);
+        fillList('r-steps', r.recommendations);
+        document.getElementById('r-verdict').textContent = r.final_verdict || '';
+        var disc = document.getElementById('r-disclaimer');
+        if (r.disclaimer) { disc.textContent = r.disclaimer; disc.hidden = false; } else { disc.hidden = true; }
+
+        results.hidden = false;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { fill.style.width = score + '%'; });
+        });
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      runBtn.addEventListener('click', function () {
+        clearError(formError);
+        var url = (document.getElementById('f-url').value || '').trim();
+        if (!url) { showError(formError, ERRORS.url_required); return; }
+
+        var payload = {
+          passphrase: pass,
+          lang: LANG,
+          url: url,
+          businessType: document.getElementById('f-type').value || ''
+        };
+
+        setLoading(true);
+        var scanCtrl = new AbortController();
+        var scanTimer = setTimeout(function () { scanCtrl.abort(); }, 60000);
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: scanCtrl.signal
+        }).then(function (res) {
+          clearTimeout(scanTimer);
+          return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; });
+        }).then(function (out) {
+          setLoading(false);
+          if (out.ok && out.data && out.data.result) {
+            render(out.data.result, false);
+            return;
+          }
+          if (out.status === 401) {
+            safeStorage.del(PASS_KEY);
+            pass = '';
+            results.hidden = true;
+            formPanel.hidden = true;
+            gate.hidden = false;
+            showError(gateError, 'Ο κωδικός πρόσβασής σου δεν ισχύει πλέον. Ζήτησε νέο.');
+            return;
+          }
+          var key = out.data && out.data.error;
+          var msg = out.data && out.data.message;
+          showError(formError, msg || ERRORS[key] || ERRORS.scan_failed);
+        }).catch(function () {
+          clearTimeout(scanTimer);
+          setLoading(false);
+          showError(formError, ERRORS.scan_failed);
+        });
+      });
+
+      // ── Copy / Download ──
+      function resultToText(r) {
+        if (!r) return '';
+        var L = [];
+        L.push('AI Visibility Scanner — Noustelos AI Lab');
+        if (r.scanned_url) L.push('Σαρώθηκε: ' + r.scanned_url);
+        L.push('');
+        L.push('Βαθμολογία Ορατότητας σε AI: ' + clampScore(r.score) + '/100 — ' + (r.grade || '') + ' (' + (r.grade_label || '') + ')');
+        var cp = r.citation_probability || {};
+        L.push('Εκτιμώμενη Πιθανότητα Παράθεσης από AI: ' + clampScore(cp.value) + '% (' + (cp.label || '') + ') — ευρετική, όχι πρόβλεψη');
+        L.push('');
+        L.push('Σύνοψη');
+        L.push(r.executive_summary || '');
+        L.push('');
+        L.push('Ανάλυση Ελέγχων');
+        (r.checks || []).forEach(function (c) {
+          L.push('- [' + (c.status || '').toUpperCase() + '] ' + (c.name || '') + ' (' + (c.points != null ? c.points : 0) + '/' + (c.weight != null ? c.weight : 0) + ')' + (c.detail ? ' — ' + c.detail : ''));
+        });
+        L.push('');
+        L.push('Δομημένα Δεδομένα που Εντοπίστηκαν');
+        L.push((r.detected_schema && r.detected_schema.length) ? r.detected_schema.join(', ') : 'Κανένα');
+        L.push('');
+        L.push('Κορυφαίες Συστάσεις');
+        (r.recommendations || []).forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        L.push(''); L.push('Τελικό Συμπέρασμα'); L.push(r.final_verdict || '');
+        if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
+        return L.join('\n');
+      }
+
+      document.getElementById('copy-result').addEventListener('click', function () {
+        var btn = this, txt = resultToText(lastResult);
+        if (!txt) return;
+        var done = function () { btn.textContent = 'Αντιγράφηκε'; setTimeout(function () { btn.textContent = 'Αντιγραφή'; }, 1600); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt).then(done).catch(function () {});
+        }
+      });
+
+      document.getElementById('download-result').addEventListener('click', function () {
+        var txt = resultToText(lastResult);
+        if (!txt) return;
+        var blob = new Blob([txt], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'ai-visibility-report.txt';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+      });
+    })();
+  </script>
+</body>
+</html>

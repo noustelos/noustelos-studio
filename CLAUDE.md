@@ -588,6 +588,68 @@ NOT legal advice** (cannot verify runtime consent firing order / real cookie sto
   reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
   `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
 
+## AI Visibility Scanner (fourth AI Lab tool — NOT the Artifact)
+A fourth standalone **Noustelos AI Lab utility**, sibling to the SaaS + Website +
+GDPR scanners and likewise decoupled from The Artifact (no persona, memory/Drive,
+kill switch). Measures **how easily AI assistants (ChatGPT, Gemini, Claude,
+Perplexity) can discover, parse and cite a website** — i.e. AI visibility / GEO.
+**Placed FIRST in the AI Lab Tools list** (homepage grid + `ai-lab*.html`), before
+the SaaS scanner (owner request). **Honest by design — the score is DETERMINISTIC**
+(15 weighted checks summing to 100; the model NEVER decides the number — it only
+writes the summary + 3 recommendations). Bilingual via SPLIT-URL like the website +
+GDPR scanners: EN `ai-visibility-scanner.html`, EL `ai-visibility-scanner-el.html`;
+sends `lang:"en"|"el"` and the AI summary comes back in that language.
+- **Front-end** → `ai-visibility-scanner.html` + `-el.html`: two self-contained EN/EL
+  pages, SAME `styles.min.css` + anthracite `var(--cta)` framing / form aesthetic /
+  Copy + Download / **"See an example report"** (`SAMPLE_REPORT`, "Sample" pill) / 60s
+  client `AbortController` backstop as the other scanners. **Shares the SAME passphrase
+  localStorage key** (`saas.scanner.pass.v1`) — unlocking any Lab scanner unlocks all.
+  Form: **Website URL (required, fetched)**, optional Business Type (feeds the AI
+  recommendations only). Renders a score bar + grade letter (A–D), an **AI Citation
+  Probability** card (clearly labelled an explicit heuristic, NOT a prediction — owner
+  chose to keep it WITH the honest label), a **15-check breakdown** (pass/partial/missing
+  icon + points/weight + detail), detected schema chips, top-3 recommendations, verdict,
+  disclaimer. 1st Experiment card in `ai-lab.html`/`ai-lab-el.html`, both in `sitemap.xml`,
+  `index,follow`. Homepage card is FIRST in the AI Lab Tools grid (i18n `labtools.aivis.*`
+  in BOTH `script.js` and `script.min.js`, EN+GR).
+- **FAQ pages** → bilingual `ai-visibility-scanner-faq.html` + `-el.html`, built on the
+  `ai-lab-faq` template (needs the `.ai-lab-faq > article { min-width:0 }` iOS guard),
+  with **FAQPage JSON-LD** mirroring the visible Q&A (9 questions: AI visibility / GEO,
+  SEO overlap, llms.txt, structured data, FAQ schema weighting, robots+sitemap, "can you
+  guarantee citation" = NO, the Citation Probability heuristic, content depth, "a high
+  score ≠ AI will recommend you"). Framed **informational, not a guarantee of citation**
+  (see [[live-site-copy-integrity]]).
+- **Engine** → **same Worker** (`engine/worker.js`), routed by **PATH**
+  `POST /api/ai-visibility-scan` (dispatch sits right after `/api/gdpr-scan`, before the
+  Artifact gate). `handleAiVisibilityScan`: `collectPassphrases` (SAME codes — no new
+  secret) → `verify` short-circuit → URL-shape validation (`url_required`) →
+  `fetchPageSignals(url, extractAiVisibilitySignals)` → **Option B refusal** (reuses
+  `websiteFetchRefusal`; `200 {error:"unreachable", message}`) if the homepage fetch
+  fails / page is thin. **PLUS three root files in parallel** (`/robots.txt`,
+  `/sitemap.xml`, `/llms.txt`) via `fetchRootFile` → `fetchFollow` (each hop
+  re-validated against the SAME SSRF guards as the website scanner) → `classifyRootFiles`
+  (soft-404 HTML guard via `looksLikeHtmlPage`; sitemap counts if `<urlset|<sitemapindex|
+  <?xml` OR referenced in robots.txt's `Sitemap:` line). `scoreAiVisibility` runs the 15
+  weighted checks → score + grade (A–D, `AIVIS_BANDS`) + an explicit **AI Citation
+  Probability heuristic** (`score×0.8` + bonuses for FAQ/llms/Organization). Then
+  **Gemini** (`SCANNER_MODEL`; live `gemini-2.5-flash-lite`, `thinkingBudget:0`,
+  `AIVIS_AI_SCHEMA` = `executive_summary`/`final_verdict`/`recommendations[3]`) writes the
+  prose ONLY from the rendered check results (`renderAiVisibilityBlock`) — **fails SOFT**
+  (the deterministic report still returns if the AI call errors). **Does NOT log user
+  input.** Errors → `401 locked` / `400 url_required` / `200 {error:"unreachable"}`.
+- **Request:** `{ passphrase, lang, url, businessType? }` → `{ result: {score, grade,
+  grade_label, citation_probability{value,label}, executive_summary, final_verdict,
+  recommendations[], checks[{key,name,weight,points,status,detail}], detected_schema[],
+  files{robots_txt,sitemap_xml,llms_txt}, disclaimer, scanned_url} }`.
+- **Honesty stance:** STATIC public-HTML analysis only — can't read JS-rendered content,
+  simulate a real AI crawl, or measure live citation frequency; **llms.txt is framed as
+  an emerging convention, not an official standard**; the headline is "how easily can AI
+  read/cite your site" (discoverability we CAN measure), NOT "will ChatGPT recommend you"
+  (the spec's original headline — dropped as an overclaim).
+- **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new secret —
+  reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
+  `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`

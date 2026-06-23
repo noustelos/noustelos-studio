@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Plain-English answers on AI visibility and Generative Engine Optimization (GEO) for website owners — llms.txt, structured data, FAQ schema, what makes a site easy for ChatGPT, Gemini, Claude and Perplexity to cite, and what no tool can promise." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/ai-visibility-scanner-faq.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/ai-visibility-scanner-faq.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/ai-visibility-scanner-faq-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/ai-visibility-scanner-faq.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AI Visibility &amp; GEO — FAQ for Website Owners | Noustelos AI Lab" />
+  <meta property="og:description" content="What makes a website easy for AI assistants to discover, parse and cite — llms.txt, structured data, FAQ schema — and how the AI Visibility Scanner fits in. Indicative, not a guarantee of citation." />
+  <meta property="og:url" content="https://noustelos.gr/ai-visibility-scanner-faq.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Noustelos Studio — AI Visibility &amp; GEO FAQ" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/ai-visibility-scanner-faq.html" />
+  <meta name="twitter:title" content="AI Visibility &amp; GEO — FAQ for Website Owners | Noustelos AI Lab" />
+  <meta name="twitter:description" content="What makes a website easy for AI assistants to discover, parse and cite. Indicative, not a guarantee of citation." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:image:alt" content="Noustelos Studio — AI Visibility &amp; GEO FAQ" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AI Visibility &amp; GEO — FAQ for Website Owners | Noustelos AI Lab</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260623" />
+
+  <!-- ── Structured data: FAQPage (Rich Snippets) ──────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is 'AI visibility'?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI visibility is how easily AI assistants — ChatGPT, Gemini, Claude, Perplexity and AI-powered search — can discover your website, understand what it says, and cite it when answering a user. It depends on the same technical foundations as classic SEO (clean HTML, a sitemap, structured data) plus a few AI-specific signals. The discipline of optimising for it is often called Generative Engine Optimization (GEO) or Answer Engine Optimization. This is general guidance, not a guarantee of any particular outcome."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this the same as SEO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It overlaps heavily but is not identical. Most of what helps search engines also helps AI assistants: a reachable page, a sitemap, a clear title and description, structured data and real content. AI visibility adds a few things on top — machine-readable structured data the model can lift directly (especially FAQ markup), clearly chunked content, and emerging conventions like llms.txt. Think of it as SEO's foundations plus AI-specific clarity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is llms.txt and do I need it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "llms.txt is a plain-text or Markdown file placed at your site root (like robots.txt) that points AI tools to your most important pages and content in a clean, easy-to-parse form. It was proposed in late 2024 and is being adopted by a growing number of sites, but it is an emerging community convention, not an official standard, and no AI provider is required to read it. The scanner weights it highly because it is the clearest AI-specific signal a site can add today, but its absence is not a failure of any rule."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does structured data (schema.org) matter for AI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Structured data (schema.org, usually as JSON-LD) describes your content in a format machines read unambiguously — who you are (Organization), where you are (LocalBusiness), and questions you answer (FAQPage). AI assistants and AI search can lift these facts directly instead of guessing them from prose, which makes your site easier to summarise and cite accurately. It is one of the highest-leverage, lowest-risk things most sites can add."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is FAQ schema weighted so heavily?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because a question-and-answer pair is exactly the shape an AI assistant needs. FAQPage structured data hands the model clean, self-contained answers it can quote, which makes your content far more likely to be surfaced for the questions you cover. Pairing genuine, useful answers with FAQPage markup is one of the most direct ways to become citable — which is why this is among the heaviest checks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do robots.txt and the sitemap still matter for AI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. A robots.txt tells crawlers — including AI crawlers — what they may access, and an XML sitemap helps them find all your pages efficiently. If you want AI tools to read your site, make sure your robots.txt does not accidentally block their user-agents, and keep a current sitemap. These are basic, well-established signals; the scanner checks that they exist and are well-formed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you guarantee ChatGPT or Perplexity will cite my site?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, and be wary of any tool that claims to. Whether an assistant cites you depends on the user's exact question, the model, its training data and live-retrieval choices, your authority and competition — none of which a static scan can see or control. What this scanner does is measure the technical signals that make your site easier to discover, parse and cite. Improving them improves your odds; it does not promise an outcome."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the 'AI Citation Probability' number?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It is an explicit heuristic, not a scientific prediction. It is derived from your deterministic score plus small bonuses for the signals AI assistants weigh most (FAQ schema, llms.txt, Organization markup). It is meant as an at-a-glance indicator of how complete your AI-visibility signals are — nothing more. We label it clearly as a heuristic precisely because no honest tool can predict real citation frequency."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do content depth and clear sections matter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI assistants cite content they can actually read and understand. A page with almost no text, or one whose meaning only appears after JavaScript runs, gives them little to work with. Substantial, well-structured copy — with recognisable Services, Pricing, About, FAQ and Contact sections — gives assistants clear, quotable material and helps them answer questions about you accurately."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a high score mean AI will recommend me?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. A high score means your site is technically easy for AI to discover, parse and cite — the foundations are strong. It does not mean any assistant will recommend you, because that also depends on your reputation, reviews, the breadth and quality of your content, and competition, plus each provider's own systems. Treat the report as a prioritised to-do list for the parts you control, not a promise of visibility."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ai-lab-heading {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .ai-lab-heading h1 {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.58em;
+      font-size: clamp(30px, 4.1vw, 46px);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .ai-lab-heading h1::after {
+      content: "/>";
+      position: absolute;
+      right: -2px;
+      top: calc(-0.28em + 2px);
+      font-size: 0.46em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--hero-mark);
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── FAQ article ───────────────────────────────────────────── */
+    .ai-lab-faq {
+      margin-top: clamp(1.5rem, 4vw, 2.5rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+      gap: 1.4rem;
+    }
+
+    /* Let the article grid item shrink so content wraps to the viewport
+       instead of dragging the whole page sideways on iOS. */
+    .ai-lab-faq > article { min-width: 0; }
+
+    .faq-lead {
+      margin: 0 0 clamp(1rem, 3vw, 1.8rem);
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .faq-item {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: clamp(1.6rem, 4vw, 2.4rem);
+      padding-top: clamp(1.4rem, 3.5vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+
+    .faq-item:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .faq-item h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(20px, 2.8vw, 27px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .faq-item p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .faq-item strong { color: var(--text-primary); font-weight: 600; }
+
+    .faq-note {
+      margin-top: clamp(1.6rem, 4vw, 2.4rem);
+      padding: clamp(1rem, 3vw, 1.4rem);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.015);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .faq-note strong { color: var(--text-primary); }
+
+    .faq-back {
+      margin-top: clamp(2.5rem, 6vw, 3.5rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap" aria-labelledby="faq-title">
+      <div class="section-heading ai-lab-heading">
+        <h1 id="faq-title">AI Visibility &amp; GEO — Website FAQ</h1>
+      </div>
+    </section>
+
+    <section class="container ai-lab-wrap ai-lab-faq" aria-labelledby="faq-title">
+      <article>
+        <p class="faq-lead">A plain-English primer on AI visibility and Generative Engine Optimization (GEO) — what makes a website easy for AI assistants to discover, parse and cite, and how the AI Visibility Scanner fits in. This is general guidance, not a guarantee of any particular outcome.</p>
+
+        <section class="faq-item">
+          <h2>What is "AI visibility"?</h2>
+          <p>AI visibility is how easily AI assistants — <strong>ChatGPT, Gemini, Claude, Perplexity</strong> and AI-powered search — can discover your website, understand what it says, and cite it when answering a user. It rests on the same technical foundations as classic SEO (clean HTML, a sitemap, structured data) plus a few AI-specific signals. The discipline of optimising for it is often called <strong>Generative Engine Optimization (GEO)</strong> or Answer Engine Optimization.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Is this the same as SEO?</h2>
+          <p>It overlaps heavily but is not identical. Most of what helps search engines also helps AI assistants: a reachable page, a sitemap, a clear title and description, structured data and real content. AI visibility adds a few things on top — <strong>machine-readable structured data the model can lift directly</strong> (especially FAQ markup), clearly chunked content, and emerging conventions like llms.txt. Think of it as SEO's foundations plus AI-specific clarity.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What is llms.txt and do I need it?</h2>
+          <p><strong>llms.txt</strong> is a plain-text or Markdown file placed at your site root (like robots.txt) that points AI tools to your most important pages and content in a clean, easy-to-parse form. It was proposed in late 2024 and is being adopted by a growing number of sites, but it is an <strong>emerging community convention, not an official standard</strong>, and no AI provider is required to read it. The scanner weights it highly because it is the clearest AI-specific signal a site can add today — but its absence breaks no rule.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Why does structured data (schema.org) matter for AI?</h2>
+          <p>Structured data (schema.org, usually as JSON-LD) describes your content in a format machines read unambiguously — who you are (<strong>Organization</strong>), where you are (<strong>LocalBusiness</strong>), and questions you answer (<strong>FAQPage</strong>). AI assistants and AI search can lift these facts directly instead of guessing them from prose, which makes your site easier to summarise and cite accurately. It is one of the highest-leverage, lowest-risk things most sites can add.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Why is FAQ schema weighted so heavily?</h2>
+          <p>Because a question-and-answer pair is exactly the shape an AI assistant needs. <strong>FAQPage structured data</strong> hands the model clean, self-contained answers it can quote, which makes your content far more likely to be surfaced for the questions you cover. Pairing genuine, useful answers with FAQPage markup is one of the most direct ways to become citable — which is why it is among the heaviest checks.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Do robots.txt and the sitemap still matter for AI?</h2>
+          <p>Yes. A <strong>robots.txt</strong> tells crawlers — including AI crawlers — what they may access, and an <strong>XML sitemap</strong> helps them find all your pages efficiently. If you want AI tools to read your site, make sure your robots.txt does not accidentally block their user-agents, and keep a current sitemap. These are basic, well-established signals; the scanner checks that they exist and are well-formed.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Can you guarantee ChatGPT or Perplexity will cite my site?</h2>
+          <p><strong>No</strong>, and be wary of any tool that claims to. Whether an assistant cites you depends on the user's exact question, the model, its training data and live-retrieval choices, your authority and competition — none of which a static scan can see or control. What this scanner does is measure the <strong>technical signals that make your site easier to discover, parse and cite</strong>. Improving them improves your odds; it does not promise an outcome.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>What is the "AI Citation Probability" number?</h2>
+          <p>It is an <strong>explicit heuristic, not a scientific prediction</strong>. It is derived from your deterministic score plus small bonuses for the signals AI assistants weigh most (FAQ schema, llms.txt, Organization markup). It is meant as an at-a-glance indicator of how complete your AI-visibility signals are — nothing more. We label it clearly as a heuristic precisely because no honest tool can predict real citation frequency.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Why do content depth and clear sections matter?</h2>
+          <p>AI assistants cite content they can actually read and understand. A page with almost no text, or one whose meaning only appears after JavaScript runs, gives them little to work with. Substantial, well-structured copy — with recognisable <strong>Services, Pricing, About, FAQ and Contact</strong> sections — gives assistants clear, quotable material and helps them answer questions about you accurately.</p>
+        </section>
+
+        <section class="faq-item">
+          <h2>Does a high score mean AI will recommend me?</h2>
+          <p><strong>No.</strong> A high score means your site is technically easy for AI to discover, parse and cite — the foundations are strong. It does not mean any assistant will recommend you, because that also depends on your reputation, reviews, the breadth and quality of your content, and competition, plus each provider's own systems. Treat the report as a prioritised to-do list for the parts you control, not a promise of visibility.</p>
+        </section>
+
+        <p class="faq-note"><strong>Disclaimer.</strong> This page is general guidance on AI visibility and is not a guarantee of any search or citation outcome. The AI Visibility Scanner analyses public HTML signals only; it cannot read JavaScript-rendered content, simulate a real AI crawl, or measure live citation frequency. <em>llms.txt</em> is an emerging convention, not an official standard.</p>
+
+        <div class="faq-back">
+          <a class="button button-link" href="/ai-visibility-scanner.html">Back to the AI Visibility Scanner</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the Greek version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/ai-visibility-scanner-faq-el.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
