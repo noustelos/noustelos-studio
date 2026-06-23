@@ -187,6 +187,17 @@ const translations = {
         href: '/gdpr-scanner.html'
       }
     },
+    faq: {
+      title: 'Frequently Asked Questions',
+      q1: 'What is Noustelos Studio?',
+      a1: 'Noustelos Studio is a web design and development practice based in Santorini, Greece, led by Nick Karadimas. It builds custom, AI-assisted websites and landing pages for tourism, hospitality, local businesses and creative projects.',
+      q2: 'What services does Noustelos Studio offer?',
+      a2: 'Custom website design, focused landing pages, creative web projects, and agentic AI platforms delivered as SaaS — with a focus on tourism and hospitality.',
+      q3: 'What is AskSantorini.ai?',
+      a3: "AskSantorini.ai is the studio's flagship live product: a free, AI-powered guide for Santorini visitors that answers practical questions about beaches, sunsets, tours, food and transport.",
+      q4: 'How can I work with Noustelos Studio?',
+      a4: 'Use the contact section on this page to describe your project. Nick replies by email and shapes each project with human design judgment and final quality control.'
+    },
     about: {
       title: 'About',
       p1: "I'm Nick Karadimas, a creative web designer and developer based in Santorini.",
@@ -348,6 +359,17 @@ const translations = {
         cta: 'Δοκίμασέ το',
         href: '/gdpr-scanner-el.html'
       }
+    },
+    faq: {
+      title: 'Συχνές Ερωτήσεις',
+      q1: 'Τι είναι το Noustelos Studio;',
+      a1: 'Το Noustelos Studio είναι μια πρακτική web design και ανάπτυξης με βάση τη Σαντορίνη, με επικεφαλής τον Νίκο Καραδήμα. Φτιάχνει custom, AI-assisted ιστοσελίδες και landing pages για τουρισμό, φιλοξενία, τοπικές επιχειρήσεις και δημιουργικά projects.',
+      q2: 'Τι υπηρεσίες προσφέρει το Noustelos Studio;',
+      a2: 'Custom σχεδιασμό ιστοσελίδων, στοχευμένα landing pages, δημιουργικά web projects και agentic AI πλατφόρμες ως SaaS — με έμφαση στον τουρισμό και τη φιλοξενία.',
+      q3: 'Τι είναι το AskSantorini.ai;',
+      a3: 'Το AskSantorini.ai είναι το flagship live προϊόν του studio: ένας δωρεάν, AI-powered οδηγός για επισκέπτες της Σαντορίνης που απαντά σε πρακτικές ερωτήσεις για παραλίες, ηλιοβασιλέματα, tours, φαγητό και μετακινήσεις.',
+      q4: 'Πώς μπορώ να συνεργαστώ με το Noustelos Studio;',
+      a4: 'Χρησιμοποίησε την ενότητα επικοινωνίας σε αυτή τη σελίδα για να περιγράψεις το project σου. Ο Νίκος απαντά με email και διαμορφώνει κάθε project με ανθρώπινη σχεδιαστική κρίση και τελικό quality control.'
     },
     about: {
       title: 'Σχετικά',
