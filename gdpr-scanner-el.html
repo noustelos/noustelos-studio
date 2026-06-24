@@ -576,11 +576,6 @@
           </select>
         </div>
 
-        <div class="scanner-field">
-          <label for="f-notes">Προαιρετικές σημειώσεις <span class="optional">(προαιρετικό)</span></label>
-          <textarea class="scanner-textarea" id="f-notes" maxlength="2000" placeholder="Παράδειγμα: Είναι ένα marketing site για κοινό στην ΕΕ, με φόρμα επικοινωνίας και εγγραφή σε newsletter. Χρησιμοποιούμε Google Analytics και Facebook Pixel, αλλά δεν είμαι σίγουρος αν το banner cookies τα μπλοκάρει πριν τη συναίνεση."></textarea>
-        </div>
-
         <p id="form-error" class="scanner-error" role="alert" hidden></p>
 
         <div class="scanner-form-actions">
@@ -799,7 +794,6 @@
       document.getElementById('fill-example').addEventListener('click', function () {
         document.getElementById('f-url').value = 'https://noustelos.gr';
         document.getElementById('f-type').value = 'Τοπική επιχείρηση υπηρεσιών';
-        document.getElementById('f-notes').value = 'Marketing site για κοινό στην ΕΕ, με φόρμα επικοινωνίας και εγγραφή σε newsletter. Χρησιμοποιούμε Google Analytics και Facebook Pixel, αλλά δεν είμαι σίγουρος αν το banner cookies τα μπλοκάρει πριν τη συναίνεση.';
       });
 
       // ── Run scan ──
@@ -1008,8 +1002,7 @@
           passphrase: pass,
           lang: LANG,
           url: url,
-          businessType: document.getElementById('f-type').value || '',
-          notes: (document.getElementById('f-notes').value || '').trim()
+          businessType: document.getElementById('f-type').value || ''
         };
 
         setLoading(true);

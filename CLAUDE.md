@@ -710,6 +710,36 @@ persona/memory/Drive/kill-switch.
 - **Deploy:** engine change → **`cd engine && npx wrangler deploy`**. `ai-chat.html` goes
   live on push to `main`. No rate-limiting beyond the per-IP KV cap above (public route).
 
+## Which tools use Gemini (model map — 2026-06)
+After the deterministic refactor: **AI Visibility = NO Gemini** (fully deterministic),
+**GDPR = NO Gemini** (fully deterministic), **Website = Gemini** (its design/clarity/
+conversion axes need judgment), **SaaS = Gemini** (subjective project eval), **Site
+Assistant + Artifact = Gemini**.
+- **AI Visibility deterministic:** the 15-check score was always deterministic; now the
+  prose is too — `aivisNarrative` (single) + `aivisCompareNarrative` (compare) build the
+  summary / top-3 recommendations (failed-or-partial checks sorted by weight, mapped via
+  `AIVIS_FIX`) / verdict (`AIVIS_VERDICTS`) from templated EN/EL copy. No model call →
+  ~1s (was 8-14s), zero per-scan cost, 100% reliable.
+- **GDPR deterministic:** detection (`extractGdprSignals`: trackers/CMP/policy links/
+  embeds/fonts/forms) was always deterministic; now `gdprReport(signals, lang)` does the
+  scoring + narrative too — a weighted 5-axis rubric (privacy 20% / cookie-consent 30% /
+  tracking 20% / data-collection 15% / third-party 15%), per-tracker concern by category
+  (`gdprTrackerConcern`), templated what's-in-place / risks / next-steps / verdict (EN/EL),
+  static `GDPR_DISCLAIMER`. Core ePrivacy rule kept: trackers WITHOUT a consent banner/CMP
+  is the red flag (cookie_consent → 15). Response shape is UNCHANGED, so both front-ends
+  render it untouched.
+- ⚠️ **Dead Gemini code retained (cleanup TODO):** the old AI-narrative helpers for these
+  two — `callAiVisibilityScanner`/`parseAiVisibilityJson`/`buildAiVisibilityPrompt`/
+  `AIVIS_AI_SCHEMA`/`renderAiVisibilityBlock` + the compare equivalents, and
+  `callGdprScanner`/`buildGdprPrompt`/`parseGdprScanJson`/`renderGdprSignalsBlock`/
+  `GDPR_SCAN_SCHEMA`/`GDPR_*_SCHEMA` — are **defined but NO LONGER CALLED**. They don't
+  run (no model call happens); remove them in a cleanup pass. `GDPR_BANDS`/`gdprScoreLabel`
+  + `GDPR_TRACKERS`/`GDPR_CMPS`/`extractGdprSignals` are STILL used — keep those.
+- **Form cleanup:** the now-unused **GDPR "Optional Notes" field was removed** (its
+  placeholder implied the model read it); the AI Visibility "Business Type" label dropped
+  "helps tailor the recommendations" → just "(optional)" (the deterministic narrative
+  doesn't use it).
+
 ## Public, ungated scanners (AI Visibility + Website + GDPR — 2026-06)
 The three **fetch-based** scanners are now **PUBLIC (no passphrase)** — anyone on
 the site can run them, like the Site Assistant. The **SaaS scanner stays
