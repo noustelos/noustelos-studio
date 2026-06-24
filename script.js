@@ -162,7 +162,7 @@ const translations = {
     labtools: {
       title: 'AI Lab Tools',
       subtitle: 'Free, AI-powered diagnostics from the Noustelos AI Lab — practical readiness reports you can run in seconds.',
-      badge: 'Experiment',
+      badge: 'Free tool',
       aivis: {
         title: 'AI Visibility Scanner',
         desc: 'See how easily AI assistants like ChatGPT, Gemini, Claude and Perplexity can discover, parse and cite your site — a deterministic, signals-based score across 15 checks, from llms.txt and structured data to content depth. Indicative, not a guarantee of citation.',
@@ -335,7 +335,7 @@ const translations = {
     labtools: {
       title: 'Εργαλεία AI Lab',
       subtitle: 'Δωρεάν AI-powered διαγνωστικά από το Noustelos AI Lab — πρακτικά reports ετοιμότητας που τρέχεις σε δευτερόλεπτα.',
-      badge: 'Πείραμα',
+      badge: 'Δωρεάν εργαλείο',
       aivis: {
         title: 'AI Visibility Scanner',
         desc: 'Δες πόσο εύκολα μπορούν βοηθοί AI όπως ChatGPT, Gemini, Claude και Perplexity να εντοπίσουν, να διαβάσουν και να παραθέσουν τον ιστότοπό σου — ντετερμινιστική βαθμολογία από σήματα, σε 15 ελέγχους, από llms.txt και δομημένα δεδομένα μέχρι βάθος περιεχομένου. Ενδεικτικό, όχι εγγύηση παράθεσης.',
