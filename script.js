@@ -88,7 +88,7 @@ const translations = {
     },
     hero: {
       title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
-      subtitle: 'Custom-built for tourism and hospitality — designed in Santorini, engineered for scale.',
+      subtitle: 'Custom websites and agentic AI platforms for tourism and hospitality — designed in Santorini, engineered for scale.',
       intro: 'Designed and built by Nick Karadimas',
       ctaWork: 'View My Work',
       ctaContact: 'Contact'
@@ -261,7 +261,7 @@ const translations = {
     },
     hero: {
       title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
-      subtitle: 'Custom-built για τουρισμό και φιλοξενία — designed in Santorini, engineered for scale.',
+      subtitle: 'Custom websites και agentic AI platforms για τουρισμό και φιλοξενία — designed in Santorini, engineered for scale.',
       intro: 'Σχεδιασμός και ανάπτυξη: Νίκος Καραδήμας',
       ctaWork: 'Δες τη Δουλειά μου',
       ctaContact: 'Επικοινωνία'

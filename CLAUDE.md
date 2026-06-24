@@ -774,13 +774,23 @@ See the Passphrase gate bullet for the full "now public" note.
   visitor lands on the Greek variant. Same generic `data-i18n-attr` mechanism as the
   footer `privacy-policy` link.
 - `script.js` / `styles.css` (+ `.min`), `chat-hero-mark.js` — site behavior/style.
-- **`index.html` is "product-first" (agentic SaaS positioning).** Hero =
-  *"Precision Agentic Platforms, Powered by AI. Delivered as SaaS."* + a developer-
-  not-agency sub-headline; the AI Lab service card (`services.card4`) pitches
-  *"Agentic AI Platforms as SaaS"* and ends with a **`Currently live: AskSantorini.ai`**
-  status line where ONLY the brand is the link (`.service-live` label +
-  `.service-live-link` accent anchor — replaced the old "View the Live Demo" CTA).
-  Greek copy keeps the English terminology (Agentic AI Platforms / SaaS), only the
+- **`index.html` is "product-first" (agentic SaaS positioning), but the hero now
+  bridges BOTH pillars.** Hero title stays *"Precision Agentic Platforms, Powered by
+  AI. Delivered as SaaS."*; the **sub-headline names both offerings** —
+  *"Custom websites and agentic AI platforms for tourism and hospitality…"* — so the
+  promise matches the Work/Services below it (was SaaS-only, which mismatched the
+  evidence; fixed 2026-06). **Services section order is core-first** — Website Design,
+  Landing Pages, Creative Web Projects, then **AI Lab last as the differentiator**,
+  sitting directly above the "AI Lab Tools" section so the AI story reads as one
+  contiguous zone. The duplicate **"AI Lab Highlight" AskSantorini service card was
+  REMOVED** (AskSantorini was showing 4×: launch strip + Work featured card + AI Lab
+  card "Currently live" line + that highlight card → now 3 distinct contexts). Orphan
+  `services.highlight.*` translation keys remain in `script.js`/`.min.js` (harmless,
+  reusable). The AI Lab service card (`services.card4`) pitches *"Agentic AI Platforms
+  as SaaS"* and ends with a **`Currently live: AskSantorini.ai`** status line + an
+  **`AI Lab tools:`** line linking all four scanners (ONLY the brand/tool names are
+  links; `.service-live` label + `.service-live-link` accent anchors). Greek copy keeps
+  the English terminology (Agentic AI Platforms / SaaS / custom websites), only the
   connective words translate.
 - **Homepage copy lives in THREE places — edit all three or the site half-updates:**
   the inline default in `index.html` (`data-i18n="…"`), AND both the `en` and `gr`
