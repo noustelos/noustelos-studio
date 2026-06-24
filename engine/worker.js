@@ -2294,6 +2294,129 @@ const GDPR_SCAN_SCHEMA = {
 
 const GDPR_SCAN_MAX_NOTES = 2000;
 
+const GDPR_DISCLAIMER = {
+  en: "Indicative, signals-based pre-audit of public HTML — not a full audit, not verification of runtime consent behaviour or real cookie storage, and not legal advice.",
+  el: "Ενδεικτικός προέλεγχος βασισμένος σε σήματα δημόσιου HTML — όχι πλήρης έλεγχος, ούτε επαλήθευση της πραγματικής συμπεριφοράς συναίνεσης ή αποθήκευσης cookies, ούτε νομική συμβουλή.",
+};
+
+// A short, deterministic GDPR concern per tracker category (EN/EL).
+function gdprTrackerConcern(category, el) {
+  const c = String(category || "").toLowerCase();
+  if (c.includes("advertis")) return el ? "Tracker διαφήμισης/retargeting· πρέπει να μπλοκάρεται μέχρι ο χρήστης να συναινέσει." : "Advertising/retargeting tracker; must be blocked until the user consents.";
+  if (c.includes("tag")) return el ? "Μπορεί να φορτώσει κι άλλα tags/cookies· βεβαιώσου ότι κανένα δεν ενεργοποιείται πριν τη συναίνεση." : "Can load further tags/cookies; ensure none fire before consent.";
+  if (c.includes("heatmap") || c.includes("behaviour")) return el ? "Καταγράφει συμπεριφορά χρήστη· χρειάζεται προηγούμενη συναίνεση." : "Records user behaviour; needs prior consent.";
+  if (c.includes("chat") || c.includes("marketing")) return el ? "Μπορεί να θέτει cookies / να μεταφέρει δεδομένα· έλεγξε τη συναίνεση." : "May set cookies / transfer data; review consent.";
+  return el ? "Θέτει cookies και μεταφέρει δεδομένα· χρειάζεται προηγούμενη συναίνεση στην ΕΕ." : "Sets cookies and transfers data; needs prior consent in the EU.";
+}
+
+// DETERMINISTIC GDPR report — rule-based scoring + templated narrative (NO model).
+// The detection (trackers/CMP/links/embeds/fonts/forms) is already deterministic in
+// extractGdprSignals; this turns those signals into a score, a 5-axis breakdown and
+// the lists. ePrivacy logic: trackers WITHOUT a consent banner/CMP is the red flag.
+function gdprReport(s, lang) {
+  const el = lang === "el";
+  const clamp = (n) => Math.max(0, Math.min(100, Math.round(n)));
+  const trackers = s.trackers || [];
+  const embeds = s.third_party_embeds || [];
+  const cmps = s.cmps_detected || [];
+  const hasTrackers = trackers.length > 0;
+  const adTrackers = trackers.filter((t) => /advertis/i.test(t.category || "")).length;
+  const cmp = cmps.length > 0;
+  const banner = s.consent_banner_detected;
+  const collectsPersonal = !!(s.collects_email || s.collects_phone);
+
+  // --- Axis scores (0-100) ---
+  let pt = 100;
+  if (!s.privacy_policy_found) pt -= 50;
+  if (!s.cookie_policy_link_found) pt -= 25;
+  if (!s.terms_link_found) pt -= 8;
+  if (!s.is_https) pt -= 15;
+  pt = clamp(pt);
+  const cc = hasTrackers ? (cmp ? 90 : (banner ? 60 : 15)) : ((cmp || banner) ? 100 : 85);
+  const tf = clamp(100 - trackers.length * 12 - adTrackers * 8);
+  const dc = !collectsPersonal ? 100
+    : (s.form_consent_checkbox && s.privacy_policy_found) ? 90
+    : (s.form_consent_checkbox || s.privacy_policy_found) ? 65 : 35;
+  const tpe = clamp(100 - (s.google_fonts_hotlinked ? 25 : 0) - embeds.length * 15);
+  const score = clamp(pt * 0.20 + cc * 0.30 + tf * 0.20 + dc * 0.15 + tpe * 0.15);
+  const label = gdprScoreLabel(score, lang);
+
+  const breakdown = {
+    privacy_transparency: { score: pt, note: s.privacy_policy_found
+      ? (el ? `Σύνδεσμος πολιτικής απορρήτου βρέθηκε${s.cookie_policy_link_found ? " και πολιτική cookies" : ", αλλά όχι ξεχωριστή πολιτική cookies"}.` : `Privacy policy link found${s.cookie_policy_link_found ? " plus a cookie policy" : ", but no dedicated cookie policy"}.`)
+      : (el ? "Δεν βρέθηκε σύνδεσμος πολιτικής απορρήτου." : "No privacy policy link was found.") },
+    cookie_consent: { score: cc, note: hasTrackers
+      ? (cmp ? (el ? `Εντοπίστηκε CMP (${cmps.join(", ")}).` : `Consent Management Platform detected (${cmps.join(", ")}).`)
+        : banner ? (el ? "Banner cookies εντοπίστηκε, αλλά όχι γνωστό CMP." : "A cookie banner was detected, but no known CMP.")
+        : (el ? "Φορτώνουν trackers χωρίς εντοπισμένο banner/CMP συναίνεσης." : "Trackers load with no detected consent banner/CMP."))
+      : (el ? "Δεν εντοπίστηκαν non-essential trackers που να απαιτούν συναίνεση." : "No non-essential trackers requiring consent were detected.") },
+    tracking_footprint: { score: tf, note: hasTrackers
+      ? (el ? `${trackers.length} scripts παρακολούθησης/μάρκετινγκ${adTrackers ? ` (${adTrackers} διαφημιστικά)` : ""}.` : `${trackers.length} tracking/marketing scripts${adTrackers ? ` (${adTrackers} advertising)` : ""}.`)
+      : (el ? "Δεν εντοπίστηκαν scripts τρίτων για παρακολούθηση." : "No third-party tracking scripts were detected.") },
+    data_collection: { score: dc, note: !collectsPersonal
+      ? (el ? "Δεν εντοπίστηκε φόρμα που να συλλέγει προσωπικά δεδομένα." : "No form collecting personal data was detected.")
+      : (el ? `Φόρμα συλλέγει προσωπικά δεδομένα· checkbox συναίνεσης ${s.form_consent_checkbox ? "βρέθηκε" : "δεν εντοπίστηκε"}.` : `A form collects personal data; a consent checkbox was ${s.form_consent_checkbox ? "found" : "not detected"}.`) },
+    third_party_exposure: { score: tpe, note: (s.google_fonts_hotlinked || embeds.length)
+      ? (el ? `${s.google_fonts_hotlinked ? "Google Fonts από Google. " : ""}${embeds.length ? "Embeds με cookies: " + embeds.join(", ") + "." : ""}`.trim() : `${s.google_fonts_hotlinked ? "Google Fonts hotlinked from Google. " : ""}${embeds.length ? "Cookie-setting embeds: " + embeds.join(", ") + "." : ""}`.trim())
+      : (el ? "Δεν εντοπίστηκαν hotlinked fonts ή embeds που θέτουν cookies." : "No hotlinked fonts or cookie-setting embeds detected.") },
+  };
+
+  const detected_trackers = trackers.map((t) => ({ name: t.name, category: t.category, concern: gdprTrackerConcern(t.category, el) }));
+
+  const inPlace = [];
+  if (s.is_https) inPlace.push(el ? "Εξυπηρετείται μέσω HTTPS." : "Served over HTTPS.");
+  if (s.privacy_policy_found) inPlace.push(el ? "Υπάρχει σύνδεσμος πολιτικής απορρήτου." : "A privacy policy link is present.");
+  if (s.cookie_policy_link_found) inPlace.push(el ? "Υπάρχει σύνδεσμος πολιτικής/ειδοποίησης cookies." : "A cookie policy / notice link is present.");
+  if (cmp) inPlace.push(el ? `Εντοπίστηκε CMP (${cmps.join(", ")}).` : `A Consent Management Platform was detected (${cmps.join(", ")}).`);
+  else if (banner) inPlace.push(el ? "Εντοπίστηκε banner συναίνεσης cookies." : "A cookie-consent banner was detected.");
+  if (s.form_consent_checkbox) inPlace.push(el ? "Οι φόρμες περιλαμβάνουν checkbox συναίνεσης." : "Forms include a consent checkbox.");
+  if (!hasTrackers) inPlace.push(el ? "Δεν εντοπίστηκαν scripts τρίτων για παρακολούθηση." : "No third-party tracking scripts were detected.");
+  if (!inPlace.length) inPlace.push(el ? "Δεν εντοπίστηκαν θετικά σήματα συμμόρφωσης." : "No positive compliance signals were detected.");
+
+  const risks = [];
+  if (hasTrackers && !banner) risks.push(el ? "Scripts παρακολούθησης/διαφήμισης φορτώνουν χωρίς εντοπισμένο banner/CMP — τα μη απαραίτητα cookies πιθανώς τρέχουν πριν τη συναίνεση." : "Tracking/advertising scripts load with no detected consent banner or CMP — non-essential cookies likely run before consent.");
+  if (!s.privacy_policy_found) risks.push(el ? "Δεν βρέθηκε σύνδεσμος πολιτικής απορρήτου." : "No privacy policy link was found.");
+  if (hasTrackers && !s.cookie_policy_link_found) risks.push(el ? "Δεν βρέθηκε ξεχωριστή πολιτική/ειδοποίηση cookies." : "No dedicated cookie policy / notice link was found.");
+  if (s.google_fonts_hotlinked) risks.push(el ? "Τα Google Fonts φορτώνονται απευθείας από την Google (ζήτημα μεταφοράς δεδομένων στην ΕΕ)." : "Google Fonts are hotlinked from Google (an EU data-transfer concern).");
+  if (collectsPersonal && !s.form_consent_checkbox) risks.push(el ? "Φόρμες συλλέγουν προσωπικά δεδομένα χωρίς εντοπισμένο checkbox συναίνεσης ή σύνδεσμο απορρήτου." : "Forms collect personal data with no detected consent checkbox or privacy-link reference.");
+  if (embeds.length) risks.push(el ? `Embeds τρίτων που θέτουν cookies: ${embeds.join(", ")}.` : `Cookie-setting third-party embeds are present: ${embeds.join(", ")}.`);
+  if (!s.is_https) risks.push(el ? "Ο ιστότοπος δεν εξυπηρετείται μέσω HTTPS." : "The site is not served over HTTPS.");
+  if (!risks.length) risks.push(el ? "Δεν εντοπίστηκαν σημαντικά κενά από τα διαθέσιμα σήματα." : "No major gaps were detected from the available signals.");
+
+  const steps = [];
+  if (hasTrackers && !cmp) steps.push(el ? "Πρόσθεσε CMP που μπλοκάρει τα μη απαραίτητα scripts μέχρι τη συναίνεση." : "Add a Consent Management Platform that blocks non-essential scripts until consent.");
+  if (hasTrackers && !s.cookie_policy_link_found) steps.push(el ? "Πρόσθεσε ξεχωριστή πολιτική cookies και σύνδεσμο ρυθμίσεων cookies." : "Add a dedicated cookie policy and a cookie-settings link.");
+  if (collectsPersonal && !s.form_consent_checkbox) steps.push(el ? "Πρόσθεσε checkbox συναίνεσης και αναφορά στην πολιτική απορρήτου σε κάθε φόρμα." : "Add a consent checkbox and a privacy-policy reference to every data-collection form.");
+  if (s.google_fonts_hotlinked) steps.push(el ? "Self-host τα Google Fonts αντί για hotlink από την Google." : "Self-host Google Fonts instead of hotlinking from Google.");
+  if (embeds.length) steps.push(el ? "Φόρτωσε τα embeds (π.χ. YouTube) σε privacy-enhanced/no-cookie mode." : "Load embeds (e.g. YouTube) in privacy-enhanced / no-cookie mode.");
+  if (!s.privacy_policy_found) steps.push(el ? "Δημοσίευσε καθαρή, προσβάσιμη πολιτική απορρήτου." : "Publish a clear, reachable privacy policy.");
+  if (!steps.length) steps.push(el ? "Διατήρησε τα τρέχοντα μέτρα και επανέλεγχε μετά από αλλαγές σε scripts/φόρμες." : "Maintain current measures and re-check after changes to scripts or forms.");
+
+  const summary = el
+    ? `Με βάση δημόσια σήματα της σελίδας, η στάση GDPR/ePrivacy βαθμολογείται ${score}/100 (${label}). ${hasTrackers ? (banner ? "Εντοπίστηκαν trackers και μηχανισμός συναίνεσης." : "Εντοπίστηκαν trackers χωρίς μηχανισμό συναίνεσης — το βασικό ζήτημα.") : "Δεν εντοπίστηκαν non-essential trackers."}`
+    : `Based on public page signals, the GDPR/ePrivacy posture scores ${score}/100 (${label}). ${hasTrackers ? (banner ? "Trackers and a consent mechanism were detected." : "Trackers were detected with no consent mechanism — the core issue.") : "No non-essential trackers were detected."}`;
+  const verdict = score >= 80
+    ? (el ? "Καλή βασική στάση συμμόρφωσης, με μικρά σημεία προς βελτίωση." : "A good baseline posture, with minor points to tighten.")
+    : score >= 60
+    ? (el ? "Μερική συμμόρφωση — χρειάζονται διορθώσεις, κυρίως στη συναίνεση cookies." : "Partially aligned — fixes are needed, mainly around cookie consent.")
+    : (el ? "Σημαντικά κενά — χρειάζεται μηχανισμός συναίνεσης πριν τρέξουν νόμιμα τα trackers." : "Significant gaps — a working consent mechanism is needed before trackers can run lawfully.");
+
+  return {
+    mode: "single",
+    language: lang,
+    compliance_score: score,
+    compliance_label: label,
+    executive_summary: summary,
+    score_breakdown: breakdown,
+    detected_trackers,
+    what_is_in_place: inPlace,
+    key_risks: risks,
+    recommended_next_steps: steps,
+    final_verdict: verdict,
+    disclaimer: GDPR_DISCLAIMER[lang] || GDPR_DISCLAIMER.en,
+  };
+}
+
 async function handleGdprScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
@@ -2312,30 +2435,14 @@ async function handleGdprScan(body, env, ctx, request, corsOrigin, origin, allow
     return json({ error: "url_required" }, 400, corsOrigin);
   }
 
-  const businessType = clean(body.businessType, 80);
-  const notes = clean(body.notes, GDPR_SCAN_MAX_NOTES);
-  const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
-
   // --- Fetch + extract real GDPR signals. Option B: refuse if unreadable. ---
   const fetched = await fetchPageSignals(url, extractGdprSignals);
   if (!fetched.ok) {
     return json({ error: "unreachable", message: websiteFetchRefusal(fetched.reason, lang, { status: fetched.status }) }, 200, corsOrigin);
   }
 
-  const lines = [renderGdprSignalsBlock(fetched.signals)];
-  if (businessType) lines.push("", `Business Type: ${businessType}`);
-  if (notes) lines.push("", "Owner Notes:", notes);
-  const userText = lines.join("\n");
-
-  let result;
-  try {
-    result = await callGdprScanner({ apiKey: env.GOOGLE_API_KEY, model, userText, lang });
-  } catch (err) {
-    console.error("gdpr-scan error:", String((err && err.message) || err));
-    return json({ error: "scan_failed" }, 502, corsOrigin);
-  }
-  if (!result) return json({ error: "bad_format" }, 502, corsOrigin);
-
+  // DETERMINISTIC report — rule-based scoring + templated narrative (NO model call).
+  const result = gdprReport(fetched.signals, lang);
   result.scanned_url = fetched.signals.final_url || url;
   return json({ result }, 200, corsOrigin);
 }
