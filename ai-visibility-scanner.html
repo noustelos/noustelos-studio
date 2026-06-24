@@ -900,38 +900,151 @@
       // Canned sample report so a locked visitor can preview the output without a
       // code (rendered through the normal render() path, flagged as a sample).
       var SAMPLE_REPORT = {
-        mode: 'single',
-        scanned_url: 'https://example.com',
-        score: 64,
-        grade: 'C',
-        grade_label: 'Needs improvement',
-        citation_probability: { value: 59, label: 'Medium' },
-        executive_summary: 'The site has solid basics — a clear title, a canonical URL and Organization structured data — but it is missing the signals AI assistants weigh most. There is no llms.txt and no FAQ structured data, and the content is thin, which makes the page harder for assistants to parse and cite confidently.',
-        checks: [
-          { key: 'homepage_reachable', name: 'Homepage reachable', weight: 5, points: 5, status: 'pass', detail: 'HTTP 200 — the homepage was fetched successfully.' },
-          { key: 'robots_txt', name: 'robots.txt present', weight: 5, points: 5, status: 'pass', detail: 'Found, with User-agent directives.' },
-          { key: 'sitemap_xml', name: 'XML sitemap', weight: 5, points: 5, status: 'pass', detail: 'XML sitemap found at /sitemap.xml.' },
-          { key: 'llms_txt', name: 'llms.txt (AI guidance file)', weight: 15, points: 0, status: 'missing', detail: 'No llms.txt — the emerging convention for guiding AI assistants is absent.' },
-          { key: 'org_schema', name: 'Organization schema', weight: 10, points: 10, status: 'pass', detail: 'Organization structured data present.' },
-          { key: 'faq_schema', name: 'FAQ schema', weight: 10, points: 0, status: 'missing', detail: 'No FAQ structured data found.' },
-          { key: 'localbusiness_schema', name: 'LocalBusiness schema', weight: 5, points: 0, status: 'missing', detail: 'No LocalBusiness schema (fine if not a local business).' },
-          { key: 'contact_info', name: 'Contact information', weight: 5, points: 5, status: 'pass', detail: 'Phone, email and/or a postal address are present.' },
-          { key: 'meta_title', name: 'Title tag', weight: 5, points: 5, status: 'pass', detail: 'Title is 48 chars (ideal 30–60).' },
-          { key: 'meta_description', name: 'Meta description', weight: 5, points: 3, status: 'partial', detail: 'Description is 92 chars (ideal 120–160).' },
-          { key: 'open_graph', name: 'Open Graph tags', weight: 5, points: 3, status: 'partial', detail: 'Only 2 of 3 core Open Graph tags present.' },
-          { key: 'canonical', name: 'Canonical URL', weight: 5, points: 5, status: 'pass', detail: 'Canonical URL declared.' },
-          { key: 'heading_structure', name: 'Heading structure (single H1)', weight: 5, points: 5, status: 'pass', detail: 'Exactly one H1, as expected.' },
-          { key: 'content_richness', name: 'Content richness', weight: 5, points: 3, status: 'partial', detail: '~320 visible words (richer content is easier for AI to parse and cite).' },
-          { key: 'ai_friendly_wording', name: 'AI-friendly content sections', weight: 10, points: 5, status: 'partial', detail: 'Found content sections: about, contact.' }
+        "mode": "single",
+        "scanned_url": "https://noustelos.gr/",
+        "score": 100,
+        "grade": "A",
+        "grade_label": "Excellent AI visibility",
+        "citation_probability": {
+                "value": 98,
+                "label": "High"
+        },
+        "executive_summary": "The website demonstrates excellent AI discoverability, passing all 15 deterministic checks. Key structured data like Organization and FAQPage are present, along with an llms.txt file. Content is rich and well-sectioned, making it highly accessible to AI assistants.",
+        "checks": [
+                {
+                        "key": "homepage_reachable",
+                        "name": "Homepage reachable",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "HTTP 200 — the homepage was fetched successfully."
+                },
+                {
+                        "key": "robots_txt",
+                        "name": "robots.txt present",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Found, with User-agent directives."
+                },
+                {
+                        "key": "sitemap_xml",
+                        "name": "XML sitemap",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "XML sitemap found at /sitemap.xml."
+                },
+                {
+                        "key": "llms_txt",
+                        "name": "llms.txt (AI guidance file)",
+                        "weight": 15,
+                        "points": 15,
+                        "status": "pass",
+                        "detail": "Found and references content (docs/products/services)."
+                },
+                {
+                        "key": "org_schema",
+                        "name": "Organization schema",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "Organization (or LocalBusiness) structured data present."
+                },
+                {
+                        "key": "faq_schema",
+                        "name": "FAQ schema",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "FAQPage structured data present — directly citable by AI."
+                },
+                {
+                        "key": "localbusiness_schema",
+                        "name": "LocalBusiness schema",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "LocalBusiness structured data present."
+                },
+                {
+                        "key": "contact_info",
+                        "name": "Contact information",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Phone, email and/or a postal address are present."
+                },
+                {
+                        "key": "meta_title",
+                        "name": "Title tag",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Title is 53 chars (ideal 30–60)."
+                },
+                {
+                        "key": "meta_description",
+                        "name": "Meta description",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Description is 155 chars (ideal 120–160)."
+                },
+                {
+                        "key": "open_graph",
+                        "name": "Open Graph tags",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "og:title, og:description and og:image all present."
+                },
+                {
+                        "key": "canonical",
+                        "name": "Canonical URL",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Canonical URL declared."
+                },
+                {
+                        "key": "heading_structure",
+                        "name": "Heading structure (single H1)",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Exactly one H1, as expected."
+                },
+                {
+                        "key": "content_richness",
+                        "name": "Content richness",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "~880 visible words (richer content is easier for AI to parse and cite)."
+                },
+                {
+                        "key": "ai_friendly_wording",
+                        "name": "AI-friendly content sections",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "Found content sections: services, faq, about, contact."
+                }
         ],
-        detected_schema: ['Organization', 'WebSite'],
-        recommendations: [
-          'Publish an llms.txt at your site root that points AI assistants to your key pages (services, pricing, about, contact) — it is the heaviest single signal here.',
-          'Add FAQPage structured data to a frequently-asked-questions section so assistants can lift and cite your answers directly.',
-          'Expand the homepage copy and add clear Services and Pricing sections so there is more citable, AI-readable content.'
+        "detected_schema": [
+                "WebSite",
+                "Organization",
+                "ImageObject",
+                "PostalAddress",
+                "Person",
+                "Place",
+                "ProfessionalService",
+                "FAQPage"
         ],
-        final_verdict: 'A technically sound site that needs AI-specific signals — an llms.txt, FAQ schema and richer content — to become easy for assistants to cite.',
-        disclaimer: 'This is a sample report shown for demonstration. Unlock the scanner with an access code to scan a real website. It is an indicative, signals-based analysis of public HTML — not a guarantee of AI citation.'
+        "recommendations": [],
+        "final_verdict": "The website is exceptionally well-optimized for AI discoverability.",
+        "disclaimer": "This is a sample report — a real, live AI Visibility scan of noustelos.gr, the studio's own site. Unlock the scanner with an access code to scan any website. It is an indicative, signals-based analysis of public HTML — not a guarantee of AI citation."
       };
 
       var lastResult = null;
@@ -958,7 +1071,14 @@
 
         renderChecks(r.checks);
         renderSchema(r.detected_schema);
-        fillList('r-steps', r.recommendations);
+        var recs = r.recommendations || [];
+        if (recs.length) {
+          fillList('r-steps', recs);
+        } else {
+          var ol = document.getElementById('r-steps');
+          ol.innerHTML = '';
+          ol.appendChild(li('All 15 checks pass — no improvements needed. Re-scan after major content or structure changes to keep it that way.'));
+        }
         document.getElementById('r-verdict').textContent = r.final_verdict || '';
         var disc = document.getElementById('r-disclaimer');
         if (r.disclaimer) { disc.textContent = r.disclaimer; disc.hidden = false; } else { disc.hidden = true; }
@@ -1041,7 +1161,11 @@
         L.push((r.detected_schema && r.detected_schema.length) ? r.detected_schema.join(', ') : 'None detected');
         L.push('');
         L.push('Top Recommendations');
-        (r.recommendations || []).forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        if (r.recommendations && r.recommendations.length) {
+          r.recommendations.forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        } else {
+          L.push('All 15 checks pass — no improvements needed.');
+        }
         L.push(''); L.push('Final Verdict'); L.push(r.final_verdict || '');
         if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
         return L.join('\n');

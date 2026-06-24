@@ -900,38 +900,151 @@
       // Canned sample report so a locked visitor can preview the output without a
       // code (rendered through the normal render() path, flagged as a sample).
       var SAMPLE_REPORT = {
-        mode: 'single',
-        scanned_url: 'https://example.com',
-        score: 64,
-        grade: 'C',
-        grade_label: 'Χρειάζεται βελτίωση',
-        citation_probability: { value: 59, label: 'Μέτρια' },
-        executive_summary: 'Ο ιστότοπος έχει γερές βάσεις — καθαρό title, canonical URL και δομημένα δεδομένα Organization — αλλά του λείπουν τα σήματα που βαραίνουν περισσότερο για τους βοηθούς AI. Δεν υπάρχει llms.txt ούτε δομημένα δεδομένα FAQ, και το περιεχόμενο είναι λιγοστό, κάτι που δυσκολεύει τους βοηθούς να το διαβάσουν και να το παραθέσουν με σιγουριά.',
-        checks: [
-          { key: 'homepage_reachable', name: 'Προσβάσιμη αρχική', weight: 5, points: 5, status: 'pass', detail: 'HTTP 200 — η αρχική ανακτήθηκε με επιτυχία.' },
-          { key: 'robots_txt', name: 'Παρουσία robots.txt', weight: 5, points: 5, status: 'pass', detail: 'Βρέθηκε, με οδηγίες User-agent.' },
-          { key: 'sitemap_xml', name: 'XML sitemap', weight: 5, points: 5, status: 'pass', detail: 'Βρέθηκε XML sitemap στο /sitemap.xml.' },
-          { key: 'llms_txt', name: 'llms.txt (αρχείο οδηγιών για AI)', weight: 15, points: 0, status: 'missing', detail: 'Δεν υπάρχει llms.txt — η αναδυόμενη σύμβαση για την καθοδήγηση βοηθών AI απουσιάζει.' },
-          { key: 'org_schema', name: 'Schema Organization', weight: 10, points: 10, status: 'pass', detail: 'Υπάρχουν δομημένα δεδομένα Organization.' },
-          { key: 'faq_schema', name: 'Schema FAQ', weight: 10, points: 0, status: 'missing', detail: 'Δεν βρέθηκαν δομημένα δεδομένα FAQ.' },
-          { key: 'localbusiness_schema', name: 'Schema LocalBusiness', weight: 5, points: 0, status: 'missing', detail: 'Δεν υπάρχει schema LocalBusiness (εντάξει αν δεν είναι τοπική επιχείρηση).' },
-          { key: 'contact_info', name: 'Στοιχεία επικοινωνίας', weight: 5, points: 5, status: 'pass', detail: 'Υπάρχουν τηλέφωνο, email ή/και ταχυδρομική διεύθυνση.' },
-          { key: 'meta_title', name: 'Ετικέτα τίτλου (title)', weight: 5, points: 5, status: 'pass', detail: 'Ο τίτλος έχει 48 χαρακτήρες (ιδανικά 30–60).' },
-          { key: 'meta_description', name: 'Meta description', weight: 5, points: 3, status: 'partial', detail: 'Η περιγραφή έχει 92 χαρακτήρες (ιδανικά 120–160).' },
-          { key: 'open_graph', name: 'Ετικέτες Open Graph', weight: 5, points: 3, status: 'partial', detail: 'Μόνο 2 από τις 3 βασικές ετικέτες Open Graph υπάρχουν.' },
-          { key: 'canonical', name: 'Canonical URL', weight: 5, points: 5, status: 'pass', detail: 'Δηλωμένο canonical URL.' },
-          { key: 'heading_structure', name: 'Δομή επικεφαλίδων (ένα H1)', weight: 5, points: 5, status: 'pass', detail: 'Ακριβώς ένα H1, όπως αναμένεται.' },
-          { key: 'content_richness', name: 'Πλούτος περιεχομένου', weight: 5, points: 3, status: 'partial', detail: '~320 ορατές λέξεις (πιο πλούσιο περιεχόμενο διαβάζεται και παρατίθεται πιο εύκολα από AI).' },
-          { key: 'ai_friendly_wording', name: 'Ενότητες φιλικές προς AI', weight: 10, points: 5, status: 'partial', detail: 'Βρέθηκαν ενότητες: σχετικά, επικοινωνία.' }
+        "mode": "single",
+        "scanned_url": "https://noustelos.gr/",
+        "score": 100,
+        "grade": "A",
+        "grade_label": "Εξαιρετική ορατότητα σε AI",
+        "citation_probability": {
+                "value": 98,
+                "label": "Υψηλή"
+        },
+        "executive_summary": "Η ιστοσελίδα παρουσιάζει εξαιρετική ορατότητα για AI, με όλους τους ελέγχους να περνούν. Η δομημένη πληροφορία είναι πλήρης, συμπεριλαμβανομένων των schema.org για Οργανισμό και Συχνές Ερωτήσεις, καθώς και του αρχείου llms.txt. Η πλούσια δομή και το περιεχόμενο διευκολύνουν την ανάλυση.",
+        "checks": [
+                {
+                        "key": "homepage_reachable",
+                        "name": "Προσβάσιμη αρχική",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "HTTP 200 — the homepage was fetched successfully."
+                },
+                {
+                        "key": "robots_txt",
+                        "name": "Παρουσία robots.txt",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Found, with User-agent directives."
+                },
+                {
+                        "key": "sitemap_xml",
+                        "name": "XML sitemap",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "XML sitemap found at /sitemap.xml."
+                },
+                {
+                        "key": "llms_txt",
+                        "name": "llms.txt (αρχείο οδηγιών για AI)",
+                        "weight": 15,
+                        "points": 15,
+                        "status": "pass",
+                        "detail": "Found and references content (docs/products/services)."
+                },
+                {
+                        "key": "org_schema",
+                        "name": "Schema Organization",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "Organization (or LocalBusiness) structured data present."
+                },
+                {
+                        "key": "faq_schema",
+                        "name": "Schema FAQ",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "FAQPage structured data present — directly citable by AI."
+                },
+                {
+                        "key": "localbusiness_schema",
+                        "name": "Schema LocalBusiness",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "LocalBusiness structured data present."
+                },
+                {
+                        "key": "contact_info",
+                        "name": "Στοιχεία επικοινωνίας",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Phone, email and/or a postal address are present."
+                },
+                {
+                        "key": "meta_title",
+                        "name": "Ετικέτα τίτλου (title)",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Title is 53 chars (ideal 30–60)."
+                },
+                {
+                        "key": "meta_description",
+                        "name": "Meta description",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Description is 155 chars (ideal 120–160)."
+                },
+                {
+                        "key": "open_graph",
+                        "name": "Ετικέτες Open Graph",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "og:title, og:description and og:image all present."
+                },
+                {
+                        "key": "canonical",
+                        "name": "Canonical URL",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Canonical URL declared."
+                },
+                {
+                        "key": "heading_structure",
+                        "name": "Δομή επικεφαλίδων (ένα H1)",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "Exactly one H1, as expected."
+                },
+                {
+                        "key": "content_richness",
+                        "name": "Πλούτος περιεχομένου",
+                        "weight": 5,
+                        "points": 5,
+                        "status": "pass",
+                        "detail": "~880 visible words (richer content is easier for AI to parse and cite)."
+                },
+                {
+                        "key": "ai_friendly_wording",
+                        "name": "Ενότητες φιλικές προς AI",
+                        "weight": 10,
+                        "points": 10,
+                        "status": "pass",
+                        "detail": "Found content sections: services, faq, about, contact."
+                }
         ],
-        detected_schema: ['Organization', 'WebSite'],
-        recommendations: [
-          'Δημοσίευσε ένα llms.txt στη ρίζα του ιστότοπου που να παραπέμπει τους βοηθούς AI στις βασικές σου σελίδες (υπηρεσίες, τιμές, σχετικά, επικοινωνία) — είναι το βαρύτερο μεμονωμένο σήμα εδώ.',
-          'Πρόσθεσε δομημένα δεδομένα FAQPage σε μια ενότητα συχνών ερωτήσεων ώστε οι βοηθοί να μπορούν να αντλούν και να παραθέτουν απευθείας τις απαντήσεις σου.',
-          'Επέκτεινε το κείμενο της αρχικής και πρόσθεσε καθαρές ενότητες Υπηρεσιών και Τιμών ώστε να υπάρχει περισσότερο παραθέσιμο, ευανάγνωστο από AI περιεχόμενο.'
+        "detected_schema": [
+                "WebSite",
+                "Organization",
+                "ImageObject",
+                "PostalAddress",
+                "Person",
+                "Place",
+                "ProfessionalService",
+                "FAQPage"
         ],
-        final_verdict: 'Ένας τεχνικά σωστός ιστότοπος που χρειάζεται σήματα ειδικά για AI — ένα llms.txt, schema FAQ και πλουσιότερο περιεχόμενο — για να γίνει εύκολο να τον παραθέτουν οι βοηθοί.',
-        disclaimer: 'Αυτό είναι δείγμα αναφοράς για επίδειξη. Ξεκλείδωσε τον scanner με κωδικό πρόσβασης για να σαρώσεις πραγματικό ιστότοπο. Είναι ενδεικτική ανάλυση δημόσιου HTML — όχι εγγύηση παράθεσης από AI.'
+        "recommendations": [],
+        "final_verdict": "Η ιστοσελίδα είναι άριστα βελτιστοποιημένη για AI.",
+        "disclaimer": "Αυτό είναι δείγμα αναφοράς — μια πραγματική, ζωντανή σάρωση AI Visibility του noustelos.gr, του ίδιου του site του studio. Ξεκλείδωσε τον scanner με κωδικό πρόσβασης για να σαρώσεις οποιονδήποτε ιστότοπο. Είναι ενδεικτική ανάλυση δημόσιου HTML — όχι εγγύηση παράθεσης από AI."
       };
 
       var lastResult = null;
@@ -958,7 +1071,14 @@
 
         renderChecks(r.checks);
         renderSchema(r.detected_schema);
-        fillList('r-steps', r.recommendations);
+        var recs = r.recommendations || [];
+        if (recs.length) {
+          fillList('r-steps', recs);
+        } else {
+          var ol = document.getElementById('r-steps');
+          ol.innerHTML = '';
+          ol.appendChild(li('Και οι 15 έλεγχοι περνούν — δεν χρειάζονται βελτιώσεις. Κάνε ξανά σάρωση μετά από μεγάλες αλλαγές περιεχομένου ή δομής για να παραμείνει έτσι.'));
+        }
         document.getElementById('r-verdict').textContent = r.final_verdict || '';
         var disc = document.getElementById('r-disclaimer');
         if (r.disclaimer) { disc.textContent = r.disclaimer; disc.hidden = false; } else { disc.hidden = true; }
@@ -1041,7 +1161,11 @@
         L.push((r.detected_schema && r.detected_schema.length) ? r.detected_schema.join(', ') : 'Κανένα');
         L.push('');
         L.push('Κορυφαίες Συστάσεις');
-        (r.recommendations || []).forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        if (r.recommendations && r.recommendations.length) {
+          r.recommendations.forEach(function (x, i) { L.push((i + 1) + '. ' + x); });
+        } else {
+          L.push('Και οι 15 έλεγχοι περνούν — δεν χρειάζονται βελτιώσεις.');
+        }
         L.push(''); L.push('Τελικό Συμπέρασμα'); L.push(r.final_verdict || '');
         if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
         return L.join('\n');
