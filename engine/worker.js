@@ -3178,7 +3178,10 @@ async function handleSiteAssistant(body, env, ctx, request, corsOrigin, origin, 
  * scanner stays passphrase-gated (it's a model-only tool, kept opt-in). Env overrides:
  * SCAN_RATE_LIMIT, SCAN_RATE_WINDOW_S, SCAN_DAILY_CAP. ==========================*/
 
-const SCAN_GATE_DEFAULTS = { RATE_LIMIT: 8, RATE_WINDOW_S: 600, DAILY_CAP: 300 };
+// Per-IP: 20 scans/day (fixed window). Global circuit-breaker: 600/day across all
+// users. Both env-overridable (e.g. SCAN_RATE_LIMIT=3 + SCAN_RATE_WINDOW_S=3600 for
+// "3/hour"). A compare scan counts as weight 2.
+const SCAN_GATE_DEFAULTS = { RATE_LIMIT: 20, RATE_WINDOW_S: 86400, DAILY_CAP: 300 };
 
 // Localized limit messages (shown to the user as `message`).
 function scanLimitMsg(lang, kind) {

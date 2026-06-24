@@ -723,7 +723,8 @@ this? contact" CTA in the reports is a recommended follow-up (not yet added).
   dispatch + signatures gained `request, origin, allowedOrigin`). The gate: **(1)
   Origin allow-list** (`isAllowed` vs `ALLOWED_ORIGIN` → `403 forbidden` off-site;
   spoofable, not a hard wall), **(2) per-IP fixed-window KV limit** (`kvBump`,
-  `rl:scan:<ip>:<bucket>`, default **8 / 600s**, SHARED across all three tools),
+  `rl:scan:<ip>:<bucket>`, default **20 / day**, SHARED across all three tools;
+  env `SCAN_RATE_LIMIT`/`SCAN_RATE_WINDOW_S` — e.g. 3/3600 = "3/hour"),
   **(3) GLOBAL daily circuit-breaker** (`rl:scan:global:<day>`, default **300/day**
   — catches distributed/IP-rotating abuse the per-IP can't). A **compare** scan
   counts as **weight 2**. Both limits return `429 {error, message}` (localized
