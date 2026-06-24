@@ -200,9 +200,8 @@ const translations = {
     },
     about: {
       title: 'About',
-      p1: "I'm Nick Karadimas, a creative web designer and developer based in Santorini.",
-      p2: 'I build custom websites and landing pages for tourism, hospitality, local businesses and creative projects. My work combines clear structure, visual storytelling, responsive design and practical functionality.',
-      p3: 'I use AI-assisted workflows to move faster, explore stronger directions and refine details, but every project is shaped through human judgment, taste and final quality control. The goal is not to produce another template. The goal is to create a site that feels specific, useful and well-directed.'
+      p1: "I'm Nick Karadimas, a creative developer based in Santorini. I design custom websites and build agentic AI platforms — delivered as SaaS — for tourism, hospitality and businesses that want more than a brochure online.",
+      p2: 'I think in terms of simpler processes, not bigger ones: where most people add steps, I look for the one that removes them. AI lets me move fast and explore unconventional directions, but every decision is shaped by human judgment, taste and final quality control — so the result feels specific and genuinely useful, never another template.'
     },
     contact: {
       title: "Let's Work Together",
@@ -373,9 +372,8 @@ const translations = {
     },
     about: {
       title: 'Σχετικά',
-      p1: 'Είμαι ο Νίκος Καραδήμας, creative web designer και developer με βάση τη Σαντορίνη.',
-      p2: 'Χτίζω custom ιστοσελίδες και landing pages για τουρισμό, φιλοξενία, τοπικές επιχειρήσεις και δημιουργικά projects. Η δουλειά μου συνδυάζει καθαρή δομή, visual storytelling, responsive design και πρακτική λειτουργικότητα.',
-      p3: 'Χρησιμοποιώ AI-assisted workflows για να κινούμαι πιο γρήγορα, να εξερευνώ πιο δυνατές κατευθύνσεις και να τελειοποιώ λεπτομέρειες, αλλά κάθε project διαμορφώνεται μέσα από ανθρώπινη κρίση, γούστο και τελικό quality control. Ο στόχος δεν είναι να παραχθεί άλλο ένα template. Ο στόχος είναι να δημιουργηθεί ένα site που νιώθει συγκεκριμένο, χρήσιμο και καλά κατευθυνόμενο.'
+      p1: 'Είμαι ο Νίκος Καραδήμας, creative developer με βάση τη Σαντορίνη. Σχεδιάζω custom ιστοσελίδες και χτίζω agentic AI platforms — που παραδίδονται ως SaaS — για τον τουρισμό, τη φιλοξενία και επιχειρήσεις που θέλουν κάτι παραπάνω από μια απλή online παρουσία.',
+      p2: 'Σκέφτομαι σε λογική απλούστερων διαδικασιών, όχι μεγαλύτερων: εκεί που οι περισσότεροι προσθέτουν βήματα, εγώ ψάχνω αυτό που τα αφαιρεί. Το AI με αφήνει να κινούμαι γρήγορα και να εξερευνώ ασυνήθιστες κατευθύνσεις, αλλά κάθε απόφαση διαμορφώνεται από ανθρώπινη κρίση, γούστο και τελικό quality control — ώστε το αποτέλεσμα να νιώθει συγκεκριμένο και πραγματικά χρήσιμο, ποτέ άλλο ένα template.'
     },
     contact: {
       title: 'Ας Συνεργαστούμε',
