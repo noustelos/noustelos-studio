@@ -753,8 +753,15 @@ this? contact" CTA in the reports is a recommended follow-up (not yet added).
   dispatch + signatures gained `request, origin, allowedOrigin`). The gate: **(1)
   Origin allow-list** (`isAllowed` vs `ALLOWED_ORIGIN` → `403 forbidden` off-site;
   spoofable, not a hard wall), **(2) per-IP fixed-window KV limit** (`kvBump`,
-  `rl:scan:<ip>:<bucket>`, default **20 / day**, SHARED across all three tools;
-  env `SCAN_RATE_LIMIT`/`SCAN_RATE_WINDOW_S` — e.g. 3/3600 = "3/hour"),
+  `rl:scan:<ip>:<bucket>`, code default 20/day but the **live `[vars]` override is
+  `SCAN_RATE_LIMIT=50`/day** (20 was too low for the owner's own testing — every
+  attempt, including errored ones, counts, and the daily window only resets at 00:00
+  UTC), SHARED across all three tools; env `SCAN_RATE_LIMIT`/`SCAN_RATE_WINDOW_S` —
+  e.g. 3/3600 = "3/hour". The per-IP `scanLimitMsg` copy says it's a **daily** limit
+  ("try again tomorrow") — NOT "give it a minute" (the window is a full day, so the
+  old short-wait copy was misleading). **Unblock a stuck IP** by deleting its KV key:
+  `npx wrangler kv key delete "rl:scan:<ip>:<dayBucket>" --namespace-id <id> --remote`
+  (dayBucket = `floor(Date.now()/86400000)`)),
   **(3) GLOBAL daily circuit-breaker** (`rl:scan:global:<day>`, default **300/day**
   — catches distributed/IP-rotating abuse the per-IP can't). A **compare** scan
   counts as **weight 2**. Both limits return `429 {error, message}` (localized

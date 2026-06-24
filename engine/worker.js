@@ -3001,8 +3001,8 @@ function scanLimitMsg(lang, kind) {
       : "The scanner is seeing heavy traffic today — the free daily limit has been reached. Please try again tomorrow, or get in touch.";
   }
   return el
-    ? "Έτρεξες αρκετές σαρώσεις σε λίγη ώρα — περίμενε ένα λεπτό και δοκίμασε ξανά."
-    : "You've run several scans in a short time — give it a minute and try again.";
+    ? "Έφτασες το ημερήσιο όριο σαρώσεων για αυτή τη σύνδεση. Δοκίμασε ξανά αύριο ή επικοινώνησε μαζί μας."
+    : "You've reached the daily scan limit for this connection. Please try again tomorrow, or get in touch.";
 }
 
 // Fixed-window KV counter. Returns true if ALREADY at/over the limit (block),
