@@ -757,6 +757,12 @@ See the Passphrase gate bullet for the full "now public" note.
   **Adding a new content page = create BOTH files** (use `water-cycle-details*.html`
   as the template), add BOTH to `sitemap.xml`, and if it's linked from the homepage
   give the link a language-aware `data-i18n-attr="href:…"` key (see next bullet).
+  ⚠️ **Also keep `llms.txt` (site root) in sync** — it's a hand-maintained map of the
+  site's key pages for AI assistants (see the AI Visibility Scanner section). When you
+  ADD / REMOVE / RENAME a notable page (a new tool, a new project write-up, a moved URL),
+  update its entry in `llms.txt` too, or the AI-facing map silently drifts out of date
+  (and the studio's own AI Visibility score relies on a real, current llms.txt). Not every
+  tiny page needs an entry — only the ones worth pointing an AI at; keep it curated.
   The HOMEPAGE stays single-URL with the shared `script.js` JS toggle (Google best
   practice for a homepage) — it is the ONE page that is still runtime-bilingual.
 - **Homepage → content-page links are language-aware** via `data-i18n-attr=
