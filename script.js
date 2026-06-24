@@ -150,7 +150,7 @@ const translations = {
         title: 'AI Lab',
         desc: 'We design and deploy Agentic AI Platforms as SaaS — intelligent systems that perceive, decide, and act autonomously within real business workflows. Built for tourism and hospitality.',
         live: 'Currently live:',
-        tool: 'New tool:'
+        tool: 'New tools:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',
@@ -166,24 +166,24 @@ const translations = {
       aivis: {
         title: 'AI Visibility Scanner',
         desc: 'See how easily AI assistants like ChatGPT, Gemini, Claude and Perplexity can discover, parse and cite your site — a deterministic, signals-based score across 15 checks, from llms.txt and structured data to content depth. Indicative, not a guarantee of citation.',
-        cta: 'Try Scanner',
+        cta: 'Try it',
         href: '/ai-visibility-scanner.html'
       },
       saas: {
         title: 'SaaS Readiness Scanner',
         desc: 'Evaluate whether a digital project can become a scalable SaaS product — scoring productization, technical gaps, monetization paths and next steps as a structured report.',
-        cta: 'Try Scanner'
+        cta: 'Try it'
       },
       web: {
         title: 'Website Quality Scanner',
         desc: 'An AI-powered website readiness audit for clarity, SEO, trust signals and conversion — scoring a site across seven axes and separating builder fixes from client-dependent material.',
-        cta: 'Try Scanner',
+        cta: 'Try it',
         href: '/website-scanner.html'
       },
       gdpr: {
         title: 'GDPR Auto-Scanner',
         desc: 'An indicative GDPR & cookie-consent pre-audit — flags privacy policy, consent banner or CMP, third-party trackers and form data-collection from real page signals. Not legal advice.',
-        cta: 'Try Scanner',
+        cta: 'Try it',
         href: '/gdpr-scanner.html'
       }
     },
@@ -323,7 +323,7 @@ const translations = {
         title: 'AI Lab',
         desc: 'Σχεδιάζουμε και αναπτύσσουμε Agentic AI Platforms ως SaaS — ευφυή συστήματα που αντιλαμβάνονται, αποφασίζουν και δρουν αυτόνομα μέσα σε πραγματικές επαγγελματικές ροές εργασίας. Φτιαγμένα για τουρισμό και φιλοξενία.',
         live: 'Ήδη σε παραγωγή:',
-        tool: 'Νέο εργαλείο:'
+        tool: 'Νέα εργαλεία:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',
