@@ -150,7 +150,7 @@ const translations = {
         title: 'AI Lab',
         desc: 'We design and deploy Agentic AI Platforms as SaaS — intelligent systems that perceive, decide, and act autonomously within real business workflows. Built for tourism and hospitality.',
         live: 'Currently live:',
-        tool: 'New tools:'
+        tool: 'AI Lab tools:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',
@@ -323,7 +323,7 @@ const translations = {
         title: 'AI Lab',
         desc: 'Σχεδιάζουμε και αναπτύσσουμε Agentic AI Platforms ως SaaS — ευφυή συστήματα που αντιλαμβάνονται, αποφασίζουν και δρουν αυτόνομα μέσα σε πραγματικές επαγγελματικές ροές εργασίας. Φτιαγμένα για τουρισμό και φιλοξενία.',
         live: 'Ήδη σε παραγωγή:',
-        tool: 'Νέα εργαλεία:'
+        tool: 'Εργαλεία AI Lab:'
       },
       highlight: {
         kicker: 'AI Lab Highlight',
