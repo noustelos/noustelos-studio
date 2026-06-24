@@ -133,7 +133,7 @@ export default {
     // schema. Bilingual — the front-end (split EN/EL pages) sends lang:"en"|"el"
     // and the report comes back in that language. Same passphrases, no logging.
     if (new URL(request.url).pathname === "/api/website-scan") {
-      return handleWebsiteScan(body, env, ctx, corsOrigin);
+      return handleWebsiteScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin);
     }
 
     // --- GDPR Auto-Scanner (third standalone, passphrase-gated AI Lab tool) ---
@@ -144,7 +144,7 @@ export default {
     // refusal if it can't), reuses fetchPageSignals + SSRF guards, and is bilingual
     // (lang:"en"|"el"). Same passphrases, no user-input logging. See handleGdprScan.
     if (new URL(request.url).pathname === "/api/gdpr-scan") {
-      return handleGdprScan(body, env, ctx, corsOrigin);
+      return handleGdprScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin);
     }
 
     // --- AI Visibility Scanner (fourth standalone, passphrase-gated AI Lab tool) ---
@@ -156,7 +156,7 @@ export default {
     // recommendations, so every point traces to a real, checkable signal. Bilingual
     // (lang:"en"|"el"). Same passphrases, no user-input logging. See handleAiVisibilityScan.
     if (new URL(request.url).pathname === "/api/ai-visibility-scan") {
-      return handleAiVisibilityScan(body, env, ctx, corsOrigin);
+      return handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin);
     }
 
     // --- Site Assistant (PUBLIC, ungated public-facing chatbot) ---
@@ -1669,18 +1669,14 @@ function websiteFetchRefusal(reason, lang, opts) {
   return `Limited analysis: ${who}${why}. No scored report was produced, because we will not base an assessment on assumptions. Check the URL and try again.`;
 }
 
-async function handleWebsiteScan(body, env, ctx, corsOrigin) {
+async function handleWebsiteScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
   }
 
-  // --- Passphrase gate — SAME codes as the Artifact chat / SaaS scanner ---
-  const valid = collectPassphrases(env);
-  if (valid.size) {
-    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
-    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
-  }
-  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+  // --- PUBLIC (ungated): Origin allow-list + per-IP + global daily KV caps ---
+  const gate = await publicScanGate(env, request, origin, allowedOrigin, body.compare === true ? 2 : 1, body.lang === "el" ? "el" : "en");
+  if (!gate.ok) return json(gate.body, gate.status, corsOrigin);
 
   const lang = body.lang === "el" ? "el" : "en";
 
@@ -2298,18 +2294,14 @@ const GDPR_SCAN_SCHEMA = {
 
 const GDPR_SCAN_MAX_NOTES = 2000;
 
-async function handleGdprScan(body, env, ctx, corsOrigin) {
+async function handleGdprScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
   }
 
-  // --- Passphrase gate — SAME codes as the Artifact chat / other scanners ---
-  const valid = collectPassphrases(env);
-  if (valid.size) {
-    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
-    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
-  }
-  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+  // --- PUBLIC (ungated): Origin allow-list + per-IP + global daily KV caps ---
+  const gate = await publicScanGate(env, request, origin, allowedOrigin, body.compare === true ? 2 : 1, body.lang === "el" ? "el" : "en");
+  if (!gate.ok) return json(gate.body, gate.status, corsOrigin);
 
   const lang = body.lang === "el" ? "el" : "en";
 
@@ -2775,18 +2767,14 @@ const AIVIS_DISCLAIMERS = {
   el: "Ενδεικτική ανάλυση βασισμένη σε στατικά, δημόσια σήματα HTML — όχι πραγματικό crawl από AI, ούτε εγγύηση παράθεσης, ούτε υποκατάστατο πλήρους εργασίας SEO/GEO. Το llms.txt είναι αναδυόμενη σύμβαση. Η «Πιθανότητα Παράθεσης από AI» είναι ευρετική, όχι πρόβλεψη.",
 };
 
-async function handleAiVisibilityScan(body, env, ctx, corsOrigin) {
+async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
   }
 
-  // --- Passphrase gate — SAME codes as the Artifact chat / other scanners ---
-  const valid = collectPassphrases(env);
-  if (valid.size) {
-    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
-    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
-  }
-  if (body.verify) return json({ ok: true }, 200, corsOrigin);
+  // --- PUBLIC (ungated): Origin allow-list + per-IP + global daily KV caps ---
+  const gate = await publicScanGate(env, request, origin, allowedOrigin, body.compare === true ? 2 : 1, body.lang === "el" ? "el" : "en");
+  if (!gate.ok) return json(gate.body, gate.status, corsOrigin);
 
   const lang = body.lang === "el" ? "el" : "en";
   const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -3176,4 +3164,66 @@ async function handleSiteAssistant(body, env, ctx, request, corsOrigin, origin, 
   }
   if (!reply) return json({ error: "assistant_failed" }, 502, corsOrigin);
   return json({ reply }, 200, corsOrigin);
+}
+
+/* ===========================================================================
+ * Public scanner gate (ungated AI Visibility / Website / GDPR scanners)
+ * ----------------------------------------------------------------------------
+ * These three scanners are now PUBLIC (no passphrase) so anyone can try them.
+ * Each request FETCHES a URL + calls the model, so it's heavier than a chat turn
+ * → protected technically: an Origin allow-list + a per-IP KV rate limit (tighter
+ * than the chat) + a GLOBAL daily circuit-breaker (catches distributed/IP-rotating
+ * abuse the per-IP limit can't). A compare scan counts as weight 2. The SSRF guards
+ * (parseSafeUrl/fetchFollow) already bound what URLs the Worker will fetch. The SaaS
+ * scanner stays passphrase-gated (it's a model-only tool, kept opt-in). Env overrides:
+ * SCAN_RATE_LIMIT, SCAN_RATE_WINDOW_S, SCAN_DAILY_CAP. ==========================*/
+
+const SCAN_GATE_DEFAULTS = { RATE_LIMIT: 8, RATE_WINDOW_S: 600, DAILY_CAP: 300 };
+
+// Localized limit messages (shown to the user as `message`).
+function scanLimitMsg(lang, kind) {
+  const el = lang === "el";
+  if (kind === "global") {
+    return el
+      ? "Ο scanner δέχεται πολλή κίνηση σήμερα — το δωρεάν ημερήσιο όριο εξαντλήθηκε. Δοκίμασε ξανά αύριο ή επικοινώνησε μαζί μας."
+      : "The scanner is seeing heavy traffic today — the free daily limit has been reached. Please try again tomorrow, or get in touch.";
+  }
+  return el
+    ? "Έτρεξες αρκετές σαρώσεις σε λίγη ώρα — περίμενε ένα λεπτό και δοκίμασε ξανά."
+    : "You've run several scans in a short time — give it a minute and try again.";
+}
+
+// Fixed-window KV counter. Returns true if ALREADY at/over the limit (block),
+// otherwise bumps by `weight` and returns false. Fails OPEN if KV is unbound.
+// Read-modify-write isn't atomic (KV has no increment) — fine for soft limits.
+async function kvBump(env, key, limit, windowS, weight) {
+  if (!env.ARTIFACT_KV) return false;
+  let count = 0;
+  try { count = parseInt((await env.ARTIFACT_KV.get(key)) || "0", 10) || 0; } catch { return false; }
+  if (count >= limit) return true;
+  try { await env.ARTIFACT_KV.put(key, String(count + (weight || 1)), { expirationTtl: windowS + 60 }); } catch { /* best effort */ }
+  return false;
+}
+
+async function publicScanGate(env, request, origin, allowedOrigin, weight, lang) {
+  // 1) Origin allow-list — blocks naive off-site abuse (spoofable, not a hard wall).
+  if (!isAllowed(origin, allowedOrigin)) return { ok: false, status: 403, body: { error: "forbidden" } };
+  const w = weight || 1;
+  const ip = (request && request.headers.get("CF-Connecting-IP")) || "unknown";
+
+  // 2) Per-IP fixed-window limit.
+  const windowS = Number(env.SCAN_RATE_WINDOW_S || SCAN_GATE_DEFAULTS.RATE_WINDOW_S);
+  const perIp = Number(env.SCAN_RATE_LIMIT || SCAN_GATE_DEFAULTS.RATE_LIMIT);
+  const ipKey = `rl:scan:${ip}:${Math.floor(Date.now() / (windowS * 1000))}`;
+  if (await kvBump(env, ipKey, perIp, windowS, w)) {
+    return { ok: false, status: 429, body: { error: "rate_limited", message: scanLimitMsg(lang, "ip") } };
+  }
+
+  // 3) Global daily circuit-breaker.
+  const dailyCap = Number(env.SCAN_DAILY_CAP || SCAN_GATE_DEFAULTS.DAILY_CAP);
+  const dayKey = `rl:scan:global:${Math.floor(Date.now() / 86400000)}`;
+  if (await kvBump(env, dayKey, dailyCap, 86400, w)) {
+    return { ok: false, status: 429, body: { error: "busy", message: scanLimitMsg(lang, "global") } };
+  }
+  return { ok: true };
 }

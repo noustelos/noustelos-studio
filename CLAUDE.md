@@ -710,6 +710,40 @@ persona/memory/Drive/kill-switch.
 - **Deploy:** engine change → **`cd engine && npx wrangler deploy`**. `ai-chat.html` goes
   live on push to `main`. No rate-limiting beyond the per-IP KV cap above (public route).
 
+## Public, ungated scanners (AI Visibility + Website + GDPR — 2026-06)
+The three **fetch-based** scanners are now **PUBLIC (no passphrase)** — anyone on
+the site can run them, like the Site Assistant. The **SaaS scanner stays
+passphrase-gated** (model-only, kept opt-in). Why ungate: more top-of-funnel reach
+for the lead-magnet tools; the email-request code was friction. The trade-off
+(losing the email-as-lead capture) is accepted; a soft "want help implementing
+this? contact" CTA in the reports is a recommended follow-up (not yet added).
+- **Engine** (`engine/worker.js`): `handleWebsiteScan` / `handleGdprScan` /
+  `handleAiVisibilityScan` dropped their `collectPassphrases` gate and now call
+  **`publicScanGate(env, request, origin, allowedOrigin, weight, lang)`** (their
+  dispatch + signatures gained `request, origin, allowedOrigin`). The gate: **(1)
+  Origin allow-list** (`isAllowed` vs `ALLOWED_ORIGIN` → `403 forbidden` off-site;
+  spoofable, not a hard wall), **(2) per-IP fixed-window KV limit** (`kvBump`,
+  `rl:scan:<ip>:<bucket>`, default **8 / 600s**, SHARED across all three tools),
+  **(3) GLOBAL daily circuit-breaker** (`rl:scan:global:<day>`, default **300/day**
+  — catches distributed/IP-rotating abuse the per-IP can't). A **compare** scan
+  counts as **weight 2**. Both limits return `429 {error, message}` (localized
+  `scanLimitMsg`); the front-ends already surface `out.data.message`. Fails OPEN if
+  `ARTIFACT_KV` is unbound. SSRF guards (`parseSafeUrl`/`fetchFollow`) already bound
+  what URLs get fetched, so ungating didn't widen the SSRF surface — just removed a
+  weak code barrier. Env overrides: `SCAN_RATE_LIMIT`, `SCAN_RATE_WINDOW_S`,
+  `SCAN_DAILY_CAP`. **Needs `cd engine && npx wrangler deploy`.**
+- **Front-end** (the 6 scanner pages, EN+EL): the passphrase **gate `<section>` is
+  now `hidden` and the form `<section>` shows by default** (no flash), with
+  `unlock()` still called on load (harmless). The gate JS (`verifyCode`, the example
+  button, request-access link) is dead but left in place. "Use an example" now fills
+  a **real, scannable URL** (noustelos.gr / watercyclesystem.gr) instead of the thin
+  `example.com` that tripped the Option-B refusal. The payload still sends
+  `passphrase` (ignored now). The canned `SAMPLE_REPORT` is unused (harmless).
+- **Cost posture:** ungated = spends against the Google billing cap, bounded only by
+  the per-IP + daily KV caps above (no Turnstile — parked on `artifact-public-wip` as
+  escalation if abused). The Site Assistant has the same posture (separate `rl:sa:*`
+  per-IP limit).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`

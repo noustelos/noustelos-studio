@@ -595,7 +595,7 @@
       </section>
 
       <!-- Passphrase gate -->
-      <section class="scanner-panel scanner-gate" id="gate" aria-labelledby="gate-title">
+      <section class="scanner-panel scanner-gate" id="gate" aria-labelledby="gate-title" hidden>
         <h2 id="gate-title">Απαιτείται πρόσβαση</h2>
         <p>Ο scanner είναι ένα πείραμα που τρέχει σε μετρημένη μηχανή AI, οπότε η πρόσβαση είναι με πρόσκληση. Βάλε τον κωδικό πρόσβασής σου ή ζήτησέ τον και θα στον στείλουμε με email.</p>
         <div class="scanner-gate-row">
@@ -608,7 +608,7 @@
       </section>
 
       <!-- Scanner form -->
-      <section class="scanner-panel scanner-form" id="form-panel" aria-labelledby="form-title" hidden>
+      <section class="scanner-panel scanner-form" id="form-panel" aria-labelledby="form-title">
         <h2 id="form-title" class="launch-kicker" style="color:var(--glass-gray-text);">Σάρωση ιστότοπου</h2>
 
         <div class="scanner-field">
@@ -820,7 +820,7 @@
         formPanel.hidden = false;
       }
 
-      if (pass) unlock();
+      unlock();
 
       function verifyCode(code) {
         gateSubmit.disabled = true;
@@ -877,9 +877,9 @@
 
       // ── Example input ──
       document.getElementById('fill-example').addEventListener('click', function () {
-        document.getElementById('f-url').value = 'https://example.com';
+        document.getElementById('f-url').value = 'https://noustelos.gr';
         document.getElementById('f-type').value = 'Τοπική επιχείρηση υπηρεσιών';
-        if (compareChk.checked) document.getElementById('f-url-b').value = 'https://noustelos.gr';
+        if (compareChk.checked) document.getElementById('f-url-b').value = 'https://watercyclesystem.gr';
       });
 
       // ── Run scan ──
