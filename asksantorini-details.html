@@ -278,6 +278,7 @@
         <h3>Overview</h3>
         <p>AskSantorini.ai is a conversational assistant that helps visitors plan their time on the island — where to eat, what to see, how to get around — and turns that intent into actual reservations through an affiliate discount-code system.</p>
         <p>It lives at the intersection of two things that don’t usually share a codebase: a consumer-facing LLM chat experience, and a transactional booking backend with partner management, email, and analytics. The entire stack runs at the edge — no traditional server, no container, no persistent VM.</p>
+        <p>It was built less as a one-off site than as the first instance of a reusable platform. The destination-specific layer — local knowledge, persona, partner data, and visual theme — is deliberately kept separate from the shared engine, so the same core can serve another destination by swapping configuration rather than forking code. A sibling instance, <strong>AskSingapore.ai</strong>, already runs on that shared codebase in early preview.</p>
         <p><em>Built and maintained solo as an AI-assisted product: I own the architecture and the decisions; an AI coding agent handles execution under a strategy-first, gated workflow. The interesting part of that process isn’t the code generation — it’s the discipline around it (reviewable diffs, rollback-first deploys, verify-before-merge).</em></p>
 
         <h3>Tech Stack</h3>
@@ -358,7 +359,7 @@
 
         <h3>Roadmap</h3>
         <ul>
-          <li><strong>Multi-tenant Edge Architecture.</strong> The architecture is being generalized into a shared worker core plus a per-instance config bundle — environment variables, persona / system-instruction, knowledge base, affiliate data, and visual theme tokens — so a new destination launches as a config-and-theme file rather than a fork. First sibling instance ships with its own distinct AI persona, not a renamed clone.</li>
+          <li><strong>Multi-tenant edge platform.</strong> Finishing the clean split between the shared worker core and a per-instance config bundle — environment variables, persona / system-instruction, knowledge base, affiliate data, and visual theme tokens — so a new destination launches as a config-and-theme file rather than a fork. Each instance keeps its own distinct persona, not a renamed clone.</li>
           <li><strong>Tiered Places activation.</strong> Gemini Function Calling to fetch venue visuals on demand — text-only for broad queries, rich detail cards for specific venues — cutting both UI clutter and API spend.</li>
           <li><strong>Privacy &amp; consent hardening.</strong> Enforced consent gating and data-deletion flows to a GDPR-grade standard.</li>
         </ul>
