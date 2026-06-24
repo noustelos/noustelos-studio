@@ -159,6 +159,17 @@ export default {
       return handleAiVisibilityScan(body, env, ctx, corsOrigin);
     }
 
+    // --- Site Assistant (PUBLIC, ungated public-facing chatbot) ---
+    // The friendly noustelos.gr site guide: answers questions about the studio +
+    // general concepts (SEO, AI visibility, testimonials, GDPR…) and points to the
+    // right page/tool. UNLIKE the Artifact + scanners it has NO passphrase (it's for
+    // random visitors), so it's protected technically instead: an Origin allow-list +
+    // a per-IP KV rate limit + a cheap model with a tight token cap. Decoupled — its
+    // own route, own short system prompt, no persona/memory/Drive/kill-switch.
+    if (new URL(request.url).pathname === "/api/site-assistant") {
+      return handleSiteAssistant(body, env, ctx, request, corsOrigin, origin, allowedOrigin);
+    }
+
     // --- Passphrase gate (optional, supports multiple codes) ---
     // The real access control lives here, server-side, so it can't be bypassed
     // by reading the page source or POSTing to the Worker directly. Any code in
@@ -3047,4 +3058,122 @@ function parseAiVisibilityCompareJson(text) {
     recommendation: str(obj.recommendation),
     final_verdict: str(obj.final_verdict),
   };
+}
+
+/* ===========================================================================
+ * Site Assistant  —  POST /api/site-assistant   (PUBLIC, no passphrase)
+ * ----------------------------------------------------------------------------
+ * The public-facing noustelos.gr chatbot: answers questions about the studio and
+ * general web/AI concepts (SEO, AI visibility, testimonials, GDPR…), pointing to
+ * the right page/tool. Replaces a separate Hugging Face Space so the system prompt
+ * + key live here. Decoupled from the Artifact: own route, own SHORT prompt, no
+ * persona/memory/Drive/kill-switch. Because it's ungated it's protected by an
+ * Origin allow-list (isAllowed) + a per-IP KV rate limit (saRateLimited) + a cheap
+ * model with a tight token cap. Env overrides: SA_SYSTEM_PROMPT, SA_MODEL,
+ * SA_MAX_OUTPUT_TOKENS, SA_TEMPERATURE, SA_HISTORY_CAP, SA_RATE_LIMIT, SA_RATE_WINDOW_S.
+ * ==========================================================================*/
+
+const SA_DEFAULTS = {
+  RATE_LIMIT: 20,        // messages per window, per IP
+  RATE_WINDOW_S: 600,    // 10 minutes
+  MAX_OUTPUT_TOKENS: 600,
+  HISTORY_CAP: 12,
+  TEMPERATURE: 0.6,
+};
+
+const SITE_ASSISTANT_PROMPT = [
+  "You are the Noustelos Studio site assistant — a friendly, professional guide on noustelos.gr. You help visitors understand the studio and answer practical questions a prospective client might have.",
+  "",
+  "ABOUT THE STUDIO (facts — do not contradict or invent beyond these):",
+  "- Noustelos Studio is a web design and development practice based in Santorini, Greece, led by Nick Karadimas.",
+  "- It builds custom websites, landing pages and creative web projects, plus agentic AI platforms delivered as SaaS. Focus is tourism and hospitality, but it is open to other fields.",
+  "- Flagship live product: AskSantorini.ai — a free AI guide/concierge for Santorini visitors. A sister project, AskSingapore.ai, is in early preview.",
+  "- The studio runs an 'AI Lab' with free, AI-powered tools: an AI Visibility Scanner (how easily AI assistants can find and cite a site), a Website Quality Scanner, a SaaS Readiness Scanner, and a GDPR Auto-Scanner. They are passphrase-gated; a visitor can request an access code by email through the contact form.",
+  "- There is also 'The Artifact', an experimental AI chat playground.",
+  "- To start a project or get a quote, visitors use the contact form on the site; Nick replies by email. There are no fixed public prices — quotes are tailored to each project.",
+  "",
+  "WHAT YOU CAN EXPLAIN, in plain language for non-experts: SEO; AI visibility / Generative Engine Optimization (GEO); llms.txt; structured data (schema.org); testimonials and social proof and why they matter; landing pages and conversion; GDPR and cookie basics. When a topic maps to one of the Lab tools or a FAQ page, mention it helpfully (e.g. 'you can check this with our free AI Visibility Scanner').",
+  "",
+  "STYLE:",
+  "- Be concise: usually 2-5 short sentences. No walls of text; minimal or no emoji.",
+  "- Reply in the user's language — Greek or English — detected from their message.",
+  "- Warm, clear and helpful; never pushy.",
+  "",
+  "HONESTY (important):",
+  "- Never invent facts, prices, features, clients or results. If you don't know, say so and suggest contacting Nick through the contact form.",
+  "- Do NOT refer visitors to specific site pages or sections unless they are named in the facts above (the four AI Lab tools, AskSantorini.ai, The Artifact, the contact form). Never claim a section exists (e.g. a testimonials page) unless listed. When unsure where to point someone, point to the contact form.",
+  "- You are an AI assistant, not a human — own it if asked.",
+  "- For legal or compliance questions (e.g. GDPR), give general information only and say it is not legal advice.",
+  "- Do not overpromise outcomes (rankings, guaranteed AI citations, traffic). Describe honestly what helps.",
+  "- Gently steer clearly off-topic requests back to the studio, its work, or web/AI topics.",
+].join("\n");
+
+// Per-IP fixed-window rate limit via KV. Fails OPEN if KV is unbound. Read-modify-
+// write isn't atomic (KV has no increment), which is fine for soft abuse control.
+async function saRateLimited(env, ip) {
+  if (!env.ARTIFACT_KV) return false;
+  const limit = Number(env.SA_RATE_LIMIT || SA_DEFAULTS.RATE_LIMIT);
+  const windowS = Number(env.SA_RATE_WINDOW_S || SA_DEFAULTS.RATE_WINDOW_S);
+  const bucket = Math.floor(Date.now() / (windowS * 1000));
+  const key = `rl:sa:${ip}:${bucket}`;
+  let count = 0;
+  try { count = parseInt((await env.ARTIFACT_KV.get(key)) || "0", 10) || 0; } catch { return false; }
+  if (count >= limit) return true;
+  try { await env.ARTIFACT_KV.put(key, String(count + 1), { expirationTtl: windowS + 60 }); } catch { /* best effort */ }
+  return false;
+}
+
+async function handleSiteAssistant(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
+  if (!env.GOOGLE_API_KEY) return json({ error: "unavailable" }, 500, corsOrigin);
+
+  // Origin allow-list — blocks naive off-site abuse (not a hard boundary; spoofable).
+  if (!isAllowed(origin, allowedOrigin)) {
+    return json({ error: "forbidden" }, 403, corsOrigin);
+  }
+
+  // Per-IP rate limit (KV). The front-end shows the friendly `reply` calmly.
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (await saRateLimited(env, ip)) {
+    return json({
+      error: "rate_limited",
+      reply: "I'm getting a lot of questions right now — give me a minute and try again. For anything urgent, use the contact form and Nick will reply by email.",
+    }, 429, corsOrigin);
+  }
+
+  const messages = normalizeMessages(body);
+  if (!messages.length) return json({ error: "no_message" }, 400, corsOrigin);
+
+  const model = env.SA_MODEL || env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
+  const cap = Number(env.SA_HISTORY_CAP || SA_DEFAULTS.HISTORY_CAP);
+  const contents = messages.slice(-cap).map((m) => ({
+    role: (m.role === "model" || m.role === "assistant" || m.role === "bot") ? "model" : "user",
+    parts: [{ text: String(m.text ?? m.content ?? "").slice(0, 2000) }],
+  }));
+
+  const payload = {
+    systemInstruction: { parts: [{ text: env.SA_SYSTEM_PROMPT || SITE_ASSISTANT_PROMPT }] },
+    contents,
+    generationConfig: {
+      temperature: Number(env.SA_TEMPERATURE || SA_DEFAULTS.TEMPERATURE),
+      maxOutputTokens: Number(env.SA_MAX_OUTPUT_TOKENS || SA_DEFAULTS.MAX_OUTPUT_TOKENS),
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+
+  let reply;
+  try {
+    const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+    const res = await postJsonWithRetry(apiUrl, env.GOOGLE_API_KEY, payload, "site-assistant", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error(`Google API ${res.status}: ${t.slice(0, 200)}`);
+    }
+    const data = await res.json();
+    reply = extractReply(data);
+  } catch (err) {
+    console.error("site-assistant error:", String((err && err.message) || err));
+    return json({ error: "assistant_failed" }, 502, corsOrigin);
+  }
+  if (!reply) return json({ error: "assistant_failed" }, 502, corsOrigin);
+  return json({ reply }, 200, corsOrigin);
 }

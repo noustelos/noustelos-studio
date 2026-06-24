@@ -4,22 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex, follow" />
-  <meta name="description" content="NOUSTELOS Digital Assistant για γρήγορη υποστήριξη και πληροφορίες σχετικά με το Noustelos Studio." />
+  <meta name="description" content="NOUSTELOS Assistant — ρωτήστε για το Noustelos Studio και για θέματα web/AI (SEO, ορατότητα σε AI, testimonials, GDPR)." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="canonical" href="https://noustelos.gr/ai-chat.html" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Noustelos Studio" />
-  <meta property="og:title" content="NOUSTELOS Digital Assistant" />
-  <meta property="og:description" content="Συνομιλήστε με την τεχνητή νοημοσύνη μας για επαγγελματική υποστήριξη και πληροφορίες." />
+  <meta property="og:title" content="NOUSTELOS Assistant" />
+  <meta property="og:description" content="Ρωτήστε για το Noustelos Studio και για θέματα web/AI." />
   <meta property="og:url" content="https://noustelos.gr/ai-chat.html" />
   <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NOUSTELOS Digital Assistant" />
-  <meta name="twitter:description" content="Συνομιλήστε με την τεχνητή νοημοσύνη μας για επαγγελματική υποστήριξη και πληροφορίες." />
+  <meta name="twitter:title" content="NOUSTELOS Assistant" />
+  <meta name="twitter:description" content="Ρωτήστε για το Noustelos Studio και για θέματα web/AI." />
   <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
-  <title>NOUSTELOS Digital Assistant</title>
+  <title>NOUSTELOS Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -27,50 +27,248 @@
     document.documentElement.classList.add('fonts-pending');
   </script>
   <link rel="stylesheet" href="styles.min.css?v=20260623" />
+
+  <style>
+    /* Native site assistant — calls the Worker (/api/site-assistant). */
+    .site-chat-wrap {
+      min-height: 0;
+      padding: clamp(0.8rem, 2vw, 1.4rem);
+      display: flex;
+    }
+    .site-chat {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      background: #fffdf8;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    .site-chat-head {
+      padding: 0.9rem clamp(1rem, 3vw, 1.4rem);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 0.15rem;
+      background: var(--bg);
+    }
+    .site-chat-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.02rem;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+    .site-chat-sub { font-size: 0.86rem; color: var(--text-secondary); }
+
+    .site-chat-stream {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: clamp(1rem, 3vw, 1.5rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .sc-msg {
+      max-width: 85%;
+      padding: 0.7rem 0.95rem;
+      border-radius: 1rem;
+      line-height: 1.55;
+      font-size: 1rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .sc-msg.bot {
+      align-self: flex-start;
+      background: var(--surface-light);
+      color: var(--text-primary);
+      border-bottom-left-radius: 0.25rem;
+    }
+    .sc-msg.user {
+      align-self: flex-end;
+      background: var(--cta);
+      color: #fff;
+      border-bottom-right-radius: 0.25rem;
+    }
+    .sc-typing { align-self: flex-start; color: var(--text-secondary); font-size: 0.9rem; font-style: italic; }
+
+    .site-chat-form {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.7rem;
+      border-top: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .site-chat-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-family: "Inter", sans-serif;
+      font-size: 1rem;
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      padding: 0.7rem 0.85rem;
+      background: #fff;
+      color: var(--text-primary);
+    }
+    .site-chat-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(41, 50, 63, 0.12); }
+    .site-chat-send {
+      flex: 0 0 auto;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 0 1.15rem;
+      background: var(--cta);
+      color: #fff;
+      cursor: pointer;
+    }
+    .site-chat-send[disabled] { opacity: 0.6; cursor: progress; }
+    .site-chat-note {
+      margin: 0;
+      padding: 0 0.95rem 0.7rem;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+  </style>
 </head>
 <body class="chat-page-body">
-  <main class="chat-page" aria-label="NOUSTELOS Digital Assistant">
+  <main class="chat-page" aria-label="NOUSTELOS Assistant">
     <header class="chat-page-header">
       <div class="chat-page-header-inner">
         <a class="chat-page-back" href="index.html">Back to Noustelos_Studio /&gt;</a>
       </div>
     </header>
 
-    <div class="chat-page-frame-shell is-loading">
-      <div class="chat-page-frame-wrap">
-        <iframe
-          class="chat-page-frame"
-          src="https://nik-greek-my-site-bot.hf.space/?__theme=light"
-          title="Συνομιλία με το AI του Noustelos Studio"
-          loading="eager"
-        ></iframe>
-      </div>
-      <div class="hero-mark-wrap chat-page-mark webgl-pending" role="img" aria-label="Animated symbol /&gt;">
-        <canvas class="hero-mark-canvas" aria-hidden="true"></canvas>
-        <span class="hero-mark-fallback">/&gt;</span>
-      </div>
-      <a class="chat-page-back chat-page-back-bottom" href="index.html">Back to Noustelos_Studio /&gt;</a>
+    <div class="site-chat-wrap">
+      <section class="site-chat" aria-label="NOUSTELOS Assistant">
+        <div class="site-chat-head">
+          <span class="site-chat-title">NOUSTELOS Assistant</span>
+          <span class="site-chat-sub" id="sc-sub">Ρώτα για το studio, SEO, ορατότητα σε AI…</span>
+        </div>
+        <div class="site-chat-stream" id="sc-stream" aria-live="polite"></div>
+        <form class="site-chat-form" id="sc-form">
+          <input class="site-chat-input" id="sc-input" type="text" autocomplete="off" autocapitalize="sentences" placeholder="Γράψε την ερώτησή σου…" aria-label="Μήνυμα" />
+          <button class="site-chat-send" id="sc-send" type="submit">Αποστολή</button>
+        </form>
+        <p class="site-chat-note" id="sc-note">AI assistant — οι απαντήσεις μπορεί να μην είναι τέλειες. Όχι νομική συμβουλή.</p>
+      </section>
     </div>
   </main>
-  <script src="chat-hero-mark.min.js"></script>
+
   <script>
     (function () {
-      var shell = document.querySelector('.chat-page-frame-shell');
-      var frame = document.querySelector('.chat-page-frame');
+      var ENDPOINT = "https://artifact-engine.avatar68.workers.dev/api/site-assistant";
 
-      if (!shell || !frame) {
-        return;
+      var lang = (function () {
+        try { return localStorage.getItem('siteLanguage') === 'en' ? 'en' : 'el'; } catch (e) { return 'el'; }
+      })();
+
+      var STR = {
+        el: {
+          greet: "Γεια! Είμαι ο assistant του Noustelos. Ρώτησέ με για το studio, ή για SEO, ορατότητα σε AI, testimonials, GDPR — οτιδήποτε σχετικό με web.",
+          ph: "Γράψε την ερώτησή σου…",
+          sub: "Ρώτα για το studio, SEO, ορατότητα σε AI…",
+          send: "Αποστολή",
+          note: "AI assistant — οι απαντήσεις μπορεί να μην είναι τέλειες. Όχι νομική συμβουλή.",
+          typing: "γράφει…",
+          err: "Συγγνώμη — δεν μπόρεσα να συνδεθώ τώρα. Δοκίμασε ξανά ή χρησιμοποίησε τη φόρμα επικοινωνίας."
+        },
+        en: {
+          greet: "Hi! I'm the Noustelos assistant. Ask me about the studio, or about SEO, AI visibility, testimonials, GDPR — anything web.",
+          ph: "Type your question…",
+          sub: "Ask about the studio, SEO, AI visibility…",
+          send: "Send",
+          note: "AI assistant — answers may be imperfect. Not legal advice.",
+          typing: "typing…",
+          err: "Sorry — I couldn't reach the assistant just now. Please try again, or use the contact form."
+        }
+      }[lang];
+
+      document.documentElement.lang = lang === 'en' ? 'en' : 'el';
+
+      var stream = document.getElementById('sc-stream');
+      var form = document.getElementById('sc-form');
+      var input = document.getElementById('sc-input');
+      var sendBtn = document.getElementById('sc-send');
+      input.placeholder = STR.ph;
+      sendBtn.textContent = STR.send;
+      document.getElementById('sc-sub').textContent = STR.sub;
+      document.getElementById('sc-note').textContent = STR.note;
+
+      var history = []; // [{ role:'user'|'model', text }]
+
+      function scrollDown() { stream.scrollTop = stream.scrollHeight; }
+
+      function bubble(text, who) {
+        var d = document.createElement('div');
+        d.className = 'sc-msg ' + (who === 'user' ? 'user' : 'bot');
+        d.textContent = text;
+        stream.appendChild(d);
+        scrollDown();
+        return d;
       }
 
-      var revealFrame = function () {
-        window.setTimeout(function () {
-          shell.classList.remove('is-loading');
-          shell.classList.add('is-loaded');
-        }, 700);
-      };
+      bubble(STR.greet, 'bot');
 
-      frame.addEventListener('load', revealFrame, { once: true });
-      window.setTimeout(revealFrame, 4500);
+      var typingEl = null;
+      function showTyping() {
+        typingEl = document.createElement('div');
+        typingEl.className = 'sc-typing';
+        typingEl.textContent = STR.typing;
+        stream.appendChild(typingEl);
+        scrollDown();
+      }
+      function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
+      function setBusy(on) { sendBtn.disabled = on; input.disabled = on; }
+
+      function send() {
+        var text = (input.value || '').trim();
+        if (!text) return;
+        input.value = '';
+        bubble(text, 'user');
+        history.push({ role: 'user', text: text });
+
+        setBusy(true);
+        showTyping();
+        var ctrl = new AbortController();
+        var timer = setTimeout(function () { ctrl.abort(); }, 60000);
+
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+          signal: ctrl.signal
+        }).then(function (res) {
+          clearTimeout(timer);
+          return res.json().then(function (d) { return { ok: res.ok, data: d }; });
+        }).then(function (out) {
+          hideTyping();
+          setBusy(false);
+          var reply = out.data && out.data.reply;
+          if (reply) {
+            bubble(reply, 'bot');
+            if (out.ok) history.push({ role: 'model', text: reply }); // don't keep error/limit replies in context
+          } else {
+            bubble(STR.err, 'bot');
+          }
+          input.focus();
+        }).catch(function () {
+          clearTimeout(timer);
+          hideTyping();
+          setBusy(false);
+          bubble(STR.err, 'bot');
+        });
+      }
+
+      form.addEventListener('submit', function (e) { e.preventDefault(); send(); });
     })();
   </script>
 </body>

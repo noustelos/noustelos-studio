@@ -668,6 +668,48 @@ sends `lang:"en"|"el"` and the AI summary comes back in that language.
   reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
   `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
 
+## Site Assistant (PUBLIC site chatbot — NOT the Artifact)
+The public-facing noustelos.gr chatbot — the friendly site guide that answers
+questions about the studio + general web/AI concepts (SEO, AI visibility / GEO,
+llms.txt, structured data, testimonials/social proof, landing pages, GDPR basics)
+and points visitors to the right page/tool. **Replaced a separate Hugging Face
+Space** (`nik-greek-my-site-bot.hf.space`, embedded as an iframe) so the system
+prompt + API key now live in OUR Worker — easy to "train" (edit the prompt) and one
+key to manage. Decoupled from the Artifact: own route, own SHORT system prompt, no
+persona/memory/Drive/kill-switch.
+- **Engine** → **same Worker** (`engine/worker.js`), route **`POST /api/site-assistant`**
+  (dispatch right after `/api/ai-visibility-scan`, before the Artifact gate).
+  `handleSiteAssistant`: **UNLIKE the Artifact + scanners it has NO passphrase** (it's
+  for random visitors). Protected technically instead: **(1) Origin allow-list**
+  (`isAllowed` vs `ALLOWED_ORIGIN` — 403 off-site; spoofable, not a hard boundary),
+  **(2) per-IP KV rate limit** (`saRateLimited`, fixed window in `ARTIFACT_KV` key
+  `rl:sa:<ip>:<bucket>`, default 20 msgs / 600s, fails OPEN if KV unbound → friendly
+  429 with a `reply`), **(3) cheap model + tight token cap** (`SA_MODEL` ||
+  `SCANNER_MODEL` = `gemini-2.5-flash-lite`, `thinkingBudget:0`, `maxOutputTokens`
+  default 600, history capped 12 turns). Reuses `normalizeMessages`, `postJsonWithRetry`,
+  `extractReply`. **Does NOT log user input.** Returns `{ reply }` or
+  `403 forbidden` / `429 rate_limited{reply}` / `502 assistant_failed`. The default
+  `SITE_ASSISTANT_PROMPT` is honest (no invented facts/prices/sections — explicitly
+  forbidden from referencing site sections not in its fact list, e.g. a testimonials
+  page; "not legal advice"; no overpromising rankings/citations) and bilingual
+  (auto-detects EN/EL from the user). Env overrides: `SA_SYSTEM_PROMPT`, `SA_MODEL`,
+  `SA_MAX_OUTPUT_TOKENS`, `SA_TEMPERATURE`, `SA_HISTORY_CAP`, `SA_RATE_LIMIT`,
+  `SA_RATE_WINDOW_S`.
+- **Front-end** → [`ai-chat.html`](ai-chat.html): a self-contained **native chat UI**
+  (replaced the HF Space iframe) calling the Worker — message bubbles + input + typing
+  indicator, themed with `styles.min.css` vars, 60s `AbortController` backstop. Chrome
+  is **bilingual via `siteLanguage`** (EN/EL labels + greeting); the assistant itself
+  replies in the user's language regardless. Keeps the floating `.ai-chat-button` →
+  `ai-chat.html` entry on the homepage. Multi-turn: posts the running `history`
+  (`{messages:[…]}`) each turn; error/limit replies are shown but NOT kept in context.
+  Dropped the old `chat-hero-mark.min.js` load (the decorative iframe mark is gone).
+- **Cutover:** built + deployed + live-tested. ⚠️ **Still TODO (owner):** once verified
+  in the browser, **delete the Hugging Face Space `nik-greek-my-site-bot` and revoke its
+  separate Gemini key** (no longer used). No new Worker secret — reuses `GOOGLE_API_KEY`
+  + the existing `ARTIFACT_KV` binding.
+- **Deploy:** engine change → **`cd engine && npx wrangler deploy`**. `ai-chat.html` goes
+  live on push to `main`. No rate-limiting beyond the per-IP KV cap above (public route).
+
 ## Gotchas
 - **Gemma 4 is a thinking model** (`gemma-4-31b-it`): thinking can't be disabled;
   reasoning returns as parts flagged `thought:true` — `worker.js` `extractReply`
