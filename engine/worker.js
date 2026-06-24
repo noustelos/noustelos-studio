@@ -2767,6 +2767,115 @@ const AIVIS_DISCLAIMERS = {
   el: "Ενδεικτική ανάλυση βασισμένη σε στατικά, δημόσια σήματα HTML — όχι πραγματικό crawl από AI, ούτε εγγύηση παράθεσης, ούτε υποκατάστατο πλήρους εργασίας SEO/GEO. Το llms.txt είναι αναδυόμενη σύμβαση. Η «Πιθανότητα Παράθεσης από AI» είναι ευρετική, όχι πρόβλεψη.",
 };
 
+// DETERMINISTIC narrative (NO model call). Per-check fix lines + per-grade verdicts.
+const AIVIS_FIX = {
+  en: {
+    robots_txt: "Add a robots.txt at your site root with clear User-agent rules so crawlers (including AI crawlers) know what they can access.",
+    sitemap_xml: "Publish an XML sitemap and reference it in robots.txt so crawlers can find all your pages.",
+    llms_txt: "Publish an llms.txt at your site root pointing AI assistants to your key pages (services, pricing, about, contact) — it's the heaviest single signal here.",
+    org_schema: "Add Organization (JSON-LD) structured data so AI can identify who you are.",
+    faq_schema: "Add FAQPage structured data to a real FAQ section so assistants can lift and cite your answers directly.",
+    localbusiness_schema: "If you're a local business, add LocalBusiness structured data with your address and contact details.",
+    contact_info: "Surface clear contact details (phone, email and/or a postal address) so AI can attribute and recommend you.",
+    meta_title: "Set a descriptive <title> tag of about 30–60 characters.",
+    meta_description: "Add a meta description of about 120–160 characters summarising the page.",
+    open_graph: "Add Open Graph tags (og:title, og:description, og:image) for cleaner sharing and richer machine context.",
+    canonical: "Declare a canonical URL to remove duplicate-content ambiguity.",
+    heading_structure: "Use exactly one clear H1 that states what the page is about.",
+    content_richness: "Add more substantial, readable copy so there is enough citable content for AI to use.",
+    ai_friendly_wording: "Add clearly labelled Services, Pricing, About, FAQ and Contact sections — the content AI assistants look for.",
+  },
+  el: {
+    robots_txt: "Πρόσθεσε robots.txt στη ρίζα με καθαρούς κανόνες User-agent ώστε τα crawlers (και των AI) να ξέρουν τι μπορούν να δουν.",
+    sitemap_xml: "Δημοσίευσε XML sitemap και ανέφερέ το στο robots.txt ώστε τα crawlers να βρίσκουν όλες τις σελίδες.",
+    llms_txt: "Δημοσίευσε llms.txt στη ρίζα που να παραπέμπει τους βοηθούς AI στις βασικές σου σελίδες (υπηρεσίες, τιμές, σχετικά, επικοινωνία) — το βαρύτερο μεμονωμένο σήμα εδώ.",
+    org_schema: "Πρόσθεσε δομημένα δεδομένα Organization (JSON-LD) ώστε το AI να αναγνωρίζει ποιος είσαι.",
+    faq_schema: "Πρόσθεσε δομημένα δεδομένα FAQPage σε μια πραγματική ενότητα συχνών ερωτήσεων ώστε οι βοηθοί να παραθέτουν απευθείας τις απαντήσεις σου.",
+    localbusiness_schema: "Αν είσαι τοπική επιχείρηση, πρόσθεσε δομημένα δεδομένα LocalBusiness με διεύθυνση και στοιχεία επικοινωνίας.",
+    contact_info: "Ανέδειξε καθαρά στοιχεία επικοινωνίας (τηλέφωνο, email ή/και διεύθυνση) ώστε το AI να σε αποδίδει και να σε προτείνει.",
+    meta_title: "Όρισε περιγραφικό <title> περίπου 30–60 χαρακτήρων.",
+    meta_description: "Πρόσθεσε meta description περίπου 120–160 χαρακτήρων που να συνοψίζει τη σελίδα.",
+    open_graph: "Πρόσθεσε ετικέτες Open Graph (og:title, og:description, og:image) για καθαρότερο share και πλουσιότερο context.",
+    canonical: "Δήλωσε canonical URL για να φύγει η ασάφεια διπλότυπου περιεχομένου.",
+    heading_structure: "Χρησιμοποίησε ακριβώς ένα καθαρό H1 που να λέει για τι είναι η σελίδα.",
+    content_richness: "Πρόσθεσε πιο ουσιαστικό, ευανάγνωστο κείμενο ώστε να υπάρχει αρκετό παραθέσιμο περιεχόμενο για το AI.",
+    ai_friendly_wording: "Πρόσθεσε καθαρές ενότητες Υπηρεσιών, Τιμών, Σχετικά, FAQ και Επικοινωνίας — το περιεχόμενο που ψάχνουν οι βοηθοί AI.",
+  },
+};
+const AIVIS_VERDICTS = {
+  en: {
+    A: "Your site is technically very easy for AI assistants to discover, parse and cite.",
+    B: "A solid AI-visibility foundation, with a few signals left to add.",
+    C: "The basics are reasonable, but several AI-visibility signals are missing.",
+    D: "Most AI-visibility signals are missing — there's a lot of low-effort upside here.",
+  },
+  el: {
+    A: "Ο ιστότοπός σου είναι τεχνικά πολύ εύκολο να τον εντοπίζουν, να τον διαβάζουν και να τον παραθέτουν οι βοηθοί AI.",
+    B: "Γερά θεμέλια ορατότητας σε AI, με λίγα σήματα ακόμη να προστεθούν.",
+    C: "Τα βασικά είναι λογικά, αλλά αρκετά σήματα ορατότητας σε AI λείπουν.",
+    D: "Τα περισσότερα σήματα ορατότητας σε AI λείπουν — υπάρχει μεγάλο περιθώριο με μικρή προσπάθεια.",
+  },
+};
+
+// Order gaps: missing before partial, then by weight desc.
+function aivisGaps(checks) {
+  return checks
+    .filter((c) => c.status !== "pass")
+    .sort((a, b) => (a.status === b.status ? b.weight - a.weight : (a.status === "missing" ? -1 : 1)));
+}
+
+function aivisNarrative(scored, lang) {
+  const el = lang === "el";
+  const passCount = scored.checks.filter((c) => c.status === "pass").length;
+  const gaps = aivisGaps(scored.checks);
+  const fixMap = AIVIS_FIX[lang] || AIVIS_FIX.en;
+  const recommendations = gaps.slice(0, 3).map((c) => fixMap[c.key]).filter(Boolean);
+  const topGapNames = gaps.slice(0, 3).map((c) => c.name);
+  const verdict = (AIVIS_VERDICTS[lang] || AIVIS_VERDICTS.en)[scored.grade] || "";
+  const summary = el
+    ? `Με βάση πραγματικά δημόσια σήματα της σελίδας, ο ιστότοπος σκοράρει ${scored.score}/100 (βαθμός ${scored.grade}, ${scored.grade_label}) και περνά ${passCount} από 15 ελέγχους ορατότητας σε AI. `
+        + (topGapNames.length ? `Τα σημαντικότερα κενά: ${topGapNames.join(", ")}.` : "Όλοι οι έλεγχοι περνούν.")
+    : `Based on real public page signals, the site scores ${scored.score}/100 (grade ${scored.grade}, ${scored.grade_label}) and passes ${passCount} of 15 AI-visibility checks. `
+        + (topGapNames.length ? `The biggest gaps: ${topGapNames.join(", ")}.` : "All checks pass.");
+  return { executive_summary: summary, final_verdict: verdict, recommendations };
+}
+
+function aivisCompareNarrative(a, b, lang) {
+  const el = lang === "el";
+  const A = a.scored, B = b.scored;
+  const labelA = hostLabel(a.signals.final_url), labelB = hostLabel(b.signals.final_url);
+  const fixMap = AIVIS_FIX[lang] || AIVIS_FIX.en;
+  const strengths = (s) => s.checks.filter((c) => c.status === "pass").sort((x, y) => y.weight - x.weight).slice(0, 3).map((c) => c.name);
+  const topGapFix = (s) => { const g = aivisGaps(s.checks)[0]; return g ? fixMap[g.key] : null; };
+  const edges = [];
+  for (let i = 0; i < A.checks.length; i++) {
+    const ca = A.checks[i], cb = B.checks[i];
+    if (ca.points !== cb.points) edges.push({ name: ca.name, w: ca.weight, side: ca.points > cb.points ? "a" : "b" });
+  }
+  const tie = A.score === B.score;
+  const winA = A.score >= B.score;
+  const wLabel = winA ? labelA : labelB, lLabel = winA ? labelB : labelA;
+  const wScore = winA ? A.score : B.score, lScore = winA ? B.score : A.score;
+  const loser = winA ? B : A;
+  const edgeNames = edges.filter((e) => e.side === (winA ? "a" : "b")).sort((x, y) => y.w - x.w).slice(0, 3).map((e) => e.name);
+  const recFix = topGapFix(loser);
+  return {
+    executive_summary: el
+      ? (tie ? `${labelA} και ${labelB} ισοβαθμούν στο ${A.score}/100 για ορατότητα σε AI.`
+             : `${wLabel} σκοράρει ${wScore}/100 έναντι ${lScore}/100 του ${lLabel}, με ισχυρότερα σήματα ορατότητας σε AI${edgeNames.length ? " — κυρίως: " + edgeNames.join(", ") + "." : "."}`)
+      : (tie ? `${labelA} and ${labelB} tie at ${A.score}/100 for AI visibility.`
+             : `${wLabel} scores ${wScore}/100 vs ${lLabel}'s ${lScore}/100, with stronger AI-visibility signals${edgeNames.length ? " — mainly: " + edgeNames.join(", ") + "." : "."}`),
+    site_a_strengths: strengths(A),
+    site_b_strengths: strengths(B),
+    recommendation: el
+      ? (recFix ? `Η κύρια ευκαιρία για ${lLabel}: ${recFix}` : `${lLabel} καλύπτει ήδη τα βασικά σήματα ορατότητας σε AI.`)
+      : (recFix ? `The main opportunity for ${lLabel}: ${recFix}` : `${lLabel} already covers the core AI-visibility signals.`),
+    final_verdict: el
+      ? (tie ? "Οι δύο ιστότοποι είναι εξίσου εύκολο να παρατεθούν από AI αυτή τη στιγμή." : `${wLabel} είναι αυτή τη στιγμή ευκολότερο να τον εντοπίζουν και να τον παραθέτουν οι βοηθοί AI.`)
+      : (tie ? "Both sites are currently equally easy for AI assistants to cite." : `${wLabel} is currently easier for AI assistants to discover and cite.`),
+  };
+}
+
 async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origin, allowedOrigin) {
   if (!env.GOOGLE_API_KEY) {
     return json({ error: "scan_failed" }, 500, corsOrigin);
@@ -2783,12 +2892,8 @@ async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origi
   if (!url || !urlOk(url)) {
     return json({ error: "url_required" }, 400, corsOrigin);
   }
-  const businessType = clean(body.businessType, 80);
-  const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
-
-  // === Compare mode: score TWO sites deterministically; AI writes the narrative. ===
-  // Business Type stays SHARED context (like the website scanner). If EITHER site
-  // can't be read, there's no comparison (the message names which site).
+  // === Compare mode: BOTH sites scored + narrated deterministically (no model). ===
+  // If EITHER site can't be read, there's no comparison (the message names which).
   if (body.compare === true) {
     const urlB = clean(body.urlB, 300);
     if (!urlB || !urlOk(urlB)) return json({ error: "url_required" }, 400, corsOrigin);
@@ -2798,17 +2903,7 @@ async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origi
     ]);
     if (!a.ok) return json({ error: "unreachable", message: websiteFetchRefusal(a.reason, lang, { status: a.status, siteLabel: hostLabel(url) }) }, 200, corsOrigin);
     if (!b.ok) return json({ error: "unreachable", message: websiteFetchRefusal(b.reason, lang, { status: b.status, siteLabel: hostLabel(urlB) }) }, 200, corsOrigin);
-
-    const result = buildAiVisibilityCompare(a, b, lang);
-    let cText = renderAiVisibilityCompareBlock(a, b);
-    if (businessType) cText += `\n\nBusiness Type (shared context): ${businessType}`;
-    try {
-      const ai = await callAiVisibilityCompare({ apiKey: env.GOOGLE_API_KEY, model, lang, userText: cText });
-      if (ai) Object.assign(result, ai); // narrative only; the table is deterministic
-    } catch (err) {
-      console.error("ai-visibility-compare error:", String((err && err.message) || err)); // fail soft
-    }
-    return json({ result }, 200, corsOrigin);
+    return json({ result: buildAiVisibilityCompare(a, b, lang) }, 200, corsOrigin);
   }
 
   // === Single mode ===
@@ -2818,18 +2913,8 @@ async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origi
   }
   const { signals, files, scored } = one;
 
-  // --- Gemini writes the summary + 3 recommendations from the check results. ---
-  let userText = renderAiVisibilityBlock(scored, signals);
-  if (businessType) userText += `\n\nBusiness Type (context for tailoring recommendations): ${businessType}`;
-  let ai;
-  try {
-    ai = await callAiVisibilityScanner({
-      apiKey: env.GOOGLE_API_KEY, model, lang, userText,
-    });
-  } catch (err) {
-    console.error("ai-visibility-scan error:", String((err && err.message) || err));
-    ai = null; // fail soft — the deterministic report still stands.
-  }
+  // DETERMINISTIC narrative — templated from the check results (NO model call).
+  const nar = aivisNarrative(scored, lang);
 
   const result = {
     mode: "single",
@@ -2839,9 +2924,9 @@ async function handleAiVisibilityScan(body, env, ctx, request, corsOrigin, origi
     grade: scored.grade,
     grade_label: scored.grade_label,
     citation_probability: scored.citation_probability,
-    executive_summary: (ai && ai.executive_summary) || "",
-    final_verdict: (ai && ai.final_verdict) || "",
-    recommendations: (ai && ai.recommendations) || [],
+    executive_summary: nar.executive_summary,
+    final_verdict: nar.final_verdict,
+    recommendations: nar.recommendations,
     checks: scored.checks,
     detected_schema: signals.schema_types,
     files: {
@@ -2945,8 +3030,7 @@ function buildAiVisibilityCompare(a, b, lang) {
     site_a_grade: A.grade, site_a_grade_label: A.grade_label, site_a_citation: A.citation_probability,
     site_b_grade: B.grade, site_b_grade_label: B.grade_label, site_b_citation: B.citation_probability,
     comparison,
-    executive_summary: "", site_a_strengths: [], site_b_strengths: [],
-    recommendation: "", final_verdict: "",
+    ...aivisCompareNarrative(a, b, lang),
     disclaimer: AIVIS_DISCLAIMERS[lang] || AIVIS_DISCLAIMERS.en,
   };
 }
