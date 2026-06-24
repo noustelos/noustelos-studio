@@ -400,6 +400,58 @@
     }
     .schema-empty { margin: 0; font-size: 0.94rem; color: var(--text-secondary); }
 
+    /* ── Compare toggle + Site B ──────────────────────────── */
+    .compare-check {
+      display: flex; align-items: center; gap: 0.55rem;
+      font-family: "Inter", sans-serif; font-size: 0.97rem; font-weight: 500;
+      letter-spacing: 0; text-transform: none; color: var(--text-primary); cursor: pointer;
+    }
+    .compare-check input { width: 1.05rem; height: 1.05rem; accent-color: var(--cta); cursor: pointer; }
+    #site-b-block { display: grid; gap: 1.15rem; }
+
+    /* ── Comparison report ────────────────────────────────── */
+    .compare-heads { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .compare-head {
+      flex: 1 1 12rem; background: #fffdf8; border: 1px solid var(--cta);
+      border-radius: var(--radius); box-shadow: var(--shadow-soft);
+      padding: clamp(1rem, 3vw, 1.4rem); display: grid; gap: 0.3rem;
+    }
+    .compare-head .lbl {
+      font-family: "Space Grotesk", sans-serif; font-size: 0.82rem; font-weight: 600;
+      color: var(--glass-gray-text); word-break: break-word;
+    }
+    .compare-head .num {
+      font-family: "Space Grotesk", sans-serif; font-size: clamp(2.2rem, 7vw, 3rem);
+      font-weight: 700; line-height: 1; color: var(--text-primary);
+    }
+    .compare-head .num span { font-size: 0.4em; font-weight: 500; color: var(--text-secondary); }
+    .compare-head .sub { font-size: 0.82rem; color: var(--text-secondary); }
+    .compare-head.is-winner { border-width: 2px; }
+
+    .compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .compare-table { width: 100%; min-width: 30rem; border-collapse: collapse; }
+    .compare-table th,
+    .compare-table td {
+      padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--line);
+      text-align: left; vertical-align: top;
+    }
+    .compare-table th {
+      font-family: "Space Grotesk", sans-serif; font-size: 0.74rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--glass-gray-text);
+    }
+    .compare-table td.num,
+    .compare-table th.num { text-align: center; width: 5rem; white-space: nowrap; }
+    .compare-table td.num {
+      font-family: "Space Grotesk", sans-serif; font-weight: 600; color: var(--text-secondary);
+    }
+    .compare-table td.num.win { color: var(--cta); }
+    .compare-crit { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+    .compare-winner-pill {
+      display: inline-block; font-family: "Space Grotesk", sans-serif;
+      font-size: 0.8rem; font-weight: 600; color: var(--cta); white-space: nowrap;
+    }
+    .compare-winner-pill.tie { color: var(--text-secondary); }
+
     .verdict-card { border-left: 3px solid var(--cta); }
     .verdict-card h3 { margin-bottom: 0.45rem; }
     .verdict-card p { color: var(--text-primary); font-size: 1.05rem; line-height: 1.55; }
@@ -581,6 +633,17 @@
           </select>
         </div>
 
+        <div class="scanner-field">
+          <label class="compare-check"><input type="checkbox" id="f-compare" /> <span>Compare with a second website</span></label>
+        </div>
+
+        <div id="site-b-block" hidden>
+          <div class="scanner-field">
+            <label for="f-url-b">Second Website URL <span class="optional">(required for comparison — both pages are fetched)</span></label>
+            <input class="scanner-input" type="url" id="f-url-b" maxlength="300" placeholder="https://competitor.com" />
+          </div>
+        </div>
+
         <p id="form-error" class="scanner-error" role="alert" hidden></p>
 
         <div class="scanner-form-actions">
@@ -602,6 +665,7 @@
           </div>
         </div>
 
+        <div id="single-body">
         <div class="scanner-panel score-card">
           <p class="score-heading">AI Visibility Score</p>
           <div class="score-top">
@@ -647,6 +711,9 @@
           <p id="r-verdict"></p>
           <p class="result-disclaimer" id="r-disclaimer" hidden></p>
         </div>
+        </div><!-- /#single-body -->
+
+        <div id="compare-body" hidden></div>
       </section>
 
       <!-- How it works -->
@@ -798,10 +865,21 @@
         gateExample.addEventListener('click', function () { render(SAMPLE_REPORT, true); });
       }
 
+      // ── Compare toggle ──
+      var compareChk = document.getElementById('f-compare');
+      var siteBBlock = document.getElementById('site-b-block');
+      function updateCompareUI() {
+        var on = compareChk.checked;
+        siteBBlock.hidden = !on;
+        runBtn.textContent = on ? 'Compare websites' : 'Scan my website';
+      }
+      compareChk.addEventListener('change', updateCompareUI);
+
       // ── Example input ──
       document.getElementById('fill-example').addEventListener('click', function () {
         document.getElementById('f-url').value = 'https://example.com';
         document.getElementById('f-type').value = 'Local Service Business';
+        if (compareChk.checked) document.getElementById('f-url-b').value = 'https://noustelos.gr';
       });
 
       // ── Run scan ──
@@ -815,7 +893,9 @@
 
       function setLoading(on) {
         runBtn.disabled = on;
-        runBtn.textContent = on ? 'Scanning your website…' : 'Scan my website';
+        var cmp = compareChk.checked;
+        if (on) runBtn.textContent = cmp ? 'Comparing websites…' : 'Scanning your website…';
+        else runBtn.textContent = cmp ? 'Compare websites' : 'Scan my website';
       }
 
       function clampScore(v) { var n = Math.round(Number(v) || 0); return Math.max(0, Math.min(100, n)); }
@@ -1049,8 +1129,16 @@
 
       var lastResult = null;
 
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+
       function render(r, isSample) {
         lastResult = r;
+        document.getElementById('single-body').hidden = false;
+        document.getElementById('compare-body').hidden = true;
         document.getElementById('results-title').textContent = 'AI Visibility Report';
         document.getElementById('sample-flag').hidden = !isSample;
 
@@ -1090,6 +1178,63 @@
         results.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
+      function compareWinnerLabel(r, w) {
+        if (w === 'a') return r.site_a_label || 'Site A';
+        if (w === 'b') return r.site_b_label || 'Site B';
+        return 'Tie';
+      }
+
+      function renderCompare(r) {
+        lastResult = r;
+        document.getElementById('single-body').hidden = true;
+        document.getElementById('compare-body').hidden = false;
+        document.getElementById('results-title').textContent = 'AI Visibility Comparison';
+        document.getElementById('sample-flag').hidden = true;
+
+        var a = clampScore(r.site_a_overall), b = clampScore(r.site_b_overall);
+        var labelA = esc(r.site_a_label || 'Site A'), labelB = esc(r.site_b_label || 'Site B');
+        var ca = r.site_a_citation || {}, cb = r.site_b_citation || {};
+
+        var rows = (r.comparison || []).map(function (row) {
+          var tie = row.winner === 'tie', aWin = row.winner === 'a', bWin = row.winner === 'b';
+          var max = row.weight != null ? row.weight : 100;
+          var winLabel = tie ? '—' : esc(compareWinnerLabel(r, row.winner));
+          return '<tr>' +
+            '<td><span class="compare-crit">' + esc(row.criterion) + '</span></td>' +
+            '<td class="num' + (aWin ? ' win' : '') + '">' + clampScore(row.site_a_score) + '/' + max + '</td>' +
+            '<td class="num' + (bWin ? ' win' : '') + '">' + clampScore(row.site_b_score) + '/' + max + '</td>' +
+            '<td><span class="compare-winner-pill' + (tie ? ' tie' : '') + '">' + winLabel + '</span></td>' +
+          '</tr>';
+        }).join('');
+
+        var headA = '<div class="compare-head' + (a >= b ? ' is-winner' : '') + '"><span class="lbl">' + labelA + '</span>' +
+          '<span class="num">' + a + '<span>/100</span></span>' +
+          '<span class="sub">' + esc(r.site_a_grade || '') + ' · Citation ' + clampScore(ca.value) + '%</span></div>';
+        var headB = '<div class="compare-head' + (b >= a ? ' is-winner' : '') + '"><span class="lbl">' + labelB + '</span>' +
+          '<span class="num">' + b + '<span>/100</span></span>' +
+          '<span class="sub">' + esc(r.site_b_grade || '') + ' · Citation ' + clampScore(cb.value) + '%</span></div>';
+
+        var liA = (r.site_a_strengths || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li>—</li>';
+        var liB = (r.site_b_strengths || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li>—</li>';
+
+        document.getElementById('compare-body').innerHTML =
+          '<div class="compare-heads">' + headA + headB + '</div>' +
+          '<div class="scanner-panel result-block"><h3>Executive Summary</h3><p>' + esc(r.executive_summary) + '</p></div>' +
+          '<div class="scanner-panel result-block"><h3>Comparison</h3><div class="compare-scroll">' +
+            '<table class="compare-table"><thead><tr><th>Criterion</th><th class="num">' + labelA + '</th><th class="num">' + labelB + '</th><th>Winner</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table></div></div>' +
+          '<div class="scanner-grid">' +
+            '<div class="scanner-panel result-block"><h3>' + labelA + ' — strengths</h3><ul>' + liA + '</ul></div>' +
+            '<div class="scanner-panel result-block"><h3>' + labelB + ' — strengths</h3><ul>' + liB + '</ul></div>' +
+          '</div>' +
+          '<div class="scanner-panel result-block"><h3>Recommendation</h3><p>' + esc(r.recommendation) + '</p></div>' +
+          '<div class="scanner-panel result-block verdict-card"><h3>Final Verdict</h3><p>' + esc(r.final_verdict) + '</p>' +
+            (r.disclaimer ? '<p class="result-disclaimer">' + esc(r.disclaimer) + '</p>' : '') + '</div>';
+
+        results.hidden = false;
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       runBtn.addEventListener('click', function () {
         clearError(formError);
         var url = (document.getElementById('f-url').value || '').trim();
@@ -1101,6 +1246,13 @@
           url: url,
           businessType: document.getElementById('f-type').value || ''
         };
+
+        if (compareChk.checked) {
+          var urlB = (document.getElementById('f-url-b').value || '').trim();
+          if (!urlB) { showError(formError, 'Please add the second website URL to compare.'); return; }
+          payload.compare = true;
+          payload.urlB = urlB;
+        }
 
         setLoading(true);
         var scanCtrl = new AbortController();
@@ -1116,7 +1268,8 @@
         }).then(function (out) {
           setLoading(false);
           if (out.ok && out.data && out.data.result) {
-            render(out.data.result, false);
+            var rr = out.data.result;
+            if (rr.mode === 'compare') renderCompare(rr); else render(rr, false);
             return;
           }
           if (out.status === 401) {
@@ -1171,8 +1324,36 @@
         return L.join('\n');
       }
 
+      function compareToText(r) {
+        var L = [];
+        L.push('AI Visibility Comparison — Noustelos AI Lab');
+        L.push('');
+        L.push((r.site_a_label || 'Site A') + ': ' + clampScore(r.site_a_overall) + '/100 (' + (r.site_a_grade || '') + ')');
+        L.push((r.site_b_label || 'Site B') + ': ' + clampScore(r.site_b_overall) + '/100 (' + (r.site_b_grade || '') + ')');
+        L.push(''); L.push('Executive Summary'); L.push(r.executive_summary || '');
+        L.push(''); L.push('Comparison');
+        (r.comparison || []).forEach(function (row) {
+          var max = row.weight != null ? row.weight : 100;
+          var win = row.winner === 'a' ? (r.site_a_label || 'Site A') : row.winner === 'b' ? (r.site_b_label || 'Site B') : 'Tie';
+          L.push('- ' + row.criterion + ': A ' + clampScore(row.site_a_score) + '/' + max + ' / B ' + clampScore(row.site_b_score) + '/' + max + ' — winner: ' + win);
+        });
+        L.push(''); L.push((r.site_a_label || 'Site A') + ' strengths');
+        (r.site_a_strengths || []).forEach(function (x) { L.push('- ' + x); });
+        L.push(''); L.push((r.site_b_label || 'Site B') + ' strengths');
+        (r.site_b_strengths || []).forEach(function (x) { L.push('- ' + x); });
+        L.push(''); L.push('Recommendation'); L.push(r.recommendation || '');
+        L.push(''); L.push('Final Verdict'); L.push(r.final_verdict || '');
+        if (r.disclaimer) { L.push(''); L.push(r.disclaimer); }
+        return L.join('\n');
+      }
+
+      function reportToText(r) {
+        if (!r) return '';
+        return r.mode === 'compare' ? compareToText(r) : resultToText(r);
+      }
+
       document.getElementById('copy-result').addEventListener('click', function () {
-        var btn = this, txt = resultToText(lastResult);
+        var btn = this, txt = reportToText(lastResult);
         if (!txt) return;
         var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy analysis'; }, 1600); };
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1181,12 +1362,12 @@
       });
 
       document.getElementById('download-result').addEventListener('click', function () {
-        var txt = resultToText(lastResult);
+        var txt = reportToText(lastResult);
         if (!txt) return;
         var blob = new Blob([txt], { type: 'text/plain' });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'ai-visibility-report.txt';
+        a.download = (lastResult && lastResult.mode === 'compare') ? 'ai-visibility-comparison.txt' : 'ai-visibility-report.txt';
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
       });

@@ -2787,24 +2787,37 @@ async function handleAiVisibilityScan(body, env, ctx, corsOrigin) {
   const businessType = clean(body.businessType, 80);
   const model = env.SCANNER_MODEL || SCAN_DEFAULT_MODEL;
 
-  // --- Fetch homepage + extract signals. Option B: refuse if unreadable. ---
-  const fetched = await fetchPageSignals(url, extractAiVisibilitySignals);
-  if (!fetched.ok) {
-    return json({ error: "unreachable", message: websiteFetchRefusal(fetched.reason, lang, { status: fetched.status }) }, 200, corsOrigin);
+  // === Compare mode: score TWO sites deterministically; AI writes the narrative. ===
+  // Business Type stays SHARED context (like the website scanner). If EITHER site
+  // can't be read, there's no comparison (the message names which site).
+  if (body.compare === true) {
+    const urlB = clean(body.urlB, 300);
+    if (!urlB || !urlOk(urlB)) return json({ error: "url_required" }, 400, corsOrigin);
+    const [a, b] = await Promise.all([
+      gatherAiVisibility(url, lang),
+      gatherAiVisibility(urlB, lang),
+    ]);
+    if (!a.ok) return json({ error: "unreachable", message: websiteFetchRefusal(a.reason, lang, { status: a.status, siteLabel: hostLabel(url) }) }, 200, corsOrigin);
+    if (!b.ok) return json({ error: "unreachable", message: websiteFetchRefusal(b.reason, lang, { status: b.status, siteLabel: hostLabel(urlB) }) }, 200, corsOrigin);
+
+    const result = buildAiVisibilityCompare(a, b, lang);
+    let cText = renderAiVisibilityCompareBlock(a, b);
+    if (businessType) cText += `\n\nBusiness Type (shared context): ${businessType}`;
+    try {
+      const ai = await callAiVisibilityCompare({ apiKey: env.GOOGLE_API_KEY, model, lang, userText: cText });
+      if (ai) Object.assign(result, ai); // narrative only; the table is deterministic
+    } catch (err) {
+      console.error("ai-visibility-compare error:", String((err && err.message) || err)); // fail soft
+    }
+    return json({ result }, 200, corsOrigin);
   }
-  const signals = fetched.signals;
-  const origin = signals.final_url || url;
 
-  // --- Three root files in parallel (each re-validated through fetchFollow). ---
-  const [robots, sitemap, llms] = await Promise.all([
-    fetchRootFile(origin, "/robots.txt"),
-    fetchRootFile(origin, "/sitemap.xml"),
-    fetchRootFile(origin, "/llms.txt"),
-  ]);
-  const files = classifyRootFiles(robots, sitemap, llms);
-
-  // --- Deterministic score (the model never touches this). ---
-  const scored = scoreAiVisibility(signals, files, lang);
+  // === Single mode ===
+  const one = await gatherAiVisibility(url, lang);
+  if (!one.ok) {
+    return json({ error: "unreachable", message: websiteFetchRefusal(one.reason, lang, { status: one.status }) }, 200, corsOrigin);
+  }
+  const { signals, files, scored } = one;
 
   // --- Gemini writes the summary + 3 recommendations from the check results. ---
   let userText = renderAiVisibilityBlock(scored, signals);
@@ -2880,5 +2893,158 @@ function parseAiVisibilityJson(text) {
     executive_summary: str(obj.executive_summary),
     final_verdict: str(obj.final_verdict),
     recommendations: recs,
+  };
+}
+
+// Short, human label for a site (hostname, no www) — used in the compare table.
+function hostLabel(u) {
+  try { return new URL(/^https?:\/\//i.test(u) ? u : "https://" + u).hostname.replace(/^www\./i, ""); }
+  catch { return String(u).replace(/^https?:\/\//i, "").split("/")[0]; }
+}
+
+// Fetch + 3 root files + deterministic score for ONE site. Shared by single +
+// compare. Returns { ok:true, signals, files, scored } or { ok:false, reason, status }.
+async function gatherAiVisibility(url, lang) {
+  const fetched = await fetchPageSignals(url, extractAiVisibilitySignals);
+  if (!fetched.ok) return { ok: false, reason: fetched.reason, status: fetched.status };
+  const signals = fetched.signals;
+  const origin = signals.final_url || url;
+  const [robots, sitemap, llms] = await Promise.all([
+    fetchRootFile(origin, "/robots.txt"),
+    fetchRootFile(origin, "/sitemap.xml"),
+    fetchRootFile(origin, "/llms.txt"),
+  ]);
+  const files = classifyRootFiles(robots, sitemap, llms);
+  const scored = scoreAiVisibility(signals, files, lang);
+  return { ok: true, signals, files, scored };
+}
+
+// DETERMINISTIC comparison table (Overall + the 15 checks). The model never
+// scores — it only adds the narrative fields afterwards.
+function buildAiVisibilityCompare(a, b, lang) {
+  const A = a.scored, B = b.scored;
+  const win = (x, y) => (x > y ? "a" : (y > x ? "b" : "tie"));
+  const comparison = [{
+    criterion: lang === "el" ? "Συνολική ορατότητα σε AI" : "Overall AI visibility",
+    weight: 100, site_a_score: A.score, site_b_score: B.score, winner: win(A.score, B.score),
+  }];
+  for (let i = 0; i < A.checks.length; i++) {
+    const ca = A.checks[i], cb = B.checks[i];
+    comparison.push({
+      criterion: ca.name, weight: ca.weight,
+      site_a_score: ca.points, site_b_score: cb.points, winner: win(ca.points, cb.points),
+    });
+  }
+  return {
+    mode: "compare",
+    language: lang,
+    site_a_label: hostLabel(a.signals.final_url),
+    site_b_label: hostLabel(b.signals.final_url),
+    site_a_url: a.signals.final_url,
+    site_b_url: b.signals.final_url,
+    site_a_overall: A.score, site_b_overall: B.score,
+    site_a_grade: A.grade, site_a_grade_label: A.grade_label, site_a_citation: A.citation_probability,
+    site_b_grade: B.grade, site_b_grade_label: B.grade_label, site_b_citation: B.citation_probability,
+    comparison,
+    executive_summary: "", site_a_strengths: [], site_b_strengths: [],
+    recommendation: "", final_verdict: "",
+    disclaimer: AIVIS_DISCLAIMERS[lang] || AIVIS_DISCLAIMERS.en,
+  };
+}
+
+// Plain-text block of BOTH sites' per-check points, fed to the narrative model.
+function renderAiVisibilityCompareBlock(a, b) {
+  const lines = [];
+  lines.push(`SITE A: ${a.signals.final_url} — total ${a.scored.score}/100 (grade ${a.scored.grade})`);
+  lines.push(`SITE B: ${b.signals.final_url} — total ${b.scored.score}/100 (grade ${b.scored.grade})`);
+  lines.push("");
+  lines.push("PER-CHECK POINTS (deterministic — do not re-score). Format: check — A pts / B pts / max:");
+  for (let i = 0; i < a.scored.checks.length; i++) {
+    const ca = a.scored.checks[i], cb = b.scored.checks[i];
+    lines.push(`- ${ca.name} — A ${ca.points} / B ${cb.points} / ${ca.weight}`);
+  }
+  return lines.join("\n");
+}
+
+function buildAiVisibilityComparePrompt(lang) {
+  const isEl = lang === "el";
+  const langName = isEl ? "Greek" : "English";
+  return (
+    "You are an AI-discoverability consultant comparing TWO websites on how easily " +
+    "AI assistants (ChatGPT, Gemini, Claude, Perplexity) can discover, parse and cite " +
+    "them. Both sites were scored with the SAME 15 deterministic checks; you are given " +
+    "each site's per-check points and totals.\n\n" +
+    "RULES:\n" +
+    "- Do NOT re-score and do NOT invent checks. Use ONLY the provided results.\n" +
+    "- executive_summary: 2-4 sentences naming which site has the stronger AI-visibility " +
+    "signals and why, citing the heaviest differences (llms.txt, FAQ/Organization schema, " +
+    "content sections).\n" +
+    "- site_a_strengths / site_b_strengths: 2-3 concrete strengths each, drawn from the " +
+    "checks that site passes or beats the other on.\n" +
+    "- recommendation: the single most impactful change for whichever site is behind " +
+    "(or for both, if they are close).\n" +
+    "- final_verdict: one short sentence.\n" +
+    "- HONESTY: this is a STATIC analysis of public HTML. Do NOT claim either site will " +
+    "rank higher, be recommended, or be cited — only that its signals are stronger or " +
+    "weaker. Treat llms.txt as an emerging convention, not an official standard.\n\n" +
+    `IMPORTANT: Write EVERY string value in ${langName}. Return ONLY structured JSON ` +
+    "matching the required schema."
+  );
+}
+
+const AIVIS_COMPARE_FIELDS = ["executive_summary", "site_a_strengths", "site_b_strengths", "recommendation", "final_verdict"];
+const AIVIS_COMPARE_SCHEMA = {
+  type: "object",
+  properties: {
+    executive_summary: { type: "string" },
+    site_a_strengths: { type: "array", items: { type: "string" } },
+    site_b_strengths: { type: "array", items: { type: "string" } },
+    recommendation: { type: "string" },
+    final_verdict: { type: "string" },
+  },
+  required: AIVIS_COMPARE_FIELDS,
+  propertyOrdering: AIVIS_COMPARE_FIELDS,
+};
+
+async function callAiVisibilityCompare({ apiKey, model, userText, lang }) {
+  const apiUrl = `${API_BASE}/${encodeURIComponent(model)}:generateContent`;
+  const payload = {
+    systemInstruction: { parts: [{ text: buildAiVisibilityComparePrompt(lang) }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.3,
+      maxOutputTokens: 1536,
+      responseMimeType: "application/json",
+      responseSchema: AIVIS_COMPARE_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  };
+  const res = await postJsonWithRetry(apiUrl, apiKey, payload, "ai-visibility-compare", SCANNER_AI_TIMEOUT_MS, SCANNER_MAX_RETRIES);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google API ${res.status}: ${errText.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  return parseAiVisibilityCompareJson(extractReply(data));
+}
+
+function parseAiVisibilityCompareJson(text) {
+  if (!text) return null;
+  let raw = String(text).trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return null; }
+  if (!obj || typeof obj !== "object") return null;
+  const str = (v) => (typeof v === "string" ? v.trim() : "");
+  const list = (v) => Array.isArray(v)
+    ? v.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()).slice(0, 5)
+    : [];
+  return {
+    executive_summary: str(obj.executive_summary),
+    site_a_strengths: list(obj.site_a_strengths),
+    site_b_strengths: list(obj.site_b_strengths),
+    recommendation: str(obj.recommendation),
+    final_verdict: str(obj.final_verdict),
   };
 }

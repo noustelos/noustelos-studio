@@ -646,6 +646,24 @@ sends `lang:"en"|"el"` and the AI summary comes back in that language.
   an emerging convention, not an official standard**; the headline is "how easily can AI
   read/cite your site" (discoverability we CAN measure), NOT "will ChatGPT recommend you"
   (the spec's original headline — dropped as an overclaim).
+- **Compare mode (AI Visibility, EN+EL):** a **"Compare with a second website"** checkbox
+  reveals a Site B URL field (Business Type stays SHARED, like the website scanner — Site B
+  is URL-only). Submitting sends `compare:true`+`urlB`; `handleAiVisibilityScan` branches:
+  `gatherAiVisibility` (fetch + 3 root files + `scoreAiVisibility`) runs for **both sites in
+  parallel** (`Promise.all`); if **either** fetch fails it's Option-B refusal naming the site
+  (`websiteFetchRefusal` with `siteLabel`). The **comparison table is DETERMINISTIC** —
+  `buildAiVisibilityCompare` builds `comparison[]` (Overall + the 15 checks, each
+  `{criterion, weight, site_a_score, site_b_score, winner:"a"|"b"|"tie"}`) straight from the
+  two scored check sets; the model NEVER scores. Then `callAiVisibilityCompare`
+  (`AIVIS_COMPARE_SCHEMA`, `thinkingBudget:0`) adds ONLY the narrative
+  (`executive_summary`, `site_a_strengths[]`, `site_b_strengths[]`, `recommendation`,
+  `final_verdict`) via `Object.assign` — **fails soft** (the table stands if the AI errors).
+  Returns `mode:"compare"` with per-site `site_x_overall/grade/grade_label/citation` + the
+  table. Front-end: `#single-body` (static) vs `#compare-body` (built via innerHTML with an
+  `esc()` HTML-escaper, table in `.compare-scroll`); the fetch dispatch picks `renderCompare`
+  vs `render` by `result.mode`; Copy/Download via `reportToText` (compare vs single). Single
+  scans carry `mode:"single"`. ~2× the cost of a single scan. The single SAMPLE_REPORT
+  (noustelos.gr 100/A) stays — no compare sample (owner choice).
 - **Deploy:** engine change → **`cd engine && npx wrangler deploy`** (no new secret —
   reuses the Artifact passphrases + `GOOGLE_API_KEY`). Pages/cards go live on push to
   `main` (no build). No rate-limiting (shared passphrase posture as the Artifact).
