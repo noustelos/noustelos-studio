@@ -27,6 +27,49 @@ coupled** — know which one a change needs.
   `styles.min.css?v=YYYYMMDD` query is a single canonical version string repeated
   across ~29 HTML files; bump it site-wide (date) whenever the CSS changes so
   browsers fetch the new file.
+- **JS cache-bust is SEPARATE from the CSS one.** `script.min.js?v=…` is its OWN
+  version token and is referenced by **`index.html` ONLY** (the homepage is the one
+  page that loads `script.min.js`; the split-URL content pages don't), so bump it
+  there alone whenever the JS changes — it does NOT need the site-wide ~29-file
+  sweep the CSS token does. It's a short descriptive tag, not a date (e.g.
+  `?v=gmail01` → `?v=herocopy01`). Rule of thumb: **CSS changed → bump
+  `styles.min.css?v=` site-wide; JS changed → bump `script.min.js?v=` in
+  `index.html`.**
+- **Bilingual homepage i18n = every string lives in 3 places — edit ALL or the
+  page half-updates per language/load.** A homepage `data-i18n` string is defined
+  (1) inline in `index.html` as the EN default, (2) in `script.js` in BOTH the `en`
+  and `gr` `translations` blocks, AND (3) the SAME two in the **hand-minified
+  `script.min.js`** (the page loads the `.min`). So one logical string = up to FIVE
+  literal edits (inline + en + gr in `script.js` + en + gr in `script.min.js`).
+  Miss one and the site shows stale copy in one language or after the JS loads.
+  (Full detail in the "Homepage copy lives in THREE places" + split-URL bullets
+  below; this is the deploy-checklist summary.)
+
+## ⭐ Honesty principle (copy / marketing) — PERMANENT RULE
+
+**All public-facing copy — site, blog posts, social, sales decks — must be ACCURATE
+about what is LIVE today vs. designed / on the roadmap.** When you write, propose,
+or edit any marketing copy, **actively flag and fix overclaims** — don't wait to be
+asked. Accuracy protects the sale: a buyer's due-diligence WILL surface inflated
+claims, and an honest story that holds up beats an impressive-but-fragile one. When
+copy outruns reality, propose a corrected version that stays just as persuasive.
+(This is the working rule behind the [[live-site-copy-integrity]] memory.)
+
+**Known limits to hold the line on (current as of 2026-06):**
+- **AskSingapore.ai = PLANNED next instance, NOT live.** "already running" / "live"
+  is false — it's the next destination on the same engine, not a running product.
+- **White-label = DESIGNED blueprint, NOT sold / multi-tenant-live.** Say "built to
+  be replicated," NOT "delivered as SaaS" — zero instances have been sold.
+- **`/redeem` = intent / activation evidence BEFORE payment, NOT a confirmed
+  transaction.** Never "highly converting" — it's a pilot with no conversion data.
+- **verified-contact = verified ONLY where Places data exists**; the grounding path
+  is **name-only by design**. NOT "every recommendation verified."
+- **Founder = solo operator-turned-builder with an AI-assisted workflow** — NOT a
+  traditional dev / established agency. The authentic story is STRONGER; don't
+  inflate it.
+- **Codebase = maintained with an active roadmap** — NOT "zero tech debt."
+- **"source-grounded" applies ONLY to the AI concierge**, NOT the pool-care landing
+  page or the calendar widget.
 
 ## The Artifact — architecture
 
