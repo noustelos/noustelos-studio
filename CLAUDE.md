@@ -17,6 +17,16 @@ coupled** — know which one a change needs.
 - `CNAME` → `noustelos.gr`. Repo: `github.com/noustelos/noustelos-studio`.
 - CSS/JS are hand-minified: edit `styles.css` / `script.js`, then regenerate the
   `.min` files (CSS via `tools/minify-css.js`). Both source and min are committed.
+- **Deploy reality: main-only serve, NO remote branch preview, push = instant
+  live.** GitHub Pages serves ONLY `main`, so a feature branch is invisible until
+  merged — there is **no second chance after `git push origin main`**. The ONLY
+  pre-deploy gate is a **local preview (VS Code Live Server / `python3 -m
+  http.server`)**; use it to eyeball before merging. Safe flow: branch → local
+  preview → STOP for review → merge `--ff-only` to main → push → live-verify on
+  noustelos.gr (hard refresh). **`?v=` cache-bust bump on CSS changes:** the
+  `styles.min.css?v=YYYYMMDD` query is a single canonical version string repeated
+  across ~29 HTML files; bump it site-wide (date) whenever the CSS changes so
+  browsers fetch the new file.
 
 ## The Artifact — architecture
 
@@ -906,6 +916,14 @@ See the Passphrase gate bullet for the full "now public" note.
   links; `.service-live` label + `.service-live-link` accent anchors). Greek copy keeps
   the English terminology (Agentic AI Platforms / SaaS / custom websites), only the
   connective words translate.
+- **AskSantorini Work featured card carries a press link** — inside the featured
+  `.project-card` (Selected Work), between the secondary copy and the `.card-ctas`,
+  a discreet `.card-featured-on` line: a `.launch-kicker` "Featured in" eyebrow + a
+  `.service-live-link` anchor **"Linxalium"** → the Linxalium blog post about
+  AskSantorini.ai (`target="_blank" rel="noopener noreferrer"`). External validation
+  of the live proof point. **Static EN, NOT `data-i18n`** (brand/press, same in both
+  languages). Reuses existing tokens (`.launch-kicker` + `.service-live-link`); the
+  only new CSS is the small `.card-featured-on` flex/spacing rule in `styles.css`.
 - **Homepage copy lives in THREE places — edit all three or the site half-updates:**
   the inline default in `index.html` (`data-i18n="…"`), AND both the `en` and `gr`
   blocks in `script.js`, AND the SAME two strings in the **hand-minified
