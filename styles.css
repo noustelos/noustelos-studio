@@ -1356,6 +1356,14 @@ h3 {
   text-decoration: underline;
 }
 
+.card-featured-on {
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
 @media (max-width: 720px) {
   #services .service-card {
     grid-template-columns: 1fr;
