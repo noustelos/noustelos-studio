@@ -87,8 +87,8 @@ const translations = {
       switchAria: 'Switch language'
     },
     hero: {
-      title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
-      subtitle: 'Custom websites and agentic AI platforms for tourism and hospitality — designed in Santorini, engineered for scale.',
+      title: 'Designed in Santorini. Engineered for scale.',
+      subtitle: 'A solo, AI-assisted software studio.',
       intro: 'Designed and built by Nick Karadimas',
       ctaWork: 'View My Work',
       ctaContact: 'Contact'
@@ -200,7 +200,7 @@ const translations = {
     },
     about: {
       title: 'About',
-      p1: "I'm Nick Karadimas, a creative developer based in Santorini. I design custom websites and build agentic AI platforms — delivered as SaaS — for tourism, hospitality and businesses that want more than a brochure online.",
+      p1: "I build custom websites, edge-native AI platforms, and digital tools — from a travel concierge that turns destination knowledge into bookable action, to a pool-maintenance landing page, to a digital Orthodox calendar. AskSantorini.ai is the deepest proof point, but the method is the same across all of them: lean, serverless, edge-native, built by one operator who needed the tool to exist.",
       p2: 'I think in terms of simpler processes, not bigger ones: where most people add steps, I look for the one that removes them. AI lets me move fast and explore unconventional directions, but every decision is shaped by human judgment, taste and final quality control — so the result feels specific and genuinely useful, never another template.'
     },
     contact: {
@@ -259,8 +259,8 @@ const translations = {
       switchAria: 'Αλλαγή γλώσσας'
     },
     hero: {
-      title: 'Precision Agentic Platforms, Powered by AI. Delivered as SaaS.',
-      subtitle: 'Custom websites και agentic AI platforms για τουρισμό και φιλοξενία — designed in Santorini, engineered for scale.',
+      title: 'Σχεδιασμένο στη Σαντορίνη. Φτιαγμένο για κλίμακα.',
+      subtitle: 'Ένα solo, AI-assisted software studio.',
       intro: 'Σχεδιασμός και ανάπτυξη: Νίκος Καραδήμας',
       ctaWork: 'Δες τη Δουλειά μου',
       ctaContact: 'Επικοινωνία'
@@ -372,7 +372,7 @@ const translations = {
     },
     about: {
       title: 'Σχετικά',
-      p1: 'Είμαι ο Νίκος Καραδήμας, creative developer με βάση τη Σαντορίνη. Σχεδιάζω custom ιστοσελίδες και χτίζω agentic AI platforms — που παραδίδονται ως SaaS — για τον τουρισμό, τη φιλοξενία και επιχειρήσεις που θέλουν κάτι παραπάνω από μια απλή online παρουσία.',
+      p1: 'Φτιάχνω custom websites, edge-native AI πλατφόρμες και ψηφιακά εργαλεία — από έναν travel concierge που μετατρέπει τη γνώση ενός προορισμού σε πράξη και κρατήσεις, μέχρι μια landing page για συντήρηση πισίνας και ένα ψηφιακό ορθόδοξο ημερολόγιο. Το AskSantorini.ai είναι η πληρέστερη απόδειξη, αλλά η μέθοδος είναι ίδια σε όλα: lean, serverless, edge-native — φτιαγμένα από έναν operator που χρειαζόταν το εργαλείο να υπάρξει.',
       p2: 'Σκέφτομαι σε λογική απλούστερων διαδικασιών, όχι μεγαλύτερων: εκεί που οι περισσότεροι προσθέτουν βήματα, εγώ ψάχνω αυτό που τα αφαιρεί. Το AI με αφήνει να κινούμαι γρήγορα και να εξερευνώ ασυνήθιστες κατευθύνσεις, αλλά κάθε απόφαση διαμορφώνεται από ανθρώπινη κρίση, γούστο και τελικό quality control — ώστε το αποτέλεσμα να νιώθει συγκεκριμένο και πραγματικά χρήσιμο, ποτέ άλλο ένα template.'
     },
     contact: {
