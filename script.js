@@ -116,8 +116,8 @@ const translations = {
         detailsHref: '/artifact-details.html'
       },
       askSingapore: {
-        label: 'Early Preview',
-        desc: 'A sister project to AskSantorini.ai — an AI guide for visitors to Singapore, built on the same engine and architecture. The two Cloudflare Workers serve both destinations from one shared codebase. Live in early preview and open for first feedback.'
+        label: 'Planned',
+        desc: 'A planned sister project to AskSantorini.ai — an AI guide for visitors to Singapore, designed to run on the same engine and architecture, extending the shared codebase to a second destination. Next on the roadmap; an early preview is up, but it isn\'t a live product yet.'
       },
       project1: {
         alt: '365orthodoxy project preview',
@@ -288,8 +288,8 @@ const translations = {
         detailsHref: '/artifact-details-el.html'
       },
       askSingapore: {
-        label: 'Early Preview',
-        desc: 'Αδελφό project του AskSantorini.ai — ένας AI οδηγός για επισκέπτες της Σιγκαπούρης, χτισμένος στην ίδια engine και αρχιτεκτονική. Οι δύο Cloudflare Workers εξυπηρετούν και τους δύο προορισμούς από έναν κοινό κώδικα. Live σε early preview, ανοιχτό για ένα πρώτο feedback.'
+        label: 'Planned',
+        desc: 'Ένα σχεδιαζόμενο αδελφό project του AskSantorini.ai — ένας AI οδηγός για επισκέπτες της Σιγκαπούρης, σχεδιασμένος να τρέχει στην ίδια engine και αρχιτεκτονική, επεκτείνοντας τον κοινό κώδικα σε έναν δεύτερο προορισμό. Επόμενο στο roadmap· υπάρχει ένα πρώιμο preview, αλλά δεν είναι ακόμη live προϊόν.'
       },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
