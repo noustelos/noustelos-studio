@@ -466,6 +466,7 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
     let buf = "";
     let full = "";
     let hb = 0;
+    let promptTokens = 0; // input tokens this turn (Google usageMetadata) → warn near the 16k/min cap
     try {
       // Open the pipe immediately so the client connection never sits idle (a
       // long "thinking" phase emits no answer tokens, and an idle SSE stream can
@@ -486,6 +487,9 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
           if (!payload || payload === "[DONE]") continue;
           let data;
           try { data = JSON.parse(payload); } catch { continue; }
+          if (data.usageMetadata && typeof data.usageMetadata.promptTokenCount === "number") {
+            promptTokens = data.usageMetadata.promptTokenCount;
+          }
           const delta = extractDelta(data);
           if (delta) {
             full += delta;
@@ -496,8 +500,8 @@ async function streamReply({ apiKey, model, contents, generationConfig, systemPr
         // Chunk carried only thinking / non-text → keep the connection warm.
         if (!emitted) { hb++; await writer.write(encoder.encode(`: hb\n\n`)); }
       }
-      await writer.write(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
-      console.log("artifact stream done", "chars:", full.length, "heartbeats:", hb);
+      await writer.write(encoder.encode(`data: ${JSON.stringify({ done: true, promptTokens })}\n\n`));
+      console.log("artifact stream done", "chars:", full.length, "heartbeats:", hb, "promptTokens:", promptTokens);
     } catch (err) {
       console.error("artifact stream error:", String((err && err.stack) || err));
       await writer.write(encoder.encode(`data: ${JSON.stringify({ error: String((err && err.message) || err) })}\n\n`));

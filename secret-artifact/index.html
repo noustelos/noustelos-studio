@@ -1055,6 +1055,15 @@
     let libSelection = [];
     let libIndex = [];
 
+    // Input-token budget warning. Google caps Gemma input at ~16k tokens/min;
+    // a long conversation's per-turn input grows until each turn alone exceeds it
+    // → 429 → SIGNAL LOST. The engine reports the turn's real promptTokens; when it
+    // crosses TOKEN_WARN we nudge the user (once) to wrap up or RESET before the cap.
+    const TOKEN_LIMIT = 16000;   // Google's per-minute input-token cap for the model
+    const TOKEN_WARN  = 12000;   // ~75% — warn here, leaving room to close cleanly
+    let lastPromptTokens = 0;    // input tokens of the most recent turn (from the engine)
+    let tokenWarned = false;     // show the warning once per conversation (reset on RESET)
+
     // The command directory shown by /dir — a single source of truth for every
     // owner command. Kept here (front-end) on purpose: it must NOT live in the
     // always-on Drive profile (that bloats the prompt and slows every turn).
@@ -1397,7 +1406,9 @@
           try { data = JSON.parse(payload); } catch { continue; }
           if (data.error) throw new Error(data.error);
           if (data.delta) { full += data.delta; onDelta(data.delta); }
-          // data.done → stream finished; loop just ends naturally.
+          // data.done → stream finished; carries the turn's input-token count so
+          // we can warn the user as they approach Google's 16k/min input cap.
+          if (data.done && typeof data.promptTokens === 'number') lastPromptTokens = data.promptTokens;
         }
         return buf;
       }
@@ -1595,6 +1606,20 @@
         saveHistory();
         // Read-aloud is ON-DEMAND only (tap the bubble's play button) — no auto-read,
         // so cloud TTS credits are only spent when the user actually asks to listen.
+
+        // Token-budget nudge: once this turn's input crosses ~75% of Google's
+        // 16k/min cap, warn (once) so the user can wrap up or RESET before the next
+        // turn tips over the cap and the engine starts returning SIGNAL LOST.
+        if (!tokenWarned && lastPromptTokens >= TOKEN_WARN) {
+          tokenWarned = true;
+          const k = (lastPromptTokens / 1000).toFixed(1);
+          addBubble(
+            '⚠️ Η συζήτηση μεγάλωσε (' + k + 'k / ' + (TOKEN_LIMIT / 1000) + 'k tokens). ' +
+            'Κοντεύεις στο όριο ανά λεπτό της Google — λίγα ακόμα μηνύματα και θα αρχίσει το SIGNAL LOST. ' +
+            'Καλό είναι να κλείσεις τη συζήτηση ή να πατήσεις RESET (πες «θυμήσου …» ό,τι θες να κρατήσω πρώτα).',
+            'system'
+          );
+        }
       } catch (err) {
         setBusy(false);
         if (err && err.locked) {
@@ -1619,6 +1644,9 @@
     function handleReset() {
       history = [];
       saveHistory();
+      // Fresh transcript → reset the token-budget nudge so it can fire again.
+      tokenWarned = false;
+      lastPromptTokens = 0;
       // Clear all bubbles, then restore the system greeting.
       stream.innerHTML = '';
       addBubble('Memory wiped. Invoke the Artifact to begin anew.', 'system');
@@ -1635,6 +1663,9 @@
       try { stopSpeak(); } catch {}      // silence any in-flight read-aloud
       persona = target;
       try { localStorage.setItem(PERSONA_KEY, persona); } catch {}
+      // Each persona has its own transcript size → reset the token-budget nudge.
+      tokenWarned = false;
+      lastPromptTokens = 0;
       // Swap in the target persona's own transcript and repaint the window.
       history = loadHistory();
       stream.innerHTML = '';
