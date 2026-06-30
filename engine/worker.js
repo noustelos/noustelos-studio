@@ -38,6 +38,14 @@ const DEFAULTS = {
   MODEL: "gemma-4-31b-it",
   ALLOWED_ORIGIN: "https://noustelos.gr",
   TEMPERATURE: "1.0",
+  // ElevenLabs cloud TTS (read-aloud voice "Elias"). The key is a SECRET
+  // (env.ELEVENLABS_API_KEY, never in the front-end); the front-end POSTs text to
+  // /api/tts and the Worker proxies it. flash_v2_5 is multilingual (reads EL+EN in
+  // the same voice), cheap and low-latency. All env-overridable.
+  ELEVENLABS_VOICE_ID: "LjADh1ECU2fAah7OCeE8",   // Elias (male)
+  ELEVENLABS_MODEL: "eleven_flash_v2_5",
+  TTS_MAX_CHARS: 2000,            // safety cap on a single read-aloud request
+  TTS_TIMEOUT_MS: 20000,
   // Gemma 4 is a THINKING model — reasoning tokens count against this budget, so
   // a low cap truncates the visible answer mid-sentence once it has thought for a
   // while. Owner gets a generous budget (effectively no cut); other roles a
@@ -168,6 +176,16 @@ export default {
     // own route, own short system prompt, no persona/memory/Drive/kill-switch.
     if (new URL(request.url).pathname === "/api/site-assistant") {
       return handleSiteAssistant(body, env, ctx, request, corsOrigin, origin, allowedOrigin);
+    }
+
+    // --- Text-to-Speech proxy (Artifact read-aloud, ElevenLabs "Elias") ---
+    // The Artifact front-end POSTs { passphrase, text } here when a bot bubble's
+    // read-aloud (▶) button is tapped; the Worker proxies it to ElevenLabs with the
+    // SECRET key and returns audio/mpeg. Passphrase-gated with the SAME codes as the
+    // chat (owner + guest), so unlocking the Artifact unlocks the voice. On-demand
+    // only (the front-end never auto-reads via cloud), no user-input logging.
+    if (new URL(request.url).pathname === "/api/tts") {
+      return handleTts(body, env, ctx, corsOrigin);
     }
 
     // --- Passphrase gate (optional, supports multiple codes) ---
@@ -960,6 +978,75 @@ function json(obj, status, corsOrigin) {
     status,
     headers: { "Content-Type": "application/json", ...cors(corsOrigin) },
   });
+}
+
+/* ============================================================================
+ * Text-to-Speech proxy  —  POST /api/tts   (Artifact read-aloud, ElevenLabs)
+ * ----------------------------------------------------------------------------
+ * Proxies the read-aloud voice "Elias" through the Worker so the ElevenLabs key
+ * stays SECRET (never reaches the front-end). Gated with the SAME passphrases as
+ * the chat (owner + guest). Returns audio/mpeg bytes, or JSON on error. Does NOT
+ * log the text. On-demand only — the front-end calls this when a ▶ button is
+ * tapped; it caches the resulting audio per bubble so a replay never re-charges.
+ * ========================================================================== */
+async function handleTts(body, env, ctx, corsOrigin) {
+  // Passphrase gate — reuse the chat codes (owner + guest). No separate secret.
+  const valid = collectPassphrases(env);
+  if (valid.size) {
+    const provided = typeof body.passphrase === "string" ? body.passphrase.trim() : "";
+    if (!valid.has(provided)) return json({ error: "locked" }, 401, corsOrigin);
+  }
+
+  if (!env.ELEVENLABS_API_KEY) {
+    return json({ error: "tts_unconfigured" }, 500, corsOrigin);
+  }
+
+  // Light server-side hygiene: ensure a string, cap length (cost guard). The
+  // front-end already strips emojis/markdown, so we don't re-clean here.
+  const maxChars = Number(env.TTS_MAX_CHARS || DEFAULTS.TTS_MAX_CHARS);
+  const text = String(body.text ?? "").trim().slice(0, maxChars);
+  if (!text) return json({ error: "no_text" }, 400, corsOrigin);
+
+  const voiceId = env.ELEVENLABS_VOICE_ID || DEFAULTS.ELEVENLABS_VOICE_ID;
+  const modelId = env.ELEVENLABS_MODEL || DEFAULTS.ELEVENLABS_MODEL;
+  const timeoutMs = Number(env.TTS_TIMEOUT_MS || DEFAULTS.TTS_TIMEOUT_MS);
+
+  try {
+    const resp = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": env.ELEVENLABS_API_KEY,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({ text, model_id: modelId }),
+        signal: AbortSignal.timeout(timeoutMs),
+      }
+    );
+
+    if (!resp.ok) {
+      // 401 (bad key) / 422 (bad request) / 429 (quota — credits exhausted) etc.
+      // Surface a clean status so the front-end can fall back to browser TTS.
+      console.error("tts upstream error:", resp.status);
+      const status = resp.status === 401 || resp.status === 429 ? resp.status : 502;
+      return json({ error: "tts_failed", status: resp.status }, status, corsOrigin);
+    }
+
+    // Stream the MP3 straight back to the browser with CORS + cache headers.
+    return new Response(resp.body, {
+      status: 200,
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Cache-Control": "private, max-age=86400",
+        ...cors(corsOrigin),
+      },
+    });
+  } catch (err) {
+    console.error("tts error:", err && err.message);
+    return json({ error: "tts_failed" }, 502, corsOrigin);
+  }
 }
 
 /* ============================================================================

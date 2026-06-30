@@ -1080,7 +1080,7 @@
       '',
       'ΦΩΝΕΣ / PERSONA',
       '• DION — concierge Μυκόνου  ·  GEMMA — επιστροφή στο Artifact',
-      '• /voices (φωνές) — τι φωνές TTS εκθέτει η συσκευή',
+      '• /voices (φωνές) — ενεργή φωνή read-aloud (Elias, ElevenLabs)',
       '',
       'ΟΘΟΝΗ',
       '• /clear (καθάρισε) — καθαρίζει μόνο την οθόνη (η κουβέντα/μνήμη συνεχίζει)',
@@ -1477,30 +1477,16 @@
         return;
       }
 
-      // Diagnostic: /voices lists the TTS voices Safari actually exposes on this
-      // device (iOS often hides downloaded enhanced/premium voices) and which one
-      // pickVoice would choose. Handled locally, no model call.
-      if (/^\/?\s*voices$/.test(cmd) || cmd === 'φωνές' || cmd === 'φωνες') {
+      // /voices — report the active read-aloud voice. Read-aloud is now cloud TTS
+      // (ElevenLabs "Elias", multilingual EL/EN) proxied through the engine, so this
+      // no longer enumerates the device's browser voices. Local, no model call.
+      if (/^\/?\s*voices$/.test(cmd) || cmd === '\u03c6\u03c9\u03bd\u03ad\u03c2' || cmd === '\u03c6\u03c9\u03bd\u03b5\u03c2') {
         input.value = '';
-        // iOS Safari loads voices lazily — getVoices() is often [] until the
-        // engine is "warmed up". Nudge it, then retry for ~3s before reporting.
         unlockTTS();
-        try { synth && synth.getVoices(); } catch {}
-        let tries = 0;
-        const renderVoices = () => {
-          const all = synth ? synth.getVoices() : [];
-          if (!all.length && tries < 12) { tries++; setTimeout(renderVoices, 250); return; }
-          const list = all
-            .filter((v) => /^(el|en)/i.test(v.lang || ''))
-            .map((v) => `• ${v.name} [${v.lang}]${isPremiumVoice(v) ? ' ✓enhanced' : ''}`)
-            .join('\n') || '(no el/en voices exposed)';
-          const elPick = pickVoice('el-GR'), enPick = pickVoice('en-US');
-          addBubble(
-            `Voices exposed: ${all.length} total\n${list}\n\nGreek → ${elPick ? elPick.name : '—'}\nEnglish → ${enPick ? enPick.name : '—'}`,
-            'system'
-          );
-        };
-        renderVoices();
+        addBubble(
+          'Read-aloud voice: Elias (ElevenLabs, multilingual EL/EN) \u2014 cloud TTS via the engine.\nTap the play button on any reply to hear it.',
+          'system'
+        );
         focusInput();
         return;
       }
@@ -1607,8 +1593,8 @@
         else if (!full) botSpan.textContent = finalText;            // streamed empty
         history.push({ role: 'model', text: finalText });
         saveHistory();
-        // Auto read-aloud the fresh reply (history replay never speaks).
-        speak(finalText, botEl.querySelector('.bubble-replay'));
+        // Read-aloud is ON-DEMAND only (tap the bubble's play button) — no auto-read,
+        // so cloud TTS credits are only spent when the user actually asks to listen.
       } catch (err) {
         setBusy(false);
         if (err && err.locked) {
@@ -1698,59 +1684,36 @@
       });
     }
 
-    // ===== Voice: Text-to-Speech (read aloud) ====================
-    const synth = window.speechSynthesis;
+    // ===== Voice: Text-to-Speech (read aloud) — ElevenLabs "Elias" =======
+    // Read-aloud is proxied through the engine (/api/tts) so the ElevenLabs key
+    // stays SERVER-SIDE; "Elias" reads BOTH Greek and English (multilingual model).
+    // On-demand ONLY (tap play) — no auto-read, to keep credit spend deliberate.
+    const TTS_URL = API_URL.replace(/\/api\/chat$/, '/api/tts');
+    // A tiny silent clip used to "unlock" the shared <audio> element inside a user
+    // gesture — iOS Safari blocks programmatic play() unless the element has played
+    // once during a tap. After unlocking, a real src can be set + played post-fetch.
+    const SILENT_AUDIO = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+    let ttsAudio = null;        // one shared, reused element — one unlock covers all reads
     let ttsUnlocked = false;
     let speakingBtn = null;
+    const ttsCache = new Map(); // cleaned text -> object URL: a replay never re-charges
 
-    // Match the spoken language to the text: Greek glyphs → el-GR, else en-US.
-    function detectLang(text) {
-      // Greek block (U+0370–U+03FF) or Greek Extended (U+1F00–U+1FFF) → Greek.
-      return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(text) ? 'el-GR' : 'en-US';
+    function getAudio() {
+      if (!ttsAudio) { ttsAudio = new Audio(); ttsAudio.preload = 'auto'; }
+      return ttsAudio;
     }
-    // Prefer Apple/Google "premium"/"enhanced" voices — their intonation is far
-    // more natural than the default compact voices. We can't query gender (the
-    // Web Speech API doesn't expose it), so we match the known-natural named
-    // voices first: Samantha for English, Melina for Greek.
-    // Ordered name preferences per language — best/desired voice first. Greek:
-    // Nikos (male, enhanced) then Melina; English: male enhanced names then
-    // Samantha. We can't query gender, so we match by these known names.
-    const VOICE_NAMES = {
-      el: [/nikos/i, /melina/i],
-      en: [/aaron/i, /\btom\b/i, /daniel/i, /arthur/i, /samantha/i],
-    };
-    const PREMIUM_TAG = /premium|enhanced/i;
-    function isPremiumVoice(v) {
-      return !!v && (PREMIUM_TAG.test(v.voiceURI || '') || PREMIUM_TAG.test(v.name || ''));
-    }
-    function pickVoice(lang) {
-      const voices = synth ? synth.getVoices() : [];
-      const base = lang.split('-')[0];
-      const norm = (v) => (v.lang || '').replace('_', '-');
-      const inLang = voices.filter((v) => norm(v).toLowerCase().startsWith(base));
-      const pool = inLang.length ? inLang : voices;
-      const names = VOICE_NAMES[base] || [];
-      // 1) a preferred name that's ALSO enhanced/premium (the ideal hit);
-      for (const re of names) {
-        const hit = pool.find((v) => re.test(v.name) && isPremiumVoice(v));
-        if (hit) return hit;
-      }
-      // 2) a preferred name at any quality;
-      for (const re of names) {
-        const hit = pool.find((v) => re.test(v.name));
-        if (hit) return hit;
-      }
-      // 3) any enhanced/premium in-language → exact locale → first available.
-      return pool.find(isPremiumVoice)
-          || pool.find((v) => norm(v) === lang)
-          || pool[0]
-          || null;
-    }
-    // iOS only allows speech after a user gesture; speaking an empty utterance
-    // during a tap grants permission for later programmatic (auto-read) speech.
+
+    // Prime the shared audio element within a user gesture (iOS blocks programmatic
+    // play() unless the element has played once during a tap). Idempotent.
     function unlockTTS() {
-      if (!synth || ttsUnlocked) return;
-      try { synth.speak(new SpeechSynthesisUtterance('')); ttsUnlocked = true; } catch {}
+      if (ttsUnlocked) return;
+      const a = getAudio();
+      try {
+        a.src = SILENT_AUDIO;
+        const p = a.play();
+        if (p && p.then) p.then(() => { ttsUnlocked = true; }).catch(() => {});
+        else ttsUnlocked = true;
+      } catch {}
     }
     // Reset a replay button back to its idle ▶ state.
     function resetBtnIcon(btn) {
@@ -1760,9 +1723,9 @@
       btn.title = 'Read aloud';
       btn.setAttribute('aria-label', 'Read this message aloud');
     }
-    // Stop any read-aloud in progress (used by the bubble's ■ toggle).
+    // Stop any read-aloud in progress (used by the bubble's stop toggle).
     function stopSpeak() {
-      if (synth) synth.cancel();
+      if (ttsAudio) { try { ttsAudio.pause(); ttsAudio.currentTime = 0; } catch {} }
       resetBtnIcon(speakingBtn);
       speakingBtn = null;
     }
@@ -1777,23 +1740,15 @@
         .replace(/\s+/g, ' ')                       // collapse whitespace
         .trim();
     }
-    function speak(text, btn) {
-      if (!synth) return;
+    // Fetch (or reuse cached) ElevenLabs audio for `text` and play it. Toggles the
+    // bubble's play/stop button; fails quietly back to idle if the engine is
+    // unreachable or the ElevenLabs credits are exhausted (no browser fallback by design).
+    async function speak(text, btn) {
       text = cleanForSpeech(text);
       if (!text) return;
-      synth.cancel(); // stop any in-flight speech cleanly before starting
-      resetBtnIcon(speakingBtn);
-      speakingBtn = null;
-
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = detectLang(text);
-      const v = pickVoice(u.lang);
-      if (v) u.voice = v;
-      // Slightly slower + slightly lower than default: a hair under 1.0 reads as
-      // "considered" rather than rushed, and a gently lowered pitch keeps the
-      // premium voice from sounding thin/screechy (without masculinising it).
-      u.rate = 0.78;
-      u.pitch = 0.9;
+      stopSpeak();        // cancel any in-flight read cleanly before starting
+      unlockTTS();        // we're inside the play tap — prime the element for iOS
+                          // (after stopSpeak so the priming clip isn't paused mid-play)
 
       if (btn) {
         speakingBtn = btn;
@@ -1801,23 +1756,40 @@
         btn.innerHTML = STOP_ICON;           // becomes a STOP button while reading
         btn.title = 'Stop';
         btn.setAttribute('aria-label', 'Stop reading');
-        const clear = () => {
-          resetBtnIcon(btn);
-          if (speakingBtn === btn) speakingBtn = null;
-        };
-        u.onend = clear;
-        u.onerror = clear;
       }
-      synth.speak(u);
-    }
-    // Voices can load asynchronously — touch the list once they're ready.
-    if (synth && typeof synth.onvoiceschanged !== 'undefined') {
-      synth.onvoiceschanged = () => { pickVoice('el-GR'); };
+      const clear = () => {
+        resetBtnIcon(btn);
+        if (speakingBtn === btn) speakingBtn = null;
+      };
+
+      try {
+        let url = ttsCache.get(text);
+        if (!url) {
+          const res = await fetch(TTS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passphrase, text }),
+          });
+          if (!res.ok) { clear(); return; }   // 401 locked / 429 out of credits / 502
+          const blob = await res.blob();
+          url = URL.createObjectURL(blob);
+          ttsCache.set(text, url);
+        }
+        if (speakingBtn !== btn) return;       // user stopped/started another read while fetching
+        const a = getAudio();
+        a.src = url;
+        a.onended = clear;
+        a.onerror = clear;
+        await a.play();
+      } catch (err) {
+        clear();
+        console.error('[Artifact] read-aloud failed:', err);
+      }
     }
     // Stop speech if the page is hidden or navigated away from.
-    window.addEventListener('pagehide', () => { if (synth) synth.cancel(); });
+    window.addEventListener('pagehide', stopSpeak);
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && synth) synth.cancel();
+      if (document.hidden) stopSpeak();
     });
 
     // ===== Voice: Speech-to-Text (dictation) =====================

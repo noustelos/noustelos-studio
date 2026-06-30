@@ -283,24 +283,33 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   `resolveTemperature` (clamp 0–2, falls back to `env.TEMPERATURE`) +
   `buildSystemPrompt` (folds the dials into the systemInstruction).
 - **Voice** — dictation via `webkitSpeechRecognition` (hard-set `el-GR`, mic
-  hidden where unsupported, auto-sends transcript); read-aloud via
-  `speechSynthesis` (lang auto-detected Greek/English) with a per-bubble ▶/■
-  play/stop toggle and auto-read of fresh replies. TTS unlocked on a send/mic tap
-  for iOS. **Voice quality (premium/enhanced, natural):** `pickVoice` walks an
-  ordered `VOICE_NAMES` list per language — Greek `nikos` (MALE enhanced) then
-  `melina`; English `aaron`/`tom`/`daniel`/`arthur` (male enhanced) then
-  `samantha` — trying each name first AS an enhanced/premium voice, then at any
-  quality, then any `premium|enhanced` in-language (`isPremiumVoice` checks
-  `voiceURI`/`name`), then exact-locale, then first. These exist only if the user
-  DOWNLOADED them (iOS Settings → Accessibility → Spoken Content → Voices) AND
-  iOS Safari actually exposes them to `getVoices()` (it often HIDES downloaded
-  enhanced voices — type `/voices` in the chat to see what's really exposed +
-  which one would be picked). We dropped the old male-name+pitch-0.7
-  masculinisation (robotic); now `rate=0.92`, `pitch=0.9` for a slightly slower,
-  non-screechy read (Nikos is already male, so no pitch hack needed).
-  `cleanForSpeech` strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/keycap) and
-  markdown markers (`* _ \` # > ~ |`) before speaking so the engine doesn't pause
-  on symbols or read emoji names aloud.
+  hidden where unsupported, auto-sends transcript); read-aloud is **cloud TTS via
+  ElevenLabs** (voice **"Elias"**, male, multilingual EL+EN) with a per-bubble ▶/■
+  play/stop toggle. **On-demand ONLY** — tapping ▶ on a bot bubble (NO auto-read,
+  so credits are only spent when the user asks to listen). **Engine-proxied — the
+  ElevenLabs key NEVER touches the front-end:** the front-end POSTs
+  `{ passphrase, text }` to **`POST /api/tts`** (`worker.js` `handleTts`), gated
+  with the SAME passphrases as the chat (owner + guest); the Worker calls
+  ElevenLabs with the secret `ELEVENLABS_API_KEY` + `ELEVENLABS_VOICE_ID`
+  (`LjADh1ECU2fAah7OCeE8`) + `ELEVENLABS_MODEL` (`eleven_flash_v2_5` — multilingual,
+  cheap, low-latency) and streams back `audio/mpeg`. **No user-input logging.**
+  Errors → `401 locked` / `400 no_text` / `429` (credits exhausted) / `502
+  tts_failed`; on any non-OK the front-end **fails quietly to idle** (NO browser-
+  voice fallback by design — owner chose Elias-for-everything). **Front-end
+  (`secret-artifact/index.html`):** one shared reused `<audio>` element; `speak()`
+  fetches the MP3, caches the object URL **per cleaned-text in `ttsCache`** so a
+  replay never re-charges, and plays it. **iOS unlock:** a tiny `SILENT_AUDIO`
+  data-URI is played inside the ▶ tap (`unlockTTS`, called AFTER `stopSpeak` so the
+  priming clip isn't paused mid-play, and also on send/mic taps) to satisfy
+  Safari's gesture requirement for later programmatic `play()`. `cleanForSpeech`
+  (unchanged) strips emojis (`\p{Extended_Pictographic}`, ZWJ/VS/keycap) and
+  markdown markers (`* _ \` # > ~ |`) before sending so ElevenLabs doesn't read
+  symbols / emoji names aloud (and we don't pay for them). **`/voices` (`φωνές`)**
+  now just reports the active cloud voice (Elias) — it no longer enumerates the
+  device's browser voices. ⚠️ **Needs `cd engine && npx wrangler deploy`** for the
+  new route + the `ELEVENLABS_API_KEY` secret (`wrangler secret put`). The old
+  `speechSynthesis` / `pickVoice` / `VOICE_NAMES` (Nikos/Melina/Samantha) browser-
+  voice path was REMOVED.
 - **Skin switch (visual only, front-end)** — a header **SKIN** button (next to
   TUNE/LOCK/RESET, half-filled-circle icon) cycles the front-end *skin*: the
   **default Vault** (obsidian + gold "Foundation" arcane look — gold/copper/
