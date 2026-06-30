@@ -293,6 +293,14 @@ which the client ignores) to keep the pipe warm. It also `console.log`s
   ElevenLabs with the secret `ELEVENLABS_API_KEY` + `ELEVENLABS_VOICE_ID`
   (`LjADh1ECU2fAah7OCeE8`) + `ELEVENLABS_MODEL` (`eleven_flash_v2_5` — multilingual,
   cheap, low-latency) and streams back `audio/mpeg`. **No user-input logging.**
+  **Length cap (`TTS_MAX_CHARS`, live `[vars]`=10000):** `handleTts` slices the
+  text to this many chars before calling ElevenLabs (cost guard). It was **2000**,
+  which **clipped long answers mid-sentence** (the read-aloud just stopped partway,
+  debugged 2026-06-30) — raised to 10000 (covers a full owner answer at 8192 output
+  tokens; `flash_v2_5` allows up to 40k/request). The front-end sends the WHOLE
+  cleaned text with no cap, so this engine value is the only limit; **changing it
+  needs `cd engine && npx wrangler deploy`** (and the browser `ttsCache` holds the
+  old clipped audio per-text, so hard-refresh to re-fetch a previously-played reply).
   Errors → `401 locked` / `400 no_text` / `429` (credits exhausted) / `502
   tts_failed`; on any non-OK the front-end **fails quietly to idle** (NO browser-
   voice fallback by design — owner chose Elias-for-everything). **Front-end

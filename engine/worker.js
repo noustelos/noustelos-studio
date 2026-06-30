@@ -44,7 +44,7 @@ const DEFAULTS = {
   // the same voice), cheap and low-latency. All env-overridable.
   ELEVENLABS_VOICE_ID: "LjADh1ECU2fAah7OCeE8",   // Elias (male)
   ELEVENLABS_MODEL: "eleven_flash_v2_5",
-  TTS_MAX_CHARS: 2000,            // safety cap on a single read-aloud request
+  TTS_MAX_CHARS: 10000,           // safety cap on a single read-aloud request (covers a full owner answer; flash_v2_5 allows up to 40k)
   TTS_TIMEOUT_MS: 20000,
   // Gemma 4 is a THINKING model — reasoning tokens count against this budget, so
   // a low cap truncates the visible answer mid-sentence once it has thought for a
