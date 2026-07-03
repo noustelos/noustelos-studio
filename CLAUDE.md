@@ -56,8 +56,13 @@ copy outruns reality, propose a corrected version that stays just as persuasive.
 (This is the working rule behind the [[live-site-copy-integrity]] memory.)
 
 **Known limits to hold the line on (current as of 2026-06):**
-- **AskSingapore.ai = PLANNED next instance, NOT live.** "already running" / "live"
-  is false — it's the next destination on the same engine, not a running product.
+- **AskSingapore.ai = standalone LIVE DEMO; the DOMAIN is FOR SALE (2026-07).**
+  It is NOT connected to the AskSantorini engine — no Workers, no shared runtime,
+  no end-to-end product — so never claim "runs on the shared engine/codebase" or
+  "sibling instance in production." Honest frame: a self-contained concept demo
+  (served at https://asksingapore.ai) that previews a second destination; the
+  asksingapore.ai domain is offered for acquisition (mailto with subject
+  "AskSingapore.ai domain inquiry" via the homepage card's Domain-for-sale line).
 - **White-label = DESIGNED blueprint, NOT sold / multi-tenant-live.** Say "built to
   be replicated," NOT "delivered as SaaS" — zero instances have been sold.
 - **`/redeem` = intent / activation evidence BEFORE payment, NOT a confirmed

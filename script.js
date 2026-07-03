@@ -116,8 +116,10 @@ const translations = {
         detailsHref: '/artifact-details.html'
       },
       askSingapore: {
-        label: 'Planned',
-        desc: 'A planned sister project to AskSantorini.ai — an AI guide for visitors to Singapore, designed to run on the same engine and architecture, extending the shared codebase to a second destination. Next on the roadmap; an early preview is up, but it isn\'t a live product yet.'
+        label: 'Live Demo',
+        desc: 'A standalone live demo of an AI travel guide for visitors to Singapore — a concept preview of how the AskSantorini.ai experience could translate to a second destination. It runs as a self-contained demo, not connected to the AskSantorini engine.',
+        saleKicker: 'Domain for sale',
+        saleLink: 'asksingapore.ai is available for acquisition'
       },
       project1: {
         alt: '365orthodoxy project preview',
@@ -288,8 +290,10 @@ const translations = {
         detailsHref: '/artifact-details-el.html'
       },
       askSingapore: {
-        label: 'Planned',
-        desc: 'Ένα σχεδιαζόμενο αδελφό project του AskSantorini.ai — ένας AI οδηγός για επισκέπτες της Σιγκαπούρης, σχεδιασμένος να τρέχει στην ίδια engine και αρχιτεκτονική, επεκτείνοντας τον κοινό κώδικα σε έναν δεύτερο προορισμό. Επόμενο στο roadmap· υπάρχει ένα πρώιμο preview, αλλά δεν είναι ακόμη live προϊόν.'
+        label: 'Live Demo',
+        desc: 'Ένα αυτόνομο live demo ενός AI οδηγού για επισκέπτες της Σιγκαπούρης — μια προεπισκόπηση του πώς θα μεταφερόταν η εμπειρία του AskSantorini.ai σε έναν δεύτερο προορισμό. Τρέχει ως αυτοτελές demo, χωρίς σύνδεση με το engine του AskSantorini.',
+        saleKicker: 'Domain προς πώληση',
+        saleLink: 'Το asksingapore.ai είναι διαθέσιμο προς εξαγορά'
       },
       project1: {
         alt: 'Προεπισκόπηση project 365orthodoxy',
@@ -554,9 +558,12 @@ const setupMailLinks = () => {
     }
 
     const email = `${user}@${domain}`;
+    const subject = link.getAttribute('data-mail-subject');
     link.addEventListener('click', (event) => {
       event.preventDefault();
-      window.location.href = `mailto:${email}`;
+      window.location.href = subject
+        ? `mailto:${email}?subject=${encodeURIComponent(subject)}`
+        : `mailto:${email}`;
     });
   });
 };
