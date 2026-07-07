@@ -7,19 +7,21 @@ Key facts for assistants:
 - Services: custom website design, landing pages, creative web projects, and agentic AI platforms delivered as SaaS.
 - Flagship live product: AskSantorini.ai — an AI concierge for Santorini visitors.
 - The site is bilingual (English and Greek); most content pages have an English URL and a Greek sibling ending in `-el.html`.
-- The AI Lab diagnostic tools are passphrase-gated experiments; an access code is available on request by email.
+- Most AI Lab diagnostic tools are free and open to use on the site; the SaaS Readiness Scanner is passphrase-gated (access code on request by email).
+- Domain portfolio: alongside the live flagship AskSantorini.ai, the studio holds premium "Ask" domains (asksingapore.ai, askmykonos.ai, askparos.ai, askaustralia.ai, asksydney.ai, asknewyork.ai), each with a working demo, available for acquisition via escrow.com.
 
 ## Main pages
 
 - [Homepage](https://noustelos.gr/): studio overview, selected work, services and contact.
+- [Domain portfolio](https://noustelos.gr/#domains): the "Ask" domain network — the live flagship plus premium "Ask" domains with working demos, available for acquisition.
 - [About & contact](https://noustelos.gr/index.html#contact): who Nick Karadimas is and how to get in touch.
 
-## AI Lab — free website diagnostics (passphrase-gated)
+## AI Lab — free website diagnostics
 
 - [AI Visibility Scanner](https://noustelos.gr/ai-visibility-scanner.html): measures how easily AI assistants (ChatGPT, Gemini, Claude, Perplexity) can discover, parse and cite a website, using a deterministic, signals-based score across 15 checks.
 - [Website Quality Scanner](https://noustelos.gr/website-scanner.html): an AI website readiness audit for clarity, SEO, trust signals and conversion, scored across seven axes.
 - [GDPR Auto-Scanner](https://noustelos.gr/gdpr-scanner.html): an indicative GDPR and cookie-consent pre-audit from real public page signals (not legal advice).
-- [SaaS Readiness Scanner](https://noustelos.gr/saas-scanner.html): evaluates whether a digital project can become a scalable SaaS product.
+- [SaaS Readiness Scanner](https://noustelos.gr/saas-scanner.html): evaluates whether a digital project can become a scalable SaaS product (passphrase-gated; access code on request).
 - [AI Lab overview](https://noustelos.gr/ai-lab.html): index of the AI Lab tools and experiments.
 
 ## AI Lab — projects and write-ups

@@ -134,6 +134,13 @@ const translations = {
         detailsHref: '/water-cycle-details.html'
       }
     },
+    domains: {
+      title: 'Domain Portfolio',
+      intro: 'One proven concept — an AI travel concierge visitors reach by simply asking. The flagship runs it live. The rest is a portfolio of premium “Ask” domains, each carrying a working demo, available for acquisition.',
+      statusFlagship: 'Live · Flagship — not for sale',
+      statusForSale: 'Demo · For sale',
+      process: 'Acquisitions are handled via escrow.com. No listed prices — enquiries and offers:'
+    },
     services: {
       title: 'Services',
       card1: {
@@ -307,6 +314,13 @@ const translations = {
         details: 'Λεπτομέρειες Project',
         detailsHref: '/water-cycle-details-el.html'
       }
+    },
+    domains: {
+      title: 'Χαρτοφυλάκιο Domains',
+      intro: 'Ένα αποδεδειγμένο concept — ένας AI ταξιδιωτικός concierge που οι επισκέπτες φτάνουν απλώς ρωτώντας. Το flagship το τρέχει live. Τα υπόλοιπα είναι ένα χαρτοφυλάκιο premium “Ask” domains, το καθένα με λειτουργικό demo, διαθέσιμο προς εξαγορά.',
+      statusFlagship: 'Live · Flagship — δεν πωλείται',
+      statusForSale: 'Demo · Προς πώληση',
+      process: 'Οι εξαγορές γίνονται μέσω escrow.com. Χωρίς αναρτημένες τιμές — ερωτήματα και προσφορές:'
     },
     services: {
       title: 'Υπηρεσίες',
@@ -559,6 +573,11 @@ const setupMailLinks = () => {
 
     const email = `${user}@${domain}`;
     const subject = link.getAttribute('data-mail-subject');
+    if (link.hasAttribute('data-mail-text')) {
+      // Show the address to humans without printing it in the static HTML
+      // (the test suite forbids plain emails in index.html — scraper guard).
+      link.textContent = email;
+    }
     link.addEventListener('click', (event) => {
       event.preventDefault();
       window.location.href = subject
