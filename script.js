@@ -138,7 +138,7 @@ const translations = {
     domains: {
       title: 'Domain Portfolio',
       intro: 'One proven concept — an AI travel concierge visitors reach by simply asking. The flagship runs it live. The rest is a portfolio of premium “Ask” domains, each carrying a working demo, available for acquisition.',
-      statusFlagship: 'Live · Flagship — not for sale',
+      statusFlagship: 'Live · Flagship',
       statusForSale: 'Demo · For sale',
       process: 'Acquisitions are handled via escrow.com. No listed prices — enquiries and offers:'
     },
@@ -320,7 +320,7 @@ const translations = {
     domains: {
       title: 'Χαρτοφυλάκιο Domains',
       intro: 'Ένα αποδεδειγμένο concept — ένας AI ταξιδιωτικός concierge που οι επισκέπτες φτάνουν απλώς ρωτώντας. Το flagship το τρέχει live. Τα υπόλοιπα είναι ένα χαρτοφυλάκιο premium “Ask” domains, το καθένα με λειτουργικό demo, διαθέσιμο προς εξαγορά.',
-      statusFlagship: 'Live · Flagship — δεν πωλείται',
+      statusFlagship: 'Live · Flagship',
       statusForSale: 'Demo · Προς πώληση',
       process: 'Οι εξαγορές γίνονται μέσω escrow.com. Χωρίς αναρτημένες τιμές — ερωτήματα και προσφορές:'
     },
