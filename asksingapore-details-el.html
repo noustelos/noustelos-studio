@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="AskSingapore.ai — λεπτομέρειες project: ένας live μονοσέλιδος AI ταξιδιωτικός οδηγός για τη Σιγκαπούρη που κάνει streaming πραγματικές απαντήσεις από το Agnes AI μέσω serverless Cloudflare Pages Function. Αυτόνομο concept site· το domain asksingapore.ai είναι διαθέσιμο προς εξαγορά." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/asksingapore-details-el.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/asksingapore-details-el.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/asksingapore-details.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/asksingapore-details.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AskSingapore.ai — Λεπτομέρειες Project | Noustelos Studio" />
+  <meta property="og:description" content="AskSingapore.ai — λεπτομέρειες project: ένας live μονοσέλιδος AI ταξιδιωτικός οδηγός για τη Σιγκαπούρη που κάνει streaming πραγματικές απαντήσεις από το Agnes AI μέσω serverless Cloudflare Pages Function. Το domain asksingapore.ai είναι διαθέσιμο προς εξαγορά." />
+  <meta property="og:url" content="https://noustelos.gr/asksingapore-details-el.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AskSingapore.ai — live AI travel guide" />
+  <meta property="og:locale" content="el_GR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/asksingapore-details-el.html" />
+  <meta name="twitter:title" content="AskSingapore.ai — Λεπτομέρειες Project | Noustelos Studio" />
+  <meta name="twitter:description" content="AskSingapore.ai — λεπτομέρειες project: ένας live μονοσέλιδος AI ταξιδιωτικός οδηγός για τη Σιγκαπούρη που κάνει streaming πραγματικές απαντήσεις από το Agnes AI μέσω serverless Cloudflare Pages Function. Το domain asksingapore.ai είναι διαθέσιμο προς εξαγορά." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/hero-share.png" />
+  <meta name="twitter:image:alt" content="AskSingapore.ai — live AI travel guide" />
+
+  <!-- Structured data: TechArticle + breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "AskSingapore.ai — a live one-page AI travel guide",
+        "description": "A live, single-page AI travel guide for Singapore: real answers streamed from Agnes AI through a serverless Cloudflare Pages Function, with anonymous Q&A logging and a curated venue allow-list. Standalone concept site; the asksingapore.ai domain is available for acquisition.",
+        "url": "https://noustelos.gr/asksingapore-details-el.html",
+        "image": "https://noustelos.gr/assets/og/hero-share.png",
+        "inLanguage": "el",
+        "author": { "@type": "Person", "name": "Nick Karadimas" },
+        "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
+        "isPartOf": { "@type": "CollectionPage", "name": "AI Lab", "url": "https://noustelos.gr/ai-lab-el.html" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://noustelos.gr/" },
+          { "@type": "ListItem", "position": 2, "name": "AI Lab", "item": "https://noustelos.gr/ai-lab-el.html" },
+          { "@type": "ListItem", "position": 3, "name": "AskSingapore.ai", "item": "https://noustelos.gr/asksingapore-details-el.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AskSingapore.ai — Λεπτομέρειες Project | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260707" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Project article ───────────────────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code:not(.project-diagram code) {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* ASCII architecture diagram — exact monospace alignment preserved */
+    .project-diagram {
+      margin: 0.4rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-diagram code {
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* ── Closing CTAs ──────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Portfolio</a></li>
+        <li><a href="/index.html#domains">Domains</a></li>
+        <li><a href="/index.html#services">Υπηρεσίες</a></li>
+        <li><a href="/index.html#about">Σχετικά</a></li>
+        <li><a href="/ai-lab-el.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Επικοινωνία</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Αλλαγή γλώσσας">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr" class="is-active">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="asksingapore-title">
+      <article>
+        <p class="project-kicker">AI Lab / Live · Domain Προς Πώληση</p>
+        <h1 id="asksingapore-title">AskSingapore.ai</h1>
+
+        <blockquote class="project-lead">
+          A live, single-page AI travel guide for Singapore — real answers streamed word-by-word from Agnes AI through a serverless edge proxy. A standalone concept site that shows what the asksingapore.ai domain can become; the domain itself is available for acquisition.
+        </blockquote>
+
+        <h3>TL;DR</h3>
+        <p>A one-screen marketing site with a <strong>real LLM chat</strong> at its centre: visitors ask anything about Singapore — hawker food, hotels, getting around — and get a live, streamed answer. No framework, no build step, no server to patch; the whole thing is one HTML file plus one edge function.</p>
+        <ul>
+          <li><strong>What</strong> — live AI travel chat + domain showcase for <code>asksingapore.ai</code></li>
+          <li><strong>Stack</strong> — Cloudflare Pages + Pages Functions · Agnes AI (<code>agnes-2.5-flash</code>, OpenAI-compatible, SSE streaming) · Apps Script + Google Sheets (anonymous Q&amp;A log)</li>
+          <li><strong>Edge-native</strong> — vanilla HTML/CSS/JS, zero build; push to <code>main</code> → live in ~30 seconds, instant rollback</li>
+          <li><strong>Relation to AskSantorini</strong> — standalone; <em>not</em> connected to the AskSantorini engine</li>
+          <li><strong>Status</strong> — live at asksingapore.ai; the domain is for sale</li>
+        </ul>
+
+        <h3>Overview</h3>
+        <p>AskSingapore.ai is the second destination in the studio’s “Ask” domain network. Where the flagship, <strong>AskSantorini.ai</strong>, is a full concierge platform with a booking engine behind it, AskSingapore is deliberately minimal: a single premium page whose centrepiece is a working AI guide. A visitor types a question and real artificial intelligence answers — <strong>Agnes AI</strong>, Singapore’s own homegrown model, a deliberate pairing for a Singapore site.</p>
+        <p>The page exists to prove a point about the domain: instead of a parked “for sale” placeholder, a buyer lands on a living demonstration of what the name can carry. The chat is the page’s only network call (plus a small live weather line under the Singapore clock); everything else — the adaptive visual themes, the decorations, the copy — is local and static.</p>
+        <p>It shares an idea with AskSantorini, not an implementation: there are no shared Workers, no shared runtime, no shared codebase. It is a self-contained concept site, and it is presented as exactly that.</p>
+        <p><em>Built and maintained solo as an AI-assisted product: I own the architecture and the decisions; an AI coding agent handles execution under a strategy-first, gated workflow with reviewable diffs and rollback-first deploys.</em></p>
+
+        <h3>Tech Stack</h3>
+        <h4>Frontend</h4>
+        <ul>
+          <li><strong>One HTML file</strong> — markup, CSS and the chat client all live in <code>index.html</code>; no framework, no bundler, no build step</li>
+          <li><strong>Streamed reveal</strong> — the client parses the SSE stream and reveals real tokens word-by-word at a reading cadence (45&nbsp;ms/word, slower fade under <code>prefers-reduced-motion</code>)</li>
+          <li><strong>Local touches</strong> — a live SGT clock and a live weather line (Open-Meteo, keyless, fetched client-side; hidden entirely on failure — no fake fallback)</li>
+        </ul>
+        <h4>Backend (serverless proxy)</h4>
+        <ul>
+          <li><strong>A single Cloudflare Pages Function</strong> — <code>POST /api/chat</code>, same origin as the page, so no CORS surface</li>
+          <li>Validates input (message ≤600 chars; history sanitized and capped at 10 turns), rate-limits, then proxies <strong>Agnes AI</strong> (<code>agnes-2.5-flash</code>, OpenAI-compatible <code>/v1/chat/completions</code>, <code>stream:&nbsp;true</code>, 50s timeout) and passes the SSE straight through</li>
+          <li>The <code>AGNES_API_KEY</code> secret lives only in the Cloudflare dashboard — it never reaches the browser</li>
+        </ul>
+        <h4>Logging &amp; analytics (anonymous)</h4>
+        <ul>
+          <li>The function <strong>tees the stream</strong>: while tokens flow to the visitor, it reassembles the full answer and fire-and-forgets <code>{question, answer}</code> to an Apps Script webhook</li>
+          <li>Rows land in a Google Sheet (<code>Timestamp (SGT) | Question | Answer</code>) — <strong>no IPs, no identifiers</strong>, and the page says so</li>
+          <li>The log doubles as a quality tool (see what the model answers) and sales evidence (see what the world asks Singapore)</li>
+        </ul>
+        <h4>Hosting</h4>
+        <ul>
+          <li><strong>Cloudflare Pages</strong>, git-connected: merge to <code>main</code> → live in ~30 seconds; rollback is one revert or one dashboard click</li>
+        </ul>
+
+        <h3>Architecture</h3>
+        <p>The whole system is a page, a proxy, and a log — the proxy exists so the model key stays locked inside Cloudflare:</p>
+
+        <pre class="project-diagram"><code>[Visitor question]
+      │
+      ▼
+(Pages Function /api/chat) ──&gt; validate + rate-limit
+      │
+      ▼
+Agnes AI — agnes-2.5-flash · stream: true · Bearer AGNES_API_KEY
+      │
+      ├──&gt; SSE pass-through ──&gt; browser (word-by-word reveal)
+      │
+      └──&gt; tee: reassemble answer ──&gt; Apps Script /exec ──&gt; Google Sheet
+           (anonymous log — no IPs, no identifiers)</code></pre>
+
+        <p>Errors are mapped, never leaked: bad input → 400, rate-limited or upstream saturation → 429, upstream failure → 502, missing key → 503, timeout → 504. The frontend renders each as a calm, honest line — “try again in a moment” — and a partial answer that gets cut mid-stream is visibly marked before the error line, never silently patched over.</p>
+
+        <h3>Key Features</h3>
+        <ul>
+          <li><strong>Live streamed answers</strong> — real model tokens in their original cadence, paced for reading; no canned responses are ever presented as live output.</li>
+          <li><strong>Answers in the visitor’s language</strong> — ask in any language, the guide replies in kind, capped at a concise ~150 words.</li>
+          <li><strong>Venue hallucination guard</strong> — a strict allow-list of verified hawker centres, restaurants, neighbourhoods, attractions and transport facts; the model may only name list entries or world-famous landmarks.</li>
+          <li><strong>Abuse damping</strong> — a sliding-window rate limit, per-visitor and site-wide, tuned to the free Agnes tier’s account-wide budget.</li>
+          <li><strong>Anonymous chat log</strong> — every Q&amp;A recorded without IPs or identifiers, declared openly on the page.</li>
+          <li><strong>Honest limits</strong> — the bot doesn’t pretend to make bookings, and under peak load visitors see a polite “busy” line rather than a fake answer.</li>
+        </ul>
+
+        <h3>Engineering Highlights</h3>
+        <p>Small site, but a few decisions carried real weight:</p>
+
+        <section class="project-highlight">
+          <h4>A key that never touches the browser</h4>
+          <p>The obvious shortcut — calling the model API straight from the page — would ship the secret key to every visitor. The Pages Function exists almost entirely for this one reason: the browser talks only to its own origin, the function holds the Bearer token, and the SSE stream is passed through untouched. One moving part buys a hard security boundary.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Stopping venue hallucination with an allow-list</h4>
+          <p>In QA the model would occasionally invent plausible-sounding restaurants — precisely the failure a travel guide can’t afford. Rather than hoping a softer prompt would behave, the system prompt now carries a curated <strong>verified list</strong> of real venues and a hard rule: name only list entries or world-famous landmarks. The standing policy is to <em>extend the list</em> when coverage feels thin, never to loosen the rule.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Honesty as a design invariant</h4>
+          <p>The page declares that answers come live from Agnes AI, that AI can make mistakes, and that chats are logged anonymously. Failures render as honest error lines, and the site’s <code>llms.txt</code> is required to match reality — live chat, domain for sale, nothing more. These are treated as invariants of the build, not marketing copy that can drift.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>The zero-config rate-limiter trade-off</h4>
+          <p>Rate limiting is a per-isolate, in-memory sliding window — deliberately approximate (no KV, no Durable Objects) because the goal is abuse damping on a free-tier budget, not billing-grade precision. Naming that trade-off in the code and docs keeps a future maintainer from mistaking a conscious choice for an oversight.</p>
+        </section>
+
+        <h3>The Domain</h3>
+        <p><strong>asksingapore.ai is available for acquisition.</strong> It is part of the studio’s “Ask” domain portfolio built around the live flagship AskSantorini.ai — a naming pattern where the domain <em>is</em> the interface: visitors reach an AI guide by simply asking. Acquisitions are handled via escrow.com; enquiries go through the <a href="/index.html#domains">Domain Portfolio</a> section.</p>
+
+        <h3>Known Limits</h3>
+        <ul>
+          <li>The free Agnes tier allows roughly <strong>20 answers/min account-wide</strong> — under a traffic spike some visitors will see the polite “busy” line. The upgrade path (a paid token plan, then raised limits) is documented and one config change away.</li>
+          <li>Rate limiting is approximate across Cloudflare’s data centres — accepted by design, see above.</li>
+        </ul>
+
+        <h3>Status</h3>
+        <p>Live at asksingapore.ai. A standalone concept site — designed, built, and operated solo; not connected to the AskSantorini engine.</p>
+
+        <!-- ── Closing CTAs ─────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="https://asksingapore.ai" target="_blank" rel="noopener noreferrer">Επισκέψου το AskSingapore.ai</a>
+          <a class="button button-link" href="/index.html#domains">Ερωτήματα για το domain</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the Greek version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'en');
+          window.location.href = '/asksingapore-details.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

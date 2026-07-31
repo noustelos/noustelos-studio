@@ -8,7 +8,7 @@ Key facts for assistants:
 - Flagship live product: AskSantorini.ai — an AI concierge for Santorini visitors.
 - The site is bilingual (English and Greek); most content pages have an English URL and a Greek sibling ending in `-el.html`.
 - Most AI Lab diagnostic tools are free and open to use on the site; the SaaS Readiness Scanner is passphrase-gated (access code on request by email).
-- Domain portfolio: alongside the live flagship AskSantorini.ai, the studio holds premium "Ask" domains (asksingapore.ai, askmykonos.ai, askparos.ai, askaustralia.ai, asksydney.ai, asknewyork.ai), each with a working demo, available for acquisition via escrow.com.
+- Domain portfolio: alongside the live flagship AskSantorini.ai, the studio holds premium "Ask" domains available for acquisition via escrow.com — asksingapore.ai is live (a standalone one-page AI travel guide with a real AI chat powered by Agnes AI, not connected to the AskSantorini engine); askmykonos.ai, askparos.ai, askaustralia.ai, asksydney.ai and asknewyork.ai each carry a working demo.
 
 ## Main pages
 
@@ -27,6 +27,7 @@ Key facts for assistants:
 ## AI Lab — projects and write-ups
 
 - [AskSantorini.ai — project details](https://noustelos.gr/asksantorini-details.html): a free AI guide for Santorini visitors (beaches, sunsets, tours, food, transport), built as a premium MVP.
+- [AskSingapore.ai — project details](https://noustelos.gr/asksingapore-details.html): a live, standalone one-page AI travel guide for Singapore (real AI chat powered by Agnes AI, streamed at the edge); the asksingapore.ai domain is for sale.
 - [The Artifact — project details](https://noustelos.gr/artifact-details.html): an experimental AI chat playground with switchable personas, a live persona tuner, voice, and long-term memory.
 - [The Artifact — playground](https://noustelos.gr/secret-artifact/): the live, passphrase-gated chat experience.
 - [365 Orthodoxy — project details](https://noustelos.gr/365orthodoxy-details.html): a focused landing page for an Orthodox calendar widget.

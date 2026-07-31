@@ -117,8 +117,8 @@ const translations = {
         detailsHref: '/artifact-details.html'
       },
       askSingapore: {
-        label: 'Live Demo',
-        desc: 'A standalone live demo of an AI travel guide for visitors to Singapore — a concept preview of how the AskSantorini.ai experience could translate to a second destination. It runs as a self-contained demo, not connected to the AskSantorini engine.',
+        label: 'Live',
+        desc: 'A live, standalone AI travel guide for visitors to Singapore — real answers streamed from Agnes AI, previewing how the AskSantorini.ai experience translates to a second destination. It runs as a self-contained site, not connected to the AskSantorini engine.',
         saleKicker: 'Domain for sale',
         saleLink: 'asksingapore.ai is available for acquisition'
       },
@@ -137,9 +137,12 @@ const translations = {
     },
     domains: {
       title: 'Domain Portfolio',
-      intro: 'One proven concept — an AI travel concierge visitors reach by simply asking. The flagship runs it live. The rest is a portfolio of premium “Ask” domains, each carrying a working demo, available for acquisition.',
+      intro: 'One proven concept — an AI travel concierge visitors reach by simply asking. The flagship runs it live. The rest is a portfolio of premium “Ask” domains — asksingapore.ai already live, the others carrying working demos — available for acquisition.',
       statusFlagship: 'Live · Flagship',
       statusForSale: 'Demo · For sale',
+      statusLiveSale: 'Live · For sale',
+      singaporeDetails: 'Details',
+      singaporeDetailsHref: '/asksingapore-details.html',
       process: 'Acquisitions are handled via escrow.com. No listed prices — enquiries and offers:'
     },
     services: {
@@ -299,8 +302,8 @@ const translations = {
         detailsHref: '/artifact-details-el.html'
       },
       askSingapore: {
-        label: 'Live Demo',
-        desc: 'Ένα αυτόνομο live demo ενός AI οδηγού για επισκέπτες της Σιγκαπούρης — μια προεπισκόπηση του πώς θα μεταφερόταν η εμπειρία του AskSantorini.ai σε έναν δεύτερο προορισμό. Τρέχει ως αυτοτελές demo, χωρίς σύνδεση με το engine του AskSantorini.',
+        label: 'Live',
+        desc: 'Ένας live, αυτόνομος AI οδηγός για επισκέπτες της Σιγκαπούρης — πραγματικές απαντήσεις σε streaming από το Agnes AI, μια προεπισκόπηση του πώς μεταφέρεται η εμπειρία του AskSantorini.ai σε έναν δεύτερο προορισμό. Τρέχει ως αυτοτελές site, χωρίς σύνδεση με το engine του AskSantorini.',
         saleKicker: 'Domain προς πώληση',
         saleLink: 'Το asksingapore.ai είναι διαθέσιμο προς εξαγορά'
       },
@@ -319,9 +322,12 @@ const translations = {
     },
     domains: {
       title: 'Χαρτοφυλάκιο Domains',
-      intro: 'Ένα αποδεδειγμένο concept — ένας AI ταξιδιωτικός concierge που οι επισκέπτες φτάνουν απλώς ρωτώντας. Το flagship το τρέχει live. Τα υπόλοιπα είναι ένα χαρτοφυλάκιο premium “Ask” domains, το καθένα με λειτουργικό demo, διαθέσιμο προς εξαγορά.',
+      intro: 'Ένα αποδεδειγμένο concept — ένας AI ταξιδιωτικός concierge που οι επισκέπτες φτάνουν απλώς ρωτώντας. Το flagship το τρέχει live. Τα υπόλοιπα είναι ένα χαρτοφυλάκιο premium “Ask” domains — το asksingapore.ai ήδη live, τα άλλα με λειτουργικό demo — διαθέσιμα προς εξαγορά.',
       statusFlagship: 'Live · Flagship',
       statusForSale: 'Demo · Προς πώληση',
+      statusLiveSale: 'Live · Προς πώληση',
+      singaporeDetails: 'Λεπτομέρειες',
+      singaporeDetailsHref: '/asksingapore-details-el.html',
       process: 'Οι εξαγορές γίνονται μέσω escrow.com. Χωρίς αναρτημένες τιμές — ερωτήματα και προσφορές:'
     },
     services: {
