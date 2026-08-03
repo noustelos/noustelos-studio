@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="How the live AI concierge on asksingapore.ai is built — and why the hard part of a travel chatbot is not answering questions, but refusing to make things up." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://asksingapore.ai/blog/ai-concierge-that-refuses-to-invent.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/en/blog/concierge-refuses-to-invent/" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/el/blog/concierge-refuses-to-invent/" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/en/blog/concierge-refuses-to-invent/" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="The Concierge That Refuses to Invent — Building Honest AI for Singapore" />
+  <meta property="og:description" content="How the live AI concierge on asksingapore.ai is built — and why the hard part of a travel chatbot is not answering questions, but refusing to make things up." />
+  <meta property="og:url" content="https://noustelos.gr/en/blog/concierge-refuses-to-invent/" />
+  <meta property="og:image" content="https://asksingapore.ai/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/en/blog/concierge-refuses-to-invent/" />
+  <meta name="twitter:title" content="The Concierge That Refuses to Invent — Building Honest AI for Singapore" />
+  <meta name="twitter:description" content="How the live AI concierge on asksingapore.ai is built — and why the hard part of a travel chatbot is not answering questions, but refusing to make things up." />
+  <meta name="twitter:image" content="https://asksingapore.ai/og-image.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "headline": "The concierge that refuses to invent",
+        "description": "How the live AI concierge on asksingapore.ai is built — and why the hard part of a travel chatbot is not answering questions, but refusing to make things up.",
+        "datePublished": "2026-08-03",
+        "dateModified": "2026-08-03",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://noustelos.gr/en/blog/concierge-refuses-to-invent/"
+        },
+        "url": "https://noustelos.gr/en/blog/concierge-refuses-to-invent/",
+        "image": "https://asksingapore.ai/og-image.png",
+        "author": {
+          "@type": "Organization",
+          "name": "Noustelos Studio",
+          "url": "https://noustelos.gr/"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Noustelos Studio",
+          "url": "https://noustelos.gr/"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://noustelos.gr/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://noustelos.gr/en/blog/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "The concierge that refuses to invent",
+            "item": "https://noustelos.gr/en/blog/concierge-refuses-to-invent/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>The Concierge That Refuses to Invent — Building Honest AI for Singapore</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.min.css?v=20260707" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Article ───────────────────────────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 46px);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .post-meta {
+      margin: 0.65rem 0 0;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--text-secondary);
+    }
+
+    .post-standfirst {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.28rem) !important;
+      line-height: 1.55 !important;
+      color: var(--text-secondary);
+    }
+
+    .project-article h2 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 29px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+
+    .project-article a {
+      color: var(--cta);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
+      word-break: break-word;
+    }
+
+    .project-article a:hover,
+    .project-article a:focus-visible { color: var(--cta-hover); }
+
+    .post-rule {
+      width: 100%;
+      margin: clamp(1rem, 3vw, 1.6rem) 0 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    /* Emphasis note — a card, not a pull quote */
+    .post-note {
+      display: block;
+      margin: 0.3rem 0 0;
+      padding: clamp(1rem, 2.5vw, 1.35rem);
+      border: 1px solid var(--cta);
+      border-radius: 12px;
+      background: var(--surface-light);
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .post-note strong { color: var(--text-primary); font-weight: 600; }
+
+    /* Sources — functional part of the article */
+    .post-sources { gap: 0.55rem; }
+    .post-sources li { font-size: 16px; line-height: 1.55; }
+
+    /* Acquisition CTA */
+    .post-cta {
+      display: grid;
+      gap: 0.75rem;
+      justify-items: start;
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding: clamp(1.35rem, 3.5vw, 2rem);
+      border: 1px solid var(--cta);
+      border-radius: 14px;
+      background: var(--surface-light);
+    }
+
+    .post-cta-kicker {
+      margin: 0;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .post-cta h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(21px, 2.6vw, 26px);
+      line-height: 1.2;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .post-cta p { margin: 0; }
+
+    .post-cta .button { margin-top: 0.2rem; }
+
+    .post-cta-slogan {
+      margin: 0;
+      font-size: 14px !important;
+      letter-spacing: 0.01em;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* More notes */
+    .post-more { margin-top: clamp(2rem, 5vw, 3rem); }
+
+    .post-more h2 {
+      margin: 0 0 0.9rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .post-more ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .post-more a {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(16px, 2vw, 18px);
+      font-weight: 500;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .post-more a:hover,
+    .post-more a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Closing links ─────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+
+    /* ── Index cards ───────────────────────────────────────────── */
+    .post-list {
+      margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: clamp(1rem, 2.5vw, 1.4rem);
+    }
+
+    .post-card {
+      display: grid;
+      gap: 0.55rem;
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+      border: 1px solid var(--cta);
+      border-radius: 14px;
+      background: var(--surface-light);
+    }
+
+    .post-card h2 { margin: 0; }
+
+    .post-card h2 a {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(20px, 2.6vw, 26px);
+      line-height: 1.25;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .post-card h2 a:hover,
+    .post-card h2 a:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+
+    .post-card p { margin: 0; }
+    .post-card .project-kicker { margin: 0; }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#domains">Domains</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="post-title">
+      <article>
+        <p class="project-kicker">How it works</p>
+        <h1 id="post-title">The concierge that refuses to invent</h1>
+        <p class="post-meta">Noustelos Studio · <time datetime="2026-08-03">3 August 2026</time> · 6 min read</p>
+
+        <p class="post-standfirst">Building a travel chatbot that answers questions is easy. Building one that admits when it doesn’t know is the entire job. Here is what runs behind the chat window on this domain, and the decisions that shaped it.</p>
+        <p>Open <a href="https://asksingapore.ai/" target="_blank" rel="noopener">asksingapore.ai</a> and type a question. Within a second or so, words begin appearing — a real answer, streaming in as the model produces it. There is no app to install, no account to create, no cookie wall. You ask; it answers; you leave.</p>
+        <p>That surface simplicity hides the only interesting problem in this category. A language model asked “where should I eat tonight near Marina Bay?” will always produce a confident, fluent, beautifully specific answer. The question is whether the restaurant it names exists.</p>
+        <h2>What actually runs here</h2>
+        <p>The architecture is deliberately small. The page itself is a single HTML file — no framework, no build step, no dependencies. The chat posts to one serverless endpoint on this same domain, which forwards the conversation to <a href="https://agnes-ai.com" target="_blank" rel="noopener">Agnes AI</a> and streams the reply straight back to the browser, token by token.</p>
+        <p>Everything else is local. The Singapore clock in the corner is computed in the browser from your device time, not fetched. The page makes exactly two outbound calls in total: the chat itself, and a weather reading for Singapore. That is the whole system.</p>
+        <p>What the visitor gets from it:</p>
+        <ul>
+          <li><strong>Answers in their own language.</strong> The model is instructed to reply in whatever language the visitor writes in — no language picker, no setting to find.</li>
+          <li><strong>Streaming, not spinning.</strong> Words appear as they are generated, at a steady reading cadence, rather than after a long blank pause.</li>
+          <li><strong>Nothing to sign up for.</strong> No account, no app, no stored profile.</li>
+          <li><strong>Short answers.</strong> Replies are held to roughly 150 words unless you ask for more. A concierge is not a brochure.</li>
+        </ul>
+        <h2>The failure we caught in testing</h2>
+        <p>Early in owner QA, the concierge was asked for hawker food recommendations. It answered warmly and specifically: a stall name, the centre it sits in, the dish to order, the queue to expect.</p>
+        <p>The stall did not exist.</p>
+        <p>This is the characteristic failure of fast, small language models on local knowledge, and it is genuinely dangerous in a travel product. A hallucinated restaurant is not an abstract accuracy metric — it is a visitor standing in the wrong place at 8pm in an unfamiliar city, having trusted you. Worse, the invented answer is <em>more</em> appealing than the honest one. It is specific, it sounds like insider knowledge, and it reads exactly like the answer a great concierge would give.</p>
+        <aside class="post-note"><strong>The uncomfortable part:</strong> the better the model is at sounding local, the more convincing its inventions become. Fluency and reliability are separate axes, and optimising for the first does nothing for the second.</aside>
+        <h2>The fix: a short leash, on purpose</h2>
+        <p>The response was not a better prompt asking the model to “be accurate.” Models comply with that instruction by sounding more confident, not by knowing more. Instead, the concierge operates under explicit venue rules and a curated list of verified places, written and checked by hand.</p>
+        <p>In practice, it may name a place only if that place is on the verified list or is a genuinely world-famous Singapore landmark. Otherwise it does not name one. Asked for the best chicken rice, it will point you to a specific hawker centre — Maxwell, Tiong Bahru Market, Chinatown Complex — and tell you to follow the queues or check current stalls on Google Maps. It will not invent a stall to fill the gap.</p>
+        <p>Three further rules follow from the same principle:</p>
+        <ul>
+          <li><strong>No street addresses or unit numbers.</strong> These are precisely the details a model fabricates most convincingly, and the ones a visitor is most likely to act on without checking.</li>
+          <li><strong>No exact prices.</strong> Broad ranges at most, always flagged as variable.</li>
+          <li><strong>No guessing at live facts.</strong> Opening hours, availability, schedules — if the model isn’t certain, it is instructed to say so rather than produce a plausible number.</li>
+        </ul>
+        <p>When a new category of invention shows up, the fix is to extend the verified list in that category — never to relax the rules. The leash stays short; the list gets longer.</p>
+        <h2>What it deliberately cannot do</h2>
+        <p>The concierge cannot make a booking, a reservation or a purchase. Asked to, it explains how you can book yourself. This is stated plainly rather than hidden, because a fake booking flow is the fastest way to destroy trust in a product like this — and because a demo that pretends to transact is lying about what it is.</p>
+        <p>It also cannot browse the live web, check real-time availability, or give turn-by-turn navigation. It answers from what the model knows plus a hand-checked local brief. For a buyer, those are exactly the seams where live integrations would slot in — booking APIs, inventory feeds, a maps provider. The point of shipping without them is that nothing on the page currently claims a capability that isn’t there.</p>
+        <h2>When it breaks, it says so</h2>
+        <p>The endpoint has real limits: rate limits per visitor, a global cap, upstream timeouts. When any of those trip, the chat shows an honest line — the concierge is busy, or something went wrong, please try again.</p>
+        <p>The tempting alternative is a canned fallback answer: a generic paragraph about Singapore, served silently when the live model fails, so the demo never appears broken. We don’t do that. A canned answer posing as a live one is a small lie told at the exact moment the visitor is deciding whether to trust the product.</p>
+        <h2>What we log, and what we don’t</h2>
+        <p>Completed exchanges — the question and the answer — are appended anonymously to a spreadsheet so we can see where the concierge is weak and extend the verified list. No IP addresses, no identifiers, no accounts, no profiles. This is disclosed on the page itself, under the category chips, rather than buried in a policy nobody opens. Turning the logging off is a matter of removing one environment variable.</p>
+        <hr class="post-rule" />
+        <p>None of this makes the concierge smarter. It makes it narrower, and narrow is the correct trade for a product whose only real asset is being believed. A visitor who follows a recommendation and finds the place open is a visitor who comes back. A visitor who follows one into an empty street is gone, and so is every answer you gave them before it.</p>
+        <p>That is the version running on this domain today: a working concierge with the guardrails visible, built so that what it says can be trusted — and honest about the parts it leaves for whoever takes it further.</p>
+
+        <!-- ── Acquisition ──────────────────────────────────────── -->
+        <aside class="post-cta">
+          <p class="post-cta-kicker">Acquisition</p>
+          <h2>This domain is available</h2>
+          <p>asksingapore.ai is for sale, along with the working concierge you can try on the front page. We haven't set a public price — tell us what it's worth to you.</p>
+          <a class="button button-primary" href="mailto:info@asksingapore.ai?subject=Acquisition%20enquiry%20%E2%80%94%20asksingapore.ai">Make an offer · info@asksingapore.ai</a>
+          <p class="post-cta-slogan">Don't buy a domain. Own the verb.</p>
+        </aside>
+
+        <!-- ── More notes ───────────────────────────────────────── -->
+        <nav class="post-more" aria-label="More notes">
+          <h2>More notes</h2>
+          <ul>
+          <li><a href="/en/blog/own-the-verb/">Own the verb: what a category domain is actually for →</a></li>
+          <li><a href="/en/blog/singapore-ai-visitor-economy/">Singapore, AI and the visitor economy →</a></li>
+          </ul>
+        </nav>
+
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="/en/blog/">All notes</a>
+          <a class="button button-link" href="https://asksingapore.ai/" target="_blank" rel="noopener noreferrer">Try the live concierge at asksingapore.ai</a>
+          <a class="button button-link" href="/index.html#top">Back to noustelos.gr</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle opens the same page in the other language.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/el/blog/concierge-refuses-to-invent/';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

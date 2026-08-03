@@ -33,6 +33,15 @@ Key facts for assistants:
 - [365 Orthodoxy — project details](https://noustelos.gr/365orthodoxy-details.html): a focused landing page for an Orthodox calendar widget.
 - [Water Cycle System — project details](https://noustelos.gr/water-cycle-details.html): a service landing page for pool care in Santorini.
 
+## Blog
+
+Bilingual notes published alongside asksingapore.ai (English at `/en/blog/...`, Greek at `/el/blog/...`). The English versions are republications: they carry a canonical link back to the originals on asksingapore.ai.
+
+- [Blog index](https://noustelos.gr/en/blog/): the three notes, in English ([Greek index](https://noustelos.gr/el/blog/)).
+- [The concierge that refuses to invent](https://noustelos.gr/en/blog/concierge-refuses-to-invent/): how the live AI concierge on asksingapore.ai is built, and the guardrails that stop it inventing places.
+- [Own the verb](https://noustelos.gr/en/blog/own-the-verb/): what a category domain like asksingapore.ai is for, what transfers to a buyer and what explicitly does not — no asking price is published.
+- [Singapore, AI and the visitor economy](https://noustelos.gr/en/blog/singapore-ai-visitor-economy/): the sourced figures on AI and tourism in Singapore, with the counter-arguments left in.
+
 ## FAQ and reference
 
 - [AI Visibility & GEO FAQ](https://noustelos.gr/ai-visibility-scanner-faq.html): what makes a website easy for AI assistants to discover, parse and cite (llms.txt, structured data, FAQ schema).

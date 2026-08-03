@@ -9,6 +9,22 @@ const siteOrigin = 'https://noustelos.gr';
 
 const read = (relativePath) => fs.readFileSync(path.join(rootDir, relativePath), 'utf8');
 
+// Republished content: the English blog notes first appeared on asksingapore.ai,
+// so they point their canonical at the original to avoid duplicate content. They
+// stay in the sitemap (their Greek siblings are original and self-canonical).
+// This is the ONLY place a canonical is allowed to leave noustelos.gr.
+const syndicatedCanonicals = new Map([
+  [
+    'en/blog/concierge-refuses-to-invent/index.html',
+    'https://asksingapore.ai/blog/ai-concierge-that-refuses-to-invent.html',
+  ],
+  ['en/blog/own-the-verb/index.html', 'https://asksingapore.ai/blog/own-the-verb.html'],
+  [
+    'en/blog/singapore-ai-visitor-economy/index.html',
+    'https://asksingapore.ai/blog/singapore-ai-tourism.html',
+  ],
+]);
+
 const walkFiles = (directory, predicate) => {
   const results = [];
 
@@ -240,7 +256,14 @@ test('sitemap lists real indexable pages and excludes noindex pages', () => {
     const robots = getMetaContent(html, 'robots') || '';
 
     sitemapFiles.add(relativePath);
-    assert.equal(canonical, location, `${relativePath} canonical should match sitemap URL`);
+    const expectedCanonical = syndicatedCanonicals.get(relativePath) || location;
+    assert.equal(
+      canonical,
+      expectedCanonical,
+      `${relativePath} canonical should match ${
+        syndicatedCanonicals.has(relativePath) ? 'its original on asksingapore.ai' : 'sitemap URL'
+      }`
+    );
     assert.ok(!/noindex/i.test(robots), `${relativePath} is noindex and should not be in sitemap.xml`);
     assert.ok(getMetaContent(html, 'description'), `${relativePath} should include a meta description`);
     assert.match(html, /<title\b[^>]*>[^<]+<\/title>/i, `${relativePath} should include a title`);

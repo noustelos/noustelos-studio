@@ -920,6 +920,46 @@ See the Passphrase gate bullet for the full "now public" note.
 - To add real guardrails: `git cherry-pick`/merge from `artifact-public-wip`, then
   do the Turnstile/KV/secrets setup documented in that branch's `wrangler.toml`.
 
+## Blog — `/en/blog/`, `/el/blog/` (republished asksingapore.ai notes, 2026-08)
+Three bilingual long-form notes about the **asksingapore.ai** domain + its live
+concierge, added from an owner brief (`~/Desktop/brief-blog.md`). **The only part
+of the site that uses DIRECTORY URLs instead of the `page.html` / `page-el.html`
+split-URL convention** — the article texts hard-code `/en/blog/<slug>/` and
+`/el/blog/<slug>/` internal links, and the owner chose to honor them verbatim
+rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
+`en|el/blog/<slug>/index.html` (article), slugs `concierge-refuses-to-invent`,
+`own-the-verb`, `singapore-ai-visitor-economy`.
+- **⚠️ SYNDICATED CANONICAL — the one place a canonical leaves noustelos.gr.** The
+  **English** pages were first published on asksingapore.ai, so each carries
+  `<link rel=canonical>` to its ORIGINAL there (duplicate-content protection); the
+  **Greek** pages are original translations and are self-canonical. All 8 pages are
+  in `sitemap.xml`, so `tests/site.test.js` ("canonical should match sitemap URL")
+  needed an explicit `syndicatedCanonicals` allow-list — **add to that map, don't
+  relax the assertion**, if another syndicated page ever lands.
+- **Copy is FROZEN.** The texts are the owner's, checked line-by-line before
+  publication on asksingapore.ai. Do NOT reword, "improve" the sourced numbers,
+  round them, drop the hedges ("described as", "we could not independently
+  corroborate"), cut the "What this does not prove" / "what does NOT come with it"
+  sections, translate the slogan *"Don't buy a domain. Own the verb."*, or add a
+  price / `offers` / `price` schema for the domain anywhere. Never call Agnes AI
+  "Singapore's homegrown model" (correct: "a Singapore-based AI company").
+  ⚠️ Article 3's **Sources** block is the article's proof — every link must stay
+  live (all 11 verified 200 on 2026-08-03); re-check if you touch it.
+- **Regenerating:** the pages were produced by a one-off generator that parses the
+  brief (§5 metadata, §6 EN bodies, §7 EL bodies, §8 CTA, §9 cross-links) so no
+  string is retyped, plus a verifier that diffs the rendered text against the brief
+  word-for-word. Neither is committed (scratchpad only). For small fixes just edit
+  the HTML; for a re-run, re-derive from `brief-blog.md` and re-verify.
+- Self-contained pages on the standard template (`styles.min.css?v=…` + a page
+  `<style>` block, `.project-article > article { min-width:0 }` iOS guard, the
+  lang-toggle NAVIGATE script pointing at the same article in the other language).
+  Page-specific classes: `.post-standfirst`, `.post-note` (the brief's `>` blocks
+  are EMPHASIS CARDS, not pull quotes), `.post-sources`, `.post-cta` (single
+  `mailto:info@asksingapore.ai`, no form, no price), `.post-more`, `.post-card`.
+  OG image is borrowed from `https://asksingapore.ai/og-image.png` until there's a
+  studio-hosted one. Linked from `asksingapore-details.html` / `-el.html` (card
+  CTA row) + `llms.txt`; deliberately NOT in the header nav.
+
 ## Other repo areas (not the Artifact)
 - `index.html`, `ai-chat.html`, `privacy-policy*.html` — homepage + chat + legal.
 - **Content/marketing pages are now SPLIT-URL bilingual (one file per language),
