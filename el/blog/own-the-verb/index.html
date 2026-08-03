@@ -197,6 +197,20 @@
     .project-article a:hover,
     .project-article a:focus-visible { color: var(--cta-hover); }
 
+    /* Buttons must not inherit the article link colour (dark-on-dark) */
+    .project-article a.button { text-decoration: none; }
+
+    .project-article a.button-primary,
+    .project-article a.button-primary:hover,
+    .project-article a.button-primary:focus-visible { color: #ffffff; }
+
+    .project-article a.button-link,
+    .project-article a.button-secondary,
+    .project-article a.button-link:hover,
+    .project-article a.button-secondary:hover,
+    .project-article a.button-link:focus-visible,
+    .project-article a.button-secondary:focus-visible { color: var(--text-primary); }
+
     .post-rule {
       width: 100%;
       margin: clamp(1rem, 3vw, 1.6rem) 0 0;
