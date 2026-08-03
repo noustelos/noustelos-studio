@@ -143,6 +143,8 @@ const translations = {
       statusLiveSale: 'Live · For sale',
       singaporeDetails: 'Details',
       singaporeDetailsHref: '/asksingapore-details.html',
+      singaporeNotes: 'Notes',
+      singaporeNotesHref: '/en/blog/',
       process: 'Acquisitions are handled via escrow.com. No listed prices — enquiries and offers:'
     },
     services: {
@@ -328,6 +330,8 @@ const translations = {
       statusLiveSale: 'Live · Προς πώληση',
       singaporeDetails: 'Λεπτομέρειες',
       singaporeDetailsHref: '/asksingapore-details-el.html',
+      singaporeNotes: 'Κείμενα',
+      singaporeNotesHref: '/el/blog/',
       process: 'Οι εξαγορές γίνονται μέσω escrow.com. Χωρίς αναρτημένες τιμές — ερωτήματα και προσφορές:'
     },
     services: {
