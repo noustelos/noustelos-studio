@@ -75,6 +75,12 @@ copy outruns reality, propose a corrected version that stays just as persuasive.
 - **Codebase = maintained with an active roadmap** — NOT "zero tech debt."
 - **"source-grounded" applies ONLY to the AI concierge**, NOT the pool-care landing
   page or the calendar widget.
+- **AskCarnivore.com = LIVE LANDING PAGE, the bot is NOT built (2026-08).** Only an
+  Under-Construction page is deployed; there is no router, no index, no Q&A. Never
+  call it a live product, a working bot, or a shipped AI. Honest frame: "the landing
+  page is live; the router and its index are still being built." Its Work card
+  carries an **`In Development`** status label — do NOT upgrade it to `Live` or
+  `Featured Launch` until the router actually answers questions.
 
 ## The Artifact — architecture
 
@@ -1029,6 +1035,22 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   of the live proof point. **Static EN, NOT `data-i18n`** (brand/press, same in both
   languages). Reuses existing tokens (`.launch-kicker` + `.service-live-link`); the
   only new CSS is the small `.card-featured-on` flex/spacing rule in `styles.css`.
+- **AskCarnivore.com Work card (added 2026-08)** — 2nd card in Selected Work, directly
+  below the AskSantorini featured card. A studio-owned project, not client work:
+  domain `askcarnivore.com`, its OWN repo `github.com/noustelos/askCarnivore-Ai`,
+  deployed on Cloudflare Pages (nothing about it lives in this repo besides the card).
+  Positioned as a **switchboard for the carnivore-diet community** — a pure router
+  that returns links to creators/talks/podcasts rather than generating answers.
+  - **Status is `In Development`, deliberately** — see the Honesty-principle bullet
+    above. The landing page is live; the bot is not.
+  - **No details page yet**, so the card has ONLY the `View Project` CTA and the
+    `work.askCarnivore` block has NO `detailsHref` key. If one is ever written:
+    create BOTH `askcarnivore-details.html` and `-el`, add BOTH to `sitemap.xml`,
+    add an entry to `llms.txt`, and add `details`/`detailsHref` to all FOUR
+    translation blocks (en + gr × `script.js` + `script.min.js`).
+  - Keys `work.askCarnivore.label` / `.desc` follow the five-places rule below; the
+    JS cache-bust went `?v=blognotes01` → `?v=askcarnivore01`. No CSS changed, so
+    the site-wide `styles.min.css?v=` sweep was correctly NOT needed.
 - **Homepage copy lives in THREE places — edit all three or the site half-updates:**
   the inline default in `index.html` (`data-i18n="…"`), AND both the `en` and `gr`
   blocks in `script.js`, AND the SAME two strings in the **hand-minified
