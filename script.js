@@ -110,6 +110,10 @@ const translations = {
         details: 'Project Details',
         detailsHref: '/asksantorini-details.html'
       },
+      askCarnivore: {
+        label: 'In Development',
+        desc: 'A switchboard for the carnivore-diet community — ask in plain language and get routed to the creator, talk or podcast that already answers it, rather than to a generated answer. The landing page is live; the router and its index are still being built.'
+      },
       artifact: {
         alt: 'The Artifact AI chat playground preview',
         desc: 'An experimental AI chat playground with switchable personalities, a live persona tuner, voice input and read-aloud, and long-term memory — an experiment in making an AI assistant feel personal, fast and a little uncanny. The access code is available on request — just ask by email.',
@@ -296,6 +300,10 @@ const translations = {
         secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.',
         details: 'Λεπτομέρειες Project',
         detailsHref: '/asksantorini-details-el.html'
+      },
+      askCarnivore: {
+        label: 'In Development',
+        desc: 'Ένας κόμβος δρομολόγησης για την carnivore κοινότητα — ρωτάς με απλά λόγια και δρομολογείσαι στον creator, την ομιλία ή το podcast που ήδη απαντά, αντί σε μια παραγόμενη απάντηση. Η landing σελίδα είναι live· ο δρομολογητής και το index του χτίζονται ακόμα.'
       },
       artifact: {
         alt: 'Προεπισκόπηση The Artifact AI chat playground',
