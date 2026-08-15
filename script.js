@@ -110,6 +110,10 @@ const translations = {
         details: 'Project Details',
         detailsHref: '/asksantorini-details.html'
       },
+      askCarnivoresPortal: {
+        label: 'Live · v1',
+        desc: 'A community portal for the carnivore world — a bilingual directory of the creators, doctors and first-person accounts people actually follow, where every link goes straight to the source instead of to a summary. Live in English and Greek; the planned tools are not built yet.'
+      },
       askCarnivore: {
         label: 'In Development',
         desc: 'A switchboard for the carnivore-diet community — ask in plain language and get routed to the creator, talk or podcast that already answers it, rather than to a generated answer. The landing page is live; the router and its index are still being built.'
@@ -300,6 +304,10 @@ const translations = {
         secondary: 'Χτισμένο ως γρήγορο, premium MVP με καθαρή κατεύθυνση προς affiliate tours, τοπικές συνεργασίες και hotel concierge εργαλεία.',
         details: 'Λεπτομέρειες Project',
         detailsHref: '/asksantorini-details-el.html'
+      },
+      askCarnivoresPortal: {
+        label: 'Live · v1',
+        desc: 'Μια κοινοτική πύλη για τον κόσμο της carnivore — δίγλωσσος κατάλογος με τους creators, τους γιατρούς και τις προσωπικές μαρτυρίες που πραγματικά παρακολουθεί ο κόσμος, όπου κάθε σύνδεσμος πάει κατευθείαν στην πηγή αντί σε μια περίληψη. Live σε αγγλικά και ελληνικά· τα σχεδιαζόμενα εργαλεία δεν έχουν χτιστεί ακόμα.'
       },
       askCarnivore: {
         label: 'In Development',
