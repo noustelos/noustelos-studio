@@ -81,6 +81,20 @@ copy outruns reality, propose a corrected version that stays just as persuasive.
   page is live; the router and its index are still being built." Its Work card
   carries an **`In Development`** status label — do NOT upgrade it to `Live` or
   `Featured Launch` until the router actually answers questions.
+- **AskCarnivores.com (with an S) = a DIFFERENT project, and it IS live (2026-08).**
+  The **portal**: a static bilingual directory of carnivore creators, doctors and
+  first-person accounts, EN + EL, every link going straight to the source. Not an
+  AI product — no bot, no model, no generated answers anywhere in it. Its Work card
+  carries **`Live · v1`**, which is the honest ceiling: the site is genuinely live
+  and finished as a directory, but it ships its own under-construction notice and
+  the planned tools (macro calculator, electrolytes, Get Started) do not exist, so
+  the card says the tools are not built yet. Do not promote it to `Featured Launch`
+  while that notice is still on the site.
+  ⚠️ **The two are one letter apart and are deliberately siloed** — separate repos,
+  separate Cloudflare Pages projects, separate secrets and analytics, no shared code.
+  `askcarnivores.com` → `github.com/noustelos/ask-CARNIVORES`; `askcarnivore.com` →
+  `github.com/noustelos/askCarnivore-Ai`. Never describe one as a page or feature of
+  the other, and never merge the two cards.
 
 ## The Artifact — architecture
 
@@ -1031,7 +1045,8 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   `.project-card` (Selected Work), between the secondary copy and the `.card-ctas`,
   a discreet `.card-featured-on` line: a `.launch-kicker` "Featured in" eyebrow + a
   `.service-live-link` anchor **"Linxalium"** → the Linxalium blog post about
-  AskSantorini.ai (`target="_blank" rel="noopener noreferrer"`). External validation
+  AskSantorini.ai (`target="_blank" rel="noopener noreferrer"` — third-party, so it
+  correctly keeps `noreferrer`; see the outbound-`rel` bullet below). External validation
   of the live proof point. **Static EN, NOT `data-i18n`** (brand/press, same in both
   languages). Reuses existing tokens (`.launch-kicker` + `.service-live-link`); the
   only new CSS is the small `.card-featured-on` flex/spacing rule in `styles.css`.
@@ -1051,6 +1066,36 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   - Keys `work.askCarnivore.label` / `.desc` follow the five-places rule below; the
     JS cache-bust went `?v=blognotes01` → `?v=askcarnivore01`. No CSS changed, so
     the site-wide `styles.min.css?v=` sweep was correctly NOT needed.
+- **AskCarnivores.com Work card (added 2026-08)** — the **2nd** card in Selected Work,
+  directly below the AskSantorini featured card, which pushed the AskCarnivore.com bot
+  card down to 3rd. The finished project sits above the unfinished one. Also
+  studio-owned, its own repo `github.com/noustelos/ask-CARNIVORES`, its own Cloudflare
+  Pages project; nothing of it lives in this repo besides the card. See the
+  Honesty-principle bullet above for the `Live · v1` label and the siloing warning.
+  - **No details page**, so the card has ONLY the `View Project` CTA and the
+    `work.askCarnivoresPortal` block has NO `detailsHref` key — same shape as the bot
+    card, and the same checklist applies if one is ever written.
+  - ⚠️ **The i18n key is `askCarnivoresPortal`, NOT `askCarnivores`** — deliberately.
+    `askCarnivores` would sit one letter from the existing `askCarnivore` key, where a
+    grep or a careless edit hits both. Keep the keys visibly distinct.
+  - Keys follow the five-places rule below; the JS cache-bust went `?v=askcarnivore01`
+    → `?v=askcarnivores01`. No CSS changed, so no site-wide `styles.min.css?v=` sweep.
+- **Outbound `rel`: our own domains get `noopener` ONLY — never `noreferrer`
+  (2026-08).** `noreferrer` strips the Referer header, so a click from here landed on
+  our own properties as "direct traffic" with nothing attributing it to noustelos.gr.
+  39 links across 19 files were changed; keep it that way. The split:
+  - **Ours → `rel="noopener"`**: asksantorini.ai, askcarnivores.com, askcarnivore.com,
+    asksingapore.ai, 365orthodoxy.com, watercyclesystem.gr, and the five portfolio
+    ask-city domains (askaustralia / askmykonos / asknewyork / askparos / asksydney).
+  - **Third-party → keep `rel="noopener noreferrer"`**: linxalium.com, github.com.
+  - `noopener` stays on **every** external link regardless — it is the security half
+    (blocks `window.opener` reach-back) and has nothing to do with the referrer.
+    Never drop it while removing `noreferrer`.
+  - `secret-artifact/` is exempt: it sets `<meta name="referrer" content="no-referrer">`
+    on purpose. Leave that page alone.
+  - Nothing else eats the referrer: the homepage sets no `meta referrer`, and GitHub
+    Pages sends no `Referrer-Policy` header, so the browser default applies and the
+    origin is sent. If a `Referrer-Policy` is ever introduced, re-check this.
 - **Homepage copy lives in THREE places — edit all three or the site half-updates:**
   the inline default in `index.html` (`data-i18n="…"`), AND both the `en` and `gr`
   blocks in `script.js`, AND the SAME two strings in the **hand-minified
