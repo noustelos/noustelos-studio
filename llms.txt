@@ -8,6 +8,7 @@ Key facts for assistants:
 - Flagship live product: AskSantorini.ai — an AI concierge for Santorini visitors.
 - The site is bilingual (English and Greek); most content pages have an English URL and a Greek sibling ending in `-el.html`.
 - Most AI Lab diagnostic tools are free and open to use on the site; the SaaS Readiness Scanner is passphrase-gated (access code on request by email).
+- Studio-owned side projects (separate websites, not part of the AI Lab): AskCarnivores.com — with an S — is a live bilingual directory for the carnivore-diet community; AskCarnivore.com — no S — is a different, in-development question router for the same audience. The two names differ by one letter and are separate projects.
 - Domain portfolio: alongside the live flagship AskSantorini.ai, the studio holds premium "Ask" domains available for acquisition via escrow.com — asksingapore.ai is live (a standalone one-page AI travel guide with a real AI chat powered by Agnes AI, not connected to the AskSantorini engine); askmykonos.ai, askparos.ai, askaustralia.ai, asksydney.ai and asknewyork.ai each carry a working demo.
 
 ## Main pages
@@ -32,6 +33,13 @@ Key facts for assistants:
 - [The Artifact — playground](https://noustelos.gr/secret-artifact/): the live, passphrase-gated chat experience.
 - [365 Orthodoxy — project details](https://noustelos.gr/365orthodoxy-details.html): a focused landing page for an Orthodox calendar widget.
 - [Water Cycle System — project details](https://noustelos.gr/water-cycle-details.html): a service landing page for pool care in Santorini.
+
+## Studio-owned projects (external sites)
+
+Listed under Selected Work on the homepage. These live on their own domains — there are no project write-ups on noustelos.gr for them yet.
+
+- [AskCarnivores.com](https://askcarnivores.com): live bilingual (English and Greek) community portal for the carnivore world — a directory of creators, doctors and first-person accounts, every link going straight to the source. Not an AI product: no chatbot, no generated answers. Live as a directory; the planned tools (macro calculator, electrolytes, Get Started) are not built yet.
+- [AskCarnivore.com](https://askcarnivore.com): a different project, in development — a switchboard that will route plain-language questions to the creator, talk or podcast that already answers them, instead of generating an answer. Only the landing page is live; the router and its index are still being built.
 
 ## Blog
 
