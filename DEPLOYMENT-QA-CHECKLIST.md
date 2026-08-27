@@ -6,7 +6,6 @@ This checklist validates the remaining non-image items before final deployment.
 Pages:
 - /
 - /lab/
-- /lab/video-experiments.html
 - /privacy-policy.html
 - /universe/
 
@@ -72,7 +71,6 @@ Pass criteria:
 3. Confirm sitemap.xml includes only indexable pages:
    - /
    - /lab/
-   - /lab/video-experiments.html
    - /privacy-policy.html
 4. Confirm noindex pages are not listed in sitemap.xml (/universe/, /lab/gravity-simulation.html, /lab/nebula-ui.html).
 

@@ -223,8 +223,9 @@ const translations = {
     },
     about: {
       title: 'About',
-      p1: "I build custom websites, edge-native AI platforms, and digital tools — from a travel concierge that turns destination knowledge into bookable action, to a pool-maintenance landing page, to a digital Orthodox calendar. AskSantorini.ai is the deepest proof point, but the method is the same across all of them: lean, serverless, edge-native, built by one operator who needed the tool to exist.",
-      p2: 'I think in terms of simpler processes, not bigger ones: where most people add steps, I look for the one that removes them. AI lets me move fast and explore unconventional directions, but every decision is shaped by human judgment, taste and final quality control — so the result feels specific and genuinely useful, never another template.'
+      p1: "I have been building things on the internet since the dial-up years — a Gen X kid with an x386, a copy of Basic and more patience than bandwidth, then hand-written HTML and CSS from 2008 on. Today I build custom websites, edge-native AI platforms and digital tools: a travel concierge that turns destination knowledge into bookable action, a pool-maintenance landing page, a digital Orthodox calendar. AskSantorini.ai is the deepest proof point, but the method is the same across all of them: lean, serverless, edge-native, built by one operator who needed the tool to exist.",
+      p2: "I am not a traditional developer, and that is deliberate. I work as the operator: I direct AI agents the way a project manager directs an engineer — I set the architecture, question every decision and own the final result. That combination is what makes a one-person studio able to ship live domains, tools and platforms at a pace a small team would recognise.",
+      p3: "I think in terms of simpler processes, not bigger ones: where most people add steps, I look for the one that removes them. And nothing ships because an agent said it works — everything built with AI is checked before it is trusted, which is why the result feels specific and genuinely useful, never another template."
     },
     contact: {
       title: "Let's Work Together",
@@ -418,8 +419,9 @@ const translations = {
     },
     about: {
       title: 'Σχετικά',
-      p1: 'Φτιάχνω custom websites, edge-native AI πλατφόρμες και ψηφιακά εργαλεία — από έναν travel concierge που μετατρέπει τη γνώση ενός προορισμού σε πράξη και κρατήσεις, μέχρι μια landing page για συντήρηση πισίνας και ένα ψηφιακό ορθόδοξο ημερολόγιο. Το AskSantorini.ai είναι η πληρέστερη απόδειξη, αλλά η μέθοδος είναι ίδια σε όλα: lean, serverless, edge-native — φτιαγμένα από έναν operator που χρειαζόταν το εργαλείο να υπάρξει.',
-      p2: 'Σκέφτομαι σε λογική απλούστερων διαδικασιών, όχι μεγαλύτερων: εκεί που οι περισσότεροι προσθέτουν βήματα, εγώ ψάχνω αυτό που τα αφαιρεί. Το AI με αφήνει να κινούμαι γρήγορα και να εξερευνώ ασυνήθιστες κατευθύνσεις, αλλά κάθε απόφαση διαμορφώνεται από ανθρώπινη κρίση, γούστο και τελικό quality control — ώστε το αποτέλεσμα να νιώθει συγκεκριμένο και πραγματικά χρήσιμο, ποτέ άλλο ένα template.'
+      p1: "Φτιάχνω πράγματα στο internet από την εποχή του dial-up — ένα παιδί της Gen X με έναν x386, μια Basic και περισσότερη υπομονή από ταχύτητα σύνδεσης, και από το 2008 HTML και CSS γραμμένα στο χέρι. Σήμερα φτιάχνω custom websites, edge-native AI πλατφόρμες και ψηφιακά εργαλεία: έναν travel concierge που μετατρέπει τη γνώση ενός προορισμού σε πράξη και κρατήσεις, μια landing page για συντήρηση πισίνας, ένα ψηφιακό ορθόδοξο ημερολόγιο. Το AskSantorini.ai είναι η πληρέστερη απόδειξη, αλλά η μέθοδος είναι ίδια σε όλα: lean, serverless, edge-native — φτιαγμένα από έναν operator που χρειαζόταν το εργαλείο να υπάρξει.",
+      p2: "Δεν είμαι κλασικός developer, και αυτό είναι συνειδητή επιλογή. Δουλεύω ως operator: κατευθύνω AI agents όπως ένας project manager κατευθύνει έναν μηχανικό — ορίζω την αρχιτεκτονική, αμφισβητώ κάθε απόφαση και αναλαμβάνω το τελικό αποτέλεσμα. Αυτός ο συνδυασμός είναι που επιτρέπει σε ένα studio ενός ανθρώπου να βγάζει live domains, εργαλεία και πλατφόρμες με ρυθμό που θα αναγνώριζε μια μικρή ομάδα.",
+      p3: "Σκέφτομαι σε λογική απλούστερων διαδικασιών, όχι μεγαλύτερων: εκεί που οι περισσότεροι προσθέτουν βήματα, εγώ ψάχνω αυτό που τα αφαιρεί. Και τίποτα δεν βγαίνει live επειδή το είπε ένας agent — ό,τι φτιάχνεται με AI ελέγχεται πριν το εμπιστευτείς, γι' αυτό το αποτέλεσμα νιώθει συγκεκριμένο και πραγματικά χρήσιμο, ποτέ άλλο ένα template."
     },
     contact: {
       title: 'Ας Συνεργαστούμε',

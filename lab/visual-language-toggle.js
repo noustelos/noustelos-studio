@@ -145,32 +145,6 @@
         }
       }
     },
-    videoExperiments: {
-      en: {
-        common: {
-          switchAria: 'Switch language',
-          backToLab: 'Back to UX Lab'
-        },
-        page: {
-          title: 'Video Experiments />',
-          subtitle: 'Portrait study: Tree sequence.',
-          videoAria: 'Tree portrait mode experiment video',
-          footerLabel: 'Back to UX Lab'
-        }
-      },
-      gr: {
-        common: {
-          switchAria: 'Αλλαγη γλωσσας',
-          backToLab: 'Επιστροφη στο UX Lab'
-        },
-        page: {
-          title: 'Πειραματα Βιντεο />',
-          subtitle: 'Μελετη καθετου καδρου: Tree sequence.',
-          videoAria: 'Βιντεο πειραματος καθετου καδρου',
-          footerLabel: 'Επιστροφη στο UX Lab'
-        }
-      }
-    },
     spotlightNav: {
       en: {
         common: {
