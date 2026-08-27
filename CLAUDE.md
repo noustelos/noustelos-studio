@@ -72,6 +72,10 @@ copy outruns reality, propose a corrected version that stays just as persuasive.
 - **Founder = solo operator-turned-builder with an AI-assisted workflow** — NOT a
   traditional dev / established agency. The authentic story is STRONGER; don't
   inflate it.
+- **The three `.dev` domains (notso.dev / trustno.dev / unacceptable.dev) are
+  UNANNOUNCED (2026-08).** They exist in the owner's plans but are still in build —
+  do NOT mention them in site copy, the About, `llms.txt`, the Site Assistant's
+  fact list, or anywhere else public until the owner says they ship.
 - **Codebase = maintained with an active roadmap** — NOT "zero tech debt."
 - **"source-grounded" applies ONLY to the AI concierge**, NOT the pool-care landing
   page or the calendar widget.
@@ -1104,6 +1108,42 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   live in the string; split it out as its own element with a `data-i18n` label +
   a static `<a>` (see the AskSantorini.ai live link). `#hero-title` size/weight is
   scoped (NOT the global `h1`, shared by ai-lab/artifact-details/faq pages).
+- **Homepage About = 3 paragraphs, rewritten 2026-08-27** (`about.p1/p2/p3`).
+  Sourced from the owner's own long-form piece (`~/Desktop/ME_FIRST_ABOUT.rtf`),
+  professionalized — NOT the raw memoir. The arc: (p1) where the work started
+  (dial-up era, x386 + Basic, hand-written HTML/CSS from 2008) into what's built
+  today, AskSantorini.ai as the deepest proof point; (p2) **the operator position,
+  stated outright** — *"I am not a traditional developer, and that is
+  deliberate"*, directing AI agents the way a PM directs an engineer; (p3)
+  simpler-processes philosophy + the one vibe-coding line (*nothing ships because
+  an agent said it works*). This is the honest founder framing the Honesty
+  principle calls for — do NOT inflate it into agency/dev language.
+  ⚠️ Deliberately OUT of the About: the three `.dev` domains from the brief
+  (notso/trustno/unacceptable) — **still in build, not to be mentioned anywhere
+  public yet** — and the Star Trek / Siri / HomePod colour (kept for a possible
+  blog post). `about.p3` was NEW, so it needed the inline `<p>` in
+  `index.html` **plus** four literal edits (en+gr × `script.js` +
+  `script.min.js`) — the five-places rule above. JS bust `?v=askcarnivores01`
+  → `?v=about01`; no CSS change, so no site-wide sweep.
+- **`lab/video-experiments.html` was DELETED (2026-08-27)** along with
+  `assets/lab/tree-1-loop.mp4` (12.5 MB, owner's call). The page existed ONLY
+  to play that clip, so removing the asset retired the page: its card in
+  `lab/index.html`, its `videoExperiments` block in
+  `lab/visual-language-toggle.js`, its `sitemap.xml` entry and its two lines
+  in `DEPLOYMENT-QA-CHECKLIST.md` all went with it. The URL now 404s by design.
+  ⚠️ **The `.lab-video-*` CSS in `lab.css`/`styles.css` was left in place on
+  purpose** — `.lab-video-header` is REUSED by five other lab cards (code,
+  signal, abyss, wave, spotlight), so it is NOT dead code. Only
+  `.lab-video-card` / `-page` / `-shell` / `-player` / `-back` are now
+  unused; removing them would force the site-wide `styles.min.css?v=` sweep for
+  no gain.
+  ⚠️ **iCloud eviction looks like deletion.** Large `assets/` binaries get
+  evicted locally (a `.<name>.icloud` stub appears and `git status` shows
+  ` D`), which fails the "local references point to existing files" test even
+  though the file is fine in git and LIVE on the site. Check
+  `git ls-files -s <path>` before believing it's gone — the fix is usually
+  `git checkout -- <path>`, not a delete (that's how `nebula_card/nebula.png`
+  was recovered the same day).
 - `lab/`, `universe/`, `assets/` — page assets/experiments.
 - `tests/` — `npm test` runs `node --test tests/*.test.js`.
 - **iOS "endless canvas" drift (recurring) — fix is two-layer.** On iPhone a
