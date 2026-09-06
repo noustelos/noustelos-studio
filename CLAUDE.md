@@ -79,12 +79,18 @@ copy outruns reality, propose a corrected version that stays just as persuasive.
 - **Codebase = maintained with an active roadmap** — NOT "zero tech debt."
 - **"source-grounded" applies ONLY to the AI concierge**, NOT the pool-care landing
   page or the calendar widget.
-- **AskCarnivore.com = LIVE LANDING PAGE, the bot is NOT built (2026-08).** Only an
-  Under-Construction page is deployed; there is no router, no index, no Q&A. Never
-  call it a live product, a working bot, or a shipped AI. Honest frame: "the landing
-  page is live; the router and its index are still being built." Its Work card
-  carries an **`In Development`** status label — do NOT upgrade it to `Live` or
-  `Featured Launch` until the router actually answers questions.
+- **AskCarnivore.com = the bot IS LIVE and answering (verified 2026-09-06).**
+  ⚠️ This REPLACES the old "the bot is NOT built" line, which was stale from
+  2026-08: the router shipped on 2026-08-16 and a live `POST /api/ask` returns a
+  real routed answer (topic match + videos, `meta.index_source:"kv+sheet"`) from a
+  curated index of **19 topics × 27 creators**, with `/embed`, `/highlights` and
+  `/about` all serving. Its Work card now carries **`Live · v0`**. The honest
+  ceiling is `v0`, NOT `Featured Launch`: nothing calls the scanner on a schedule
+  (the `POST /api/scan` endpoint is live and token-guarded, but the host runs no
+  cron for it), RAG/vector is deliberately deferred, three recently added topics
+  answer nothing until a scan fills them, and the site itself still shows an
+  "in development" strip. Never claim a finished product, a cron-fed index, or
+  guaranteed coverage.
 - **AskCarnivores.com (with an S) = a DIFFERENT project, and it IS live (2026-08).**
   The **portal**: a static bilingual directory of carnivore creators, doctors and
   first-person accounts, EN + EL, every link going straight to the source. Not an
@@ -1062,28 +1068,47 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   that returns links to creators/talks/podcasts rather than generating answers.
   - **Status is `In Development`, deliberately** — see the Honesty-principle bullet
     above. The landing page is live; the bot is not.
-  - **No details page yet**, so the card has ONLY the `View Project` CTA and the
-    `work.askCarnivore` block has NO `detailsHref` key. If one is ever written:
-    create BOTH `askcarnivore-details.html` and `-el`, add BOTH to `sitemap.xml`,
-    add an entry to `llms.txt`, and add `details`/`detailsHref` to all FOUR
-    translation blocks (en + gr × `script.js` + `script.min.js`).
-  - Keys `work.askCarnivore.label` / `.desc` follow the five-places rule below; the
-    JS cache-bust went `?v=blognotes01` → `?v=askcarnivore01`. No CSS changed, so
-    the site-wide `styles.min.css?v=` sweep was correctly NOT needed.
+  - **Details page: `askcarnivore-details.html` / `-el` (added 2026-09-06).** ONE
+    page covers BOTH carnivore projects — see the shared-details-page bullet below.
+  - Keys `work.askCarnivore.label` / `.desc` / `.details` / `.detailsHref` follow the
+    five-places rule below; the JS cache-bust went `?v=blognotes01` →
+    `?v=askcarnivore01` → … → `?v=carnivoredetails01`. No CSS changed, so the
+    site-wide `styles.min.css?v=` sweep was correctly NOT needed.
 - **AskCarnivores.com Work card (added 2026-08)** — the **2nd** card in Selected Work,
   directly below the AskSantorini featured card, which pushed the AskCarnivore.com bot
   card down to 3rd. The finished project sits above the unfinished one. Also
   studio-owned, its own repo `github.com/noustelos/ask-CARNIVORES`, its own Cloudflare
   Pages project; nothing of it lives in this repo besides the card. See the
   Honesty-principle bullet above for the `Live · v1` label and the siloing warning.
-  - **No details page**, so the card has ONLY the `View Project` CTA and the
-    `work.askCarnivoresPortal` block has NO `detailsHref` key — same shape as the bot
-    card, and the same checklist applies if one is ever written.
+  - **Details page: the SHARED `askcarnivore-details.html` / `-el`** — see the
+    shared-details-page bullet below; `work.askCarnivoresPortal` has `details` +
+    `detailsHref` like the bot card.
   - ⚠️ **The i18n key is `askCarnivoresPortal`, NOT `askCarnivores`** — deliberately.
     `askCarnivores` would sit one letter from the existing `askCarnivore` key, where a
     grep or a careless edit hits both. Keep the keys visibly distinct.
   - Keys follow the five-places rule below; the JS cache-bust went `?v=askcarnivore01`
     → `?v=askcarnivores01`. No CSS changed, so no site-wide `styles.min.css?v=` sweep.
+- **`askcarnivore-details.html` / `-el` = ONE details page for BOTH carnivore
+  projects (added 2026-09-06).** Deliberate exception to "one card, one page": the
+  two repos themselves describe a single concept — **two doors, one index**
+  (singular = the bot you ask, plural = the portal you browse) — so a split page
+  would repeat the index, the curation and the story twice. **Both Work cards link
+  to the SAME page** (`work.askCarnivore.detailsHref` and
+  `work.askCarnivoresPortal.detailsHref`), which does NOT violate the "never merge
+  the two cards" rule — the cards stay separate, only the write-up is shared.
+  - Full EL translation (like `water-cycle-details-el.html`), NOT the EN-only-body
+    convention of `asksantorini-details` / `artifact-details`. The source material
+    (the bot repo's `CLAUDE.md`) is written in Greek, so it is a real translation.
+  - Built from the two repos' own docs: `~/Desktop/ASK CARNIVORE AI` (bot, repo
+    `noustelos/askCarnivore-Ai`) and `~/Desktop/askCARNIVORES` (portal, repo
+    `noustelos/ask-CARNIVORES`). Re-read those before editing the page — the two
+    repos are the source of truth, not this file.
+  - The page ends with an explicit **"What is not built yet"** section (no
+    scheduler, no RAG, portal tools/events out of scope, incomplete depth tags,
+    three empty topics). Keep it: it is what makes the rest of the page credible,
+    and the Honesty principle above depends on it.
+  - OG image is `assets/og/wave-grid-share.png` (the AskSantorini pages use
+    `hero-share.png`). No project-specific OG image exists yet.
 - **Outbound `rel`: our own domains get `noopener` ONLY — never `noreferrer`
   (2026-08).** `noreferrer` strips the Referer header, so a click from here landed on
   our own properties as "direct traffic" with nothing attributing it to noustelos.gr.
