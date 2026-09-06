@@ -1024,6 +1024,15 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   tiny page needs an entry — only the ones worth pointing an AI at; keep it curated.
   The HOMEPAGE stays single-URL with the shared `script.js` JS toggle (Google best
   practice for a homepage) — it is the ONE page that is still runtime-bilingual.
+- **`sitemap.xml` is SUBMITTED to Google Search Console (2026-09-06)** — property
+  `https://noustelos.gr/`, sitemap path `sitemap.xml`. Google now re-crawls it on its
+  own, so a NEW page is only discovered if it lands in `sitemap.xml`; there is no
+  re-submission step (re-submit only if the file ever moves or the property is
+  re-verified). Current state: **42 URLs**, all live, `ai-chat.html` correctly
+  EXCLUDED because it is `noindex, follow`. `robots.txt` points at the same
+  production URL. `tests/site.test.js` guards both ("sitemap lists real indexable
+  pages and excludes noindex pages", "robots.txt points crawlers to the production
+  sitemap") — run `npm test` after touching the sitemap.
 - **Homepage → content-page links are language-aware** via `data-i18n-attr=
   "href:…"` keys in `script.js`/`script.min.js`: `nav.aiLabHref`
   (`/ai-lab.html` ⇄ `/ai-lab-el.html`) and `work.<card>.detailsHref`
