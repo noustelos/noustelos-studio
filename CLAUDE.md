@@ -1114,8 +1114,18 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
     affiliate links in the not-built list; both were removed. The bot's
     "no account, no app, no sign-up" line is about the UX and is fine — do not
     let it grow back into a monetization sentence.
-  - OG image is `assets/og/wave-grid-share.png` (the AskSantorini pages use
-    `hero-share.png`). No project-specific OG image exists yet.
+  - **OG image is its own: `assets/og/askcarnivore-share.png`** (+ the
+    `.svg` source beside it, like the other two share images). It briefly
+    borrowed `wave-grid-share.png`, which read as amateurish on a shared link —
+    a dark UX-lab graphic on a carnivore write-up. The new one is in the SITE's
+    warm palette (`--bg` #f7f4ee / `--text-primary` #211e19 / `--cta` #29323f)
+    and makes the one-letter difference the whole idea: the two domains stacked,
+    with the extra **`s` in rust #a4552f**. **Regenerate** by editing the SVG
+    and re-rendering it — headless Chrome at `--window-size=1200,630
+    --force-device-scale-factor=2`, screenshotting an HTML wrapper that inlines
+    the SVG and `<link>`s Space Grotesk from Google Fonts (the webfont only
+    applies when the SVG is inline in a document that loads it), then
+    `sips -Z 1200` back down. Both files are committed.
 - **Outbound `rel`: our own domains get `noopener` ONLY — never `noreferrer`
   (2026-08).** `noreferrer` strips the Referer header, so a click from here landed on
   our own properties as "direct traffic" with nothing attributing it to noustelos.gr.

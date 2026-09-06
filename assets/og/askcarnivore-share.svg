@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="AskCarnivore.com and AskCarnivores.com — two doors, one index">
+  <rect width="1200" height="630" fill="#f7f4ee"/>
+
+  <!-- header rail -->
+  <rect width="1200" height="86" fill="#efe9df"/>
+  <line x1="0" y1="85.5" x2="1200" y2="85.5" stroke="#e4ded3" stroke-width="1"/>
+  <text x="56" y="56" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="26" font-weight="700" letter-spacing="0.5" fill="#211e19">NOUSTELOS_STUDIO</text>
+  <text x="345" y="56" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#5b554d">/&gt;</text>
+  <text x="1144" y="55" text-anchor="end" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="15" font-weight="500" letter-spacing="2.6" fill="#5b554d">AI LAB</text>
+
+  <!-- kicker -->
+  <text x="56" y="176" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="16" font-weight="600" letter-spacing="3.4" fill="#5b554d">TWO DOMAINS, ONE INDEX</text>
+
+  <!-- the pair — the single letter is the whole idea -->
+  <text x="56" y="284" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#211e19">askcarnivore.com</text>
+  <text x="56" y="382" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#211e19">askcarnivore<tspan fill="#a4552f">s</tspan>.com</text>
+
+  <!-- role labels, right-aligned against the names -->
+  <text x="1144" y="284" text-anchor="end" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="21" font-weight="500" letter-spacing="1.6" fill="#5b554d">the bot — you ask it</text>
+  <text x="1144" y="382" text-anchor="end" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="21" font-weight="500" letter-spacing="1.6" fill="#5b554d">the portal — you browse it</text>
+
+  <line x1="56" y1="452" x2="1144" y2="452" stroke="#e4ded3" stroke-width="1"/>
+
+  <!-- standfirst -->
+  <text x="56" y="508" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="27" font-weight="500" fill="#211e19">A switchboard for the carnivore community: it routes your question</text>
+  <text x="56" y="546" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="27" font-weight="500" fill="#211e19">to the video that answers it — it never writes the answer.</text>
+
+  <!-- footer mark -->
+  <rect x="1044" y="486" width="100" height="60" rx="8" fill="#29323f"/>
+  <text x="1094" y="529" text-anchor="middle" font-family="'Space Grotesk', Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#f7f4ee">/&gt;</text>
+</svg>
