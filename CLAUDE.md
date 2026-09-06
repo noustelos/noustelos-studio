@@ -1107,6 +1107,13 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
     scheduler, no RAG, portal tools/events out of scope, incomplete depth tags,
     three empty topics). Keep it: it is what makes the rest of the page credible,
     and the Honesty principle above depends on it.
+  - ⚠️ **The business model stays OFF the page — owner's call, 2026-09-06.** The
+    free-bot / portal-funds-it model, affiliate plans, buy-me-a-coffee and the
+    demo-first creator outreach are **internal**, and none of it is built anyway.
+    A first draft said "commerce, when it exists, will live here" and named
+    affiliate links in the not-built list; both were removed. The bot's
+    "no account, no app, no sign-up" line is about the UX and is fine — do not
+    let it grow back into a monetization sentence.
   - OG image is `assets/og/wave-grid-share.png` (the AskSantorini pages use
     `hero-share.png`). No project-specific OG image exists yet.
 - **Outbound `rel`: our own domains get `noopener` ONLY — never `noreferrer`

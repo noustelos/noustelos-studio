@@ -279,8 +279,8 @@
         <h3>Two doors, one index</h3>
         <p>The singular asks <em>the thing</em>; the plural shows <em>the people</em>. That pairing is the whole product decision, and it has to be stated consistently everywhere or the two domains look like a typo of each other.</p>
         <ul>
-          <li><strong>AskCarnivore.com — the bot.</strong> Ask in plain language, get routed to videos, cross-creator. No account, no app, nothing for sale.</li>
-          <li><strong>AskCarnivores.com — the portal.</strong> A bilingual directory of creators, doctors and first-person accounts, every link going straight to the source. Commerce, when it exists, will live here and only here.</li>
+          <li><strong>AskCarnivore.com — the bot.</strong> Ask in plain language, get routed to videos, cross-creator. No account, no app, no sign-up.</li>
+          <li><strong>AskCarnivores.com — the portal.</strong> A bilingual directory of creators, doctors and first-person accounts, every link going straight to the source.</li>
         </ul>
         <p>They share the index and nothing else. Separate repositories, separate Cloudflare Pages projects, separate secrets and analytics, no imports in either direction. Shared surfaces — the studio credit, the contact address — are <em>copied by hand</em> into each; the duplicate-maintenance cost is deliberate.</p>
 
@@ -364,7 +364,7 @@
         <ul>
           <li><strong>Nothing calls the scanner on a schedule.</strong> The scan endpoint is live and token-guarded, but the host does not run cron for this project, so an external scheduler is still the open item.</li>
           <li><strong>No RAG, no vector store</strong> — deliberately deferred until the grid outgrows the cached prompt. The curated core fits; the full catalogue would not.</li>
-          <li><strong>The portal’s tools</strong> — macro calculator, electrolytes, a getting-started plan, shopping list — plus affiliate links and the events calendar are all out of the first scope. The directory is what is live.</li>
+          <li><strong>The portal’s tools</strong> — macro calculator, electrolytes, a getting-started plan, shopping list — and the events calendar are all out of the first scope. The directory is what is live.</li>
           <li><strong>Depth tags are incomplete</strong> for part of the roster, and are being filled in from first-hand listening rather than guessed.</li>
           <li><strong>Three recently added topics answer nothing yet.</strong> A topic only exists for the bot once a video lands in it — an empty box is never advertised — so those return “no topic” until a scan or a sheet row fills them. That is the intended behaviour, not a bug.</li>
         </ul>
