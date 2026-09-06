@@ -112,11 +112,15 @@ const translations = {
       },
       askCarnivoresPortal: {
         label: 'Live · v1',
+        details: 'Project Details',
+        detailsHref: '/askcarnivore-details.html',
         desc: 'A community portal for the carnivore world — a bilingual directory of the creators, doctors and first-person accounts people actually follow, where every link goes straight to the source instead of to a summary. Live in English and Greek; the planned tools are not built yet.'
       },
       askCarnivore: {
-        label: 'In Development',
-        desc: 'A switchboard for the carnivore-diet community — ask in plain language and get routed to the creator, talk or podcast that already answers it, rather than to a generated answer. The landing page is live; the router and its index are still being built.'
+        label: 'Live · v0',
+        details: 'Project Details',
+        detailsHref: '/askcarnivore-details.html',
+        desc: 'A switchboard for the carnivore-diet community — ask in plain language and get routed to the video that already answers it, rather than to a generated answer. Live and answering from a curated index of 19 topics; the scanner has no scheduler yet and the index is still growing.'
       },
       artifact: {
         alt: 'The Artifact AI chat playground preview',
@@ -308,11 +312,15 @@ const translations = {
       },
       askCarnivoresPortal: {
         label: 'Live · v1',
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/askcarnivore-details-el.html',
         desc: 'Μια κοινοτική πύλη για τον κόσμο της carnivore — δίγλωσσος κατάλογος με τους creators, τους γιατρούς και τις προσωπικές μαρτυρίες που πραγματικά παρακολουθεί ο κόσμος, όπου κάθε σύνδεσμος πάει κατευθείαν στην πηγή αντί σε μια περίληψη. Live σε αγγλικά και ελληνικά· τα σχεδιαζόμενα εργαλεία δεν έχουν χτιστεί ακόμα.'
       },
       askCarnivore: {
-        label: 'In Development',
-        desc: 'Ένας κόμβος δρομολόγησης για την carnivore κοινότητα — ρωτάς με απλά λόγια και δρομολογείσαι στον creator, την ομιλία ή το podcast που ήδη απαντά, αντί σε μια παραγόμενη απάντηση. Η landing σελίδα είναι live· ο δρομολογητής και το index του χτίζονται ακόμα.'
+        label: 'Live · v0',
+        details: 'Λεπτομέρειες Project',
+        detailsHref: '/askcarnivore-details-el.html',
+        desc: 'Ένας κόμβος δρομολόγησης για την carnivore κοινότητα — ρωτάς με απλά λόγια και δρομολογείσαι στο βίντεο που ήδη απαντά, αντί σε μια παραγόμενη απάντηση. Live και απαντά από curated index 19 θεμάτων· ο scanner δεν τρέχει ακόμα προγραμματισμένα και το index μεγαλώνει.'
       },
       artifact: {
         alt: 'Προεπισκόπηση The Artifact AI chat playground',

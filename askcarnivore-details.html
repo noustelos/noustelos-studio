@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="AskCarnivore.com and AskCarnivores.com — architecture deep-dive: a bot that routes plain-language questions to the videos that answer them, and a static bilingual portal, two domains sharing one curated index on Cloudflare Pages Functions, KV and Mistral." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/askcarnivore-details.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/askcarnivore-details.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/askcarnivore-details-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/askcarnivore-details.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AskCarnivore.com &amp; AskCarnivores.com — Project Details | Noustelos Studio" />
+  <meta property="og:description" content="AskCarnivore.com and AskCarnivores.com — architecture deep-dive: a bot that routes plain-language questions to the videos that answer them, and a static bilingual portal, two domains sharing one curated index on Cloudflare Pages Functions, KV and Mistral." />
+  <meta property="og:url" content="https://noustelos.gr/askcarnivore-details.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AskCarnivore.com — a switchboard for the carnivore community" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="el_GR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/askcarnivore-details.html" />
+  <meta name="twitter:title" content="AskCarnivore.com &amp; AskCarnivores.com — Project Details | Noustelos Studio" />
+  <meta name="twitter:description" content="AskCarnivore.com and AskCarnivores.com — architecture deep-dive: a bot that routes plain-language questions to the videos that answer them, and a static bilingual portal, two domains sharing one curated index on Cloudflare Pages Functions, KV and Mistral." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta name="twitter:image:alt" content="AskCarnivore.com — a switchboard for the carnivore community" />
+
+  <!-- Structured data: TechArticle + breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "AskCarnivore.com &amp; AskCarnivores.com — two doors, one index",
+        "description": "A pure-router bot and a static bilingual portal sharing one curated index: Cloudflare Pages Functions, Workers KV, Mistral Small, a Google Sheets override and the YouTube Data API.",
+        "url": "https://noustelos.gr/askcarnivore-details.html",
+        "image": "https://noustelos.gr/assets/og/wave-grid-share.png",
+        "inLanguage": "en",
+        "author": { "@type": "Person", "name": "Nick Karadimas" },
+        "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
+        "isPartOf": { "@type": "CollectionPage", "name": "AI Lab", "url": "https://noustelos.gr/ai-lab.html" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://noustelos.gr/" },
+          { "@type": "ListItem", "position": 2, "name": "AI Lab", "item": "https://noustelos.gr/ai-lab.html" },
+          { "@type": "ListItem", "position": 3, "name": "AskCarnivore.com", "item": "https://noustelos.gr/askcarnivore-details.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AskCarnivore.com &amp; AskCarnivores.com — Project Details | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260707" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Project article ───────────────────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code:not(.project-diagram code) {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* ASCII architecture diagram — exact monospace alignment preserved */
+    .project-diagram {
+      margin: 0.4rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-diagram code {
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* ── Closing CTAs ──────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#domains">Domains</a></li>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#about">About</a></li>
+        <li><a href="/ai-lab.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en" class="is-active">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="askcarnivore-title">
+      <article>
+        <p class="project-kicker">AI Lab / Two Domains, One Index</p>
+        <h1 id="askcarnivore-title">AskCarnivore.com &amp; AskCarnivores.com</h1>
+
+        <blockquote class="project-lead">
+          Two domains one letter apart, on purpose: a bot you ask and a portal you browse, sharing one curated index underneath. The bot routes a plain-language question to the videos that already answer it — it never writes the answer itself.
+        </blockquote>
+
+        <h3>TL;DR</h3>
+        <p>A <strong>switchboard for the carnivore community</strong>, built as two separate properties over one shared index. <strong>AskCarnivore.com</strong> (singular) is a bot: you ask it in words, it hands you videos. <strong>AskCarnivores.com</strong> (plural) is a portal: you browse it with your eyes, and it lists the people.</p>
+        <ul>
+          <li><strong>What</strong> — a pure router, not an explainer, plus a static human directory beside it</li>
+          <li><strong>Stack</strong> — Cloudflare Pages + Pages Functions · Workers KV · Mistral Small · Google Sheets as a live override · YouTube Data API at cron time. The portal is hand-written HTML and CSS with a single script.</li>
+          <li><strong>The rule that shapes everything</strong> — the model never emits a URL. It is shown ids and titles, it returns ids, and the router rebuilds every link from the index, so it cannot cite a video that does not exist.</li>
+          <li><strong>Built by</strong> — solo: curation, architecture, and decisions (AI-assisted execution)</li>
+          <li><strong>Status</strong> — bot live since 16 Aug 2026, answering from a 19-topic × 27-creator curation; portal live as a directory. Both carry their own “in development” strip, and the honest gaps are listed at the bottom of this page.</li>
+        </ul>
+
+        <h3>Two doors, one index</h3>
+        <p>The singular asks <em>the thing</em>; the plural shows <em>the people</em>. That pairing is the whole product decision, and it has to be stated consistently everywhere or the two domains look like a typo of each other.</p>
+        <ul>
+          <li><strong>AskCarnivore.com — the bot.</strong> Ask in plain language, get routed to videos, cross-creator. No account, no app, nothing for sale.</li>
+          <li><strong>AskCarnivores.com — the portal.</strong> A bilingual directory of creators, doctors and first-person accounts, every link going straight to the source. Commerce, when it exists, will live here and only here.</li>
+        </ul>
+        <p>They share the index and nothing else. Separate repositories, separate Cloudflare Pages projects, separate secrets and analytics, no imports in either direction. Shared surfaces — the studio credit, the contact address — are <em>copied by hand</em> into each; the duplicate-maintenance cost is deliberate.</p>
+
+        <h3>Why a router instead of an answer engine</h3>
+        <p>The obvious build would have been an assistant that explains nutrition. This one deliberately refuses to.</p>
+        <ul>
+          <li><strong>It is finite.</strong> “Who covers what, and where” is buildable and verifiable. “Beat a frontier model at biochemistry” is not.</li>
+          <li><strong>It carries less responsibility.</strong> A hub that <em>points at</em> people is a different liability surface from an AI that <em>is</em> the authority — and this subject matter makes that distinction matter.</li>
+          <li><strong>A channel is not an answer.</strong> Sending someone to a YouTube channel is a second search. The index is therefore <strong>topic → video</strong>, cross-creator, not topic → channel.</li>
+        </ul>
+        <p>So the bot returns links with neutral labels, framed as what these voices say rather than as settled fact, and it makes no treatment claims anywhere. One case is not routing at all: a personal-medical question gets a redirect to a doctor.</p>
+
+        <h3>Architecture</h3>
+        <pre class="project-diagram"><code>[Question]
+      │
+      └──&gt; (Pages Function: POST /api/ask)
+                │
+                ├──&gt; Origin check ──&gt; per-IP rate limit (KV, hashed address)
+                ├──&gt; Mistral Small  (the index rides inside a cached system prompt)
+                ├──&gt; Router: verify every id against the index, gate on intent
+                └──&gt; Links, rebuilt from the index — never from the model
+
+  Index, in priority order:
+      Cron scan ──&gt; YouTube Data API ──&gt; KV grid  (topic × register → videos)
+      Google Sheet ──&gt; CSV override on top of the grid
+      src/index.json ──&gt; bundled fallback when KV is empty
+
+  askcarnivores.com ──(iframe of /embed)──&gt; askcarnivore.com
+      a window onto the bot — never a client of its worker</code></pre>
+
+        <p>There is no database, no vector store and no second service. At this index size there is nothing to shard and nothing to retrieve — a decision revisited below, not one made by default.</p>
+        <p>The index has three sources, in priority order: the <strong>KV grid</strong> written by the scanner, a <strong>Google Sheet override</strong> layered on top of it, then a bundled JSON file as the fallback when KV is empty. Which one answered is reported in <code>meta.index_source</code> on every response, so a wrong answer can be traced to the layer that produced it.</p>
+        <p>The Sheet is fetched into KV, never from Google on the user’s clock. A stale copy is served as-is and refreshed <em>after</em> the response; the case being refused is a person waiting on a spreadsheet before the bot says anything.</p>
+
+        <h3>How an answer gets built</h3>
+        <p>The interesting constraint was to leave as little quality judgment as possible in the machine — and none of it hidden.</p>
+        <ul>
+          <li><strong>Topic</strong> — the model reads it from the question. This is the one thing a language model is reliably good at here.</li>
+          <li><strong>Depth</strong> — the <em>user</em> picks it with a button: <strong>Start here</strong> or <strong>Go deeper</strong>. Phrasing rarely reveals whether someone wants an introduction or a deep dive, so the bot asks instead of guessing.</li>
+          <li><strong>Which video</strong> — mechanically. Within one creator on one topic, the shorter video is the “start”, the longer one the “deep”; ordering is recency-weighted views, not raw views, so an old viral clip cannot bury good recent work.</li>
+          <li><strong>Which creators</strong> — the curated roster, taken hierarchically, expanding outside it only when nobody on it covers the topic.</li>
+          <li><strong>Naming the label</strong> — always experience, never a treatment claim. “What people who tried this say about X”, not “how X was cured”.</li>
+        </ul>
+        <p>The human half of the curation is the one place editorial judgment lives: a person approves <em>which creator covers which topic</em>; the algorithm picks <em>which video</em>. One approval covers everything that creator publishes on that topic, today and next year, so the curation does not rot as content appears.</p>
+
+        <h3>Key features</h3>
+        <ul>
+          <li><strong>Scan-to-grid.</strong> A cron-time scan reads the YouTube Data API and writes a pre-computed grid of <code>topic × depth → ranked videos</code>. At question time the answer is already written; the model only picks the box. No live search, no per-question API call — which solves quota and link rot in the same move.</li>
+          <li><strong>A byte-identical system prompt.</strong> The index rides inside the prompt and is cached per isolate, keyed on the scan timestamp, so the string changes when the grid changes — once a week — and never per request. The provider’s prefix cache keeps hitting and the index is paid for once.</li>
+          <li><strong>Creator-scoped questions.</strong> “Insulin by Paul Mason” filters the routed list to that person. The model hands over a name, code does the rest, and the match is anchored on the surname — the live data credits the same doctor three different ways, and a plain substring test fails on all of them.</li>
+          <li><strong>Trusted sources instead of an approval gate.</strong> Each creator is scanned from their own channel plus a small set of trusted hosts, so genuine guest appearances come in and re-upload or clip channels stay out — automatically, with no judgment call.</li>
+          <li><strong>One sheet, two independent projections.</strong> A column decides whether a row can be served as an answer; a different column decides whether it appears on the public Highlights page. A row can be either, both or neither: parking a video for the bot should not pull it off the page, and putting something on the page should not quietly feed it to the model.</li>
+          <li><strong>Bilingual, twice over, two different ways.</strong> The portal ships parallel English and Greek URLs with hreflang alternates; the bot does it on one page with a script. The portal cannot use the second approach — its own content-security policy blocks every script on the site.</li>
+        </ul>
+
+        <h3>Engineering Highlights</h3>
+        <p>A handful of problems that were more interesting than they first appeared:</p>
+
+        <section class="project-highlight">
+          <h4>Two rules that had to live in code, not in the prompt</h4>
+          <p>The model never emits a URL: it sees ids and titles, returns ids, and the router rebuilds the links from the index — so a hallucinated citation is not a low-probability event, it is unrepresentable. And a question classified as personal-medical returns zero links from the worker regardless of what the model asked for, so the redirect to a doctor does not depend on the model behaving. Both are guarded by tests whose entire job is to keep them true.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>A frame is not an integration</h4>
+          <p>The portal offers the bot in a panel — as an iframe of the bot’s public page, wrapped in portal-side chrome. It never calls the bot’s worker, and the portal’s hostname is deliberately absent from the worker’s origin allow-list: inside the frame the request origin is the bot’s own, so the check passes. The day that allow-list grows a portal hostname, the two projects have been coupled. One failure mode is worth knowing by heart: adding a <code>sandbox</code> attribute to that iframe gives the framed page an opaque origin, the fetch arrives with a null origin, and the panel renders a flawless chat that answers 403 to every question.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Word matching has no “not”</h4>
+          <p>“Sugar” is the substance; “blood sugar” is metabolic and belongs to a different topic. Whole-word matching cannot express that exception, so roughly one in eight items in the sugar box is a title that says “blood sugar”. The overlap is accepted openly and corrected with data rows rather than with special-case code — a small decision that keeps a matching layer from slowly turning into a rules engine.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>A green status code proves nothing</h4>
+          <p>The bot’s host falls back to its landing page for any unknown path and answers 200, so a stale or mistyped framed URL renders a page that looks fine while the content is wrong. Anything framed is verified by opening the live page and looking inside the frame. In the same spirit, the security headers of the one route rendered by a function are set in code — the platform does not apply the static header file to generated responses, and a missing frame policy fails in the worst possible direction: silently permissive.</p>
+        </section>
+
+        <h3>What is not built yet</h3>
+        <p>Stated plainly, because the site’s rule is that copy matches reality:</p>
+        <ul>
+          <li><strong>Nothing calls the scanner on a schedule.</strong> The scan endpoint is live and token-guarded, but the host does not run cron for this project, so an external scheduler is still the open item.</li>
+          <li><strong>No RAG, no vector store</strong> — deliberately deferred until the grid outgrows the cached prompt. The curated core fits; the full catalogue would not.</li>
+          <li><strong>The portal’s tools</strong> — macro calculator, electrolytes, a getting-started plan, shopping list — plus affiliate links and the events calendar are all out of the first scope. The directory is what is live.</li>
+          <li><strong>Depth tags are incomplete</strong> for part of the roster, and are being filled in from first-hand listening rather than guessed.</li>
+          <li><strong>Three recently added topics answer nothing yet.</strong> A topic only exists for the bot once a video lands in it — an empty box is never advertised — so those return “no topic” until a scan or a sheet row fills them. That is the intended behaviour, not a bug.</li>
+        </ul>
+
+        <h3>Status</h3>
+        <p>Both domains are live. The bot answers from a real curated index; the portal is a finished directory with its planned tools still ahead of it. Designed, curated, built and operated solo.</p>
+
+        <!-- ── Closing CTAs ─────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="https://askcarnivore.com" target="_blank" rel="noopener">Visit AskCarnivore.com</a>
+          <a class="button button-link" href="https://askcarnivores.com" target="_blank" rel="noopener">Visit AskCarnivores.com</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the Greek version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'gr');
+          window.location.href = '/askcarnivore-details-el.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

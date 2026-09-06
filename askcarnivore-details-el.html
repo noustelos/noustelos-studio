@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="AskCarnivore.com και AskCarnivores.com — αρχιτεκτονική: ένα bot που δρομολογεί ερωτήσεις σε βίντεο και μια στατική δίγλωσση πύλη, δύο domains με ένα κοινό curated index, πάνω σε Cloudflare Pages Functions, KV και Mistral." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://noustelos.gr/askcarnivore-details-el.html" />
+  <link rel="alternate" hreflang="en" href="https://noustelos.gr/askcarnivore-details.html" />
+  <link rel="alternate" hreflang="el" href="https://noustelos.gr/askcarnivore-details-el.html" />
+  <link rel="alternate" hreflang="x-default" href="https://noustelos.gr/askcarnivore-details.html" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Noustelos Studio" />
+  <meta property="og:title" content="AskCarnivore.com &amp; AskCarnivores.com — Λεπτομέρειες Project | Noustelos Studio" />
+  <meta property="og:description" content="AskCarnivore.com και AskCarnivores.com — αρχιτεκτονική: ένα bot που δρομολογεί ερωτήσεις σε βίντεο και μια στατική δίγλωσση πύλη, δύο domains με ένα κοινό curated index, πάνω σε Cloudflare Pages Functions, KV και Mistral." />
+  <meta property="og:url" content="https://noustelos.gr/askcarnivore-details-el.html" />
+  <meta property="og:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:secure_url" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AskCarnivore.com — switchboard της carnivore κοινότητας" />
+  <meta property="og:locale" content="el_GR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://noustelos.gr/askcarnivore-details-el.html" />
+  <meta name="twitter:title" content="AskCarnivore.com &amp; AskCarnivores.com — Λεπτομέρειες Project | Noustelos Studio" />
+  <meta name="twitter:description" content="AskCarnivore.com και AskCarnivores.com — αρχιτεκτονική: ένα bot που δρομολογεί ερωτήσεις σε βίντεο και μια στατική δίγλωσση πύλη, δύο domains με ένα κοινό curated index, πάνω σε Cloudflare Pages Functions, KV και Mistral." />
+  <meta name="twitter:image" content="https://noustelos.gr/assets/og/wave-grid-share.png" />
+  <meta name="twitter:image:alt" content="AskCarnivore.com — switchboard της carnivore κοινότητας" />
+
+  <!-- Structured data: TechArticle + breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "AskCarnivore.com &amp; AskCarnivores.com — δύο πόρτες, ένα index",
+        "description": "Ένα bot καθαρός δρομολογητής και μια στατική δίγλωσση πύλη που μοιράζονται ένα curated index: Cloudflare Pages Functions, Workers KV, Mistral Small, Google Sheets override και YouTube Data API.",
+        "url": "https://noustelos.gr/askcarnivore-details-el.html",
+        "image": "https://noustelos.gr/assets/og/wave-grid-share.png",
+        "inLanguage": "el",
+        "author": { "@type": "Person", "name": "Nick Karadimas" },
+        "publisher": { "@type": "Organization", "name": "Noustelos Studio", "url": "https://noustelos.gr/" },
+        "isPartOf": { "@type": "CollectionPage", "name": "AI Lab", "url": "https://noustelos.gr/ai-lab-el.html" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://noustelos.gr/" },
+          { "@type": "ListItem", "position": 2, "name": "AI Lab", "item": "https://noustelos.gr/ai-lab-el.html" },
+          { "@type": "ListItem", "position": 3, "name": "AskCarnivore.com", "item": "https://noustelos.gr/askcarnivore-details-el.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <title>AskCarnivore.com &amp; AskCarnivores.com — Λεπτομέρειες Project | Noustelos Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.min.css?v=20260707" />
+
+  <style>
+    .ai-lab-main {
+      min-height: calc(100svh - var(--nav-height));
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .ai-lab-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu a[aria-current="page"] {
+      color: var(--glass-gray-text);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* ── Project article ───────────────────────────────────────── */
+    .ai-lab-project {
+      margin-top: clamp(1.5rem, 4vw, 3rem);
+      padding-bottom: clamp(3.5rem, 9vw, 7rem);
+    }
+
+    .project-article { gap: 1.4rem; }
+    .project-article > article { min-width: 0; }
+
+    .project-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .project-lead {
+      margin: 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--text-primary);
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .project-article h3 {
+      margin: clamp(1.6rem, 4vw, 2.6rem) 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .project-article h4 {
+      margin: 1.3rem 0 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .project-article p {
+      margin: 0;
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .project-article ul {
+      margin: 0.2rem 0 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .project-article li {
+      font-size: var(--content-text-size, 18px);
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .project-article strong { color: var(--text-primary); font-weight: 600; }
+    .project-article em { color: var(--text-secondary); }
+    .project-article code:not(.project-diagram code) {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.08em 0.36em;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* ASCII architecture diagram — exact monospace alignment preserved */
+    .project-diagram {
+      margin: 0.4rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-diagram code {
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .project-highlight {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-highlight:first-of-type {
+      margin-top: 0.4rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* ── Closing CTAs ──────────────────────────────────────────── */
+    .ai-lab-faq-cta {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      padding-top: clamp(1.5rem, 4vw, 2rem);
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="logo" href="/index.html#top" aria-label="Noustelos Studio">
+        <span class="logo-lockup">
+          <span class="logo-wordmark">
+            <span class="logo-main">NOUSTELOS</span>
+            <span class="logo-studio">_STUDIO</span>
+          </span>
+          <span class="logo-location" aria-hidden="true">SANTORINI</span>
+        </span>
+        <span class="logo-mark" aria-hidden="true">/&gt;</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="menu" id="site-menu">
+        <li><a href="/index.html#work">Work</a></li>
+        <li><a href="/index.html#domains">Domains</a></li>
+        <li><a href="/index.html#services">Υπηρεσίες</a></li>
+        <li><a href="/index.html#about">Σχετικά</a></li>
+        <li><a href="/ai-lab-el.html" aria-current="page">AI Lab</a></li>
+        <li><a href="/index.html#contact">Επικοινωνία</a></li>
+      </ul>
+
+      <button class="lang-toggle" type="button" aria-label="Switch language">
+        <span data-lang-option="en">EN</span>
+        <span class="lang-divider">/</span>
+        <span data-lang-option="gr" class="is-active">GR</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="ai-lab-main">
+    <section class="container ai-lab-wrap project-article ai-lab-project" aria-labelledby="askcarnivore-title">
+      <article>
+        <p class="project-kicker">AI Lab / Δύο Domains, Ένα Index</p>
+        <h1 id="askcarnivore-title">AskCarnivore.com &amp; AskCarnivores.com</h1>
+
+        <blockquote class="project-lead">
+          Δύο domains που απέχουν ένα γράμμα, επίτηδες: ένα bot που το ρωτάς και μια πύλη που την ξεφυλλίζεις, με ένα κοινό curated index από κάτω. Το bot δρομολογεί μια ερώτηση σε απλά λόγια προς τα βίντεο που ήδη την απαντούν — δεν γράφει ποτέ το ίδιο την απάντηση.
+        </blockquote>
+
+        <h3>Με δυο λόγια</h3>
+        <p>Ένας <strong>κόμβος δρομολόγησης για την carnivore κοινότητα</strong>, χτισμένος ως δύο ξεχωριστά projects πάνω σε ένα κοινό index. Το <strong>AskCarnivore.com</strong> (ενικός) είναι bot: το ρωτάς με λόγια, σου δίνει βίντεο. Το <strong>AskCarnivores.com</strong> (πληθυντικός) είναι πύλη: την ξεφυλλίζεις με το μάτι, και δείχνει τους ανθρώπους.</p>
+        <ul>
+          <li><strong>Τι είναι</strong> — καθαρός δρομολογητής, όχι explainer, και δίπλα του ένας στατικός ανθρώπινος κατάλογος</li>
+          <li><strong>Stack</strong> — Cloudflare Pages + Pages Functions · Workers KV · Mistral Small · Google Sheets ως live override · YouTube Data API σε cron. Η πύλη είναι γραμμένη στο χέρι σε HTML και CSS, με ένα μόνο script.</li>
+          <li><strong>Ο κανόνας που ορίζει τα πάντα</strong> — το μοντέλο δεν βγάζει ποτέ URL. Βλέπει ids και τίτλους, επιστρέφει ids, και ο router ξαναχτίζει κάθε link από το index — άρα δεν μπορεί να παραπέμψει σε βίντεο που δεν υπάρχει.</li>
+          <li><strong>Ποιος το έφτιαξε</strong> — μόνος: curation, αρχιτεκτονική και αποφάσεις (η εκτέλεση με AI υποστήριξη)</li>
+          <li><strong>Κατάσταση</strong> — το bot είναι live από τις 16/08/2026 και απαντά από curation 19 θεμάτων × 27 creators· η πύλη είναι live ως κατάλογος. Και τα δύο δείχνουν τη δική τους ταινία «in development», και τα κενά καταγράφονται τίμια στο τέλος αυτής της σελίδας.</li>
+        </ul>
+
+        <h3>Δύο πόρτες, ένα index</h3>
+        <p>Ο ενικός ρωτάει <em>το πράγμα</em>· ο πληθυντικός δείχνει <em>τους ανθρώπους</em>. Αυτό το ζευγάρι είναι ολόκληρη η απόφαση προϊόντος, και πρέπει να λέγεται με συνέπεια παντού — αλλιώς τα δύο domains μοιάζουν με typo το ένα του άλλου.</p>
+        <ul>
+          <li><strong>AskCarnivore.com — το bot.</strong> Ρωτάς με απλά λόγια, δρομολογείσαι σε βίντεο, από όλους τους creators μαζί. Χωρίς λογαριασμό, χωρίς app, χωρίς τίποτα προς πώληση.</li>
+          <li><strong>AskCarnivores.com — η πύλη.</strong> Δίγλωσσος κατάλογος με creators, γιατρούς και προσωπικές μαρτυρίες, όπου κάθε σύνδεσμος πάει κατευθείαν στην πηγή. Το εμπόριο, όταν υπάρξει, θα ζει εδώ και μόνο εδώ.</li>
+        </ul>
+        <p>Μοιράζονται το index και τίποτε άλλο. Ξεχωριστά repositories, ξεχωριστά Cloudflare Pages projects, ξεχωριστά secrets και analytics, κανένα import προς καμία κατεύθυνση. Ό,τι είναι κοινό — η υπογραφή του studio, η διεύθυνση επικοινωνίας — <em>αντιγράφεται στο χέρι</em> στο καθένα· το κόστος της διπλής συντήρησης είναι συνειδητή επιλογή.</p>
+
+        <h3>Γιατί δρομολογητής και όχι μηχανή απαντήσεων</h3>
+        <p>Το προφανές θα ήταν ένας βοηθός που εξηγεί διατροφή. Αυτός εδώ αρνείται επίτηδες να το κάνει.</p>
+        <ul>
+          <li><strong>Είναι πεπερασμένο.</strong> Το «ποιος καλύπτει τι, και πού» χτίζεται και επαληθεύεται. Το «να νικήσω ένα frontier μοντέλο στη βιοχημεία» δεν χτίζεται ποτέ.</li>
+          <li><strong>Κουβαλάει λιγότερη ευθύνη.</strong> Ένας κόμβος που <em>δείχνει</em> ανθρώπους έχει άλλη επιφάνεια ευθύνης από ένα AI που <em>είναι</em> η αυθεντία — και σε αυτό το θέμα η διάκριση μετράει.</li>
+          <li><strong>Το κανάλι δεν είναι απάντηση.</strong> Το να στείλεις κάποιον σε ένα κανάλι YouTube είναι μια δεύτερη αναζήτηση. Γι’ αυτό το index είναι <strong>θέμα → βίντεο</strong>, cross-creator, όχι θέμα → κανάλι.</li>
+        </ul>
+        <p>Έτσι το bot επιστρέφει links με ουδέτερες ετικέτες, με πλαίσιο «τι λένε αυτές οι φωνές» και όχι «τι είναι αποδεδειγμένο», και δεν κάνει πουθενά ισχυρισμούς θεραπείας. Μία μόνο περίπτωση δεν είναι καθόλου δρομολόγηση: μια προσωπική ιατρική ερώτηση παίρνει παραπομπή σε γιατρό.</p>
+
+        <h3>Αρχιτεκτονική</h3>
+        <pre class="project-diagram"><code>[Question]
+      │
+      └──&gt; (Pages Function: POST /api/ask)
+                │
+                ├──&gt; Origin check ──&gt; per-IP rate limit (KV, hashed address)
+                ├──&gt; Mistral Small  (the index rides inside a cached system prompt)
+                ├──&gt; Router: verify every id against the index, gate on intent
+                └──&gt; Links, rebuilt from the index — never from the model
+
+  Index, in priority order:
+      Cron scan ──&gt; YouTube Data API ──&gt; KV grid  (topic × register → videos)
+      Google Sheet ──&gt; CSV override on top of the grid
+      src/index.json ──&gt; bundled fallback when KV is empty
+
+  askcarnivores.com ──(iframe of /embed)──&gt; askcarnivore.com
+      a window onto the bot — never a client of its worker</code></pre>
+
+        <p>Δεν υπάρχει βάση δεδομένων, ούτε vector store, ούτε δεύτερη υπηρεσία. Σε αυτό το μέγεθος index δεν υπάρχει τίποτα να μοιραστεί σε shards και τίποτα να ανακτηθεί — απόφαση που ξαναεξετάζεται παρακάτω, όχι κάτι που έμεινε έτσι από αμέλεια.</p>
+        <p>Το index έχει τρεις πηγές, με σειρά προτεραιότητας: το <strong>πλέγμα στο KV</strong> που γράφει ο scanner, ένα <strong>override από Google Sheet</strong> από πάνω του, και ένα bundled JSON ως fallback όταν το KV είναι άδειο. Ποια απάντησε φαίνεται στο <code>meta.index_source</code> κάθε απόκρισης, ώστε μια λάθος απάντηση να εντοπίζεται στο επίπεδο που την παρήγαγε.</p>
+        <p>Το Sheet διαβάζεται στο KV, ποτέ από την Google πάνω στο ρολόι του χρήστη. Ένα παλιό αντίγραφο σερβίρεται ως έχει και ανανεώνεται <em>μετά</em> την απόκριση· αυτό που δεν επιτρέπεται είναι να περιμένει άνθρωπος ένα spreadsheet πριν μιλήσει το bot.</p>
+
+        <h3>Πώς χτίζεται μια απάντηση</h3>
+        <p>Ο ενδιαφέρων περιορισμός ήταν να μείνει όσο το δυνατόν λιγότερη κρίση ποιότητας μέσα στη μηχανή — και τίποτα από αυτήν κρυφό.</p>
+        <ul>
+          <li><strong>Θέμα</strong> — το διαβάζει το μοντέλο από την ερώτηση. Είναι το ένα πράγμα που ένα γλωσσικό μοντέλο κάνει εδώ αξιόπιστα.</li>
+          <li><strong>Βάθος</strong> — το διαλέγει ο <em>χρήστης</em> με κουμπί: <strong>Start here</strong> ή <strong>Go deeper</strong>. Η διατύπωση σπάνια αποκαλύπτει αν κάποιος θέλει εισαγωγή ή βάθος, οπότε το bot ρωτάει αντί να μαντεύει.</li>
+          <li><strong>Ποιο βίντεο</strong> — μηχανικά. Μέσα στα βίντεο ενός creator σε ένα θέμα, το πιο σύντομο είναι το «start», το πιο μεγάλο το «deep»· η σειρά βγαίνει από views σταθμισμένα με τη φρεσκάδα, όχι από σκέτα views, ώστε ένα παλιό viral να μη θάβει καλή πρόσφατη δουλειά.</li>
+          <li><strong>Ποιοι creators</strong> — η curated λίστα, ιεραρχικά, με επέκταση εκτός λίστας μόνο όταν κανείς μέσα της δεν καλύπτει το θέμα.</li>
+          <li><strong>Πώς ονομάζεται το link</strong> — πάντα εμπειρία, ποτέ ισχυρισμός θεραπείας. «Τι λένε άνθρωποι που το δοκίμασαν για το Χ», όχι «πώς θεραπεύτηκε το Χ».</li>
+        </ul>
+        <p>Το ανθρώπινο μισό της curation είναι το μόνο σημείο όπου ζει συντακτική κρίση: ένας άνθρωπος εγκρίνει <em>ποιος creator καλύπτει ποιο θέμα</em>· ο αλγόριθμος διαλέγει <em>ποιο βίντεο</em>. Μία έγκριση καλύπτει ό,τι δημοσιεύει αυτός ο creator στο θέμα, σήμερα και του χρόνου — έτσι η curation δεν παλιώνει καθώς βγαίνει νέο περιεχόμενο.</p>
+
+        <h3>Βασικά χαρακτηριστικά</h3>
+        <ul>
+          <li><strong>Scan-to-grid.</strong> Ένα scan σε ώρα cron διαβάζει το YouTube Data API και γράφει ένα προ-υπολογισμένο πλέγμα <code>θέμα × βάθος → ταξινομημένα βίντεο</code>. Την ώρα της ερώτησης η απάντηση είναι ήδη γραμμένη· το μοντέλο διαλέγει μόνο κουτί. Καμία live αναζήτηση, καμία κλήση API ανά ερώτηση — που λύνει quota και link rot με την ίδια κίνηση.</li>
+          <li><strong>Ένα system prompt πανομοιότυπο ως το byte.</strong> Το index ταξιδεύει μέσα στο prompt και κρατιέται σε cache ανά isolate, με κλειδί τη χρονοσφραγίδα του scan, ώστε το string να αλλάζει όταν αλλάζει το πλέγμα — μία φορά την εβδομάδα — και ποτέ ανά αίτημα. Το prefix cache του παρόχου συνεχίζει να χτυπάει και το index πληρώνεται μία φορά.</li>
+          <li><strong>Ερωτήσεις με συγκεκριμένο creator.</strong> Το «insulin by Paul Mason» φιλτράρει τη λίστα σε αυτό το πρόσωπο. Το μοντέλο δίνει ένα όνομα, τα υπόλοιπα τα κάνει κώδικας, και το ταίριασμα αγκυρώνεται στο επώνυμο — τα πραγματικά δεδομένα γράφουν τον ίδιο γιατρό με τρεις διαφορετικούς τρόπους, και ένας απλός έλεγχος υποσυμβολοσειράς αποτυγχάνει και στους τρεις.</li>
+          <li><strong>Έμπιστες πηγές αντί για πύλη έγκρισης.</strong> Κάθε creator σκανάρεται από το δικό του κανάλι συν ένα μικρό σύνολο έμπιστων hosts, ώστε οι γνήσιες guest εμφανίσεις να μπαίνουν και τα re-upload ή clip κανάλια να μένουν έξω — αυτόματα, χωρίς να χρειάζεται κρίση.</li>
+          <li><strong>Ένα sheet, δύο ανεξάρτητες προβολές.</strong> Μια στήλη αποφασίζει αν μια γραμμή μπορεί να σερβιριστεί ως απάντηση· μια άλλη αν εμφανίζεται στη δημόσια σελίδα Highlights. Μια γραμμή μπορεί να είναι το ένα, το άλλο, και τα δύο ή τίποτα: το να παρκάρεις ένα βίντεο για το bot δεν πρέπει να το βγάζει από τη σελίδα, και το να βάλεις κάτι στη σελίδα δεν πρέπει να το ταΐζει σιωπηλά στο μοντέλο.</li>
+          <li><strong>Δίγλωσσα, διπλά, με δύο διαφορετικούς τρόπους.</strong> Η πύλη έχει παράλληλα αγγλικά και ελληνικά URLs με hreflang· το bot το κάνει σε μία σελίδα με script. Η πύλη δεν μπορεί να χρησιμοποιήσει τον δεύτερο τρόπο — η δική της πολιτική ασφαλείας μπλοκάρει κάθε script στο site.</li>
+        </ul>
+
+        <h3>Τεχνικά σημεία που άξιζαν</h3>
+        <p>Μερικά προβλήματα που αποδείχθηκαν πιο ενδιαφέροντα απ’ όσο φαίνονταν:</p>
+
+        <section class="project-highlight">
+          <h4>Δύο κανόνες που έπρεπε να ζουν σε κώδικα, όχι στο prompt</h4>
+          <p>Το μοντέλο δεν βγάζει ποτέ URL: βλέπει ids και τίτλους, επιστρέφει ids, και ο router ξαναχτίζει τα links από το index — άρα μια παραισθησιακή παραπομπή δεν είναι απλώς απίθανη, είναι μη αναπαραστάσιμη. Και μια ερώτηση που ταξινομείται ως προσωπική ιατρική επιστρέφει μηδέν links από τον worker, ό,τι κι αν ζήτησε το μοντέλο — έτσι η παραπομπή σε γιατρό δεν εξαρτάται από το αν το μοντέλο συμπεριφέρεται σωστά. Και τα δύο τα φυλάνε tests που δεν κάνουν τίποτε άλλο.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Ένα iframe δεν είναι ολοκλήρωση</h4>
+          <p>Η πύλη προσφέρει το bot μέσα σε ένα panel — ως iframe της δημόσιας σελίδας του bot, τυλιγμένο σε chrome της πύλης. Δεν καλεί ποτέ τον worker του bot, και το hostname της πύλης λείπει επίτηδες από τη λίστα επιτρεπόμενων origins: μέσα στο frame το origin του αιτήματος είναι του ίδιου του bot, οπότε ο έλεγχος περνάει. Την ημέρα που αυτή η λίστα θα αποκτήσει hostname της πύλης, τα δύο projects θα έχουν συνδεθεί. Μια αποτυχία αξίζει να τη θυμάται κανείς απ’ έξω: ένα <code>sandbox</code> attribute σε αυτό το iframe δίνει στη σελίδα opaque origin, το αίτημα φτάνει με null origin, και το panel δείχνει ένα άψογο chat που απαντά 403 σε κάθε ερώτηση.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Το ταίριασμα λέξεων δεν έχει «όχι»</h4>
+          <p>Το «sugar» είναι η ουσία· το «blood sugar» είναι μεταβολικό και ανήκει σε άλλο θέμα. Το ταίριασμα ολόκληρης λέξης δεν μπορεί να εκφράσει αυτή την εξαίρεση, οπότε περίπου ένα στα οκτώ αντικείμενα του θέματος «sugar» είναι τίτλος που λέει «blood sugar». Η επικάλυψη γίνεται δεκτή ανοιχτά και διορθώνεται με γραμμές δεδομένων, όχι με κώδικα ειδικών περιπτώσεων — μια μικρή απόφαση που εμποδίζει ένα επίπεδο ταιριάσματος να γίνει σιγά σιγά μηχανή κανόνων.</p>
+        </section>
+
+        <section class="project-highlight">
+          <h4>Ένα πράσινο status code δεν αποδεικνύει τίποτα</h4>
+          <p>Ο host του bot επιστρέφει τη landing σελίδα του για κάθε άγνωστο path με κωδικό 200, οπότε ένα παλιό ή λάθος γραμμένο URL μέσα σε iframe δείχνει σελίδα που φαίνεται μια χαρά ενώ το περιεχόμενο είναι λάθος. Ό,τι μπαίνει σε frame επαληθεύεται ανοίγοντας τη live σελίδα και κοιτώντας μέσα στο frame. Στο ίδιο πνεύμα, οι security headers της μίας διαδρομής που παράγεται από function ορίζονται σε κώδικα — η πλατφόρμα δεν εφαρμόζει το στατικό αρχείο headers σε παραγόμενες αποκρίσεις, και μια πολιτική frame που λείπει αποτυγχάνει προς τη χειρότερη κατεύθυνση: σιωπηλά επιτρεπτική.</p>
+        </section>
+
+        <h3>Τι δεν έχει χτιστεί ακόμα</h3>
+        <p>Λέγεται ξεκάθαρα, γιατί ο κανόνας αυτού του site είναι ότι το κείμενο συμφωνεί με την πραγματικότητα:</p>
+        <ul>
+          <li><strong>Κανείς δεν καλεί τον scanner προγραμματισμένα.</strong> Το endpoint του scan είναι live και προστατευμένο με token, αλλά ο host δεν τρέχει cron για αυτό το project, οπότε ένα εξωτερικό χρονόμετρο παραμένει ανοιχτό θέμα.</li>
+          <li><strong>Κανένα RAG, κανένα vector store</strong> — αναβάλλεται συνειδητά ώσπου το πλέγμα να ξεπεράσει το cached prompt. Ο curated πυρήνας χωράει· ολόκληρος ο κατάλογος δεν θα χωρούσε.</li>
+          <li><strong>Τα εργαλεία της πύλης</strong> — υπολογιστής μακροθρεπτικών, ηλεκτρολύτες, πλάνο εκκίνησης, λίστα αγορών — καθώς και τα affiliate links και το ημερολόγιο εκδηλώσεων είναι όλα εκτός πρώτου σκοπού. Live είναι ο κατάλογος.</li>
+          <li><strong>Οι ετικέτες βάθους είναι ελλιπείς</strong> για μέρος της λίστας, και συμπληρώνονται με πραγματική ακρόαση αντί για εικασία.</li>
+          <li><strong>Τρία πρόσφατα θέματα δεν απαντούν ακόμα.</strong> Ένα θέμα υπάρχει για το bot μόνο αφότου προσγειωθεί βίντεο μέσα του — άδειο κουτί δεν διαφημίζεται ποτέ — οπότε επιστρέφουν «κανένα θέμα» ώσπου να τα γεμίσει ένα scan ή μια γραμμή του sheet. Αυτή είναι η επιδιωκόμενη συμπεριφορά, όχι bug.</li>
+        </ul>
+
+        <h3>Κατάσταση</h3>
+        <p>Και τα δύο domains είναι live. Το bot απαντά από πραγματικό curated index· η πύλη είναι ολοκληρωμένος κατάλογος με τα σχεδιαζόμενα εργαλεία της ακόμα μπροστά. Σχεδιασμός, curation, υλοποίηση και λειτουργία από έναν άνθρωπο.</p>
+
+        <!-- ── Closing CTAs ─────────────────────────────────────── -->
+        <div class="ai-lab-faq-cta">
+          <a class="button button-link" href="https://askcarnivore.com" target="_blank" rel="noopener">Επισκέψου το AskCarnivore.com</a>
+          <a class="button button-link" href="https://askcarnivores.com" target="_blank" rel="noopener">Επισκέψου το AskCarnivores.com</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var navToggle = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('#site-menu');
+      var langToggle = document.querySelector('.lang-toggle');
+
+      var safeStorage = {
+        set: function (key, value) { try { localStorage.setItem(key, value); } catch (_e) {} }
+      };
+
+      if (navToggle && menu) {
+        navToggle.addEventListener('click', function () {
+          var isOpen = menu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        menu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            menu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Single-language page: the toggle switches to the English version.
+      if (langToggle) {
+        langToggle.addEventListener('click', function () {
+          safeStorage.set('siteLanguage', 'en');
+          window.location.href = '/askcarnivore-details.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
