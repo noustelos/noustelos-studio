@@ -1159,7 +1159,8 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   live in the string; split it out as its own element with a `data-i18n` label +
   a static `<a>` (see the AskSantorini.ai live link). `#hero-title` size/weight is
   scoped (NOT the global `h1`, shared by ai-lab/artifact-details/faq pages).
-- **Homepage About = 3 paragraphs, rewritten 2026-08-27** (`about.p1/p2/p3`).
+- **Homepage About = 4 paragraphs** (`about.p1/p2/p3/p4`; the first three rewritten
+  2026-08-27, `p4` added 2026-09-06).
   Sourced from the owner's own long-form piece (`~/Desktop/ME_FIRST_ABOUT.rtf`),
   professionalized — NOT the raw memoir. The arc: (p1) where the work started
   (dial-up era, x386 + Basic, hand-written HTML/CSS from 2008) into what's built
@@ -1176,6 +1177,16 @@ rather than edit the copy. Layout: `en|el/blog/index.html` (index) +
   `index.html` **plus** four literal edits (en+gr × `script.js` +
   `script.min.js`) — the five-places rule above. JS bust `?v=askcarnivores01`
   → `?v=about01`; no CSS change, so no site-wide sweep.
+  **`about.p4` (2026-09-06) covers the two carnivore projects** and sits **between
+  p1 and p2 in `index.html`** — p1 is where the projects are listed, and p3 has to
+  stay the closer, so the DOM order is p1, p4, p2, p3 while the JS keys read
+  p1..p4. Note the ORDER MISMATCH before you "fix" it. Copy holds the
+  Honesty-principle line: the portal is named as a directory where *nothing is
+  generated*, the bot as a *first-version switchboard* returning talks and videos
+  *rather than an answer of its own*, and the last sentence says the directory's
+  calculators and the bot's deeper index are still being built. Don't drop that
+  sentence or promote either project past `Live · v1` / `Live · v0`. Same
+  five-places rule; JS bust `?v=carnivoredetails01` → `?v=about02`, no CSS change.
 - **`lab/video-experiments.html` was DELETED (2026-08-27)** along with
   `assets/lab/tree-1-loop.mp4` (12.5 MB, owner's call). The page existed ONLY
   to play that clip, so removing the asset retired the page: its card in
